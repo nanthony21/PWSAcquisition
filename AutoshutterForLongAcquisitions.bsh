@@ -1,0 +1,49 @@
+
+
+myRunnable = new Runnable(){
+	acqeng = mm.getAcquisitionEngine();
+	shm = mm.getShutterManager();
+	pos = mm.getPositionList();
+	int timeFrames = acqeng.getSequenceSettings().numFrames;
+	int currentTimeFrame = 0;
+	int l = pos.getPositions().length;
+	int count = 0;
+	long time = 0;
+	long msinterval = acqeng.getFrameIntervalMs();
+	public class scheduledTask extends TimerTask{
+		shm = shm;
+		public void run(){
+			shm.setShutter(true);
+			print("on");
+		}
+	};
+	public void run(){
+		count++;
+		if (count == 1){
+			time = System.currentTimeMillis();
+			currentTimeFrame++;
+		}
+		else if (count == l){
+			Thread.sleep(100);
+			shm.setShutter(false);
+			print("off");
+			count = 0;
+			if (currentTimeFrame != timeFrames){
+				Timer timer = new Timer();
+				scheduledTask task = new scheduledTask();
+				long turnontime = msinterval - 1000 - (System.currentTimeMillis() - time);
+				timer.schedule(task,turnontime);
+			}		
+		}
+	}
+};
+
+
+acqeng = mm.getAcquisitionEngine();
+acqeng.clearRunnables();
+acqeng.attachRunnable(-1,-1,-1,-1,myRunnable);
+shm = mm.getShutterManager();
+shm.setAutoShutter(false);
+shm.setShutter(true);
+mm.acquisitions().runAcquisition();
+shm.setShutter(false);
