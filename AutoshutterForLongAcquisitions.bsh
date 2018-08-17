@@ -1,38 +1,38 @@
 
 
-myRunnable = new Runnable(){
+myRunnable = new Runnable(){ //A runnable to turn off the led when we reach the end of the possition list. and schedule to reenable it when it's time to start again.
 	acqeng = mm.getAcquisitionEngine();
 	shm = mm.getShutterManager();
 	pos = mm.getPositionList();
-	int timeFrames = acqeng.getSequenceSettings().numFrames;
+	int timeFrames = acqeng.getSequenceSettings().numFrames;	//The number of time steps we're taking.
 	int currentTimeFrame = 0;
-	int l = pos.getPositions().length;
-	int count = 0;
-	long time = 0;
-	long msinterval = acqeng.getFrameIntervalMs();
-	public class scheduledTask extends TimerTask{
-		shm = shm;
-		public void run(){
-			shm.setShutter(true);
+	int l = pos.getPositions().length;	//The number of items in the position list.
+	int count = 0;	//Number of images acquired. This is reset each time we reach the end of the position list.
+	long time = 0;	//This holds the current time in ms. It is initialized every time we start a new time step.
+	long msinterval = acqeng.getFrameIntervalMs();	//The time in ms between each time step.
+	public class scheduledTask extends TimerTask{	//A class to schedule the reignition of the LED at a specified time.
+		shm = shm;	//Save the shuttermanager object.
+		public void run(){	//This runs when the scheduler is scheduled.
+			shm.setShutter(true);	//Turn on the LED
 			print("on");
 		}
 	};
-	public void run(){
-		count++;
-		if (count == 1){
+	public void run(){	//This is run right after each image is acquired in the acquisition.
+		count++;	//Keep track of how many images we've captured.
+		if (count == 1){	//If this is the first image of the current time step then record the time and mark that we are on a new time step.
 			time = System.currentTimeMillis();
 			currentTimeFrame++;
 		}
-		else if (count == l){
-			Thread.sleep(100);
-			shm.setShutter(false);
+		else if (count == l){	//If we've imaged every position in the position list.
+			Thread.sleep(100);	//Wait a little
+			shm.setShutter(false);	//Turn off the shutter.
 			print("off");
-			count = 0;
-			if (currentTimeFrame != timeFrames){
+			count = 0;	//Reset the image counter.
+			if (currentTimeFrame != timeFrames){	//We don't want to do this on the last time step.
 				Timer timer = new Timer();
 				scheduledTask task = new scheduledTask();
-				long turnontime = msinterval - 1000 - (System.currentTimeMillis() - time);
-				timer.schedule(task,turnontime);
+				long turnontime = msinterval - 1000 - (System.currentTimeMillis() - time); //This is the number of milliseconds before we want to turn the led on again. One second before acquisition begins.
+				timer.schedule(task,turnontime);	//Schedule the turn on.
 			}		
 		}
 	}
@@ -40,10 +40,10 @@ myRunnable = new Runnable(){
 
 
 acqeng = mm.getAcquisitionEngine();
-acqeng.clearRunnables();
-acqeng.attachRunnable(-1,-1,-1,-1,myRunnable);
+acqeng.clearRunnables();	//Clear old runnables so things don't get too confusing.
+acqeng.attachRunnable(-1,-1,-1,-1,myRunnable); //Attach our runnable to every axis of the acquisition.
 shm = mm.getShutterManager();
-shm.setAutoShutter(false);
-shm.setShutter(true);
-mm.acquisitions().runAcquisition();
-shm.setShutter(false);
+shm.setAutoShutter(false);	//We don't want the auto shutter functionality messing things up.
+shm.setShutter(true); //Make sure the light is on at first.
+mm.acquisitions().runAcquisition(); //This function blocks until the acquisition completes.
+shm.setShutter(false);	//By default the acquisition manager will reenable the led at the end. Let's turn it off.
