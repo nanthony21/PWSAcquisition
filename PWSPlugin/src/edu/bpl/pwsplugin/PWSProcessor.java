@@ -35,6 +35,7 @@ import org.micromanager.internal.utils.MDUtils;
 import org.micromanager.internal.utils.ReportingUtils;
 
 import org.micromanager.data.Processor;
+import org.micromanager.PropertyMap;
 import org.micromanager.Studio;
 import org.micromanager.data.ProcessorContext;
 import org.micromanager.data.Image;
@@ -51,13 +52,31 @@ public class PWSProcessor extends Processor {
     TaggedImageQueue imageQueue;
     boolean debugLogEnabled_ = true;
     Image[] imageArray;
+    Integer[] wv;
+    String filtLabel;
+    String filtProp;
     
-    public PWSProcessor(Studio studio, int averages) {
+    public PWSProcessor(Studio studio, PropertyMap settings) {
         studio_ = studio;
-        numAverages_ = averages;
-        imageArray = new Image[numAverages_];
+        wv = settings.getIntArray("wv");
+        filtLabel = settings.getString("filtLabel");
+        filtProp = "Wavelength";
+        imageArray = new Image[wv.length];
         studio_.acquisitions().attachRunnable(-1, -1, -1, -1, new PWSRunnable(this)); 
         imageQueue = new TaggedImageQueue();
+        
+        try {
+            if (!studio_.core().isPropertySequenceable(filtLabel, filtProp)){
+                ReportingUtils.showError("The filter device does not have a sequenceable 'Wavelength' property.");
+            }
+            if (studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp) < wv.length) {
+                ReportingUtils.showError("The filter device does not support sequencing as many wavelenghts as have been specified. Max is " + Integer.toString(studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp)));
+            }
+        }
+        catch (Exception ex) {
+            ReportingUtils.showError(ex);
+        }
+                    
     }
     
     @Override
@@ -68,23 +87,21 @@ public class PWSProcessor extends Processor {
     @Override
     public SummaryMetadata processSummaryMetadata(SummaryMetadata metadata) {
         SummaryMetadata.SummaryMetadataBuilder builder = metadata.copy();
-        builder.userName("Nicks Averager");
+        builder.userName("PWSAcquisition");
         return builder.build();
     }
     
     @Override
     public void processImage(Image image, ProcessorContext context) {
-
         Image imageOnError = image;
         try {  
             if (studio_.acquisitions().isAcquisitionRunning()) {
                 if (debugLogEnabled_) {
                     ReportingUtils.logMessage("Queue has" + Integer.toString(imageQueue.size()));
                 }
-                imageArray[0] = image;
-                int i = 1;
+                int i = 0;  //The original image is just going to be thrown out :( .
                 while (!imageQueue.isEmpty()) {
-                    imageArray[i++] = studio_.data().convertTaggedImage(imageQueue.take()); //Lets make an array with the acquisition image first and then the queued images after.
+                    imageArray[i++] = studio_.data().convertTaggedImage(imageQueue.take()); //Lets make an array with the queued images.
                 }
             }
             // Only applies for Live - MultiD and Snap collect images elsewhere (in Runnable and Poison-Image-Delay thread)
@@ -108,27 +125,7 @@ public class PWSProcessor extends Processor {
                 while (!imageQueue.isEmpty()) {
                     imageArray[i++] = studio_.data().convertTaggedImage(imageQueue.take()); //Lets make an array with the acquisition image first and then the queued images after.
                 }
-            /*if (taggedImage == null || TaggedImageQueue.isPoison(taggedImage)) {                                                
-                new Thread("Poison-Image-Delay") {
-                    public void run() {                            
-                        tfa.fa.taggedImageArray[0] = tfa.fa.taggedImageArray[1];
-
-                        if (!studio_.core().isSequenceRunning()) {
-                            acquireImages();
-                        }
-
-                        computeProduceAndEmpty(); // on to computing avg. frame
-
-                        if (debugLogEnabled_) {
-                            studio_.core().logMessage("FrameAvg: exiting processor");
-                        }
-                        produce(TaggedImageQueue.POISON);
-                    }
-                }.start();
-            return;
-            }  */ 
-            }
-                                   
+            }                                   
             Image avg = getAverage(imageArray); // on to computing avg. frame
             context.outputImage(avg);
         } catch (Exception ex) {
@@ -197,42 +194,8 @@ public class PWSProcessor extends Processor {
             return imArray[0];
         }
     }
-       
-   /* public void acquireImagesStartSequence() {
-        try {
-            tfa.getCMMCore().waitForDevice(tfa.getCMMCore().getCameraDevice());
-            tfa.getCMMCore().clearCircularBuffer();
-            String cam = tfa.getCMMCore().getCameraDevice();
-            
-//          CMMCore::startSequenceAcquisition(long numImages, double intervalMs, bool stopOnOverflow)
-//          @param numImages Number of images requested from the camera
-//          @param intervalMs interval between images, currently only supported by Andor cameras
-//          @param stopOnOverflow whether or not the camera stops acquiring when the circular buffer is full
-            studio_.core().startSequenceAcquisition(numAverages_-1, 0, false);
-            
-            long now = System.currentTimeMillis();
-            int frame = 1;// keep 0 free for the image from engine
-            // reference BurstExample.bsh
-            
-            while (studio_.core().getRemainingImageCount() > 0 || studio_.isSequenceRunning(cam)) {
-                if (studio_.core().getRemainingImageCount() > 0) {
-                   tfa.fa.taggedImageArray[frame] = tfa.getCMMCore().popNextTaggedImage();
-                   frame++;                 
-                }
-             }
-            long itTook = System.currentTimeMillis() - now;
-            if (debugLogEnabled_) {
-                ReportingUtils.logMessage("Averaging Acquisition took: " + itTook + " milliseconds for " + numAverages_ + " frames");
-            }
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            ReportingUtils.logMessage("FrameAvg Error");
-        }
-    }  */
-    
-        
-     public void acquireImages() {
+         
+    public void acquireImages() {
         try {
             studio_.core().waitForDevice(studio_.core().getCameraDevice());
             studio_.core().clearCircularBuffer();
@@ -242,14 +205,23 @@ public class PWSProcessor extends Processor {
 //          @param numImages Number of images requested from the camera
 //          @param intervalMs interval between images, currently only supported by Andor cameras
 //          @param stopOnOverflow whether or not the camera stops acquiring when the circular buffer is full
-            studio_.core().startSequenceAcquisition(numAverages_-1, 0, false);
+            
+            studio_.core().startPropertySequence(filtLabel, filtProp);
+                            
+            studio_.core().startSequenceAcquisition(wv.length, 0, false);
             
             long now = System.currentTimeMillis();
             int frame = 1;// keep 0 free for the image from engine
             // reference BurstExample.bsh
             
-            while (studio_.core().getRemainingImageCount() > 0 || studio_.core().isSequenceRunning(cam)) {
-                if (studio_.core().getRemainingImageCount() > 0) {
+            boolean canExit = false;
+            while (true) {
+                boolean remaining = (studio_.core().getRemainingImageCount() > 0);
+                boolean running = (studio_.core().isSequenceRunning(cam));
+                if ((!remaining) && (canExit)) {
+                    break;  //Everything is taken care of.
+                }
+                if (remaining) {    //Process images
                    imageQueue.add(studio_.core().popNextTaggedImage());
                    frame++;
                    /*
@@ -259,6 +231,10 @@ public class PWSProcessor extends Processor {
                         }
                     }
                     */
+                }
+                if (!running) {
+                    studio_.core().stopPropertySequence(filtLabel, filtProp);
+                    canExit = true;
                 }
              }
             long itTook = System.currentTimeMillis() - now;

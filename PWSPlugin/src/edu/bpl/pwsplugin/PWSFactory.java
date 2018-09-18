@@ -25,6 +25,6 @@ public class PWSFactory implements ProcessorFactory{
     }
     @Override
     public Processor createProcessor() {
-        return new PWSProcessor(studio_, settings_.getInt("numAverages"));
+        return new PWSProcessor(studio_, settings_);
     }
 }
