@@ -94,30 +94,23 @@ public class PWSProcessor extends Processor {
     @Override
     public void processImage(Image image, ProcessorContext context) {
         Image imageOnError = image;
-        try {  
-            if (studio_.acquisitions().isAcquisitionRunning()) {
-                if (debugLogEnabled_) {
-                    ReportingUtils.logMessage("Queue has" + Integer.toString(imageQueue.size()));
-                }
-                int i = 0;  //The original image is just going to be thrown out :( .
-                while (!imageQueue.isEmpty()) {
-                    imageArray[i++] = studio_.data().convertTaggedImage(imageQueue.take()); //Lets make an array with the queued images.
-                }
+        try { 
+            if (studio_.live().getIsLiveModeOn()) { //Not supported
+                return;
             }
-            // if we are not in a state where we have acquired some frames for averaging
-            // this case would be for Snap or end of Live routine where additional images
-            // are needed to be acquired to fill the averaging array
-            // a Poison image indicates EOL
-            else { //We are not in an acquisition or live mode so we must be taking a snap shot.
+            else if (!studio_.acquisitions().isAcquisitionRunning()) { //This means we must be in snap mode. There is no runnable so we must acquire the image here.
                 acquireImages();
-                imageArray[0] = image;
-                int i = 1;
-                while (!imageQueue.isEmpty()) {
-                    imageArray[i++] = studio_.data().convertTaggedImage(imageQueue.take()); //Lets make an array with the acquisition image first and then the queued images after.
-                }
-            }                                   
-            Image avg = getAverage(imageArray); // on to computing avg. frame
-            context.outputImage(avg);
+            }
+            //Nothing extra needs to be done for acquisition mode
+            if (debugLogEnabled_) {
+                ReportingUtils.logMessage("Queue has" + Integer.toString(imageQueue.size()));
+            }
+            int i = 0;  //The original image is just going to be thrown out :( .
+            while (!imageQueue.isEmpty()) {
+                imageArray[i++] = studio_.data().convertTaggedImage(imageQueue.take()); //Lets make an array with the queued images.
+            }
+            savePWS(imageArray);
+            context.outputImage(imageArray[imageArray.length/2]);   //Return the middle image.
         } catch (Exception ex) {
             context.outputImage(imageOnError);            
             ReportingUtils.logError("PWSPlugin, in Process: " + ex.toString());
@@ -125,7 +118,7 @@ public class PWSProcessor extends Processor {
         }
     }
 
-    private Image getAverage(Image[] imArray) {
+    private void savePWS(Image[] imArray) {
         try {
             if (debugLogEnabled_) {
                 ReportingUtils.logMessage("PWSPlugin: computing...");
