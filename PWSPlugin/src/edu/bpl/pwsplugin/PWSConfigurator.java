@@ -11,6 +11,9 @@ import org.micromanager.data.ProcessorConfigurator;
 import org.micromanager.PropertyMap;
 import org.micromanager.Studio;
 import org.micromanager.LogManager;
+import java.util.ArrayList;
+import javax.swing.DefaultComboBoxModel;
+import mmcorej.StrVector;
 
 
 public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
@@ -27,6 +30,18 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         settings_ = settings;
         log_ = studio.logs();
         initComponents();
+        String[] devs = studio_.core().getLoadedDevices().toArray();
+        StrVector newDevs = new StrVector();
+        for (int i = 0; i < devs.length; i++) {
+            try {
+                if (studio_.core().isPropertySequenceable(devs[i], "Wavelength")) {
+                    newDevs.add(devs[i]);
+                }
+            }
+            catch (Exception ex) {}
+        }
+        DefaultComboBoxModel model = new DefaultComboBoxModel(newDevs.toArray());
+        filterComboBox.setModel(model); //Update the available names.
         super.loadAndRestorePosition(200, 200);
     }       
     
@@ -34,10 +49,24 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
     public PropertyMap getSettings() {
         PropertyMap.PropertyMapBuilder builder = studio_.data().getPropertyMapBuilder();
         try{
-            builder.putInt("numAverages", Integer.parseInt(numFramesField.getText().trim()));
+            int start = Integer.parseInt(wvStartField.getText().trim());
+            int stop = Integer.parseInt(wvStopField.getText().trim());
+            int step = Integer.parseInt(wvStepField.getText().trim());
+            ArrayList<Integer> wvList = new ArrayList<Integer>();
+            for (int i = start; i <= stop; i += step) {
+                wvList.add(i);
+            }
+            Integer wvArr[] = new Integer[wvList.size()];
+            builder.putIntArray("wv", wvList.toArray(wvArr));
         }
         catch(NumberFormatException e){
-            log_.showMessage("A valid number was not specified. Got: " + numFramesField.getText().trim());
+            log_.showMessage("A valid number was not specified.");
+        }
+        try{
+            builder.putString("filtLabel", filterComboBox.getSelectedItem().toString());
+        }
+        catch(NumberFormatException e){
+            log_.showMessage("A valid string was not specified.");
         }
         return builder.build();
     }
@@ -52,23 +81,6 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         pack();
         setVisible(true);
     }
-    
-
-    private void updateNumFramesField() {
-        int num;
-        String str = numFramesField.getText().trim().toString();
-        try {
-         num = (int) Integer.parseInt(str);
-        } catch(NumberFormatException e) {
-            log_.showMessage("A valid number was not specified. Defaulting to 4.");
-            num = 4;
-        }
-        if (num < 2) {
-            log_.showMessage("Can not average less than 2 frames. Defaulting to 4.");
-            num = 4;
-        }
-        numFramesField.setText(Integer.toString(num));
-    }
 
 
     /**
@@ -80,12 +92,15 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jCheckBox1 = new javax.swing.JCheckBox();
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        numFramesField = new javax.swing.JTextField();
-
-        jCheckBox1.setText("jCheckBox1");
+        startLabel = new javax.swing.JLabel();
+        wvStartField = new javax.swing.JTextField();
+        stopLabel = new javax.swing.JLabel();
+        wvStopField = new javax.swing.JTextField();
+        stepLabel = new javax.swing.JLabel();
+        wvStepField = new javax.swing.JTextField();
+        filterLabel = new javax.swing.JLabel();
+        filterComboBox = new javax.swing.JComboBox<String>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -98,60 +113,92 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         jPanel1.setAutoscrolls(true);
         jPanel1.setMinimumSize(new java.awt.Dimension(332, 142));
         jPanel1.setPreferredSize(new java.awt.Dimension(332, 142));
-        jPanel1.setLayout(new java.awt.GridLayout(1, 2));
+        jPanel1.setLayout(new java.awt.GridLayout(4, 0));
 
-        jLabel1.setText("Averages");
-        jPanel1.add(jLabel1);
+        startLabel.setText("Start");
+        jPanel1.add(startLabel);
 
-        numFramesField.setText("4");
-        numFramesField.setToolTipText("");
-        numFramesField.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                numFramesFieldFocusLost(evt);
-            }
-        });
-        numFramesField.addActionListener(new java.awt.event.ActionListener() {
+        wvStartField.setText("500");
+        wvStartField.setName(""); // NOI18N
+        wvStartField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                numFramesFieldActionPerformed(evt);
+                wvStartFieldActionPerformed(evt);
             }
         });
-        jPanel1.add(numFramesField);
-        numFramesField.getAccessibleContext().setAccessibleName("");
+        jPanel1.add(wvStartField);
+
+        stopLabel.setText("Stop");
+        jPanel1.add(stopLabel);
+
+        wvStopField.setText("700");
+        wvStopField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                wvStopFieldActionPerformed(evt);
+            }
+        });
+        jPanel1.add(wvStopField);
+
+        stepLabel.setText("Step");
+        jPanel1.add(stepLabel);
+
+        wvStepField.setText("2");
+        jPanel1.add(wvStepField);
+
+        filterLabel.setText("Filter");
+        jPanel1.add(filterLabel);
+
+        filterComboBox.setModel(new javax.swing.DefaultComboBoxModel<String>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        filterComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                filterComboBoxActionPerformed(evt);
+            }
+        });
+        jPanel1.add(filterComboBox);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(58, 58, 58)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void numFramesFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numFramesFieldActionPerformed
-        updateNumFramesField();
-    }//GEN-LAST:event_numFramesFieldActionPerformed
-
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
 
     }//GEN-LAST:event_formWindowClosing
 
-    private void numFramesFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_numFramesFieldFocusLost
-        updateNumFramesField();
-    }//GEN-LAST:event_numFramesFieldFocusLost
+    private void wvStartFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wvStartFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_wvStartFieldActionPerformed
+
+    private void wvStopFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wvStopFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_wvStopFieldActionPerformed
+
+    private void filterComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterComboBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_filterComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JComboBox<String> filterComboBox;
+    private javax.swing.JLabel filterLabel;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField numFramesField;
+    private javax.swing.JLabel startLabel;
+    private javax.swing.JLabel stepLabel;
+    private javax.swing.JLabel stopLabel;
+    private javax.swing.JTextField wvStartField;
+    private javax.swing.JTextField wvStepField;
+    private javax.swing.JTextField wvStopField;
     // End of variables declaration//GEN-END:variables
 }

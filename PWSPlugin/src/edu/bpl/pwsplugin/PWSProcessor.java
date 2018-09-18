@@ -62,7 +62,7 @@ public class PWSProcessor extends Processor {
     String filtLabel;
     String filtProp;
     
-    public PWSProcessor(Studio studio, PropertyMap settings) {
+    public PWSProcessor(Studio studio, PropertyMap settings){
         studio_ = studio;
         wv = settings.getIntArray("wv");
         filtLabel = settings.getString("filtLabel");
@@ -80,7 +80,7 @@ public class PWSProcessor extends Processor {
             }
             StrVector strv = new StrVector();
             for (int i = 0; i < wv.length; i++) {   //Convert wv from int to string for sending to the device.
-                strv.set(i, String.valueOf(wv[i]));
+                strv.add(String.valueOf(wv[i]));
             }
             studio_.core().loadPropertySequence(filtLabel, filtProp, strv);
         }
@@ -107,6 +107,7 @@ public class PWSProcessor extends Processor {
         Image imageOnError = image;
         try { 
             if (studio_.live().getIsLiveModeOn()) { //Not supported
+                context.outputImage(imageOnError); 
                 return;
             }
             else if (!studio_.acquisitions().isAcquisitionRunning()) { //This means we must be in snap mode. There is no runnable so we must acquire the image here.
@@ -133,6 +134,7 @@ public class PWSProcessor extends Processor {
 
     private void savePWS(Image[] imArray, Coords coords, Metadata metadata) {
         try {
+            long now = System.currentTimeMillis();
             if (debugLogEnabled_) {
                 ReportingUtils.logMessage("PWSPlugin: computing...");
             }
@@ -155,7 +157,7 @@ public class PWSProcessor extends Processor {
             param.setCompression(TIFFEncodeParam.COMPRESSION_DEFLATE);
             param.setDeflateLevel(1);
             writer.setImageEncodeParam(param);
-            ImageStack stack = new ImageStack(width,height,imArray.length);
+            ImageStack stack = new ImageStack(width,height);
             
             CoordsBuilder co = coords.copy();
             co.channel(0);
@@ -180,9 +182,10 @@ public class PWSProcessor extends Processor {
                 stack.addSlice(studio_.data().ij().createProcessor(new DefaultImage(result,width,height,imgDepth,1,co.build(),metadata)));           
             }
             ImagePlus im = new ImagePlus("PWSacq", stack);
-            writer.write("Myfile.tiff",im);
+            writer.write("E:\\Nick\\Tiffy.tif",im);
+            long itTook = System.currentTimeMillis() - now;
             if (debugLogEnabled_) {
-                ReportingUtils.logMessage("PWSPlugin: produced image");
+                ReportingUtils.logMessage("PWSPlugin: produced image. Saving took:" + itTook + "milliseconds.");
             }
         } catch (Exception ex) {
             ReportingUtils.logError("Error: PWSPlugin, while producing averaged img: "+ ex.toString());

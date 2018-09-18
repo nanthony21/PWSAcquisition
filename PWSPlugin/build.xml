@@ -7,8 +7,8 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="FrameAverager" default="default" basedir=".">
-    <description>Builds, tests, and runs the project FrameAverager</description>
+<project name="PWSPlugin" default="default" basedir=".">
+    <description>Builds, tests, and runs the project PWSPlugin</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
 
@@ -82,20 +82,21 @@
     -->
 
     <manifest file="MANIFEST.MF">
-    <attribute name="Signature-Title" value="FrameAverager"/>
-    <attribute name="Signature-Vendor" value="Marine Biological Laboratory (Rudolf Oldenbourg)"/>
+    <attribute name="Signature-Title" value="PWSPlugin"/>
+    <attribute name="Signature-Vendor" value="Backman Photonics Laboratory (Nick Anthony)"/>
     <attribute name="Application-Plugin" value="Micro-Manager"/>
     <attribute name="Built-By" value="${user.name}"/>
     <!--<attribute name="Built-Version" value="${Version_Major}.${Version_Minor}${Version_Type}"/>-->
     <attribute name="Built-Date" value="${TODAY}"/>
     </manifest>
-    
+<!-- This copies the plugin to micromanager automatically
 <target name="-post-jar">  
-  <property name="MMPlugin_dist1" value="dist/FrameAverager.jar"/>
-  <property name="MMPlugin_dir1" value="${work.dir}/mmplugins/FrameAverager.jar"/>
+  <property name="MMPlugin_dist1" value="dist/PWSPlugin.jar"/>
+  <property name="MMPlugin_dir1" value="${work.dir}/mmplugins/PWSPlugin.jar"/>
   <copy tofile="${MMPlugin_dir1}">
   <fileset file="${MMPlugin_dist1}"/>
   </copy>
 </target> 
-  
+ -->
 </project>
+
