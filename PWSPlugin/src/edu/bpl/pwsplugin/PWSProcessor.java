@@ -120,7 +120,7 @@ public class PWSProcessor extends Processor {
             context.outputImage(avg);
         } catch (Exception ex) {
             context.outputImage(imageOnError);            
-            ReportingUtils.logError("FrameAvg, in Process: " + ex.toString());
+            ReportingUtils.logError("PWSPlugin, in Process: " + ex.toString());
             imageQueue.clear();
         }
     }
@@ -128,7 +128,7 @@ public class PWSProcessor extends Processor {
     private Image getAverage(Image[] imArray) {
         try {
             if (debugLogEnabled_) {
-                ReportingUtils.logMessage("FrameAvg: computing...");
+                ReportingUtils.logMessage("PWSPlugin: computing...");
             }
             int width = imArray[0].getHeight();
             int height = imArray[0].getWidth();
@@ -175,12 +175,12 @@ public class PWSProcessor extends Processor {
             Coords co = imArray[0].getCoords();
             Image averagedImage = new DefaultImage(result,width,height,imgDepth,1,co,md);
             if (debugLogEnabled_) {
-                ReportingUtils.logMessage("FrameAvg: produced averaged image");
+                ReportingUtils.logMessage("PWSPlugin: produced averaged image");
             }
             return averagedImage;
 
         } catch (Exception ex) {
-            ReportingUtils.logError("Error: FrameAvg, while producing averaged img: "+ ex.toString());
+            ReportingUtils.logError("Error: PWSPlugin, while producing averaged img: "+ ex.toString());
             return imArray[0];
         }
     }
@@ -232,14 +232,14 @@ public class PWSProcessor extends Processor {
                 studio_.core().stopSequenceAcquisition();  
             } catch (Exception ex) {
                 ex.printStackTrace();
-                ReportingUtils.logMessage("ERROR: FrameAvg: " + ex.getMessage());
+                ReportingUtils.logMessage("ERROR: PWSPlugin: " + ex.getMessage());
             }          
             if (debugLogEnabled_) {
-                ReportingUtils.logMessage("Averaging Acquisition took: " + itTook + " milliseconds for "+numAverages_ + " frames");
+                ReportingUtils.logMessage("PWS Acquisition took: " + itTook + " milliseconds for "+wv.length + " frames");
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            ReportingUtils.logMessage("FrameAvg Error");
+            ReportingUtils.logMessage("PWSPlugin Error");
         }
     }
 }
