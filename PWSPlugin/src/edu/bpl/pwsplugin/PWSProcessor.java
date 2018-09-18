@@ -104,16 +104,6 @@ public class PWSProcessor extends Processor {
                     imageArray[i++] = studio_.data().convertTaggedImage(imageQueue.take()); //Lets make an array with the queued images.
                 }
             }
-            // Only applies for Live - MultiD and Snap collect images elsewhere (in Runnable and Poison-Image-Delay thread)
-            // when in Live collect (n-1) required images from stream
-            // when averaging array is filled skip this step and continue to
-            // compute and produce avg. image
-            else if (studio_.live().getIsLiveModeOn()) { //Rolling average for live mode.
-                for (int i = 1; i < numAverages_; i++) { 
-                    imageArray[i-1] = imageArray[i];
-                }
-                imageArray[numAverages_-1] = image;
-            }
             // if we are not in a state where we have acquired some frames for averaging
             // this case would be for Snap or end of Live routine where additional images
             // are needed to be acquired to fill the averaging array
