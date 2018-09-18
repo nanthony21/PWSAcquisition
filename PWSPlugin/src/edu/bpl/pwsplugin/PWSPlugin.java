@@ -50,10 +50,10 @@ import org.scijava.plugin.Plugin;
 @Plugin(type = ProcessorPlugin.class)
 public class PWSPlugin implements ProcessorPlugin, SciJavaPlugin {
 
-    public static String menuName = "Frame Averager";
-    public static String tooltipDescription = "Multiple-Frame Averaging";
-    public static String versionNumber = "1.1";
-    public static String copyright = "";
+    public static String menuName = "PWSAcquisition";
+    public static String tooltipDescription = "Hyperspectral Image";
+    public static String versionNumber = "0.1";
+    public static String copyright = "Backman Photonics Lab";
 
     private Studio studio_;  
     
