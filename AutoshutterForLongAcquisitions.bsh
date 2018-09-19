@@ -1,4 +1,5 @@
-
+//A script that turns off the led at the end of each position acquisition. This is useful for acquisitions with long time steps where you don't want to overexpose the cells.
+//Set up the acquisition. Then run this script.
 
 myRunnable = new Runnable(){ //A runnable to turn off the led when we reach the end of the possition list. and schedule to reenable it when it's time to start again.
 	acqeng = mm.getAcquisitionEngine();
