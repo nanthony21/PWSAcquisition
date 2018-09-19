@@ -49,6 +49,9 @@ import org.micromanager.data.Metadata;
 import org.micromanager.data.internal.DefaultImage;
 import net.sf.ij.jaiio.JAIWriter;
 import non_com.media.jai.codec.TIFFEncodeParam;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.io.FileWriter;
 
 
 public class PWSProcessor extends Processor {
@@ -157,8 +160,7 @@ public class PWSProcessor extends Processor {
             param.setCompression(TIFFEncodeParam.COMPRESSION_DEFLATE);
             param.setDeflateLevel(1);
             writer.setImageEncodeParam(param);
-            ImageStack stack = new ImageStack(width,height);
-            
+            ImageStack stack = new ImageStack(width,height); 
             CoordsBuilder co = coords.copy();
             co.channel(0);
             Image firstIm = imArray[0].copyWith(co.build(), metadata);
@@ -181,6 +183,23 @@ public class PWSProcessor extends Processor {
                 result = ssub;
                 stack.addSlice(studio_.data().ij().createProcessor(new DefaultImage(result,width,height,imgDepth,1,co.build(),metadata)));           
             }
+            JSONObject jobj = new JSONObject();
+            JSONObject md = new JSONObject(metadata.toString());
+            jobj.put("MicroManagerMetadata", md);
+            JSONArray WV = new JSONArray();
+            for (int i = 0; i < wv.length; i++) {
+                WV.put(wv[i]);
+            }
+            JSONArray Min = new JSONArray();
+            for (int i = 0; i < min.length; i++) {
+                Min.put(min[i]);
+            }     
+            jobj.put("waveLengths", WV);  
+            jobj.put("exposure", studio_.core().getExposure());
+            jobj.put("compressionMins", Min);
+            FileWriter file = new FileWriter("E:\\Nick\\md.txt");
+            file.write(jobj.toString());
+            file.close();
             ImagePlus im = new ImagePlus("PWSacq", stack);
             writer.write("E:\\Nick\\Tiffy.tif",im);
             long itTook = System.currentTimeMillis() - now;
