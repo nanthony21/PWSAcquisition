@@ -34,8 +34,7 @@ package edu.bpl.pwsplugin;
 
 import org.micromanager.internal.utils.ReportingUtils;
 import mmcorej.StrVector;
-import ij.ImagePlus;
-import ij.ImageStack;
+
 import org.micromanager.data.Processor;
 import org.micromanager.PropertyMap;
 import org.micromanager.Studio;
@@ -43,15 +42,23 @@ import org.micromanager.data.ProcessorContext;
 import org.micromanager.data.Image;
 import org.micromanager.data.SummaryMetadata;
 import org.micromanager.acquisition.internal.TaggedImageQueue;
-import org.micromanager.data.Coords.CoordsBuilder;
-import org.micromanager.data.Coords;
 import org.micromanager.data.Metadata;
-import org.micromanager.data.internal.DefaultImage;
-import net.sf.ij.jaiio.JAIWriter;
-import non_com.media.jai.codec.TIFFEncodeParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.IIOImage;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
+import java.io.File;
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
+import javax.imageio.stream.ImageOutputStream;
+import javax.imageio.ImageTypeSpecifier;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.FileWriter;
+import com.twelvemonkeys.imageio.metadata.tiff.TIFF;
+
 
 
 public class PWSProcessor extends Processor {
@@ -125,8 +132,7 @@ public class PWSProcessor extends Processor {
                 imageArray[i++] = studio_.data().convertTaggedImage(imageQueue.take()); //Lets make an array with the queued images.
             }
             Metadata md = image.getMetadata();
-            Coords co = image.getCoords();
-            savePWS(imageArray, co, md);
+            savePWS(imageArray, md);
             context.outputImage(imageArray[imageArray.length/2]);   //Return the middle image.
         } catch (Exception ex) {
             context.outputImage(imageOnError);            
@@ -135,7 +141,7 @@ public class PWSProcessor extends Processor {
         }
     }
 
-    private void savePWS(Image[] imArray, Coords coords, Metadata metadata) {
+    private void savePWS(Image[] imArray, Metadata metadata) {
         try {
             long now = System.currentTimeMillis();
             if (debugLogEnabled_) {
@@ -154,17 +160,21 @@ public class PWSProcessor extends Processor {
             int[] sub = new int[dimension];
             Object result = null;
             int[] min = new int[imArray.length-1];
-            JAIWriter writer = new JAIWriter();
-            writer.setFormatName("TIFF");
-            TIFFEncodeParam param = new TIFFEncodeParam();
-            param.setCompression(TIFFEncodeParam.COMPRESSION_DEFLATE);
-            param.setDeflateLevel(1);
-            writer.setImageEncodeParam(param);
-            ImageStack stack = new ImageStack(width,height); 
-            CoordsBuilder co = coords.copy();
-            co.channel(0);
-            Image firstIm = imArray[0].copyWith(co.build(), metadata);
-            stack.addSlice(studio_.data().ij().createProcessor(firstIm));
+            ImageWriter writer = ImageIO.getImageWritersBySuffix("tif").next();
+            File file = new File("E:\\Nick\\Tiffy3.tif");
+            ImageOutputStream ostream = ImageIO.createImageOutputStream(file);
+            writer.setOutput(ostream);
+            ImageWriteParam param = writer.getDefaultWriteParam();
+            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            param.setCompressionType("ZLib");
+            IIOMetadata streamMeta = writer.getDefaultStreamMetadata(param);
+            writer.prepareWriteSequence(streamMeta);      
+            BufferedImage bim = arrtoim(width,height,(short[])imArray[0].getRawPixels());
+            IIOMetadata  meta = writer.getDefaultImageMetadata(ImageTypeSpecifier.createFromBufferedImageType(bim.getType()), param);
+            IIOMetadataNode tree = (IIOMetadataNode) meta.getAsTree(meta.getMetadataFormatNames()[0]);
+            createTiffFieldNode(tree.getFirstChild().appendChild(tree) TIFF.TAG_IMAGE_DESCRIPTION,"HEHE");
+            IIOImage im = new IIOImage(bim,null,meta);
+            writer.writeToSequence(im, param);
             for (int i = 1; i < imArray.length; i++) {
                 old = (short[]) imArray[i-1].getRawPixels();
                 short[] New = (short[]) imArray[i].getRawPixels();
@@ -179,9 +189,8 @@ public class PWSProcessor extends Processor {
                 for (int j = 0; j < dimension; j++) {
                     ssub[j] = (short) (sub[j] - min[i-1]);
                 }
-                co.channel(i);
-                result = ssub;
-                stack.addSlice(studio_.data().ij().createProcessor(new DefaultImage(result,width,height,imgDepth,1,co.build(),metadata)));           
+                im = new IIOImage(arrtoim(width,height,ssub), null, meta);
+                writer.writeToSequence(im,param);
             }
             JSONObject jobj = new JSONObject();
             JSONObject md = new JSONObject(metadata.toString());
@@ -194,14 +203,15 @@ public class PWSProcessor extends Processor {
             for (int i = 0; i < min.length; i++) {
                 Min.put(min[i]);
             }     
+            writer.endWriteSequence();
+            writer.dispose();
+            ostream.close();
             jobj.put("waveLengths", WV);  
             jobj.put("exposure", studio_.core().getExposure());
             jobj.put("compressionMins", Min);
-            FileWriter file = new FileWriter("E:\\Nick\\md.txt");
-            file.write(jobj.toString());
-            file.close();
-            ImagePlus im = new ImagePlus("PWSacq", stack);
-            writer.write("E:\\Nick\\Tiffy.tif",im);
+            FileWriter filew = new FileWriter("E:\\Nick\\md.txt");
+            filew.write(jobj.toString());
+            filew.close();
             long itTook = System.currentTimeMillis() - now;
             if (debugLogEnabled_) {
                 ReportingUtils.logMessage("PWSPlugin: produced image. Saving took:" + itTook + "milliseconds.");
@@ -267,5 +277,16 @@ public class PWSProcessor extends Processor {
             ex.printStackTrace();
             ReportingUtils.logMessage("PWSPlugin Error");
         }
+    }
+    
+    private BufferedImage arrtoim(int width, int height, short[] arr) {
+        BufferedImage im = new BufferedImage(width, height, BufferedImage.TYPE_USHORT_GRAY);
+        WritableRaster r = (WritableRaster) im.getData();
+        int[] newarr = new int[arr.length];
+        for (int i=0; i<newarr.length; i++) {
+            newarr[i] = (int) arr[i];
+        }
+        r.setPixels(0,0,width,height,newarr);
+        return im;
     }
 }
