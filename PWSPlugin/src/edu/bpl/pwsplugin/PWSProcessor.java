@@ -56,7 +56,7 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.ImageTypeSpecifier;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.io.FileWriter;
+import java.io.FileWriter; 
 import com.twelvemonkeys.imageio.metadata.tiff.TIFF;
 
 
@@ -156,27 +156,12 @@ public class PWSProcessor extends Processor {
             }
 
             int dimension = width * height;
-            short[] old;   
             int[] sub = new int[dimension];
-            Object result = null;
             int[] min = new int[imArray.length-1];
-            ImageWriter writer = ImageIO.getImageWritersBySuffix("tif").next();
-            File file = new File("E:\\Nick\\Tiffy3.tif");
-            ImageOutputStream ostream = ImageIO.createImageOutputStream(file);
-            writer.setOutput(ostream);
-            ImageWriteParam param = writer.getDefaultWriteParam();
-            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            param.setCompressionType("ZLib");
-            IIOMetadata streamMeta = writer.getDefaultStreamMetadata(param);
-            writer.prepareWriteSequence(streamMeta);      
-            BufferedImage bim = arrtoim(width,height,(short[])imArray[0].getRawPixels());
-            IIOMetadata  meta = writer.getDefaultImageMetadata(ImageTypeSpecifier.createFromBufferedImageType(bim.getType()), param);
-            IIOMetadataNode tree = (IIOMetadataNode) meta.getAsTree(meta.getMetadataFormatNames()[0]);
-            createTiffFieldNode(tree.getFirstChild().appendChild(tree) TIFF.TAG_IMAGE_DESCRIPTION,"HEHE");
-            IIOImage im = new IIOImage(bim,null,meta);
-            writer.writeToSequence(im, param);
+            Object[] subsarray = new Object[imArray.length];
+            subsarray[0] = (short[]) imArray[0].getRawPixels();
             for (int i = 1; i < imArray.length; i++) {
-                old = (short[]) imArray[i-1].getRawPixels();
+                short[] old = (short[]) imArray[i-1].getRawPixels();
                 short[] New = (short[]) imArray[i].getRawPixels();
                 min[i-1] = 32767;
                 for (int j = 0; j < dimension; j++) {
@@ -189,8 +174,7 @@ public class PWSProcessor extends Processor {
                 for (int j = 0; j < dimension; j++) {
                     ssub[j] = (short) (sub[j] - min[i-1]);
                 }
-                im = new IIOImage(arrtoim(width,height,ssub), null, meta);
-                writer.writeToSequence(im,param);
+                subsarray[i] = ssub;              
             }
             JSONObject jobj = new JSONObject();
             JSONObject md = new JSONObject(metadata.toString());
@@ -202,21 +186,42 @@ public class PWSProcessor extends Processor {
             JSONArray Min = new JSONArray();
             for (int i = 0; i < min.length; i++) {
                 Min.put(min[i]);
-            }     
-            writer.endWriteSequence();
-            writer.dispose();
-            ostream.close();
+            } 
             jobj.put("waveLengths", WV);  
             jobj.put("exposure", studio_.core().getExposure());
             jobj.put("compressionMins", Min);
             FileWriter filew = new FileWriter("E:\\Nick\\md.txt");
             filew.write(jobj.toString());
             filew.close();
+            ImageWriter writer = ImageIO.getImageWritersBySuffix("tif").next();
+            File file = new File("E:\\Nick\\Tiffy3.tif");
+            ImageOutputStream ostream = ImageIO.createImageOutputStream(file);
+            writer.setOutput(ostream);
+            ImageWriteParam param = writer.getDefaultWriteParam();
+            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            param.setCompressionType("ZLib");
+            IIOMetadata streamMeta = writer.getDefaultStreamMetadata(param);     
+            BufferedImage bim = arrtoim(width,height,(short[])imArray[0].getRawPixels());
+            IIOMetadata  meta = writer.getDefaultImageMetadata(ImageTypeSpecifier.createFromBufferedImageType(bim.getType()), param);
+            IIOMetadataNode tree = (IIOMetadataNode) meta.getAsTree(meta.getMetadataFormatNames()[0]);
+            createTIFFFieldNode((IIOMetadataNode) tree.getFirstChild(), TIFF.TAG_IMAGE_DESCRIPTION, TIFF.TYPE_ASCII, jobj.toString());
+            meta.setFromTree(meta.getMetadataFormatNames()[0], tree);
+            writer.prepareWriteSequence(streamMeta);
+            for (int i = 0; i < subsarray.length; i++) {
+                bim = arrtoim(width,height,(short[])subsarray[i]);
+                IIOImage im = new IIOImage(bim ,null, meta);
+                writer.writeToSequence(im, param);
+            }
+            writer.endWriteSequence();
+            writer.dispose();
+            ostream.close();
+
             long itTook = System.currentTimeMillis() - now;
             if (debugLogEnabled_) {
                 ReportingUtils.logMessage("PWSPlugin: produced image. Saving took:" + itTook + "milliseconds.");
             }
         } catch (Exception ex) {
+            ReportingUtils.showError(ex);
             ReportingUtils.logError("Error: PWSPlugin, while producing averaged img: "+ ex.toString());
         }
     }
@@ -279,7 +284,7 @@ public class PWSProcessor extends Processor {
         }
     }
     
-    private BufferedImage arrtoim(int width, int height, short[] arr) {
+    static BufferedImage arrtoim(int width, int height, short[] arr) {
         BufferedImage im = new BufferedImage(width, height, BufferedImage.TYPE_USHORT_GRAY);
         WritableRaster r = (WritableRaster) im.getData();
         int[] newarr = new int[arr.length];
@@ -287,6 +292,40 @@ public class PWSProcessor extends Processor {
             newarr[i] = (int) arr[i];
         }
         r.setPixels(0,0,width,height,newarr);
+        im.setData(r);
         return im;
+    }
+    
+    static void createTIFFFieldNode(final IIOMetadataNode parentIFDNode, int tag, short type, Object value) {
+        IIOMetadataNode fieldNode = new IIOMetadataNode("TIFFField");
+
+        fieldNode.setAttribute("number", String.valueOf(tag));
+        parentIFDNode.appendChild(fieldNode);
+
+        switch (type) {
+            case TIFF.TYPE_ASCII:
+                createTIFFFieldContainerNode(fieldNode, "Ascii", value);
+                break;
+            case TIFF.TYPE_BYTE:
+                createTIFFFieldContainerNode(fieldNode, "Byte", value);
+                break;
+            case TIFF.TYPE_SHORT:
+                createTIFFFieldContainerNode(fieldNode, "Short", value);
+                break;
+            case TIFF.TYPE_RATIONAL:
+                createTIFFFieldContainerNode(fieldNode, "Rational", value);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported type: " + type);
+        }
+    }
+
+    static void createTIFFFieldContainerNode(final IIOMetadataNode fieldNode, final String type, final Object value) {
+        IIOMetadataNode containerNode = new IIOMetadataNode("TIFF" + type + "s");
+        fieldNode.appendChild(containerNode);
+
+        IIOMetadataNode valueNode = new IIOMetadataNode("TIFF" + type);
+        valueNode.setAttribute("value", String.valueOf(value));
+        containerNode.appendChild(valueNode);
     }
 }
