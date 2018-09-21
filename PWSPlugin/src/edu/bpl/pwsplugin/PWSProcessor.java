@@ -34,7 +34,6 @@ package edu.bpl.pwsplugin;
 
 import org.micromanager.internal.utils.ReportingUtils;
 import mmcorej.StrVector;
-
 import org.micromanager.data.Processor;
 import org.micromanager.PropertyMap;
 import org.micromanager.Studio;

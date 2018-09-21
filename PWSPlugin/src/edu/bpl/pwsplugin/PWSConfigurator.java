@@ -14,6 +14,7 @@ import org.micromanager.LogManager;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import mmcorej.StrVector;
+import java.util.Arrays;
 
 
 public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
@@ -42,6 +43,16 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         }
         DefaultComboBoxModel model = new DefaultComboBoxModel(newDevs.toArray());
         filterComboBox.setModel(model); //Update the available names.
+        try {
+            wvStartField.setText(settings_.getInt("start").toString());
+            wvStopField.setText(settings_.getInt("stop").toString());
+            wvStepField.setText(settings_.getInt("step").toString());
+            String oldName = settings_.getString("filtLabel");
+            if (Arrays.asList(newDevs.toArray()).contains(oldName)) {
+                filterComboBox.setSelectedItem(oldName);
+            }
+        }
+        catch (Exception e) {}
         super.loadAndRestorePosition(200, 200);
     }       
     
@@ -58,6 +69,9 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
             }
             Integer wvArr[] = new Integer[wvList.size()];
             builder.putIntArray("wv", wvList.toArray(wvArr));
+            builder.putInt("start", start);
+            builder.putInt("stop", stop);
+            builder.putInt("step", step);                  
         }
         catch(NumberFormatException e){
             log_.showMessage("A valid number was not specified.");
@@ -82,7 +96,6 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         setVisible(true);
     }
 
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -101,6 +114,7 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         wvStepField = new javax.swing.JTextField();
         filterLabel = new javax.swing.JLabel();
         filterComboBox = new javax.swing.JComboBox<String>();
+        submitButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -113,7 +127,7 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         jPanel1.setAutoscrolls(true);
         jPanel1.setMinimumSize(new java.awt.Dimension(332, 142));
         jPanel1.setPreferredSize(new java.awt.Dimension(332, 142));
-        jPanel1.setLayout(new java.awt.GridLayout(4, 0));
+        jPanel1.setLayout(new java.awt.GridLayout(5, 0));
 
         startLabel.setText("Start");
         jPanel1.add(startLabel);
@@ -155,6 +169,14 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         });
         jPanel1.add(filterComboBox);
 
+        submitButton.setText("Submit");
+        submitButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                submitButtonActionPerformed(evt);
+            }
+        });
+        jPanel1.add(submitButton);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -190,6 +212,10 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         // TODO add your handling code here:
     }//GEN-LAST:event_filterComboBoxActionPerformed
 
+    private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButtonActionPerformed
+        studio_.data().notifyPipelineChanged();
+    }//GEN-LAST:event_submitButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> filterComboBox;
     private javax.swing.JLabel filterLabel;
@@ -197,6 +223,7 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
     private javax.swing.JLabel startLabel;
     private javax.swing.JLabel stepLabel;
     private javax.swing.JLabel stopLabel;
+    private javax.swing.JButton submitButton;
     private javax.swing.JTextField wvStartField;
     private javax.swing.JTextField wvStepField;
     private javax.swing.JTextField wvStopField;
