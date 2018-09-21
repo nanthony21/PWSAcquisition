@@ -159,10 +159,10 @@ public class PWSProcessor extends Processor {
             int[] sub = new int[dimension];
             int[] min = new int[imArray.length-1];
             Object[] subsarray = new Object[imArray.length];
-            subsarray[0] = (int[]) imArray[0].getRawPixels();
+            subsarray[0] = (short[]) imArray[0].getRawPixels();
             for (int i = 1; i < imArray.length; i++) {
-                int[] old = (int[]) imArray[i-1].getRawPixels();
-                int[] New = (int[]) imArray[i].getRawPixels();
+                short[] old = (short[]) imArray[i-1].getRawPixels();
+                short[] New = (short[]) imArray[i].getRawPixels();
                 min[i-1] = 32767;
                 for (int j = 0; j < dimension; j++) {
                     sub[j] =  ((int) New[j] - (int) old[j]);
@@ -170,9 +170,9 @@ public class PWSProcessor extends Processor {
                         min[i-1] = sub[j];
                     }
                 }
-                int[] ssub = new int[dimension];
+                short[] ssub = new short[dimension];
                 for (int j = 0; j < dimension; j++) {
-                    ssub[j] = (int) (sub[j] - min[i-1]);
+                    ssub[j] = (short) (sub[j] - min[i-1]);
                 }
                 subsarray[i] = ssub;              
             }
@@ -201,14 +201,14 @@ public class PWSProcessor extends Processor {
             param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
             param.setCompressionType("ZLib");
             IIOMetadata streamMeta = writer.getDefaultStreamMetadata(param);     
-            BufferedImage bim = arrtoim(width,height,(int[])imArray[0].getRawPixels());
+            BufferedImage bim = arrtoim(width,height,(short[])imArray[0].getRawPixels());
             IIOMetadata  meta = writer.getDefaultImageMetadata(ImageTypeSpecifier.createFromBufferedImageType(bim.getType()), param);
             IIOMetadataNode tree = (IIOMetadataNode) meta.getAsTree(meta.getMetadataFormatNames()[0]);
             createTIFFFieldNode((IIOMetadataNode) tree.getFirstChild(), TIFF.TAG_IMAGE_DESCRIPTION, TIFF.TYPE_ASCII, jobj.toString());
             meta.setFromTree(meta.getMetadataFormatNames()[0], tree);
             writer.prepareWriteSequence(streamMeta);
             for (int i = 0; i < subsarray.length; i++) {
-                bim = arrtoim(width,height,(int[])subsarray[i]);
+                bim = arrtoim(width,height,(short[])subsarray[i]);
                 IIOImage im = new IIOImage(bim ,null, meta);
                 writer.writeToSequence(im, param);
             }
@@ -284,7 +284,7 @@ public class PWSProcessor extends Processor {
         }
     }
     
-    static BufferedImage arrtoim(int width, int height, int[] arr) {
+    static BufferedImage arrtoim(int width, int height, short[] arr) {
         BufferedImage im = new BufferedImage(width, height, BufferedImage.TYPE_USHORT_GRAY);
         WritableRaster r = (WritableRaster) im.getData();
         int[] newarr = new int[arr.length];
