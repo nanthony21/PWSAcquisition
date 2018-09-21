@@ -197,7 +197,7 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-
+        studio_.data().notifyPipelineChanged();
     }//GEN-LAST:event_formWindowClosing
 
     private void wvStartFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wvStartFieldActionPerformed
