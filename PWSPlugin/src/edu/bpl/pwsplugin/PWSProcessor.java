@@ -189,9 +189,6 @@ public class PWSProcessor extends Processor {
             jobj.put("waveLengths", WV);  
             jobj.put("exposure", studio_.core().getExposure());
             jobj.put("compressionMins", Min);
-            FileWriter filew = new FileWriter("E:\\Nick\\md.txt");
-            filew.write(jobj.toString());
-            filew.close();
             ImageWriter writer = ImageIO.getImageWritersBySuffix("tif").next();
             File file = new File("E:\\Nick\\Tiffy3.tif");
             ImageOutputStream ostream = ImageIO.createImageOutputStream(file);
