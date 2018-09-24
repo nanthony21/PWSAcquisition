@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin;
 
 
+import java.io.File;
 import org.micromanager.internal.utils.MMFrame;
 import org.micromanager.data.ProcessorConfigurator;
 import org.micromanager.PropertyMap;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import mmcorej.StrVector;
 import java.util.Arrays;
+import org.micromanager.internal.utils.FileDialogs;
 
 
 public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
@@ -115,6 +117,9 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         filterLabel = new javax.swing.JLabel();
         filterComboBox = new javax.swing.JComboBox<String>();
         submitButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        directoryText = new javax.swing.JTextField();
+        directoryButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -127,7 +132,7 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         jPanel1.setAutoscrolls(true);
         jPanel1.setMinimumSize(new java.awt.Dimension(332, 142));
         jPanel1.setPreferredSize(new java.awt.Dimension(332, 142));
-        jPanel1.setLayout(new java.awt.GridLayout(5, 0));
+        jPanel1.setLayout(new java.awt.GridLayout(6, 0));
 
         startLabel.setText("Start");
         jPanel1.add(startLabel);
@@ -177,6 +182,18 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         });
         jPanel1.add(submitButton);
 
+        jLabel1.setText("jLabel1");
+        jPanel1.add(jLabel1);
+        jPanel1.add(directoryText);
+
+        directoryButton.setText("...");
+        directoryButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                directoryButtonActionPerformed(evt);
+            }
+        });
+        jPanel1.add(directoryButton);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -216,9 +233,18 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         studio_.data().notifyPipelineChanged();
     }//GEN-LAST:event_submitButtonActionPerformed
 
+    private void directoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_directoryButtonActionPerformed
+        File f = FileDialogs.openDir(this, "Directory to save to",
+        new FileDialogs.FileType("SaveDir", "Save Directory", "D:\\Data", true, ""));
+        directoryText.setText(f.getAbsolutePath());
+    }//GEN-LAST:event_directoryButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton directoryButton;
+    private javax.swing.JTextField directoryText;
     private javax.swing.JComboBox<String> filterComboBox;
     private javax.swing.JLabel filterLabel;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel startLabel;
     private javax.swing.JLabel stepLabel;
