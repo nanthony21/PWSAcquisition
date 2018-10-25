@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.io.File;
 import org.micromanager.internal.utils.MMFrame;
 import org.micromanager.data.ProcessorConfigurator;
+import org.micromanager.PropertyMaps;
 import org.micromanager.PropertyMap;
 import org.micromanager.Studio;
 import org.micromanager.LogManager;
@@ -47,10 +48,10 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         DefaultComboBoxModel model = new DefaultComboBoxModel(newDevs.toArray());
         filterComboBox.setModel(model); //Update the available names.
         try {
-            wvStartField.setText(settings_.getInt("start").toString());
-            wvStopField.setText(settings_.getInt("stop").toString());
-            wvStepField.setText(settings_.getInt("step").toString());
-            String oldName = settings_.getString("filtLabel");
+            wvStartField.setText(String.valueOf(settings_.getInteger("start", 500)));
+            wvStopField.setText(String.valueOf(settings_.getInteger("stop",2)));
+            wvStepField.setText(String.valueOf(settings_.getInteger("step",700)));
+            String oldName = settings_.getString("filtLabel","");
             if (Arrays.asList(newDevs.toArray()).contains(oldName)) {
                 filterComboBox.setSelectedItem(oldName);
             }
@@ -61,7 +62,7 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
     
     @Override
     public PropertyMap getSettings() {
-        PropertyMap.PropertyMapBuilder builder = studio_.data().getPropertyMapBuilder();
+        PropertyMap.Builder builder = PropertyMaps.builder();
         try{
             int start = Integer.parseInt(wvStartField.getText().trim());
             int stop = Integer.parseInt(wvStopField.getText().trim());
@@ -69,12 +70,15 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
             ArrayList<Integer> wvList = new ArrayList<Integer>();
             for (int i = start; i <= stop; i += step) {
                 wvList.add(i);
+            }   
+            int[] wvArr = new int[wvList.size()];
+            for (int i=0; i<wvList.size(); i++) {
+                wvArr[i] = wvList.get(i).intValue();
             }
-            Integer wvArr[] = new Integer[wvList.size()];
-            builder.putIntArray("wv", wvList.toArray(wvArr));
-            builder.putInt("start", start);
-            builder.putInt("stop", stop);
-            builder.putInt("step", step);      
+            builder.putIntegerList("wv", wvArr);
+            builder.putInteger("start", start);
+            builder.putInteger("stop", stop);
+            builder.putInteger("step", step);      
             builder.putBoolean("sequence", hardwareSequencingCheckBox.isSelected());
             builder.putString("savePath", directoryText.getText());
         }

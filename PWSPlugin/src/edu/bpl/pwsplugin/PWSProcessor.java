@@ -53,7 +53,7 @@ public class PWSProcessor extends Processor {
     LinkedBlockingQueue imageQueue;
     boolean debugLogEnabled_ = true;
     Image[] imageArray;
-    Integer[] wv;
+    int[] wv;
     String filtLabel;
     String filtProp;
     Boolean hardwareSequence;
@@ -61,10 +61,10 @@ public class PWSProcessor extends Processor {
     
     public PWSProcessor(Studio studio, PropertyMap settings){
         studio_ = studio;
-        wv = settings.getIntArray("wv");
-        filtLabel = settings.getString("filtLabel");
-        hardwareSequence = settings.getBoolean("sequence");
-        savePath = settings.getString("savePath");
+        wv = settings.getIntegerList("wv");
+        filtLabel = settings.getString("filtLabel", "");
+        hardwareSequence = settings.getBoolean("sequence", false);
+        savePath = settings.getString("savePath", "");
         filtProp = "Wavelength";
         imageArray = new Image[wv.length];
         studio_.acquisitions().attachRunnable(-1, -1, -1, -1, new PWSRunnable(this)); 
@@ -97,7 +97,7 @@ public class PWSProcessor extends Processor {
     
     @Override
     public SummaryMetadata processSummaryMetadata(SummaryMetadata metadata) {
-        SummaryMetadata.SummaryMetadataBuilder builder = metadata.copy();
+        SummaryMetadata.Builder builder = metadata.copyBuilder();
         builder.userName("PWSAcquisition");
         return builder.build();
     }

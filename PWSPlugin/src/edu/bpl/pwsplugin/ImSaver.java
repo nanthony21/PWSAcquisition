@@ -37,10 +37,10 @@ public class ImSaver implements Runnable {
     Thread t;
     Studio studio_;
     int expectedFrames_;
-    Integer[] wv_;
+    int[] wv_;
     String savePath_;
 
-    ImSaver(Studio studio, String savePath, LinkedBlockingQueue queue, Metadata metadata, Integer[] wavelengths, boolean debug){
+    ImSaver(Studio studio, String savePath, LinkedBlockingQueue queue, Metadata metadata, int[] wavelengths, boolean debug){
         debug_ = debug;
         md_ = metadata;
         queue_ = queue;
