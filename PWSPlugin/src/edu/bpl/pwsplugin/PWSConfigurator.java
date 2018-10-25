@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin;
 
 
+import java.awt.Color;
 import java.io.File;
 import org.micromanager.internal.utils.MMFrame;
 import org.micromanager.data.ProcessorConfigurator;
@@ -98,6 +99,10 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
     public void showGUI() {
         pack();
         setVisible(true);
+    }
+    
+    public void settingsChanged() {
+        submitButton.setBackground(Color.red);
     }
 
     /**
@@ -280,19 +285,22 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
     }//GEN-LAST:event_formWindowClosing
 
     private void wvStartFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wvStartFieldActionPerformed
-        // TODO add your handling code here:
+        settingsChanged();
     }//GEN-LAST:event_wvStartFieldActionPerformed
 
     private void wvStopFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wvStopFieldActionPerformed
         // TODO add your handling code here:
+        settingsChanged();
     }//GEN-LAST:event_wvStopFieldActionPerformed
 
     private void filterComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterComboBoxActionPerformed
         // TODO add your handling code here:
+        settingsChanged();
     }//GEN-LAST:event_filterComboBoxActionPerformed
 
     private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButtonActionPerformed
         studio_.data().notifyPipelineChanged();
+        submitButton.setBackground(Color.green);
     }//GEN-LAST:event_submitButtonActionPerformed
 
     private void directoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_directoryButtonActionPerformed
