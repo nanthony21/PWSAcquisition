@@ -73,7 +73,8 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
             builder.putIntArray("wv", wvList.toArray(wvArr));
             builder.putInt("start", start);
             builder.putInt("stop", stop);
-            builder.putInt("step", step);                  
+            builder.putInt("step", step);      
+            builder.putBoolean("sequence", hardwareSequencingCheckBox.isSelected());
         }
         catch(NumberFormatException e){
             log_.showMessage("A valid number was not specified.");
@@ -117,9 +118,9 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         filterLabel = new javax.swing.JLabel();
         filterComboBox = new javax.swing.JComboBox<String>();
         submitButton = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
         directoryText = new javax.swing.JTextField();
         directoryButton = new javax.swing.JButton();
+        hardwareSequencingCheckBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -132,10 +133,8 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         jPanel1.setAutoscrolls(true);
         jPanel1.setMinimumSize(new java.awt.Dimension(332, 142));
         jPanel1.setPreferredSize(new java.awt.Dimension(332, 142));
-        jPanel1.setLayout(new java.awt.GridLayout(6, 0));
 
         startLabel.setText("Start");
-        jPanel1.add(startLabel);
 
         wvStartField.setText("500");
         wvStartField.setName(""); // NOI18N
@@ -144,10 +143,8 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
                 wvStartFieldActionPerformed(evt);
             }
         });
-        jPanel1.add(wvStartField);
 
         stopLabel.setText("Stop");
-        jPanel1.add(stopLabel);
 
         wvStopField.setText("700");
         wvStopField.addActionListener(new java.awt.event.ActionListener() {
@@ -155,16 +152,12 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
                 wvStopFieldActionPerformed(evt);
             }
         });
-        jPanel1.add(wvStopField);
 
         stepLabel.setText("Step");
-        jPanel1.add(stepLabel);
 
         wvStepField.setText("2");
-        jPanel1.add(wvStepField);
 
         filterLabel.setText("Filter");
-        jPanel1.add(filterLabel);
 
         filterComboBox.setModel(new javax.swing.DefaultComboBoxModel<String>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         filterComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -172,7 +165,6 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
                 filterComboBoxActionPerformed(evt);
             }
         });
-        jPanel1.add(filterComboBox);
 
         submitButton.setText("Submit");
         submitButton.addActionListener(new java.awt.event.ActionListener() {
@@ -180,11 +172,6 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
                 submitButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(submitButton);
-
-        jLabel1.setText("jLabel1");
-        jPanel1.add(jLabel1);
-        jPanel1.add(directoryText);
 
         directoryButton.setText("...");
         directoryButton.addActionListener(new java.awt.event.ActionListener() {
@@ -192,7 +179,81 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
                 directoryButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(directoryButton);
+
+        hardwareSequencingCheckBox.setLabel("Use Hardware Sequencing");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(startLabel)
+                        .addGap(5, 5, 5)
+                        .addComponent(wvStartField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(5, 5, 5)
+                        .addComponent(stopLabel)
+                        .addGap(5, 5, 5)
+                        .addComponent(wvStopField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(5, 5, 5)
+                        .addComponent(stepLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(wvStepField, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(40, 40, 40)
+                        .addComponent(filterLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(filterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(directoryText, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(directoryButton))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(submitButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(hardwareSequencingCheckBox))))
+                .addGap(6, 6, 6))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(9, 9, 9)
+                        .addComponent(startLabel))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(wvStartField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(9, 9, 9)
+                        .addComponent(stopLabel))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(wvStopField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(9, 9, 9)
+                        .addComponent(stepLabel))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(9, 9, 9)
+                        .addComponent(filterLabel))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(filterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(wvStepField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(directoryButton)
+                    .addComponent(directoryText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(hardwareSequencingCheckBox, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(submitButton, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -244,7 +305,7 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
     private javax.swing.JTextField directoryText;
     private javax.swing.JComboBox<String> filterComboBox;
     private javax.swing.JLabel filterLabel;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JCheckBox hardwareSequencingCheckBox;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel startLabel;
     private javax.swing.JLabel stepLabel;

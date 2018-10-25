@@ -69,33 +69,36 @@ public class PWSProcessor extends Processor {
     Integer[] wv;
     String filtLabel;
     String filtProp;
+    Boolean hardwareSequence;
     
     public PWSProcessor(Studio studio, PropertyMap settings){
         studio_ = studio;
         wv = settings.getIntArray("wv");
         filtLabel = settings.getString("filtLabel");
+        hardwareSequence = settings.getBoolean("sequence");
         filtProp = "Wavelength";
         imageArray = new Image[wv.length];
         studio_.acquisitions().attachRunnable(-1, -1, -1, -1, new PWSRunnable(this)); 
         imageQueue = new TaggedImageQueue();
         
-        try {
-            if (!studio_.core().isPropertySequenceable(filtLabel, filtProp)){
-                ReportingUtils.showError("The filter device does not have a sequenceable 'Wavelength' property.");
+        if (hardwareSequence) {
+            try {
+                if (!studio_.core().isPropertySequenceable(filtLabel, filtProp)){
+                    ReportingUtils.showError("The filter device does not have a sequenceable 'Wavelength' property.");
+                }
+                if (studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp) < wv.length) {
+                    ReportingUtils.showError("The filter device does not support sequencing as many wavelenghts as have been specified. Max is " + Integer.toString(studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp)));
+                }
+                StrVector strv = new StrVector();
+                for (int i = 0; i < wv.length; i++) {   //Convert wv from int to string for sending to the device.
+                    strv.add(String.valueOf(wv[i]));
+                }
+                studio_.core().loadPropertySequence(filtLabel, filtProp, strv);
             }
-            if (studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp) < wv.length) {
-                ReportingUtils.showError("The filter device does not support sequencing as many wavelenghts as have been specified. Max is " + Integer.toString(studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp)));
+            catch (Exception ex) {
+                ReportingUtils.showError(ex);
             }
-            StrVector strv = new StrVector();
-            for (int i = 0; i < wv.length; i++) {   //Convert wv from int to string for sending to the device.
-                strv.add(String.valueOf(wv[i]));
-            }
-            studio_.core().loadPropertySequence(filtLabel, filtProp, strv);
-        }
-        catch (Exception ex) {
-            ReportingUtils.showError(ex);
-        }
-                    
+        }             
     }
     
     @Override
@@ -226,56 +229,62 @@ public class PWSProcessor extends Processor {
             studio_.core().waitForDevice(studio_.core().getCameraDevice());
             studio_.core().clearCircularBuffer();
             String cam = studio_.core().getCameraDevice();
-            
-//          CMMCore::startSequenceAcquisition(long numImages, double intervalMs, bool stopOnOverflow)
-//          @param numImages Number of images requested from the camera
-//          @param intervalMs interval between images, currently only supported by Andor cameras
-//          @param stopOnOverflow whether or not the camera stops acquiring when the circular buffer is full
-            
-            studio_.core().startPropertySequence(filtLabel, filtProp);
-                            
-            studio_.core().startSequenceAcquisition(wv.length, 0, false);
-            
             long now = System.currentTimeMillis();
-            int frame = 1;// keep 0 free for the image from engine
-            // reference BurstExample.bsh
             
-            boolean canExit = false;
-            while (true) {
-                boolean remaining = (studio_.core().getRemainingImageCount() > 0);
-                boolean running = (studio_.core().isSequenceRunning(cam));
-                if ((!remaining) && (canExit)) {
-                    break;  //Everything is taken care of.
-                }
-                if (remaining) {    //Process images
-                   imageQueue.add(studio_.core().popNextTaggedImage());
-                   frame++;
-                   /*
-                    if (proc_.display_ != null) {
-                        if (proc_.display_.acquisitionIsRunning()) {
-                            proc_.display_.displayStatusLine("Image Avg. Acquiring No. " + frame);
-                        }
+            if (hardwareSequence) {
+    //          CMMCore::startSequenceAcquisition(long numImages, double intervalMs, bool stopOnOverflow)
+    //          @param numImages Number of images requested from the camera
+    //          @param intervalMs interval between images, currently only supported by Andor cameras
+    //          @param stopOnOverflow whether or not the camera stops acquiring when the circular buffer is full
+                studio_.core().startPropertySequence(filtLabel, filtProp);
+
+                studio_.core().startSequenceAcquisition(wv.length, 0, false);
+
+                int frame = 1;// keep 0 free for the image from engine
+                // reference BurstExample.bsh
+
+                boolean canExit = false;
+                while (true) {
+                    boolean remaining = (studio_.core().getRemainingImageCount() > 0);
+                    boolean running = (studio_.core().isSequenceRunning(cam));
+                    if ((!remaining) && (canExit)) {
+                        studio_.core().stopSequenceAcquisition(); 
+                        break;  //Everything is taken care of.
                     }
-                    */
+                    if (remaining) {    //Process images
+                       imageQueue.add(studio_.core().popNextTaggedImage());
+                       frame++;
+                       /*
+                        if (proc_.display_ != null) {
+                            if (proc_.display_.acquisitionIsRunning()) {
+                                proc_.display_.displayStatusLine("Image Avg. Acquiring No. " + frame);
+                            }
+                        }
+                        */
+                    }
+                    if (!running) {
+                        studio_.core().stopPropertySequence(filtLabel, filtProp);
+                        canExit = true;
+                    }
+                 }
+            }
+            else {  //Software sequenced acquisition
+                for (int i=0; i<; i++) {
+                    Image im = studio_.live().snap(true).get(0);
+                    fprintf(handles.lctf,['W ' num2str(wv(ii)) char(13)]);    // set the LCTF to the next wavelength
+                    Thread.sleep(50);    // wait for LCTF wavelength switch to complete
+                    [img, mmImg] = pws.acquisition.snapImage(handles,true);   // acquire an image from the camera. setting to false only saves 1 second out of 25.
+                    cube(:,:,ii) = img;
                 }
-                if (!running) {
-                    studio_.core().stopPropertySequence(filtLabel, filtProp);
-                    canExit = true;
-                }
-             }
-            long itTook = System.currentTimeMillis() - now;
-            try {
-                studio_.core().stopSequenceAcquisition();  
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                ReportingUtils.logMessage("ERROR: PWSPlugin: " + ex.getMessage());
-            }          
+                
+            }
+            long itTook = System.currentTimeMillis() - now;         
             if (debugLogEnabled_) {
                 ReportingUtils.logMessage("PWS Acquisition took: " + itTook + " milliseconds for "+wv.length + " frames");
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            ReportingUtils.logMessage("PWSPlugin Error");
+            ReportingUtils.logMessage("ERROR: PWSPlugin: " + ex.getMessage());
         }
     }
     
