@@ -110,18 +110,19 @@ public class PWSProcessor extends Processor {
                 context.outputImage(imageOnError); 
                 return;
             }
-            else if (!studio_.acquisitions().isAcquisitionRunning()) { //This means we must be in snap mode. There is no runnable so we must acquire the image here.
-                acquireImages();
+            else {
+                Metadata md = image.getMetadata();
+                ImSaver imsaver = new ImSaver(studio_, savePath, imageQueue, md, wv, true);
+                if (!studio_.acquisitions().isAcquisitionRunning()) { //This means we must be in snap mode. There is no runnable so we must acquire the image here.
+                    acquireImages();
+                }
+                //Nothing extra needs to be done for acquisition mode
             }
-            //Nothing extra needs to be done for acquisition mode
             if (debugLogEnabled_) {
                 ReportingUtils.logMessage("Queue has" + Integer.toString(imageQueue.size()));
             }
             
             int i = 0;  //The original image is just going to be thrown out :( .
-
-            Metadata md = image.getMetadata();
-            ImSaver imsaver = new ImSaver(studio_, savePath, imageQueue, md, wv, true);
             context.outputImage(imageArray[imageArray.length/2]);   //Return the middle image.
         } catch (Exception ex) {
             context.outputImage(imageOnError);            
