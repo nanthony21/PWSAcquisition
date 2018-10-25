@@ -68,32 +68,14 @@ public class ImSaver implements Runnable {
             if (imgDepth != 2) {
                 ReportingUtils.showError("PWSPlugin does not support images with other than 16 bit bitdepth.");
             }
-
+            
             int dimension = width * height;
             int[] sub = new int[dimension];
             int[] min = new int[expectedFrames_-1];
             Object[] subsarray = new Object[expectedFrames_];
             subsarray[0] = (short[]) im.getRawPixels();
             
-            for (int i=1; i<expectedFrames_; i++) {
-                while (queue_.size()<1) { Thread.sleep(10);} //Wait for an image
-                im = (Image) queue_.take(); //Lets make an array with the queued images.
-                short[] old = (short[]) oldIm.getRawPixels();
-                short[] New = (short[]) im.getRawPixels();
-                min[i-1] = 32767;
-                for (int j = 0; j < dimension; j++) {
-                    sub[j] =  ((int) New[j] - (int) old[j]);
-                    if (sub[j] < min[i-1]) {
-                        min[i-1] = sub[j];
-                    }
-                }
-                short[] ssub = new short[dimension];
-                for (int j = 0; j < dimension; j++) {
-                    ssub[j] = (short) (sub[j] - min[i-1]);
-                }
-                subsarray[i] = ssub;
-                oldIm = im;
-            }
+            
             JSONObject jobj = new JSONObject();
             JSONObject md = new JSONObject(md_.toString());
             jobj.put("MicroManagerMetadata", md);
@@ -122,10 +104,35 @@ public class ImSaver implements Runnable {
             ImageIOHelper.createTIFFFieldNode((IIOMetadataNode) tree.getFirstChild(), TIFF.TAG_IMAGE_DESCRIPTION, TIFF.TYPE_ASCII, jobj.toString());
             meta.setFromTree(meta.getMetadataFormatNames()[0], tree);
             writer.prepareWriteSequence(streamMeta);
-            for (int i = 0; i < subsarray.length; i++) {
+            bim = ImageIOHelper.arrtoim(width,height,(short[])subsarray[0]);
+            IIOImage newIm = new IIOImage(bim ,null, meta);
+            writer.writeToSequence(newIm, param);
+            
+            for (int i=1; i<expectedFrames_; i++) {
+                while (queue_.size()<1) { Thread.sleep(10);} //Wait for an image
+                im = (Image) queue_.take(); //Lets make an array with the queued images.
+                short[] old = (short[]) oldIm.getRawPixels();
+                short[] New = (short[]) im.getRawPixels();
+                min[i-1] = 32767;
+                for (int j = 0; j < dimension; j++) {
+                    sub[j] =  ((int) New[j] - (int) old[j]);
+                    if (sub[j] < min[i-1]) {
+                        min[i-1] = sub[j];
+                    }
+                }
+                short[] ssub = new short[dimension];
+                for (int j = 0; j < dimension; j++) {
+                    ssub[j] = (short) (sub[j] - min[i-1]);
+                }
+                subsarray[i] = ssub;
+                oldIm = im;
                 bim = ImageIOHelper.arrtoim(width,height,(short[])subsarray[i]);
-                IIOImage newIm = new IIOImage(bim ,null, meta);
+                newIm = new IIOImage(bim ,null, meta);
                 writer.writeToSequence(newIm, param);
+            }
+
+            for (int i = 0; i < subsarray.length; i++) {
+
             }
             writer.endWriteSequence();
             writer.dispose();
