@@ -75,21 +75,6 @@ public class ImSaver implements Runnable {
             Object[] subsarray = new Object[expectedFrames_];
             subsarray[0] = (short[]) im.getRawPixels();
             
-            
-            JSONObject jobj = new JSONObject();
-            JSONObject md = new JSONObject(md_.toString());
-            jobj.put("MicroManagerMetadata", md);
-            JSONArray WV = new JSONArray();
-            for (int i = 0; i < wv_.length; i++) {
-                WV.put(wv_[i]);
-            }
-            JSONArray Min = new JSONArray();
-            for (int i = 0; i < min.length; i++) {
-                Min.put(min[i]);
-            } 
-            jobj.put("waveLengths", WV);  
-            jobj.put("exposure", studio_.core().getExposure());
-            jobj.put("compressionMins", Min);
             ImageWriter writer = ImageIO.getImageWritersBySuffix("tif").next();
             File file = Paths.get(savePath_).resolve("pws.comp.tif").toFile();
             ImageOutputStream ostream = ImageIO.createImageOutputStream(file);
@@ -100,9 +85,6 @@ public class ImSaver implements Runnable {
             IIOMetadata streamMeta = writer.getDefaultStreamMetadata(param);     
             BufferedImage bim = ImageIOHelper.arrtoim(width,height,(short[])subsarray[0]);
             IIOMetadata  meta = writer.getDefaultImageMetadata(ImageTypeSpecifier.createFromBufferedImageType(bim.getType()), param);
-            IIOMetadataNode tree = (IIOMetadataNode) meta.getAsTree(meta.getMetadataFormatNames()[0]);
-            ImageIOHelper.createTIFFFieldNode((IIOMetadataNode) tree.getFirstChild(), TIFF.TAG_IMAGE_DESCRIPTION, TIFF.TYPE_ASCII, jobj.toString());
-            meta.setFromTree(meta.getMetadataFormatNames()[0], tree);
             writer.prepareWriteSequence(streamMeta);
             bim = ImageIOHelper.arrtoim(width,height,(short[])subsarray[0]);
             IIOImage newIm = new IIOImage(bim ,null, meta);
@@ -130,10 +112,37 @@ public class ImSaver implements Runnable {
                 newIm = new IIOImage(bim ,null, meta);
                 writer.writeToSequence(newIm, param);
             }
-
-            for (int i = 0; i < subsarray.length; i++) {
-
+            
+            
+            JSONObject jobj = new JSONObject();
+            JSONObject md = new JSONObject(md_.toString());
+            jobj.put("MicroManagerMetadata", md);
+            JSONArray WV = new JSONArray();
+            for (int i = 0; i < wv_.length; i++) {
+                WV.put(wv_[i]);
             }
+            JSONArray Min = new JSONArray();
+            for (int i = 0; i < min.length; i++) {
+                Min.put(min[i]);
+            } 
+            jobj.put("waveLengths", WV);  
+            jobj.put("exposure", studio_.core().getExposure());
+            jobj.put("compressionMins", Min);
+            meta = writer.getDefaultImageMetadata(ImageTypeSpecifier.createFromBufferedImageType(bim.getType()), param);
+            IIOMetadataNode tree = (IIOMetadataNode) meta.getAsTree(meta.getMetadataFormatNames()[0]);
+            ImageIOHelper.createTIFFFieldNode((IIOMetadataNode) tree.getFirstChild(), TIFF.TAG_IMAGE_DESCRIPTION, TIFF.TYPE_ASCII, jobj.toString());
+            meta.setFromTree(meta.getMetadataFormatNames()[0], tree);
+            //Replace the mins in the metadata
+            for (int i=0; i< expectedFrames_; i++) {
+                if (writer.canReplaceImageMetadata(i)){
+                    writer.replaceImageMetadata(i, meta);
+                }
+                else{
+                    ReportingUtils.logError("PWS Plugin: Cannot replace Tiff Metadata.");
+                    break;
+                }
+            }
+
             writer.endWriteSequence();
             writer.dispose();
             ostream.close();
