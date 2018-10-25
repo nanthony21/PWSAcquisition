@@ -57,12 +57,14 @@ public class PWSProcessor extends Processor {
     String filtLabel;
     String filtProp;
     Boolean hardwareSequence;
+    String savePath;
     
     public PWSProcessor(Studio studio, PropertyMap settings){
         studio_ = studio;
         wv = settings.getIntArray("wv");
         filtLabel = settings.getString("filtLabel");
         hardwareSequence = settings.getBoolean("sequence");
+        savePath = settings.getString("savePath");
         filtProp = "Wavelength";
         imageArray = new Image[wv.length];
         studio_.acquisitions().attachRunnable(-1, -1, -1, -1, new PWSRunnable(this)); 
@@ -119,7 +121,7 @@ public class PWSProcessor extends Processor {
             int i = 0;  //The original image is just going to be thrown out :( .
 
             Metadata md = image.getMetadata();
-            ImSaver imsaver = new ImSaver(studio_, imageQueue, md, wv, true);
+            ImSaver imsaver = new ImSaver(studio_, savePath, imageQueue, md, wv, true);
             context.outputImage(imageArray[imageArray.length/2]);   //Return the middle image.
         } catch (Exception ex) {
             context.outputImage(imageOnError);            

@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin;
 
 import java.util.concurrent.LinkedBlockingQueue;
+import java.nio.file.Paths;
 import org.micromanager.Studio;
 import org.micromanager.data.Image;
 import org.micromanager.internal.utils.ReportingUtils;
@@ -37,13 +38,15 @@ public class ImSaver implements Runnable {
     Studio studio_;
     int expectedFrames_;
     Integer[] wv_;
+    String savePath_;
 
-    ImSaver(Studio studio, LinkedBlockingQueue queue, Metadata metadata, Integer[] wavelengths, boolean debug){
+    ImSaver(Studio studio, String savePath, LinkedBlockingQueue queue, Metadata metadata, Integer[] wavelengths, boolean debug){
         debug_ = debug;
         md_ = metadata;
         queue_ = queue;
         studio_ = studio;
         expectedFrames_ = wavelengths.length;
+        savePath_ = savePath;
         wv_ = wavelengths;
         t = new Thread(this, "PWS ImSaver");
         t.start();
@@ -106,7 +109,7 @@ public class ImSaver implements Runnable {
             jobj.put("exposure", studio_.core().getExposure());
             jobj.put("compressionMins", Min);
             ImageWriter writer = ImageIO.getImageWritersBySuffix("tif").next();
-            File file = new File("E:\\Nick\\Tiffy3.tif");
+            File file = Paths.get(savePath_).resolve("pws.comp.tif").toFile();
             ImageOutputStream ostream = ImageIO.createImageOutputStream(file);
             writer.setOutput(ostream);
             ImageWriteParam param = writer.getDefaultWriteParam();

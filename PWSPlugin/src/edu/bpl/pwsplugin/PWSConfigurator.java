@@ -75,6 +75,7 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
             builder.putInt("stop", stop);
             builder.putInt("step", step);      
             builder.putBoolean("sequence", hardwareSequencingCheckBox.isSelected());
+            builder.putString("savePath", directoryText.getText());
         }
         catch(NumberFormatException e){
             log_.showMessage("A valid number was not specified.");
