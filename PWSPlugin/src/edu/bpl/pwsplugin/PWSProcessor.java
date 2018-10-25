@@ -129,8 +129,14 @@ public class PWSProcessor extends Processor {
                 ReportingUtils.logMessage("Queue has" + Integer.toString(imageQueue.size()));
             }
             int i = 0;  //The original image is just going to be thrown out :( .
-            while (!imageQueue.isEmpty()) {
-                imageArray[i++] = studio_.data().convertTaggedImage(imageQueue.take()); //Lets make an array with the queued images.
+            while (true) {
+                TaggedImage im = imageQueue.take();
+                if (TaggedImageQueue.isPoison(im)) {
+                    break;
+                }
+                else {
+                    imageArray[i++] = studio_.data().convertTaggedImage(imageQueue.take()); //Lets make an array with the queued images.
+                }
             }
             Metadata md = image.getMetadata();
             savePWS(imageArray, md);
@@ -269,15 +275,15 @@ public class PWSProcessor extends Processor {
                  }
             }
             else {  //Software sequenced acquisition
-                for (int i=0; i<; i++) {
-                    Image im = studio_.live().snap(true).get(0);
-                    fprintf(handles.lctf,['W ' num2str(wv(ii)) char(13)]);    // set the LCTF to the next wavelength
-                    Thread.sleep(50);    // wait for LCTF wavelength switch to complete
-                    [img, mmImg] = pws.acquisition.snapImage(handles,true);   // acquire an image from the camera. setting to false only saves 1 second out of 25.
-                    cube(:,:,ii) = img;
+                for (int i=0; i<wv.length; i++) {
+                    studio_.core().setProperty(filtLabel, filtProp, wv[i]);
+                    while (studio_.core().deviceBusy(filtLabel)) {Thread.sleep(1);} //Wait until the device says it is tuned.
+                    studio_.core().snapImage();
+                    imageQueue.add(studio_.core().getTaggedImage());
                 }
-                
+                studio_.core().setProperty(filtLabel, filtProp, wv[0]);
             }
+            imageQueue.add(TaggedImageQueue.POISON);
             long itTook = System.currentTimeMillis() - now;         
             if (debugLogEnabled_) {
                 ReportingUtils.logMessage("PWS Acquisition took: " + itTook + " milliseconds for "+wv.length + " frames");
