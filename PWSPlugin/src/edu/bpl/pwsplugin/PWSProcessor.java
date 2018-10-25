@@ -33,6 +33,7 @@ package edu.bpl.pwsplugin;
  */
 
 import org.micromanager.internal.utils.ReportingUtils;
+import java.util.concurrent.LinkedBlockingQueue;
 import mmcorej.StrVector;
 import org.micromanager.data.Processor;
 import org.micromanager.PropertyMap;
@@ -40,22 +41,8 @@ import org.micromanager.Studio;
 import org.micromanager.data.ProcessorContext;
 import org.micromanager.data.Image;
 import org.micromanager.data.SummaryMetadata;
-import org.micromanager.acquisition.internal.TaggedImageQueue;
 import org.micromanager.data.Metadata;
-import javax.imageio.ImageWriter;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.IIOImage;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.metadata.IIOMetadataNode;
-import java.io.File;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
-import javax.imageio.stream.ImageOutputStream;
-import javax.imageio.ImageTypeSpecifier;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import com.twelvemonkeys.imageio.metadata.tiff.TIFF;
+
 
 
 
@@ -63,7 +50,7 @@ public class PWSProcessor extends Processor {
  
     Studio studio_;
     int numAverages_;
-    TaggedImageQueue imageQueue;
+    LinkedBlockingQueue imageQueue;
     boolean debugLogEnabled_ = true;
     Image[] imageArray;
     Integer[] wv;
@@ -79,7 +66,7 @@ public class PWSProcessor extends Processor {
         filtProp = "Wavelength";
         imageArray = new Image[wv.length];
         studio_.acquisitions().attachRunnable(-1, -1, -1, -1, new PWSRunnable(this)); 
-        imageQueue = new TaggedImageQueue();
+        imageQueue = new LinkedBlockingQueue();
         
         if (hardwareSequence) {
             try {
@@ -128,18 +115,11 @@ public class PWSProcessor extends Processor {
             if (debugLogEnabled_) {
                 ReportingUtils.logMessage("Queue has" + Integer.toString(imageQueue.size()));
             }
+            
             int i = 0;  //The original image is just going to be thrown out :( .
-            while (true) {
-                TaggedImage im = imageQueue.take();
-                if (TaggedImageQueue.isPoison(im)) {
-                    break;
-                }
-                else {
-                    imageArray[i++] = studio_.data().convertTaggedImage(imageQueue.take()); //Lets make an array with the queued images.
-                }
-            }
+
             Metadata md = image.getMetadata();
-            savePWS(imageArray, md);
+            ImSaver imsaver = new ImSaver(studio_, imageQueue, md, wv, true);
             context.outputImage(imageArray[imageArray.length/2]);   //Return the middle image.
         } catch (Exception ex) {
             context.outputImage(imageOnError);            
@@ -148,87 +128,7 @@ public class PWSProcessor extends Processor {
         }
     }
 
-    private void savePWS(Image[] imArray, Metadata metadata) {
-        try {
-            long now = System.currentTimeMillis();
-            if (debugLogEnabled_) {
-                ReportingUtils.logMessage("PWSPlugin: computing...");
-            }
-            int width = imArray[0].getHeight();
-            int height = imArray[0].getWidth();
-            int imgDepth = imArray[0].getBytesPerPixel();
-            
-            if (imgDepth != 2) {
-                studio_.logs().showError("PWSPlugin does not support images with other than 16 bit bitdepth.");
-            }
-
-            int dimension = width * height;
-            int[] sub = new int[dimension];
-            int[] min = new int[imArray.length-1];
-            Object[] subsarray = new Object[imArray.length];
-            subsarray[0] = (short[]) imArray[0].getRawPixels();
-            for (int i = 1; i < imArray.length; i++) {
-                short[] old = (short[]) imArray[i-1].getRawPixels();
-                short[] New = (short[]) imArray[i].getRawPixels();
-                min[i-1] = 32767;
-                for (int j = 0; j < dimension; j++) {
-                    sub[j] =  ((int) New[j] - (int) old[j]);
-                    if (sub[j] < min[i-1]) {
-                        min[i-1] = sub[j];
-                    }
-                }
-                short[] ssub = new short[dimension];
-                for (int j = 0; j < dimension; j++) {
-                    ssub[j] = (short) (sub[j] - min[i-1]);
-                }
-                subsarray[i] = ssub;              
-            }
-            JSONObject jobj = new JSONObject();
-            JSONObject md = new JSONObject(metadata.toString());
-            jobj.put("MicroManagerMetadata", md);
-            JSONArray WV = new JSONArray();
-            for (int i = 0; i < wv.length; i++) {
-                WV.put(wv[i]);
-            }
-            JSONArray Min = new JSONArray();
-            for (int i = 0; i < min.length; i++) {
-                Min.put(min[i]);
-            } 
-            jobj.put("waveLengths", WV);  
-            jobj.put("exposure", studio_.core().getExposure());
-            jobj.put("compressionMins", Min);
-            ImageWriter writer = ImageIO.getImageWritersBySuffix("tif").next();
-            File file = new File("E:\\Nick\\Tiffy3.tif");
-            ImageOutputStream ostream = ImageIO.createImageOutputStream(file);
-            writer.setOutput(ostream);
-            ImageWriteParam param = writer.getDefaultWriteParam();
-            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            param.setCompressionType("ZLib");
-            IIOMetadata streamMeta = writer.getDefaultStreamMetadata(param);     
-            BufferedImage bim = ImageIOHelper.arrtoim(width,height,(short[])imArray[0].getRawPixels());
-            IIOMetadata  meta = writer.getDefaultImageMetadata(ImageTypeSpecifier.createFromBufferedImageType(bim.getType()), param);
-            IIOMetadataNode tree = (IIOMetadataNode) meta.getAsTree(meta.getMetadataFormatNames()[0]);
-            ImageIOHelper.createTIFFFieldNode((IIOMetadataNode) tree.getFirstChild(), TIFF.TAG_IMAGE_DESCRIPTION, TIFF.TYPE_ASCII, jobj.toString());
-            meta.setFromTree(meta.getMetadataFormatNames()[0], tree);
-            writer.prepareWriteSequence(streamMeta);
-            for (int i = 0; i < subsarray.length; i++) {
-                bim = ImageIOHelper.arrtoim(width,height,(short[])subsarray[i]);
-                IIOImage im = new IIOImage(bim ,null, meta);
-                writer.writeToSequence(im, param);
-            }
-            writer.endWriteSequence();
-            writer.dispose();
-            ostream.close();
-
-            long itTook = System.currentTimeMillis() - now;
-            if (debugLogEnabled_) {
-                ReportingUtils.logMessage("PWSPlugin: produced image. Saving took:" + itTook + "milliseconds.");
-            }
-        } catch (Exception ex) {
-            ReportingUtils.showError(ex);
-            ReportingUtils.logError("Error: PWSPlugin, while producing averaged img: "+ ex.toString());
-        }
-    }
+    
          
     public void acquireImages() {
         try {
@@ -258,7 +158,7 @@ public class PWSProcessor extends Processor {
                         break;  //Everything is taken care of.
                     }
                     if (remaining) {    //Process images
-                       imageQueue.add(studio_.core().popNextTaggedImage());
+                       imageQueue.add(studio_.data().convertTaggedImage(studio_.core().popNextTaggedImage()));
                        frame++;
                        /*
                         if (proc_.display_ != null) {
@@ -278,12 +178,10 @@ public class PWSProcessor extends Processor {
                 for (int i=0; i<wv.length; i++) {
                     studio_.core().setProperty(filtLabel, filtProp, wv[i]);
                     while (studio_.core().deviceBusy(filtLabel)) {Thread.sleep(1);} //Wait until the device says it is tuned.
-                    studio_.core().snapImage();
-                    imageQueue.add(studio_.core().getTaggedImage());
+                    imageQueue.add(studio_.live().snap(true));
                 }
                 studio_.core().setProperty(filtLabel, filtProp, wv[0]);
             }
-            imageQueue.add(TaggedImageQueue.POISON);
             long itTook = System.currentTimeMillis() - now;         
             if (debugLogEnabled_) {
                 ReportingUtils.logMessage("PWS Acquisition took: " + itTook + " milliseconds for "+wv.length + " frames");
