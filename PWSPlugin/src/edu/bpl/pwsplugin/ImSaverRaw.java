@@ -30,7 +30,7 @@ import com.twelvemonkeys.imageio.metadata.tiff.TIFF;
  *
  * @author N2-LiveCell
  */
-public class ImSaver implements Runnable {
+public class ImSaverRaw implements Runnable {
     boolean debug_;
     Metadata md_;
     LinkedBlockingQueue queue_;
@@ -40,7 +40,7 @@ public class ImSaver implements Runnable {
     int[] wv_;
     String savePath_;
 
-    ImSaver(Studio studio, String savePath, LinkedBlockingQueue queue, Metadata metadata, int[] wavelengths, boolean debug){
+    ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue, Metadata metadata, int[] wavelengths, boolean debug){
         debug_ = debug;
         md_ = metadata;
         queue_ = queue;
@@ -70,10 +70,6 @@ public class ImSaver implements Runnable {
             }
             
             int dimension = width * height;
-            int[] sub = new int[dimension];
-            int[] min = new int[expectedFrames_-1];
-            Object[] subsarray = new Object[expectedFrames_];
-            subsarray[0] = (short[]) im.getRawPixels();
             
             ImageWriter writer = ImageIO.getImageWritersBySuffix("tif").next();
             File file = Paths.get(savePath_).resolve("pws.comp.tif").toFile();
@@ -82,36 +78,9 @@ public class ImSaver implements Runnable {
             ImageWriteParam param = writer.getDefaultWriteParam();
             param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
             param.setCompressionType("ZLib");
-            IIOMetadata streamMeta = writer.getDefaultStreamMetadata(param);     
-            BufferedImage bim = ImageIOHelper.arrtoim(width,height,(short[])subsarray[0]);
+            IIOMetadata streamMeta = writer.getDefaultStreamMetadata(param); 
+            BufferedImage bim = ImageIOHelper.arrtoim(width,height,(short[]) im.getRawPixels());
             IIOMetadata  meta = writer.getDefaultImageMetadata(ImageTypeSpecifier.createFromBufferedImageType(bim.getType()), param);
-            writer.prepareWriteSequence(streamMeta);
-            bim = ImageIOHelper.arrtoim(width,height,(short[])subsarray[0]);
-            IIOImage newIm = new IIOImage(bim ,null, meta);
-            writer.writeToSequence(newIm, param);
-            
-            for (int i=1; i<expectedFrames_; i++) {
-                while (queue_.size()<1) { Thread.sleep(10);} //Wait for an image
-                im = (Image) queue_.take(); //Lets make an array with the queued images.
-                short[] old = (short[]) oldIm.getRawPixels();
-                short[] New = (short[]) im.getRawPixels();
-                min[i-1] = 32767;
-                for (int j = 0; j < dimension; j++) {
-                    sub[j] =  ((int) New[j] - (int) old[j]);
-                    if (sub[j] < min[i-1]) {
-                        min[i-1] = sub[j];
-                    }
-                }
-                short[] ssub = new short[dimension];
-                for (int j = 0; j < dimension; j++) {
-                    ssub[j] = (short) (sub[j] - min[i-1]);
-                }
-                subsarray[i] = ssub;
-                oldIm = im;
-                bim = ImageIOHelper.arrtoim(width,height,(short[])subsarray[i]);
-                newIm = new IIOImage(bim ,null, meta);
-                writer.writeToSequence(newIm, param);
-            }
             
             
             JSONObject jobj = new JSONObject();
@@ -121,26 +90,24 @@ public class ImSaver implements Runnable {
             for (int i = 0; i < wv_.length; i++) {
                 WV.put(wv_[i]);
             }
-            JSONArray Min = new JSONArray();
-            for (int i = 0; i < min.length; i++) {
-                Min.put(min[i]);
-            } 
             jobj.put("waveLengths", WV);  
             jobj.put("exposure", studio_.core().getExposure());
-            jobj.put("compressionMins", Min);
             meta = writer.getDefaultImageMetadata(ImageTypeSpecifier.createFromBufferedImageType(bim.getType()), param);
             IIOMetadataNode tree = (IIOMetadataNode) meta.getAsTree(meta.getMetadataFormatNames()[0]);
             ImageIOHelper.createTIFFFieldNode((IIOMetadataNode) tree.getFirstChild(), TIFF.TAG_IMAGE_DESCRIPTION, TIFF.TYPE_ASCII, jobj.toString());
             meta.setFromTree(meta.getMetadataFormatNames()[0], tree);
-            //Replace the mins in the metadata
-            for (int i=0; i< expectedFrames_; i++) {
-                if (writer.canReplaceImageMetadata(i)){
-                    writer.replaceImageMetadata(i, meta);
-                }
-                else{
-                    ReportingUtils.logError("PWS Plugin: Cannot replace Tiff Metadata.");
-                    break;
-                }
+                    
+            writer.prepareWriteSequence(streamMeta);
+            IIOImage newIm = new IIOImage(bim ,null, meta);
+            writer.writeToSequence(newIm, param);
+            
+            for (int i=1; i<expectedFrames_; i++) {
+                while (queue_.size()<1) { Thread.sleep(10);} //Wait for an image
+                im = (Image) queue_.take(); //Lets make an array with the queued images.
+                short[] imArr = (short[]) im.getRawPixels();
+                bim = ImageIOHelper.arrtoim(width, height, imArr);
+                newIm = new IIOImage(bim ,null, meta);
+                writer.writeToSequence(newIm, param);
             }
 
             writer.endWriteSequence();

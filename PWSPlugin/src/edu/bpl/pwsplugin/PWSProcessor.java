@@ -112,7 +112,7 @@ public class PWSProcessor extends Processor {
             }
             else {
                 Metadata md = image.getMetadata();
-                ImSaver imsaver = new ImSaver(studio_, savePath, imageQueue, md, wv, true);
+                ImSaverCompressed imsaver = new ImSaverCompressed(studio_, savePath, imageQueue, md, wv, true);
                 if (!studio_.acquisitions().isAcquisitionRunning()) { //This means we must be in snap mode. There is no runnable so we must acquire the image here.
                     acquireImages();
                 }
