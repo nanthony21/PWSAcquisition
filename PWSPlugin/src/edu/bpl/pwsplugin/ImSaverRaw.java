@@ -6,25 +6,13 @@
 package edu.bpl.pwsplugin;
 
 import java.util.concurrent.LinkedBlockingQueue;
-import java.nio.file.Paths;
 import org.micromanager.Studio;
 import org.micromanager.data.Image;
+import org.micromanager.PropertyMap;
 import org.micromanager.internal.utils.ReportingUtils;
-import org.micromanager.data.internal.DefaultMetadata;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import javax.imageio.ImageWriter;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.IIOImage;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.metadata.IIOMetadataNode;
-import java.io.File;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
-import javax.imageio.stream.ImageOutputStream;
-import javax.imageio.ImageTypeSpecifier;
-import com.twelvemonkeys.imageio.metadata.tiff.TIFF;
+import org.micromanager.data.Metadata;
+import org.micromanager.PropertyMaps;
+import org.micromanager.data.Datastore;
 
 /**
  *
@@ -32,7 +20,7 @@ import com.twelvemonkeys.imageio.metadata.tiff.TIFF;
  */
 public class ImSaverRaw implements Runnable {
     boolean debug_;
-    DefaultMetadata md_;
+    Metadata md_;
     LinkedBlockingQueue queue_;
     Thread t;
     Studio studio_;
@@ -40,7 +28,7 @@ public class ImSaverRaw implements Runnable {
     int[] wv_;
     String savePath_;
 
-    ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue, DefaultMetadata metadata, int[] wavelengths, boolean debug){
+    ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue, Metadata metadata, int[] wavelengths, boolean debug){
         debug_ = debug;
         md_ = metadata;
         queue_ = queue;
@@ -59,57 +47,26 @@ public class ImSaverRaw implements Runnable {
             if (debug_) {
                 ReportingUtils.logMessage("PWSPlugin: saving...");
             }
-            Image im = (Image) queue_.take();
-            Image oldIm = im;
-            int width = im.getHeight();
-            int height = im.getWidth();
-            int imgDepth = im.getBytesPerPixel();
-            
-            if (imgDepth != 2) {
-                ReportingUtils.showError("PWSPlugin does not support images with other than 16 bit bitdepth.");
-            }
-            
-            int dimension = width * height;
-            
-            ImageWriter writer = ImageIO.getImageWritersBySuffix("tif").next();
-            File file = Paths.get(savePath_).resolve("pws.tif").toFile();
-            ImageOutputStream ostream = ImageIO.createImageOutputStream(file);
-            writer.setOutput(ostream);
-            ImageWriteParam param = writer.getDefaultWriteParam();
-            IIOMetadata streamMeta = writer.getDefaultStreamMetadata(param); 
-            BufferedImage bim = ImageIOHelper.arrtoim(width,height,(short[]) im.getRawPixels());
-            
-            
-            JSONObject jobj = new JSONObject();
-            JSONObject md = new JSONObject(md_.toPropertyMap().toJSON());
-            jobj.put("MicroManagerMetadata", md);
-            JSONArray WV = new JSONArray();
-            for (int i = 0; i < wv_.length; i++) {
-                WV.put(wv_[i]);
-            }
-            jobj.put("waveLengths", WV);  
-            jobj.put("exposure", studio_.core().getExposure());
-            IIOMetadata meta = writer.getDefaultImageMetadata(ImageTypeSpecifier.createFromBufferedImageType(bim.getType()), param);
-            IIOMetadataNode tree = (IIOMetadataNode) meta.getAsTree(meta.getMetadataFormatNames()[0]);
-            ImageIOHelper.createTIFFFieldNode((IIOMetadataNode) tree.getFirstChild(), TIFF.TAG_IMAGE_DESCRIPTION, TIFF.TYPE_ASCII, jobj.toString());
-            meta.setFromTree(meta.getMetadataFormatNames()[0], tree);
-                    
-            writer.prepareWriteSequence(streamMeta);
-            IIOImage newIm = new IIOImage(bim ,null, meta);
-            writer.writeToSequence(newIm, param);
-            
-            for (int i=1; i<expectedFrames_; i++) {
+     
+            Metadata.Builder b = md_.copyBuilderWithNewUUID();
+            PropertyMap.Builder userData = PropertyMaps.builder();
+            userData.putString("system", "lcpws2");
+            userData.putIntegerList("wavelengths", wv_);
+            userData.putDouble("exposure", studio_.core().getExposure());
+            b.userData(userData.build());
+            Metadata newMeta = b.build();
+
+            Datastore ds = studio_.data().createMultipageTIFFDatastore(savePath_, false, true);
+            ds.setName("PWS");
+            Image im;
+            for (int i=0; i<expectedFrames_; i++) {
                 while (queue_.size()<1) { Thread.sleep(10);} //Wait for an image
                 im = (Image) queue_.take(); //Lets make an array with the queued images.
-                short[] imArr = (short[]) im.getRawPixels();
-                bim = ImageIOHelper.arrtoim(width, height, imArr);
-                newIm = new IIOImage(bim ,null, meta);
-                writer.writeToSequence(newIm, param);
-            }
+                ds.putImage(im.copyWithMetadata(newMeta));
 
-            writer.endWriteSequence();
-            writer.dispose();
-            ostream.close();
+            }
+            ds.freeze();
+            ds.close();
 
             long itTook = System.currentTimeMillis() - now;
             if (debug_) {
@@ -119,5 +76,8 @@ public class ImSaverRaw implements Runnable {
             ReportingUtils.showError(ex);
             ReportingUtils.logError("Error: PWSPlugin, while producing averaged img: "+ ex.toString());
         } 
+        
+
+        
     }
 }
