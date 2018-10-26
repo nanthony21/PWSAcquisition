@@ -16,13 +16,13 @@ public class PWSRunnable implements Runnable {
     @Override
     public void run() {
         try {
-            ReportingUtils.logMessage("FrameAvg: entering runnable");
+            ReportingUtils.logMessage("PWS: entering runnable");
             studio_.acquisitions().setPause(true);
             proc_.acquireImages();
             studio_.acquisitions().setPause(false);
         } catch (Exception ex) {
             ex.printStackTrace();
-            ReportingUtils.logMessage("ERROR: FrameAvg: while entering runnable");
+            ReportingUtils.logError("PWS: while entering runnable");
         }
     }
 

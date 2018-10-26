@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 import org.micromanager.Studio;
 import org.micromanager.data.Image;
 import org.micromanager.internal.utils.ReportingUtils;
-import org.micromanager.data.Metadata;
+import org.micromanager.data.internal.DefaultMetadata;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import javax.imageio.ImageWriter;
@@ -32,7 +32,7 @@ import com.twelvemonkeys.imageio.metadata.tiff.TIFF;
  */
 public class ImSaverCompressed implements Runnable {
     boolean debug_;
-    Metadata md_;
+    DefaultMetadata md_;
     LinkedBlockingQueue queue_;
     Thread t;
     Studio studio_;
@@ -40,7 +40,7 @@ public class ImSaverCompressed implements Runnable {
     int[] wv_;
     String savePath_;
 
-    ImSaverCompressed(Studio studio, String savePath, LinkedBlockingQueue queue, Metadata metadata, int[] wavelengths, boolean debug){
+    ImSaverCompressed(Studio studio, String savePath, LinkedBlockingQueue queue, DefaultMetadata metadata, int[] wavelengths, boolean debug){
         debug_ = debug;
         md_ = metadata;
         queue_ = queue;
@@ -114,7 +114,7 @@ public class ImSaverCompressed implements Runnable {
             
             
             JSONObject jobj = new JSONObject();
-            JSONObject md = new JSONObject(md_.toString());
+            JSONObject md = new JSONObject(md_.toPropertyMap().toJSON());
             jobj.put("MicroManagerMetadata", md);
             JSONArray WV = new JSONArray();
             for (int i = 0; i < wv_.length; i++) {
@@ -152,7 +152,7 @@ public class ImSaverCompressed implements Runnable {
             }
         } catch (Exception ex) {
             ReportingUtils.showError(ex);
-            ReportingUtils.logError("Error: PWSPlugin, while producing averaged img: "+ ex.toString());
+            ReportingUtils.logError("PWSPlugin, while producing img: "+ ex.toString());
         } 
     }
 }

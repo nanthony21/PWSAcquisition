@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 import org.micromanager.Studio;
 import org.micromanager.data.Image;
 import org.micromanager.internal.utils.ReportingUtils;
-import org.micromanager.data.Metadata;
+import org.micromanager.data.internal.DefaultMetadata;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import javax.imageio.ImageWriter;
@@ -32,7 +32,7 @@ import com.twelvemonkeys.imageio.metadata.tiff.TIFF;
  */
 public class ImSaverRaw implements Runnable {
     boolean debug_;
-    Metadata md_;
+    DefaultMetadata md_;
     LinkedBlockingQueue queue_;
     Thread t;
     Studio studio_;
@@ -40,7 +40,7 @@ public class ImSaverRaw implements Runnable {
     int[] wv_;
     String savePath_;
 
-    ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue, Metadata metadata, int[] wavelengths, boolean debug){
+    ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue, DefaultMetadata metadata, int[] wavelengths, boolean debug){
         debug_ = debug;
         md_ = metadata;
         queue_ = queue;
@@ -72,19 +72,16 @@ public class ImSaverRaw implements Runnable {
             int dimension = width * height;
             
             ImageWriter writer = ImageIO.getImageWritersBySuffix("tif").next();
-            File file = Paths.get(savePath_).resolve("pws.comp.tif").toFile();
+            File file = Paths.get(savePath_).resolve("pws.tif").toFile();
             ImageOutputStream ostream = ImageIO.createImageOutputStream(file);
             writer.setOutput(ostream);
             ImageWriteParam param = writer.getDefaultWriteParam();
-            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            param.setCompressionType("ZLib");
             IIOMetadata streamMeta = writer.getDefaultStreamMetadata(param); 
             BufferedImage bim = ImageIOHelper.arrtoim(width,height,(short[]) im.getRawPixels());
-            IIOMetadata  meta = writer.getDefaultImageMetadata(ImageTypeSpecifier.createFromBufferedImageType(bim.getType()), param);
             
             
             JSONObject jobj = new JSONObject();
-            JSONObject md = new JSONObject(md_.toString());
+            JSONObject md = new JSONObject(md_.toPropertyMap().toJSON());
             jobj.put("MicroManagerMetadata", md);
             JSONArray WV = new JSONArray();
             for (int i = 0; i < wv_.length; i++) {
@@ -92,7 +89,7 @@ public class ImSaverRaw implements Runnable {
             }
             jobj.put("waveLengths", WV);  
             jobj.put("exposure", studio_.core().getExposure());
-            meta = writer.getDefaultImageMetadata(ImageTypeSpecifier.createFromBufferedImageType(bim.getType()), param);
+            IIOMetadata meta = writer.getDefaultImageMetadata(ImageTypeSpecifier.createFromBufferedImageType(bim.getType()), param);
             IIOMetadataNode tree = (IIOMetadataNode) meta.getAsTree(meta.getMetadataFormatNames()[0]);
             ImageIOHelper.createTIFFFieldNode((IIOMetadataNode) tree.getFirstChild(), TIFF.TAG_IMAGE_DESCRIPTION, TIFF.TYPE_ASCII, jobj.toString());
             meta.setFromTree(meta.getMetadataFormatNames()[0], tree);

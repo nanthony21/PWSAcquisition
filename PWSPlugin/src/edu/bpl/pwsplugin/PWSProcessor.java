@@ -1,37 +1,5 @@
 package edu.bpl.pwsplugin;
 
-/*
- * Copyright © 2009 – 2013, Marine Biological Laboratory
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
-
- * Redistributions of source code must retain the above copyright notice, 
- * this list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
- * this list of conditions and the following disclaimer in the documentation 
- * and/or other materials provided with the distribution.
-
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND 
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
- * IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are those of 
- * the authors and should not be interpreted as representing official policies, 
- * either expressed or implied, of any organization.
- * 
- * Multiple-Frame Averaging plug-in for Micro-Manager
- * @author Amitabh Verma (averma@mbl.edu), Grant Harris (gharris@mbl.edu)
- * Marine Biological Laboratory, Woods Hole, Mass.
- * 
- */
-
 import org.micromanager.internal.utils.ReportingUtils;
 import java.util.concurrent.LinkedBlockingQueue;
 import mmcorej.StrVector;
@@ -42,7 +10,9 @@ import org.micromanager.data.ProcessorContext;
 import org.micromanager.data.Image;
 import org.micromanager.data.SummaryMetadata;
 import org.micromanager.data.Metadata;
-
+import org.micromanager.data.internal.DefaultMetadata;
+import org.micromanager.alerts.UpdatableAlert;
+import org.micromanager.internal.MMStudio;
 
 
 
@@ -64,9 +34,8 @@ public class PWSProcessor extends Processor {
         wv = settings.getIntegerList("wv");
         filtLabel = settings.getString("filtLabel", "");
         hardwareSequence = settings.getBoolean("sequence", false);
-        savePath = settings.getString("savePath", "");
+        savePath = settings.getString("savepath", "");
         filtProp = "Wavelength";
-        imageArray = new Image[wv.length];
         studio_.acquisitions().attachRunnable(-1, -1, -1, -1, new PWSRunnable(this)); 
         imageQueue = new LinkedBlockingQueue();
         
@@ -112,21 +81,21 @@ public class PWSProcessor extends Processor {
             }
             else {
                 Metadata md = image.getMetadata();
-                ImSaverCompressed imsaver = new ImSaverCompressed(studio_, savePath, imageQueue, md, wv, true);
+                ImSaverRaw imsaver = new ImSaverRaw(studio_, savePath, imageQueue, (DefaultMetadata) md, wv, true);
+                Image retIm;
                 if (!studio_.acquisitions().isAcquisitionRunning()) { //This means we must be in snap mode. There is no runnable so we must acquire the image here.
                     acquireImages();
                 }
                 //Nothing extra needs to be done for acquisition mode
+                if (debugLogEnabled_) {
+                    ReportingUtils.logMessage("Queue has" + Integer.toString(imageQueue.size()));
+                }
+                context.outputImage(imageOnError);   //Return the middle image.
             }
-            if (debugLogEnabled_) {
-                ReportingUtils.logMessage("Queue has" + Integer.toString(imageQueue.size()));
-            }
-            
-            int i = 0;  //The original image is just going to be thrown out :( .
-            context.outputImage(imageArray[imageArray.length/2]);   //Return the middle image.
+
         } catch (Exception ex) {
             context.outputImage(imageOnError);            
-            ReportingUtils.logError("PWSPlugin, in Process: " + ex.toString());
+            ReportingUtils.logError("PWSPlugin, in processor: " + ex.toString());
             imageQueue.clear();
         }
     }
@@ -181,7 +150,8 @@ public class PWSProcessor extends Processor {
                 for (int i=0; i<wv.length; i++) {
                     studio_.core().setProperty(filtLabel, filtProp, wv[i]);
                     while (studio_.core().deviceBusy(filtLabel)) {Thread.sleep(1);} //Wait until the device says it is tuned.
-                    imageQueue.add(studio_.live().snap(true));
+                    studio_.core().snapImage();
+                    imageQueue.add(studio_.data().convertTaggedImage(studio_.core().getTaggedImage()));
                 }
                 studio_.core().setProperty(filtLabel, filtProp, wv[0]);
             }
