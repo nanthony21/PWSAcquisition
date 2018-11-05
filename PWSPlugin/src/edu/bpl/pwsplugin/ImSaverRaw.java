@@ -13,6 +13,7 @@ import org.micromanager.internal.utils.ReportingUtils;
 import org.micromanager.data.Metadata;
 import org.micromanager.PropertyMaps;
 import org.micromanager.data.Datastore;
+import org.micromanager.data.Coords;
 
 /**
  *
@@ -59,10 +60,13 @@ public class ImSaverRaw implements Runnable {
             Datastore ds = studio_.data().createMultipageTIFFDatastore(savePath_, false, true);
             ds.setName("PWS");
             Image im;
+            Coords.Builder coords;
             for (int i=0; i<expectedFrames_; i++) {
                 while (queue_.size()<1) { Thread.sleep(10);} //Wait for an image
                 im = (Image) queue_.take(); //Lets make an array with the queued images.
-                ds.putImage(im.copyWithMetadata(newMeta));
+                coords = im.getCoords().copyBuilder();
+                coords.channel(i);
+                ds.putImage(im.copyWith(coords.build(), newMeta));
 
             }
             ds.freeze();
