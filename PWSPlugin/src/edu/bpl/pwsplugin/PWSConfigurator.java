@@ -35,26 +35,11 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         settings_ = settings;
         log_ = studio.logs();
         initComponents();
-        String[] devs = studio_.core().getLoadedDevices().toArray();
-        StrVector newDevs = new StrVector();
-        for (int i = 0; i < devs.length; i++) {
-            try {
-                if (studio_.core().isPropertySequenceable(devs[i], "Wavelength")) {
-                    newDevs.add(devs[i]);
-                }
-            }
-            catch (Exception ex) {}
-        }
-        DefaultComboBoxModel model = new DefaultComboBoxModel(newDevs.toArray());
-        filterComboBox.setModel(model); //Update the available names.
+
         try {
             wvStartField.setText(String.valueOf(settings_.getInteger("start", 500)));
             wvStopField.setText(String.valueOf(settings_.getInteger("stop",700)));
             wvStepField.setText(String.valueOf(settings_.getInteger("step",2)));
-            String oldName = settings_.getString("filtLabel","");
-            if (Arrays.asList(newDevs.toArray()).contains(oldName)) {
-                filterComboBox.setSelectedItem(oldName);
-            }
             directoryText.setText(settings_.getString("savepath",""));
             hardwareSequencingCheckBox.setSelected(settings_.getBoolean("sequence",false));
         }
@@ -104,6 +89,22 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
     @Override
     public void showGUI() {
         pack();
+        String[] devs = studio_.core().getLoadedDevices().toArray();
+        StrVector newDevs = new StrVector();
+        for (int i = 0; i < devs.length; i++) {
+            try {
+                if (studio_.core().isPropertySequenceable(devs[i], "Wavelength")) {
+                    newDevs.add(devs[i]);
+                }
+            }
+            catch (Exception ex) {}
+        }
+        DefaultComboBoxModel model = new DefaultComboBoxModel(newDevs.toArray());
+        filterComboBox.setModel(model); //Update the available names.
+        String oldName = settings_.getString("filtLabel","");
+            if (Arrays.asList(newDevs.toArray()).contains(oldName)) {
+                filterComboBox.setSelectedItem(oldName);
+            }
         setVisible(true);
     }
     
