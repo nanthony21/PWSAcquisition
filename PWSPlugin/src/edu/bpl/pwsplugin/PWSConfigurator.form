@@ -69,6 +69,8 @@
                           <Component id="submitButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="hardwareSequencingCheckBox" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="delayEdit" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
@@ -117,7 +119,10 @@
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="hardwareSequencingCheckBox" alignment="1" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" alignment="1" groupAlignment="3" attributes="0">
+                          <Component id="hardwareSequencingCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="delayEdit" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <Component id="submitButton" alignment="1" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -203,6 +208,11 @@
         <Component class="javax.swing.JCheckBox" name="hardwareSequencingCheckBox">
           <Properties>
             <Property name="label" type="java.lang.String" value="Use Hardware Sequencing"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="delayEdit">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="jTextField1"/>
           </Properties>
         </Component>
       </SubComponents>

@@ -28,6 +28,7 @@ public class PWSProcessor extends Processor {
     String filtProp;
     Boolean hardwareSequence;
     String savePath;
+    int delayMs;
     
     public PWSProcessor(Studio studio, PropertyMap settings){
         studio_ = studio;
@@ -35,6 +36,7 @@ public class PWSProcessor extends Processor {
         filtLabel = settings.getString("filtLabel", "");
         hardwareSequence = settings.getBoolean("sequence", false);
         savePath = settings.getString("savepath", "");
+        delayMs = settings.getInteger("delayMs", 0);
         filtProp = "Wavelength";
         studio_.acquisitions().attachRunnable(-1, -1, -1, -1, new PWSRunnable(this)); 
         imageQueue = new LinkedBlockingQueue();
@@ -116,7 +118,7 @@ public class PWSProcessor extends Processor {
     //          @param stopOnOverflow whether or not the camera stops acquiring when the circular buffer is full
                 studio_.core().startPropertySequence(filtLabel, filtProp);
 
-                studio_.core().startSequenceAcquisition(wv.length, 0, false);
+                studio_.core().startSequenceAcquisition(wv.length, delayMs, false);
 
                 int frame = 1;// keep 0 free for the image from engine
                 // reference BurstExample.bsh
