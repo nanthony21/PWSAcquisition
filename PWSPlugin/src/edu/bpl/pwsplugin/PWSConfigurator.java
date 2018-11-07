@@ -16,6 +16,8 @@ import org.micromanager.Studio;
 import org.micromanager.LogManager;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.DocumentEvent;
 import mmcorej.StrVector;
 import java.util.Arrays;
 import org.micromanager.internal.utils.FileDialogs;
@@ -35,6 +37,7 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         settings_ = settings;
         log_ = studio.logs();
         initComponents();
+        customInitComponents();
 
         try {
             wvStartField.setText(String.valueOf(settings_.getInteger("start", 500)));
@@ -111,6 +114,26 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
     
     public void settingsChanged() {
         submitButton.setBackground(Color.red);
+    }
+    
+    public void customInitComponents() {
+        javax.swing.JTextField[] fields = {wvStartField, wvStopField, wvStepField, directoryText, delayEdit};
+        for (int i=0; i<fields.length; i++) {
+            fields[i].getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    settingsChanged();
+                }
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    settingsChanged();
+                }
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    settingsChanged();
+                }
+            });
+        }
     }
 
     /**
@@ -286,12 +309,12 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
     }//GEN-LAST:event_formWindowClosing
 
     private void wvStartFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wvStartFieldActionPerformed
-        settingsChanged();
+        //settingsChanged();
     }//GEN-LAST:event_wvStartFieldActionPerformed
 
     private void wvStopFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wvStopFieldActionPerformed
         // TODO add your handling code here:
-        settingsChanged();
+        //settingsChanged();
     }//GEN-LAST:event_wvStopFieldActionPerformed
 
     private void filterComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterComboBoxActionPerformed
