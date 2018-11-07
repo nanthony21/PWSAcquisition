@@ -219,6 +219,11 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         });
 
         hardwareSequencingCheckBox.setLabel("Use Hardware Sequencing");
+        hardwareSequencingCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hardwareSequencingCheckBoxActionPerformed(evt);
+            }
+        });
 
         delayEdit.setText("jTextField1");
 
@@ -332,6 +337,10 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         new FileDialogs.FileType("SaveDir", "Save Directory", "D:\\Data", true, ""));
         directoryText.setText(f.getAbsolutePath());
     }//GEN-LAST:event_directoryButtonActionPerformed
+
+    private void hardwareSequencingCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hardwareSequencingCheckBoxActionPerformed
+        settingsChanged();
+    }//GEN-LAST:event_hardwareSequencingCheckBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField delayEdit;
