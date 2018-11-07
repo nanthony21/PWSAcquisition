@@ -106,9 +106,9 @@ public class PWSProcessor extends Processor {
          
     public void acquireImages() {
         try {
-            studio_.core().waitForDevice(studio_.core().getCameraDevice());
-            studio_.core().clearCircularBuffer();
             String cam = studio_.core().getCameraDevice();
+            studio_.core().waitForDevice(cam);
+            studio_.core().clearCircularBuffer();     
             long now = System.currentTimeMillis();
             
             if (hardwareSequence) {
@@ -118,10 +118,13 @@ public class PWSProcessor extends Processor {
     //          @param stopOnOverflow whether or not the camera stops acquiring when the circular buffer is full
                 studio_.core().startPropertySequence(filtLabel, filtProp);
 
+                if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { //This device adapter doesn't seem to support delays in the sequence acquisition. We instead set the master pulse interval. We have to assume that the camera is set to trigger from the master pulse. 
+                    double exposurems = studio_.core().getExposure();
+                    double readoutms = 10; //This is based on the frame rate calculation portion of the 13440-20CU camera. 9.7 us per line, reading two lines at once, 20148 lines -> 0.097*2048/2 ~= 10
+                    studio_.core().setProperty(cam, "MASTER PULSE INTERVAL", (exposurems+readoutms+delayMs)/1000.0);
+                }
                 studio_.core().startSequenceAcquisition(wv.length, delayMs, false);
 
-                int frame = 1;// keep 0 free for the image from engine
-                // reference BurstExample.bsh
 
                 boolean canExit = false;
                 while (true) {
@@ -133,14 +136,6 @@ public class PWSProcessor extends Processor {
                     }
                     if (remaining) {    //Process images
                        imageQueue.add(studio_.data().convertTaggedImage(studio_.core().popNextTaggedImage()));
-                       frame++;
-                       /*
-                        if (proc_.display_ != null) {
-                            if (proc_.display_.acquisitionIsRunning()) {
-                                proc_.display_.displayStatusLine("Image Avg. Acquiring No. " + frame);
-                            }
-                        }
-                        */
                     }
                     if (!running) {
                         studio_.core().stopPropertySequence(filtLabel, filtProp);
