@@ -11,13 +11,12 @@ import org.micromanager.data.Image;
 import org.micromanager.data.SummaryMetadata;
 import org.micromanager.data.Metadata;
 import org.micromanager.data.internal.DefaultMetadata;
-import org.micromanager.alerts.UpdatableAlert;
-import org.micromanager.internal.MMStudio;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 
 
 public class PWSProcessor extends Processor {
- 
     Studio studio_;
     int numAverages_;
     LinkedBlockingQueue imageQueue;
@@ -29,7 +28,7 @@ public class PWSProcessor extends Processor {
     Boolean hardwareSequence;
     String savePath;
     int delayMs;
-    
+    int cellNum;
     public PWSProcessor(Studio studio, PropertyMap settings){
         studio_ = studio;
         wv = settings.getIntegerList("wv");
@@ -37,6 +36,7 @@ public class PWSProcessor extends Processor {
         hardwareSequence = settings.getBoolean("sequence", false);
         savePath = settings.getString("savepath", "");
         delayMs = settings.getInteger("delayMs", 0);
+        cellNum = settings.getInteger("cellNum",1);
         filtProp = "Wavelength";
         studio_.acquisitions().attachRunnable(-1, -1, -1, -1, new PWSRunnable(this)); 
         imageQueue = new LinkedBlockingQueue();
@@ -83,8 +83,10 @@ public class PWSProcessor extends Processor {
             }
             else {
                 Metadata md = image.getMetadata();
-                ImSaverRaw imsaver = new ImSaverRaw(studio_, savePath, imageQueue, (DefaultMetadata) md, wv, true);
-                Image retIm;
+                while (Files.isDirectory(Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)))){
+                    cellNum++;
+                }
+                ImSaverRaw imsaver = new ImSaverRaw(studio_, Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).toString(), imageQueue, (DefaultMetadata) md, wv, true);
                 if (!studio_.acquisitions().isAcquisitionRunning()) { //This means we must be in snap mode. There is no runnable so we must acquire the image here.
                     acquireImages();
                 }

@@ -72,6 +72,7 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
             builder.putBoolean("sequence", hardwareSequencingCheckBox.isSelected());
             builder.putString("savepath", directoryText.getText());
             builder.putInteger("delayMs", Integer.parseInt(delayEdit.getText()));
+            builder.putInteger("cellNum", Integer.parseInt(cellNumEdit.getText()));
         }
         catch(NumberFormatException e){
             log_.showMessage("A valid number was not specified.");
@@ -117,7 +118,9 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
     }
     
     public void customInitComponents() {
-        javax.swing.JTextField[] fields = {wvStartField, wvStopField, wvStepField, directoryText, delayEdit};
+        javax.swing.JTextField[] fields = {wvStartField, wvStopField,
+            wvStepField, directoryText,
+            delayEdit, cellNumEdit};
         for (int i=0; i<fields.length; i++) {
             fields[i].getDocument().addDocumentListener(new DocumentListener() {
                 @Override
@@ -159,6 +162,7 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         directoryButton = new javax.swing.JButton();
         hardwareSequencingCheckBox = new javax.swing.JCheckBox();
         delayEdit = new javax.swing.JTextField();
+        cellNumEdit = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -225,7 +229,20 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
             }
         });
 
-        delayEdit.setText("jTextField1");
+        delayEdit.setText("10");
+        delayEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                delayEditActionPerformed(evt);
+            }
+        });
+
+        cellNumEdit.setText("1");
+        cellNumEdit.setToolTipText("Cell Number");
+        cellNumEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cellNumEditActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -242,7 +259,9 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(hardwareSequencingCheckBox)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(delayEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(delayEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(61, 61, 61)
+                        .addComponent(cellNumEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
@@ -285,7 +304,8 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(hardwareSequencingCheckBox)
-                        .addComponent(delayEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(delayEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cellNumEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(submitButton, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
@@ -342,7 +362,16 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         settingsChanged();
     }//GEN-LAST:event_hardwareSequencingCheckBoxActionPerformed
 
+    private void delayEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delayEditActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_delayEditActionPerformed
+
+    private void cellNumEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cellNumEditActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cellNumEditActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField cellNumEdit;
     private javax.swing.JTextField delayEdit;
     private javax.swing.JButton directoryButton;
     private javax.swing.JTextField directoryText;
