@@ -140,7 +140,6 @@ public class PWSProcessor extends Processor {
                        imageQueue.add(studio_.data().convertTaggedImage(studio_.core().popNextTaggedImage()));
                     }
                     if (!running) {
-                        studio_.core().stopPropertySequence(filtLabel, filtProp);
                         canExit = true;
                     }
                  }
@@ -161,6 +160,10 @@ public class PWSProcessor extends Processor {
         } catch (Exception ex) {
             ex.printStackTrace();
             ReportingUtils.logMessage("ERROR: PWSPlugin: " + ex.getMessage());
+        } finally {
+            try {
+                studio_.core().stopPropertySequence(filtLabel, filtProp); //Got to make sure to stop the sequencing behaviour.
+            } catch (Exception ex) {;}
         }
     }
     
