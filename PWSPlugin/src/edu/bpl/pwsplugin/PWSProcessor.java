@@ -124,8 +124,10 @@ public class PWSProcessor extends Processor {
                     double exposurems = studio_.core().getExposure();
                     double readoutms = 10; //This is based on the frame rate calculation portion of the 13440-20CU camera. 9.7 us per line, reading two lines at once, 20148 lines -> 0.097*2048/2 ~= 10
                     studio_.core().setProperty(cam, "MASTER PULSE INTERVAL", (exposurems+readoutms+delayMs)/1000.0);
+                    studio_.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an eror if the interval is not 0.
+                } else{
+                    studio_.core().startSequenceAcquisition(wv.length, delayMs, false);
                 }
-                studio_.core().startSequenceAcquisition(wv.length, delayMs, false);
 
 
                 boolean canExit = false;
