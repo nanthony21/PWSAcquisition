@@ -14,6 +14,11 @@ import org.micromanager.data.Metadata;
 import org.micromanager.PropertyMaps;
 import org.micromanager.data.Datastore;
 import org.micromanager.data.Coords;
+import org.micromanager.data.internal.DefaultImageJConverter;
+import ij.ImageStack;
+import ij.ImagePlus;
+import ij.io.FileSaver;
+
 
 /**
  *
@@ -56,6 +61,9 @@ public class ImSaverRaw implements Runnable {
             userData.putDouble("exposure", studio_.core().getExposure());
             b.userData(userData.build());
             Metadata newMeta = b.build();
+            
+            DefaultImageJConverter imJConv = new DefaultImageJConverter();
+            ImageStack stack = new ImageStack();
 
             Datastore ds = studio_.data().createMultipageTIFFDatastore(savePath_, false, true);
             ds.setName("PWS");
@@ -64,11 +72,17 @@ public class ImSaverRaw implements Runnable {
             for (int i=0; i<expectedFrames_; i++) {
                 while (queue_.size()<1) { Thread.sleep(10);} //Wait for an image
                 im = (Image) queue_.take(); //Lets make an array with the queued images.
+                stack.addSlice(imJConv.createProcessor(im));
                 coords = im.getCoords().copyBuilder();
                 coords.channel(i);
                 ds.putImage(im.copyWith(coords.build(), newMeta));
 
             }
+            ImagePlus imPlus = new ImagePlus("PWS", stack);
+            FileInfo info = new FileInfo()
+            imPlus.setFileInfo(info);
+            FileSaver saver = new FileSaver(imPlus);
+            saver.saveAsTiffStack("PWS.tif");
             ds.freeze();
             ds.close();
 
