@@ -5,12 +5,16 @@
  */
 package edu.bpl.pwsplugin;
 
+import java.nio.file.Paths;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.micromanager.Studio;
 import org.micromanager.data.Image;
 import org.micromanager.PropertyMap;
 import org.micromanager.internal.utils.ReportingUtils;
 import org.micromanager.data.Metadata;
+import org.micromanager.data.internal.DefaultMetadata;
 import org.micromanager.PropertyMaps;
 import org.micromanager.data.Datastore;
 import org.micromanager.data.Coords;
@@ -18,7 +22,9 @@ import org.micromanager.data.internal.DefaultImageJConverter;
 import ij.ImageStack;
 import ij.ImagePlus;
 import ij.io.FileSaver;
-
+import ij.io.FileInfo;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 /**
  *
@@ -54,37 +60,42 @@ public class ImSaverRaw implements Runnable {
                 ReportingUtils.logMessage("PWSPlugin: saving...");
             }
      
-            Metadata.Builder b = md_.copyBuilderWithNewUUID();
-            PropertyMap.Builder userData = PropertyMaps.builder();
-            userData.putString("system", "lcpws2");
-            userData.putIntegerList("wavelengths", wv_);
-            userData.putDouble("exposure", studio_.core().getExposure());
-            b.userData(userData.build());
-            Metadata newMeta = b.build();
+            new File(savePath_).mkdirs();
             
+            JSONObject jobj = new JSONObject();
+            JSONObject md = new JSONObject(((DefaultMetadata)md_).toPropertyMap().toJSON());
+            jobj.put("MicroManagerMetadata", md);
+            JSONArray WV = new JSONArray();
+            for (int i = 0; i < wv_.length; i++) {
+                WV.put(wv_[i]);
+            }
+            jobj.put("wavelengths", WV);  
+            jobj.put("exposure", studio_.core().getExposure());
+            jobj.put("system", "lcpws2");
+            
+            FileWriter file = new FileWriter(Paths.get(savePath_).resolve("pwsmetadata.json").toString());
+            file.write(jobj.toString());
+            file.flush();
+            file.close();
             DefaultImageJConverter imJConv = new DefaultImageJConverter();
-            ImageStack stack = new ImageStack();
-
-            Datastore ds = studio_.data().createMultipageTIFFDatastore(savePath_, false, true);
-            ds.setName("PWS");
+            ImageStack stack;
             Image im;
-            Coords.Builder coords;
-            for (int i=0; i<expectedFrames_; i++) {
+                        
+            while (queue_.size()<1) { Thread.sleep(10);} //Wait for an image
+            im = (Image) queue_.take(); //Lets make an array with the queued images.
+            stack = new ImageStack(im.getWidth(), im.getHeight());
+            stack.addSlice(imJConv.createProcessor(im));
+
+            for (int i=1; i<expectedFrames_; i++) {
                 while (queue_.size()<1) { Thread.sleep(10);} //Wait for an image
                 im = (Image) queue_.take(); //Lets make an array with the queued images.
                 stack.addSlice(imJConv.createProcessor(im));
-                coords = im.getCoords().copyBuilder();
-                coords.channel(i);
-                ds.putImage(im.copyWith(coords.build(), newMeta));
-
             }
             ImagePlus imPlus = new ImagePlus("PWS", stack);
-            FileInfo info = new FileInfo()
+            FileInfo info = new FileInfo();
             imPlus.setFileInfo(info);
             FileSaver saver = new FileSaver(imPlus);
-            saver.saveAsTiffStack("PWS.tif");
-            ds.freeze();
-            ds.close();
+            saver.saveAsTiffStack(Paths.get(savePath_).resolve("pws.tif").toString());
 
             long itTook = System.currentTimeMillis() - now;
             if (debug_) {
