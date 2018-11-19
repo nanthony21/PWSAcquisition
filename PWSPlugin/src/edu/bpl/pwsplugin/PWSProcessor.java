@@ -165,7 +165,10 @@ public class PWSProcessor extends Processor {
         } finally {
             try {
                 studio_.core().stopPropertySequence(filtLabel, filtProp); //Got to make sure to stop the sequencing behaviour.
-            } catch (Exception ex) {;}
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                ReportingUtils.logMessage("ERROR: PWSPlugin: Stopping property sequence: " + ex.getMessage());
+            }
         }
     }
     
