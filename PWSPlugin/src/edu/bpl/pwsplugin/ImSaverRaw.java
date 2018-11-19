@@ -92,6 +92,7 @@ public class ImSaverRaw implements Runnable {
                 stack.addSlice(imJConv.createProcessor(im));
             }
             ImagePlus imPlus = new ImagePlus("PWS", stack);
+            imPlus.setProperty("pwsmetadata", jobj.toString());
             FileInfo info = new FileInfo();
             imPlus.setFileInfo(info);
             FileSaver saver = new FileSaver(imPlus);
