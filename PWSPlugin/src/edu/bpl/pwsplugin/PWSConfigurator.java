@@ -21,6 +21,7 @@ import javax.swing.event.DocumentEvent;
 import mmcorej.StrVector;
 import java.util.Arrays;
 import org.micromanager.internal.utils.FileDialogs;
+import org.micromanager.internal.utils.ReportingUtils;
 
 
 public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
@@ -45,8 +46,12 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
             wvStepField.setText(String.valueOf(settings_.getInteger("step",2)));
             directoryText.setText(settings_.getString("savepath",""));
             hardwareSequencingCheckBox.setSelected(settings_.getBoolean("sequence",false));
+            delayEdit.setText(String.valueOf(settings_.getInteger("delayMs", 10)));
+            cellNumEdit.setText(String.valueOf(settings_.getInteger("cellNum", 1)));
         }
-        catch (Exception e) {}
+        catch (Exception e) {
+            ReportingUtils.logError(e);
+        }
         super.loadAndRestorePosition(200, 200);
     }       
     
