@@ -392,4 +392,16 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
     private javax.swing.JTextField wvStepField;
     private javax.swing.JTextField wvStopField;
     // End of variables declaration//GEN-END:variables
+
+    //API
+    public void setSavePath(String savepath) {
+        directoryText.setText(savepath);
+        studio_.data().notifyPipelineChanged();
+    }
+    
+    public void setCellNumber(int cellNum) {
+        cellNumEdit.setText(String.valueOf(cellNum));
+        studio_.data().notifyPipelineChanged();
+    }
+
 }
