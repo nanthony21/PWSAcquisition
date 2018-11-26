@@ -78,13 +78,18 @@ public class PWSProcessor extends Processor {
         Image imageOnError = image;
         try { 
             if (studio_.live().getIsLiveModeOn()) { //Not supported
-                context.outputImage(imageOnError); 
                 return;
             }
             else {
                 Metadata md = image.getMetadata();
-                while (Files.isDirectory(Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)))){
+                /*
+                while (Files.isDirectory(Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)))){ //Find a cell number that doesn't already exist.
                     cellNum++;
+                }
+                */
+                if (Files.isDirectory(Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)))){
+                    ReportingUtils.showError("Cell " + cellNum + " already exists");
+                    return;
                 }
                 ImSaverRaw imsaver = new ImSaverRaw(studio_, Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).toString(), imageQueue, (DefaultMetadata) md, wv, true);
                 if (!studio_.acquisitions().isAcquisitionRunning()) { //This means we must be in snap mode. There is no runnable so we must acquire the image here.
@@ -94,13 +99,14 @@ public class PWSProcessor extends Processor {
                 if (debugLogEnabled_) {
                     ReportingUtils.logMessage("Queue has" + Integer.toString(imageQueue.size()));
                 }
-                context.outputImage(imageOnError);   //Return the middle image.
             }
 
-        } catch (Exception ex) {
-            context.outputImage(imageOnError);            
+        } catch (Exception ex) {          
             ReportingUtils.logError("PWSPlugin, in processor: " + ex.toString());
             imageQueue.clear();
+        }
+        finally {
+            context.outputImage(imageOnError);
         }
     }
 
