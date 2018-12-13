@@ -26,6 +26,7 @@ public class PWSProcessor extends Processor {
     String filtLabel;
     String filtProp;
     Boolean hardwareSequence;
+    Boolean useExternalTrigger;
     String savePath;
     int delayMs;
     int cellNum;
@@ -36,6 +37,7 @@ public class PWSProcessor extends Processor {
         hardwareSequence = settings.getBoolean("sequence", false);
         savePath = settings.getString("savepath", "");
         delayMs = settings.getInteger("delayMs", 0);
+        useExternalTrigger = settings.getBoolean("externalTrigger", false);
         cellNum = settings.getInteger("cellNum",1);
         filtProp = "Wavelength";
         studio_.acquisitions().attachRunnable(-1, -1, -1, -1, new PWSRunnable(this)); 
@@ -124,33 +126,54 @@ public class PWSProcessor extends Processor {
     //          @param numImages Number of images requested from the camera
     //          @param intervalMs interval between images, currently only supported by Andor cameras
     //          @param stopOnOverflow whether or not the camera stops acquiring when the circular buffer is full
-                studio_.core().startPropertySequence(filtLabel, filtProp);
-
-                if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { //This device adapter doesn't seem to support delays in the sequence acquisition. We instead set the master pulse interval. We have to assume that the camera is set to trigger from the master pulse. 
-                    double exposurems = studio_.core().getExposure();
-                    double readoutms = 10; //This is based on the frame rate calculation portion of the 13440-20CU camera. 9.7 us per line, reading two lines at once, 20148 lines -> 0.097*2048/2 ~= 10
-                    studio_.core().setProperty(cam, "MASTER PULSE INTERVAL", (exposurems+readoutms+delayMs)/1000.0);
-                    studio_.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an eror if the interval is not 0.
-                } else{
-                    studio_.core().startSequenceAcquisition(wv.length, delayMs, false);
+                String origCameraTrigger="";  
+                if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")){
+                    origCameraTrigger = studio_.core().getProperty(cam, "TRIGGER SOURCE");
                 }
+                try {
+                    studio_.core().startPropertySequence(filtLabel, filtProp);
+                    if (useExternalTrigger) {
+                        if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { //This device adapter doesn't seem to support delays in the sequence acquisition. We instead set the master pulse interval. We have to assume that the camera is set to trigger from the master pulse. 
+                            studio_.core().setProperty(cam, "TRIGGER SOURCE", "EXTERNAL");
+                        }   
+                    }
+                    else { //Since we're not using an external trigger we need to have the camera control the timing.
+                        if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { //This device adapter doesn't seem to support delays in the sequence acquisition. We instead set the master pulse interval.
+                            studio_.core().setProperty(cam, "TRIGGER SOURCE", "MASTER PULSE"); //Make sure that MAster Pulse is triggering the camera.
+                            double exposurems = studio_.core().getExposure();
+                            double readoutms = 10; //This is based on the frame rate calculation portion of the 13440-20CU camera. 9.7 us per line, reading two lines at once, 20148 lines -> 0.097*2048/2 ~= 10
+                            studio_.core().setProperty(cam, "MASTER PULSE INTERVAL", (exposurems+readoutms+delayMs)/1000.0);
+                            studio_.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an eror if the interval is not 0.
+                        } else{
+                            studio_.core().startSequenceAcquisition(wv.length, delayMs, false);
+                        }
+                    }
 
 
-                boolean canExit = false;
-                while (true) {
-                    boolean remaining = (studio_.core().getRemainingImageCount() > 0);
-                    boolean running = (studio_.core().isSequenceRunning(cam));
-                    if ((!remaining) && (canExit)) {
-                        studio_.core().stopSequenceAcquisition(); 
-                        break;  //Everything is taken care of.
+
+                    boolean canExit = false;
+                    while (true) {
+                        boolean remaining = (studio_.core().getRemainingImageCount() > 0);
+                        boolean running = (studio_.core().isSequenceRunning(cam));
+                        if ((!remaining) && (canExit)) {
+
+                            break;  //Everything is taken care of.
+                        }
+                        if (remaining) {    //Process images
+                           imageQueue.add(studio_.data().convertTaggedImage(studio_.core().popNextTaggedImage()));
+                        }
+                        if (!running) {
+                            canExit = true;
+                        }
+                     }
+
+                }
+                finally {
+                    studio_.core().stopSequenceAcquisition();
+                    if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")){
+                        studio_.core().setProperty(cam, "TRIGGER SOURCE", origCameraTrigger); //Set the trigger source back ot what it was originally
                     }
-                    if (remaining) {    //Process images
-                       imageQueue.add(studio_.data().convertTaggedImage(studio_.core().popNextTaggedImage()));
-                    }
-                    if (!running) {
-                        canExit = true;
-                    }
-                 }
+                }
             }
             else {  //Software sequenced acquisition
                 for (int i=0; i<wv.length; i++) {
