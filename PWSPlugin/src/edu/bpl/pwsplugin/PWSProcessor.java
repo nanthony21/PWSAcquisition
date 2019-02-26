@@ -30,7 +30,7 @@ public class PWSProcessor extends Processor {
     String savePath;
     int delayMs;
     int cellNum;
-    public PWSProcessor(Studio studio, PropertyMap settings){
+    public PWSProcessor(Studio studio, PropertyMap settings) throws Exception{
         studio_ = studio;
         wv = settings.getIntegerList("wv");
         filtLabel = settings.getString("filtLabel", "");
@@ -46,10 +46,12 @@ public class PWSProcessor extends Processor {
         if (hardwareSequence) {
             try {
                 if (!studio_.core().isPropertySequenceable(filtLabel, filtProp)){
-                    ReportingUtils.showError("The filter device does not have a sequenceable 'Wavelength' property.");
+                    throw new Exception("The filter device does not have a sequenceable 'Wavelength' property.");
+                    //ReportingUtils.showError("The filter device does not have a sequenceable 'Wavelength' property.");
                 }
                 if (studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp) < wv.length) {
-                    ReportingUtils.showError("The filter device does not support sequencing as many wavelenghts as have been specified. Max is " + Integer.toString(studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp)));
+                    throw new Exception("The filter device does not support sequencing as many wavelenghts as have been specified. Max is " + Integer.toString(studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp)));
+                    //ReportingUtils.showError("The filter device does not support sequencing as many wavelenghts as have been specified. Max is " + Integer.toString(studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp)));
                 }
                 StrVector strv = new StrVector();
                 for (int i = 0; i < wv.length; i++) {   //Convert wv from int to string for sending to the device.
@@ -59,6 +61,7 @@ public class PWSProcessor extends Processor {
             }
             catch (Exception ex) {
                 ReportingUtils.showError(ex);
+                throw ex;
             }
         }             
     }
@@ -135,6 +138,7 @@ public class PWSProcessor extends Processor {
                     if (useExternalTrigger) {
                         if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { //This device adapter doesn't seem to support delays in the sequence acquisition. We instead set the master pulse interval. We have to assume that the camera is set to trigger from the master pulse. 
                             studio_.core().setProperty(cam, "TRIGGER SOURCE", "EXTERNAL");
+                            studio_.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an eror if the interval is not 0.
                         }   
                     }
                     else { //Since we're not using an external trigger we need to have the camera control the timing.
@@ -148,15 +152,12 @@ public class PWSProcessor extends Processor {
                             studio_.core().startSequenceAcquisition(wv.length, delayMs, false);
                         }
                     }
-
-
-
+                    
                     boolean canExit = false;
                     while (true) {
                         boolean remaining = (studio_.core().getRemainingImageCount() > 0);
                         boolean running = (studio_.core().isSequenceRunning(cam));
                         if ((!remaining) && (canExit)) {
-
                             break;  //Everything is taken care of.
                         }
                         if (remaining) {    //Process images
