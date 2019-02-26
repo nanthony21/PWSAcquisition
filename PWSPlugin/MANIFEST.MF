@@ -5,5 +5,5 @@ Signature-Title: PWSPlugin
 Signature-Vendor: Backman Photonics Laboratory (Nick Anthony)
 Application-Plugin: Micro-Manager
 Built-By: N2-LiveCell
-Built-Date: 10-25-2018
+Built-Date: 02-26-2019
 
