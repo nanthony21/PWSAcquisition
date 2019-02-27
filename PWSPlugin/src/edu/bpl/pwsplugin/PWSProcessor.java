@@ -137,7 +137,10 @@ public class PWSProcessor extends Processor {
                     if (useExternalTrigger) {
                         if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { //This device adapter doesn't seem to support delays in the sequence acquisition. We instead set the master pulse interval. We have to assume that the camera is set to trigger from the master pulse. 
                             studio_.core().setProperty(cam, "TRIGGER SOURCE", "EXTERNAL");
+                            studio_.core().setProperty(cam, "TRIGGER_DELAY", delayMs/1000); //This is in units of seconds.
                             studio_.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an eror if the interval is not 0.
+                            int currWv = Integer.parseInt(studio_.core().getProperty(filtLabel, filtProp));
+                            studio_.core().setProperty(filtLabel, filtProp, currWv+1); //Trigger a pulse which sets the whole thing off.
                         }   
                     }
                     else { //Since we're not using an external trigger we need to have the camera control the timing.
