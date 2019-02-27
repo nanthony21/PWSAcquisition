@@ -28,7 +28,6 @@ public class PWSProcessor extends Processor {
     Boolean hardwareSequence;
     Boolean useExternalTrigger;
     String savePath;
-    int delayMs;
     int cellNum;
     public PWSProcessor(Studio studio, PropertyMap settings) throws Exception{
         studio_ = studio;
@@ -36,7 +35,6 @@ public class PWSProcessor extends Processor {
         filtLabel = settings.getString("filtLabel", "");
         hardwareSequence = settings.getBoolean("sequence", false);
         savePath = settings.getString("savepath", "");
-        delayMs = settings.getInteger("delayMs", 0);
         useExternalTrigger = settings.getBoolean("externalTrigger", false);
         cellNum = settings.getInteger("cellNum",1);
         filtProp = "Wavelength";
@@ -135,6 +133,7 @@ public class PWSProcessor extends Processor {
                 }
                 try {
                     studio_.core().startPropertySequence(filtLabel, filtProp);
+                    double delayMs = studio_.core().getDeviceDelayMs(filtLabel); //Use the delay defined by the device adapter.
                     if (useExternalTrigger) {
                         if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { //This device adapter doesn't seem to support delays in the sequence acquisition. We instead set the master pulse interval. We have to assume that the camera is set to trigger from the master pulse. 
                             studio_.core().setProperty(cam, "TRIGGER SOURCE", "EXTERNAL");

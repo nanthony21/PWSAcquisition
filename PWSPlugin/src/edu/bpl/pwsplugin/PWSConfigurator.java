@@ -47,7 +47,6 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
             directoryText.setText(settings_.getString("savepath",""));
             hardwareSequencingCheckBox.setSelected(settings_.getBoolean("sequence",false));
             externalTriggerCheckBox.setSelected(settings_.getBoolean("externalTrigger",false));
-            delayEdit.setText(String.valueOf(settings_.getInteger("delayMs", 10)));
             cellNumEdit.setText(String.valueOf(settings_.getInteger("cellNum", 1)));
         }
         catch (Exception e) {
@@ -78,7 +77,6 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
             builder.putBoolean("sequence", hardwareSequencingCheckBox.isSelected());
             builder.putBoolean("externalTrigger",externalTriggerCheckBox.isSelected());
             builder.putString("savepath", directoryText.getText());
-            builder.putInteger("delayMs", Integer.parseInt(delayEdit.getText()));
             builder.putInteger("cellNum", Integer.parseInt(cellNumEdit.getText()));
         }
         catch(NumberFormatException e){
@@ -127,7 +125,7 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
     public void customInitComponents() {
         javax.swing.JTextField[] fields = {wvStartField, wvStopField,
             wvStepField, directoryText,
-            delayEdit, cellNumEdit};
+            cellNumEdit};
         for (int i=0; i<fields.length; i++) {
             fields[i].getDocument().addDocumentListener(new DocumentListener() {
                 @Override
@@ -172,8 +170,6 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         filterLabel = new javax.swing.JLabel();
         filterComboBox = new javax.swing.JComboBox<String>();
         hardwareSequencingCheckBox = new javax.swing.JCheckBox();
-        filterLabel1 = new javax.swing.JLabel();
-        delayEdit = new javax.swing.JTextField();
         externalTriggerCheckBox = new javax.swing.JCheckBox();
         submitButton = new javax.swing.JButton();
 
@@ -219,8 +215,7 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
                         .addGap(27, 27, 27)
                         .addComponent(stopLabel)
                         .addGap(43, 43, 43)
-                        .addComponent(stepLabel)
-                        .addGap(26, 26, 26))
+                        .addComponent(stepLabel))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(wvStartField, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(7, 7, 7)
@@ -310,15 +305,6 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
             }
         });
 
-        filterLabel1.setText("FilterDelay");
-
-        delayEdit.setText("10");
-        delayEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                delayEditActionPerformed(evt);
-            }
-        });
-
         externalTriggerCheckBox.setText("Use External Trigger");
         externalTriggerCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -334,12 +320,8 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(filterLabel)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(filterLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(delayEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(filterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(250, Short.MAX_VALUE))
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(hardwareSequencingCheckBox)
@@ -354,11 +336,7 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
                 .addComponent(filterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(hardwareSequencingCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(filterLabel1)
-                    .addComponent(delayEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
                 .addComponent(externalTriggerCheckBox)
                 .addContainerGap())
         );
@@ -429,10 +407,6 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         settingsChanged();
     }//GEN-LAST:event_hardwareSequencingCheckBoxActionPerformed
 
-    private void delayEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delayEditActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_delayEditActionPerformed
-
     private void cellNumEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cellNumEditActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cellNumEditActionPerformed
@@ -443,13 +417,11 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField cellNumEdit;
-    private javax.swing.JTextField delayEdit;
     private javax.swing.JButton directoryButton;
     private javax.swing.JTextField directoryText;
     private javax.swing.JCheckBox externalTriggerCheckBox;
     private javax.swing.JComboBox<String> filterComboBox;
     private javax.swing.JLabel filterLabel;
-    private javax.swing.JLabel filterLabel1;
     private javax.swing.JCheckBox hardwareSequencingCheckBox;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
