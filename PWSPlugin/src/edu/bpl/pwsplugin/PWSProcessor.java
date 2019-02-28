@@ -53,7 +53,7 @@ public class PWSProcessor extends Processor {
         }
         JSONArray linPoly = new JSONArray();
         for (int i=0; i<linearityPolynomial.length; i++) {
-            linPoly.put(linearityPolynomial);
+            linPoly.put(linearityPolynomial[i]);
         }
         metadata.put("wavelengths", WV);  
         metadata.put("system", systemName);
