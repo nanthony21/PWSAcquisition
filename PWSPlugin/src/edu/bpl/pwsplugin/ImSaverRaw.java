@@ -25,6 +25,9 @@ import ij.io.FileSaver;
 import ij.io.FileInfo;
 import org.json.JSONObject;
 import org.json.JSONArray;
+import java.io.IOException;
+import ij.process.ImageConverter;
+import ij.plugin.ContrastEnhancer;
 
 /**
  *
@@ -39,6 +42,7 @@ public class ImSaverRaw implements Runnable {
     int expectedFrames_;
     int[] wv_;
     String savePath_;
+    DefaultImageJConverter imJConv;
 
     ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue, JSONObject metadata, int[] wavelengths, boolean debug){
         debug_ = debug;
@@ -48,6 +52,7 @@ public class ImSaverRaw implements Runnable {
         expectedFrames_ = wavelengths.length;
         savePath_ = savePath;
         wv_ = wavelengths;
+        imJConv = new DefaultImageJConverter();
         t = new Thread(this, "PWS ImSaver");
         t.start();
     }
@@ -62,11 +67,9 @@ public class ImSaverRaw implements Runnable {
      
             new File(savePath_).mkdirs();
             
-            FileWriter file = new FileWriter(Paths.get(savePath_).resolve("pwsmetadata.json").toString());
-            file.write(md_);
-            file.flush();
-            file.close();
-            DefaultImageJConverter imJConv = new DefaultImageJConverter();
+            writeMetadata();
+            
+            
             ImageStack stack;
             Image im;
                         
@@ -79,6 +82,9 @@ public class ImSaverRaw implements Runnable {
             for (int i=1; i<expectedFrames_; i++) {
                 while (queue_.size()<1) { Thread.sleep(10);} //Wait for an image
                 im = (Image) queue_.take(); //Lets make an array with the queued images.
+                if (i == expectedFrames_/2) {
+                    saveImBd(im); //Save the image from halfway through the sequence.
+                }
                 stack.addSlice(imJConv.createProcessor(im));
                 album.addImage(im, wv_[i]);
             }
@@ -97,8 +103,26 @@ public class ImSaverRaw implements Runnable {
             ReportingUtils.showError(ex);
             ReportingUtils.logError("Error: PWSPlugin, while producing averaged img: "+ ex.toString());
         } 
-        
+    }
+    
+    private void writeMetadata() throws IOException {
+            FileWriter file = new FileWriter(Paths.get(savePath_).resolve("pwsmetadata.json").toString());
+            file.write(md_);
+            file.flush();
+            file.close();
+    }
+            
 
-        
+    private void saveImBd(Image im) {
+        ImagePlus imPlus = new ImagePlus("PWS", imJConv.createProcessor(im));
+        ContrastEnhancer contrast = new ContrastEnhancer();
+        contrast.stretchHistogram(imPlus,0.01); //I think this will saturate 0.01% of the image. or maybe its 1% idk. 
+        ImageConverter converter = new ImageConverter(imPlus);
+        converter.setDoScaling(true);
+        converter.convertToGray8();
+        FileInfo info = new FileInfo();
+        imPlus.setFileInfo(info);
+        FileSaver saver = new FileSaver(imPlus);
+        saver.saveAsTiff(Paths.get(savePath_).resolve("image_bd.tif").toString());
     }
 }
