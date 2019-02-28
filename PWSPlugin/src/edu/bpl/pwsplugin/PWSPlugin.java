@@ -54,7 +54,21 @@ public class PWSPlugin implements ProcessorPlugin, SciJavaPlugin {
     public static String tooltipDescription = "Hyperspectral Image";
     public static String versionNumber = "0.1";
     public static String copyright = "Backman Photonics Lab";
+    
+    public static String wvSetting = "wv";
+    public static String startSetting = "start";
+    public static String stopSetting = "stop";
+    public static String stepSetting = "step";
+    public static String darkCountsSetting = "darkCounts";
+    public static String linearityPolySetting = "linearityPoly";
+    public static String sequenceSetting = "sequence";
+    public static String externalTriggerSetting = "externalTrigger";
+    public static String savePathSetting  = "savepath";
+    public static String cellNumSetting  = "cellNum";
+    public static String filterLabelSetting = "filtLabel";
+    public static String systemNameSetting = "systemName";
 
+    
     private Studio studio_;  
     
     @Override

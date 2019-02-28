@@ -62,6 +62,11 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
             int start = Integer.parseInt(wvStartField.getText().trim());
             int stop = Integer.parseInt(wvStopField.getText().trim());
             int step = Integer.parseInt(wvStepField.getText().trim());
+            int darkCounts = Integer.parseInt(darkCountsEdit.getText().trim());
+            int[] linearityPolynomial = Arrays.asList(linearityCorrectionEdit.getText().split(","))
+                                .stream()
+                                .map(String::trim)
+                                .mapToInt(Integer::parseInt).toArray();
             ArrayList<Integer> wvList = new ArrayList<Integer>();
             for (int i = start; i <= stop; i += step) {
                 wvList.add(i);
@@ -70,20 +75,22 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
             for (int i=0; i<wvList.size(); i++) {
                 wvArr[i] = wvList.get(i).intValue();
             }
-            builder.putIntegerList("wv", wvArr);
-            builder.putInteger("start", start);
-            builder.putInteger("stop", stop);
-            builder.putInteger("step", step);      
-            builder.putBoolean("sequence", hardwareSequencingCheckBox.isSelected());
-            builder.putBoolean("externalTrigger",externalTriggerCheckBox.isSelected());
-            builder.putString("savepath", directoryText.getText());
-            builder.putInteger("cellNum", Integer.parseInt(cellNumEdit.getText()));
+            builder.putIntegerList(PWSPlugin.wvSetting, wvArr);
+            builder.putInteger(PWSPlugin.startSetting, start);
+            builder.putInteger(PWSPlugin.stopSetting, stop);
+            builder.putInteger(PWSPlugin.stepSetting, step);    
+            builder.putInteger(PWSPlugin.darkCountsSetting, darkCounts);
+            builder.putIntegerList(PWSPlugin.linearityPolySetting, linearityPolynomial);
+            builder.putBoolean(PWSPlugin.sequenceSetting, hardwareSequencingCheckBox.isSelected());
+            builder.putBoolean(PWSPlugin.externalTriggerSetting,externalTriggerCheckBox.isSelected());
+            builder.putString(PWSPlugin.savePathSetting, directoryText.getText());
+            builder.putInteger(PWSPlugin.cellNumSetting, Integer.parseInt(cellNumEdit.getText()));
         }
         catch(NumberFormatException e){
             log_.showMessage("A valid number was not specified.");
         }
         try{
-            builder.putString("filtLabel", filterComboBox.getSelectedItem().toString());
+            builder.putString(PWSPlugin.filterLabelSetting, filterComboBox.getSelectedItem().toString());
         }
         catch(NumberFormatException e){
             log_.showMessage("A valid string was not specified.");
@@ -125,7 +132,7 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
     public void customInitComponents() {
         javax.swing.JTextField[] fields = {wvStartField, wvStopField,
             wvStepField, directoryText,
-            cellNumEdit};
+            cellNumEdit, systemNameEdit, darkCountsEdit, linearityCorrectionEdit};
         for (int i=0; i<fields.length; i++) {
             fields[i].getDocument().addDocumentListener(new DocumentListener() {
                 @Override
@@ -171,6 +178,13 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         filterComboBox = new javax.swing.JComboBox<String>();
         hardwareSequencingCheckBox = new javax.swing.JCheckBox();
         externalTriggerCheckBox = new javax.swing.JCheckBox();
+        jPanel1 = new javax.swing.JPanel();
+        systemNameEdit = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        darkCountsEdit = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        linearityCorrectionEdit = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
         submitButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -343,6 +357,70 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
 
         jTabbedPane1.addTab("tab2", jPanel4);
 
+        systemNameEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                systemNameEditActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Name");
+
+        darkCountsEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                darkCountsEditActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Dark Counts");
+
+        linearityCorrectionEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                linearityCorrectionEditActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Linearity Correction");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(systemNameEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(darkCountsEdit)))
+                    .addComponent(jLabel3)
+                    .addComponent(linearityCorrectionEdit))
+                .addContainerGap(160, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(darkCountsEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(systemNameEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(linearityCorrectionEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(50, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("system data", jPanel1);
+
         submitButton.setText("Submit");
         submitButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -379,16 +457,12 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
     }//GEN-LAST:event_formWindowClosing
 
     private void wvStartFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wvStartFieldActionPerformed
-        //settingsChanged();
     }//GEN-LAST:event_wvStartFieldActionPerformed
 
     private void wvStopFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wvStopFieldActionPerformed
-        // TODO add your handling code here:
-        //settingsChanged();
     }//GEN-LAST:event_wvStopFieldActionPerformed
 
     private void filterComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterComboBoxActionPerformed
-        // TODO add your handling code here:
         settingsChanged();
     }//GEN-LAST:event_filterComboBoxActionPerformed
 
@@ -405,6 +479,11 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
 
     private void hardwareSequencingCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hardwareSequencingCheckBoxActionPerformed
         settingsChanged();
+        boolean checked = hardwareSequencingCheckBox.isSelected();
+        if (!checked) {
+            externalTriggerCheckBox.setSelected(false);
+        }
+        externalTriggerCheckBox.setEnabled(checked);
     }//GEN-LAST:event_hardwareSequencingCheckBoxActionPerformed
 
     private void cellNumEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cellNumEditActionPerformed
@@ -412,26 +491,45 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
     }//GEN-LAST:event_cellNumEditActionPerformed
 
     private void externalTriggerCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_externalTriggerCheckBoxActionPerformed
-        // TODO add your handling code here:
+        settingsChanged();
     }//GEN-LAST:event_externalTriggerCheckBoxActionPerformed
+
+    private void systemNameEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_systemNameEditActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_systemNameEditActionPerformed
+
+    private void darkCountsEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_darkCountsEditActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_darkCountsEditActionPerformed
+
+    private void linearityCorrectionEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linearityCorrectionEditActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_linearityCorrectionEditActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField cellNumEdit;
+    private javax.swing.JTextField darkCountsEdit;
     private javax.swing.JButton directoryButton;
     private javax.swing.JTextField directoryText;
     private javax.swing.JCheckBox externalTriggerCheckBox;
     private javax.swing.JComboBox<String> filterComboBox;
     private javax.swing.JLabel filterLabel;
     private javax.swing.JCheckBox hardwareSequencingCheckBox;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTextField linearityCorrectionEdit;
     private javax.swing.JLabel startLabel;
     private javax.swing.JLabel stepLabel;
     private javax.swing.JLabel stepLabel1;
     private javax.swing.JLabel stopLabel;
     private javax.swing.JButton submitButton;
+    private javax.swing.JTextField systemNameEdit;
     private javax.swing.JTextField wvStartField;
     private javax.swing.JTextField wvStepField;
     private javax.swing.JTextField wvStopField;
