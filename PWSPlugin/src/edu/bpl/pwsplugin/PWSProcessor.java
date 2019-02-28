@@ -15,6 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 
@@ -49,10 +51,14 @@ public class PWSProcessor extends Processor {
         for (int i = 0; i < wv.length; i++) {
             WV.put(wv[i]);
         }
+        JSONArray linPoly = new JSONArray();
+        for (int i=0; i<linearityPolynomial.length; i++) {
+            linPoly.put(linearityPolynomial);
+        }
         metadata.put("wavelengths", WV);  
         metadata.put("system", systemName);
         metadata.put("darkCounts", darkCounts);
-        metadata.put("linearityPoly", linearityPolynomial);
+        metadata.put("linearityPoly", linPoly);
 
         filtProp = "Wavelength";
         studio_.acquisitions().attachRunnable(-1, -1, -1, -1, new PWSRunnable(this)); 
@@ -105,6 +111,7 @@ public class PWSProcessor extends Processor {
                 JSONObject jmd = new JSONObject(((DefaultMetadata)md).toPropertyMap().toJSON());
                 metadata.put("MicroManagerMetadata", jmd);
                 metadata.put("exposure", studio_.core().getExposure());
+                metadata.put("time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:SS")));
 
                 /*
                 while (Files.isDirectory(Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)))){ //Find a cell number that doesn't already exist.

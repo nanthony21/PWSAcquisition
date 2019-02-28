@@ -22,6 +22,7 @@ import mmcorej.StrVector;
 import java.util.Arrays;
 import org.micromanager.internal.utils.FileDialogs;
 import org.micromanager.internal.utils.ReportingUtils;
+import java.util.stream.Collectors;
 
 
 public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
@@ -41,13 +42,18 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         customInitComponents();
 
         try {
-            wvStartField.setText(String.valueOf(settings_.getInteger("start", 500)));
-            wvStopField.setText(String.valueOf(settings_.getInteger("stop",700)));
-            wvStepField.setText(String.valueOf(settings_.getInteger("step",2)));
-            directoryText.setText(settings_.getString("savepath",""));
-            hardwareSequencingCheckBox.setSelected(settings_.getBoolean("sequence",false));
-            externalTriggerCheckBox.setSelected(settings_.getBoolean("externalTrigger",false));
-            cellNumEdit.setText(String.valueOf(settings_.getInteger("cellNum", 1)));
+            wvStartField.setText(String.valueOf(settings_.getInteger(PWSPlugin.startSetting, 500)));
+            wvStopField.setText(String.valueOf(settings_.getInteger(PWSPlugin.stopSetting,700)));
+            wvStepField.setText(String.valueOf(settings_.getInteger(PWSPlugin.stepSetting,2)));
+            directoryText.setText(settings_.getString(PWSPlugin.savePathSetting,""));
+            hardwareSequencingCheckBox.setSelected(settings_.getBoolean(PWSPlugin.sequenceSetting,false));
+            externalTriggerCheckBox.setSelected(settings_.getBoolean(PWSPlugin.externalTriggerSetting,false));
+            cellNumEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.cellNumSetting, 1)));
+            systemNameEdit.setText(settings_.getString(PWSPlugin.systemNameSetting, ""));
+            darkCountsEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.darkCountsSetting, 0)));
+            linearityCorrectionEdit.setText(String.join(",",Arrays.asList(settings_.getIntegerList(PWSPlugin.linearityPolySetting)).stream().map(Object::toString).collect(Collectors.toList()))); //convert from int[] to csv string.
+            
+            
         }
         catch (Exception e) {
             ReportingUtils.logError(e);
@@ -81,6 +87,7 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
             builder.putInteger(PWSPlugin.stepSetting, step);    
             builder.putInteger(PWSPlugin.darkCountsSetting, darkCounts);
             builder.putIntegerList(PWSPlugin.linearityPolySetting, linearityPolynomial);
+            builder.putString(PWSPlugin.systemNameSetting, systemNameEdit.getText());
             builder.putBoolean(PWSPlugin.sequenceSetting, hardwareSequencingCheckBox.isSelected());
             builder.putBoolean(PWSPlugin.externalTriggerSetting,externalTriggerCheckBox.isSelected());
             builder.putString(PWSPlugin.savePathSetting, directoryText.getText());

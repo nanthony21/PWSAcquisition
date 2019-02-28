@@ -62,8 +62,6 @@ public class ImSaverRaw implements Runnable {
      
             new File(savePath_).mkdirs();
             
-
-            
             FileWriter file = new FileWriter(Paths.get(savePath_).resolve("pwsmetadata.json").toString());
             file.write(md_);
             file.flush();
