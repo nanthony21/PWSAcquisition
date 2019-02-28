@@ -13,6 +13,8 @@ import org.micromanager.data.Metadata;
 import org.micromanager.data.internal.DefaultMetadata;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 
@@ -29,14 +31,29 @@ public class PWSProcessor extends Processor {
     Boolean useExternalTrigger;
     String savePath;
     int cellNum;
+    JSONObject metadata = new JSONObject();
     public PWSProcessor(Studio studio, PropertyMap settings) throws Exception{
         studio_ = studio;
-        wv = settings.getIntegerList("wv");
-        filtLabel = settings.getString("filtLabel", "");
-        hardwareSequence = settings.getBoolean("sequence", false);
-        savePath = settings.getString("savepath", "");
-        useExternalTrigger = settings.getBoolean("externalTrigger", false);
-        cellNum = settings.getInteger("cellNum",1);
+        
+        wv = settings.getIntegerList(PWSPlugin.wvSetting);
+        filtLabel = settings.getString(PWSPlugin.filterLabelSetting, "");
+        hardwareSequence = settings.getBoolean(PWSPlugin.sequenceSetting, false);
+        savePath = settings.getString(PWSPlugin.savePathSetting, "");
+        useExternalTrigger = settings.getBoolean(PWSPlugin.externalTriggerSetting, false);
+        cellNum = settings.getInteger(PWSPlugin.cellNumSetting,1);
+        int darkCounts = settings.getInteger(PWSPlugin.darkCountsSetting,0);
+        int[] linearityPolynomial = settings.getIntegerList(PWSPlugin.linearityPolySetting);
+        String systemName = settings.getString(PWSPlugin.systemNameSetting, "");
+        
+        JSONArray WV = new JSONArray();
+        for (int i = 0; i < wv.length; i++) {
+            WV.put(wv[i]);
+        }
+        metadata.put("wavelengths", WV);  
+        metadata.put("system", systemName);
+        metadata.put("darkCounts", darkCounts);
+        metadata.put("linearityPoly", linearityPolynomial);
+
         filtProp = "Wavelength";
         studio_.acquisitions().attachRunnable(-1, -1, -1, -1, new PWSRunnable(this)); 
         imageQueue = new LinkedBlockingQueue();
@@ -85,6 +102,10 @@ public class PWSProcessor extends Processor {
             }
             else {
                 Metadata md = image.getMetadata();
+                JSONObject jmd = new JSONObject(((DefaultMetadata)md).toPropertyMap().toJSON());
+                metadata.put("MicroManagerMetadata", jmd);
+                metadata.put("exposure", studio_.core().getExposure());
+
                 /*
                 while (Files.isDirectory(Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)))){ //Find a cell number that doesn't already exist.
                     cellNum++;
@@ -94,7 +115,7 @@ public class PWSProcessor extends Processor {
                     ReportingUtils.showError("Cell " + cellNum + " already exists");
                     return;
                 }
-                ImSaverRaw imsaver = new ImSaverRaw(studio_, Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).toString(), imageQueue, (DefaultMetadata) md, wv, true);
+                ImSaverRaw imsaver = new ImSaverRaw(studio_, Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).toString(), imageQueue, metadata, wv, true);
                 if (!studio_.acquisitions().isAcquisitionRunning()) { //This means we must be in snap mode. There is no runnable so we must acquire the image here.
                     acquireImages();
                 }

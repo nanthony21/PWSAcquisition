@@ -32,7 +32,7 @@ import org.json.JSONArray;
  */
 public class ImSaverRaw implements Runnable {
     boolean debug_;
-    Metadata md_;
+    String md_;
     LinkedBlockingQueue queue_;
     Thread t;
     Studio studio_;
@@ -40,9 +40,9 @@ public class ImSaverRaw implements Runnable {
     int[] wv_;
     String savePath_;
 
-    ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue, Metadata metadata, int[] wavelengths, boolean debug){
+    ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue, JSONObject metadata, int[] wavelengths, boolean debug){
         debug_ = debug;
-        md_ = metadata;
+        md_ = metadata.toString();
         queue_ = queue;
         studio_ = studio;
         expectedFrames_ = wavelengths.length;
@@ -62,19 +62,10 @@ public class ImSaverRaw implements Runnable {
      
             new File(savePath_).mkdirs();
             
-            JSONObject jobj = new JSONObject();
-            JSONObject md = new JSONObject(((DefaultMetadata)md_).toPropertyMap().toJSON());
-            jobj.put("MicroManagerMetadata", md);
-            JSONArray WV = new JSONArray();
-            for (int i = 0; i < wv_.length; i++) {
-                WV.put(wv_[i]);
-            }
-            jobj.put("wavelengths", WV);  
-            jobj.put("exposure", studio_.core().getExposure());
-            jobj.put("system", "lcpws2");
+
             
             FileWriter file = new FileWriter(Paths.get(savePath_).resolve("pwsmetadata.json").toString());
-            file.write(jobj.toString());
+            file.write(md_);
             file.flush();
             file.close();
             DefaultImageJConverter imJConv = new DefaultImageJConverter();
@@ -94,7 +85,7 @@ public class ImSaverRaw implements Runnable {
                 album.addImage(im, wv_[i]);
             }
             ImagePlus imPlus = new ImagePlus("PWS", stack);
-            imPlus.setProperty("Info", jobj.toString());
+            imPlus.setProperty("Info", md_);
             FileInfo info = new FileInfo();
             imPlus.setFileInfo(info);
             FileSaver saver = new FileSaver(imPlus);
