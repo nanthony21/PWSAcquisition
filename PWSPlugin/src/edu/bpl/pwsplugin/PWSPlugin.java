@@ -81,7 +81,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     @Override
     public void onPluginSelected() {
         if (frame_ == null) {
-            frame_ = new PWSConfigurator(settings, studio_);
+            frame_ = new PWSConfigurator(studio_);
         }
         frame_.setVisible(true);
     }
