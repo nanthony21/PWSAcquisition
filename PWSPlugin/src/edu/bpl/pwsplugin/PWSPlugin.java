@@ -35,24 +35,26 @@ package edu.bpl.pwsplugin;
  * Backman Photonics Lab, Northwestern University, Evanston, IL.
  */
 
+import com.google.common.eventbus.Subscribe;
 import javax.swing.JFrame;
 import mmcorej.CMMCore;
 import org.micromanager.Studio;
 import org.micromanager.acquisition.internal.AcquisitionWrapperEngine;
-import org.micromanager.data.ProcessorPlugin;
+import org.micromanager.MenuPlugin;
 import org.micromanager.data.ProcessorConfigurator;
 import org.micromanager.data.ProcessorFactory;
 import org.micromanager.PropertyMap;
+import org.micromanager.events.ShutdownCommencingEvent;
 
 import org.scijava.plugin.SciJavaPlugin;
 import org.scijava.plugin.Plugin;
    
-@Plugin(type = ProcessorPlugin.class)
-public class PWSPlugin implements ProcessorPlugin, SciJavaPlugin {
+@Plugin(type = MenuPlugin.class)
+public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
 
     public static String menuName = "PWSAcquisition";
     public static String tooltipDescription = "Hyperspectral Image";
-    public static String versionNumber = "0.1";
+    public static String versionNumber = "0.2";
     public static String copyright = "Backman Photonics Lab";
     
     public static String wvSetting = "wv";
@@ -67,9 +69,9 @@ public class PWSPlugin implements ProcessorPlugin, SciJavaPlugin {
     public static String cellNumSetting  = "cellNum";
     public static String filterLabelSetting = "filtLabel";
     public static String systemNameSetting = "systemName";
-
     
     private Studio studio_;  
+    private PWSConfigurator frame_;
     
     @Override
     public void setContext(Studio studio) {
@@ -77,13 +79,16 @@ public class PWSPlugin implements ProcessorPlugin, SciJavaPlugin {
     } 
     
     @Override
-    public ProcessorConfigurator createConfigurator(PropertyMap settings) {
-        return new PWSConfigurator(settings, studio_);
+    public void onPluginSelected() {
+        if (frame_ == null) {
+            frame_ = new PWSConfigurator(settings, studio_);
+        }
+        frame_.setVisible(true);
     }
     
     @Override
-    public ProcessorFactory createFactory(PropertyMap settings) {
-        return new PWSFactory(studio_, settings);
+    public String getSubMenu() {
+        return "Acquisition Tools";
     }
 
     @Override
@@ -105,4 +110,13 @@ public class PWSPlugin implements ProcessorPlugin, SciJavaPlugin {
     public String getCopyright() {
         return copyright;
     }
+    
+    @Subscribe
+    public void closeRequested( ShutdownCommencingEvent sce){
+      if (frame_ != null) {
+         if (!sce.getIsCancelled()) {
+            frame_.dispose();
+         }
+      }
+   }
 }

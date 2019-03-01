@@ -7,11 +7,12 @@ package edu.bpl.pwsplugin;
 
 
 import java.awt.Color;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import org.micromanager.internal.utils.MMFrame;
-import org.micromanager.data.ProcessorConfigurator;
-import org.micromanager.PropertyMaps;
 import org.micromanager.PropertyMap;
+import org.micromanager.propertymap.MutablePropertyMapView;
 import org.micromanager.Studio;
 import org.micromanager.LogManager;
 import java.util.ArrayList;
@@ -25,22 +26,32 @@ import org.micromanager.internal.utils.ReportingUtils;
 import java.util.stream.Collectors;
 
 
-public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
+public class PWSConfigurator extends MMFrame {
 
     private final Studio studio_;
-    private PropertyMap settings_;
+    private MutablePropertyMapView settings_;
     private final LogManager log_;
+    private PWSProcessor processor_;
     
     /**
-     * Creates new form FrameAveragerControls
+     * 
      */
-    public PWSConfigurator(PropertyMap settings, Studio studio) {
+    public PWSConfigurator(Studio studio) {
         studio_ = studio;
-        settings_ = settings;
+        settings_ = studio_.profile().getSettings(PWSConfigurator.class);
         log_ = studio.logs();
+        
+        super.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(final WindowEvent e) {
+               saveSettings();
+            }
+        });
+        
         initComponents();
         customInitComponents();
-
+        scanDevices();
+        
         try {
             wvStartField.setText(String.valueOf(settings_.getInteger(PWSPlugin.startSetting, 500)));
             wvStopField.setText(String.valueOf(settings_.getInteger(PWSPlugin.stopSetting,700)));
@@ -51,9 +62,9 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
             cellNumEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.cellNumSetting, 1)));
             systemNameEdit.setText(settings_.getString(PWSPlugin.systemNameSetting, ""));
             darkCountsEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.darkCountsSetting, 0)));
-            linearityCorrectionEdit.setText(String.join(",",Arrays.asList(settings_.getIntegerList(PWSPlugin.linearityPolySetting)).stream().map(Object::toString).collect(Collectors.toList()))); //convert from int[] to csv string.
-            
-            
+            linearityCorrectionEdit.setText(String.join(",",Arrays.asList(settings_.getIntegerList(PWSPlugin.linearityPolySetting)).stream().map(Object::toString).collect(Collectors.toList()))); //convert from int[] to csv string.      
+            //Do this last in case the filter is not available
+            filterComboBox.setSelectedItem(settings_.getString(PWSPlugin.filterLabelSetting, ""));
         }
         catch (Exception e) {
             ReportingUtils.logError(e);
@@ -61,9 +72,7 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
         super.loadAndRestorePosition(200, 200);
     }       
     
-    @Override
-    public PropertyMap getSettings() {
-        PropertyMap.Builder builder = PropertyMaps.builder();
+    private void saveSettings() {
         try{
             int start = Integer.parseInt(wvStartField.getText().trim());
             int stop = Integer.parseInt(wvStopField.getText().trim());
@@ -81,38 +90,49 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
             for (int i=0; i<wvList.size(); i++) {
                 wvArr[i] = wvList.get(i).intValue();
             }
-            builder.putIntegerList(PWSPlugin.wvSetting, wvArr);
-            builder.putInteger(PWSPlugin.startSetting, start);
-            builder.putInteger(PWSPlugin.stopSetting, stop);
-            builder.putInteger(PWSPlugin.stepSetting, step);    
-            builder.putInteger(PWSPlugin.darkCountsSetting, darkCounts);
-            builder.putIntegerList(PWSPlugin.linearityPolySetting, linearityPolynomial);
-            builder.putString(PWSPlugin.systemNameSetting, systemNameEdit.getText());
-            builder.putBoolean(PWSPlugin.sequenceSetting, hardwareSequencingCheckBox.isSelected());
-            builder.putBoolean(PWSPlugin.externalTriggerSetting,externalTriggerCheckBox.isSelected());
-            builder.putString(PWSPlugin.savePathSetting, directoryText.getText());
-            builder.putInteger(PWSPlugin.cellNumSetting, Integer.parseInt(cellNumEdit.getText()));
+            settings_.putIntegerList(PWSPlugin.wvSetting, wvArr);
+            settings_.putInteger(PWSPlugin.startSetting, start);
+            settings_.putInteger(PWSPlugin.stopSetting, stop);
+            settings_.putInteger(PWSPlugin.stepSetting, step);    
+            settings_.putInteger(PWSPlugin.darkCountsSetting, darkCounts);
+            settings_.putIntegerList(PWSPlugin.linearityPolySetting, linearityPolynomial);
+            settings_.putString(PWSPlugin.systemNameSetting, systemNameEdit.getText());
+            settings_.putBoolean(PWSPlugin.sequenceSetting, hardwareSequencingCheckBox.isSelected());
+            settings_.putBoolean(PWSPlugin.externalTriggerSetting,externalTriggerCheckBox.isSelected());
+            settings_.putString(PWSPlugin.savePathSetting, directoryText.getText());
+            settings_.putInteger(PWSPlugin.cellNumSetting, Integer.parseInt(cellNumEdit.getText()));
         }
         catch(NumberFormatException e){
             log_.showMessage("A valid number was not specified.");
         }
         try{
-            builder.putString(PWSPlugin.filterLabelSetting, filterComboBox.getSelectedItem().toString());
+            settings_.putString(PWSPlugin.filterLabelSetting, filterComboBox.getSelectedItem().toString());
         }
         catch(NumberFormatException e){
             log_.showMessage("A valid string was not specified.");
         }
-        return builder.build();
     }
-        
-    @Override
-    public void cleanup() {
-        dispose();
+    
+    public void acquire() {
+        if ((processor_==null) || (settingsStale_)){
+            saveSettings();
+            try{
+                processor_ = new PWSProcessor(studio_, (PropertyMap) settings_);
+            } catch (Exception e) {
+                log_.showError(e);
+                return;
+            }
+        }
+        processor_.run();
     }
     
     @Override
-    public void showGUI() {
-        pack();
+    public void dispose() {
+        saveSettings();
+        super.dispose();
+    }
+    
+    private void scanDevices() {
         String[] devs = studio_.core().getLoadedDevices().toArray();
         StrVector newDevs = new StrVector();
         for (int i = 0; i < devs.length; i++) {
@@ -129,14 +149,13 @@ public class PWSConfigurator extends MMFrame implements ProcessorConfigurator {
             if (Arrays.asList(newDevs.toArray()).contains(oldName)) {
                 filterComboBox.setSelectedItem(oldName);
             }
-        setVisible(true);
     }
     
-    public void settingsChanged() {
+    private void settingsChanged() {
         submitButton.setBackground(Color.red);
     }
     
-    public void customInitComponents() {
+    private void customInitComponents() {
         javax.swing.JTextField[] fields = {wvStartField, wvStopField,
             wvStepField, directoryText,
             cellNumEdit, systemNameEdit, darkCountsEdit, linearityCorrectionEdit};
