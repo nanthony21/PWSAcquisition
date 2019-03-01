@@ -32,6 +32,7 @@ public class PWSConfigurator extends MMFrame {
     private MutablePropertyMapView settings_;
     private final LogManager log_;
     private PWSProcessor processor_;
+    private boolean settingsStale_ = true;
     
     /**
      * 
@@ -113,19 +114,6 @@ public class PWSConfigurator extends MMFrame {
         }
     }
     
-    public void acquire() {
-        if ((processor_==null) || (settingsStale_)){
-            saveSettings();
-            try{
-                processor_ = new PWSProcessor(studio_, (PropertyMap) settings_);
-            } catch (Exception e) {
-                log_.showError(e);
-                return;
-            }
-        }
-        processor_.run();
-    }
-    
     @Override
     public void dispose() {
         saveSettings();
@@ -152,6 +140,7 @@ public class PWSConfigurator extends MMFrame {
     }
     
     private void settingsChanged() {
+        settingsStale_ = true;
         submitButton.setBackground(Color.red);
     }
     
@@ -447,7 +436,7 @@ public class PWSConfigurator extends MMFrame {
 
         jTabbedPane1.addTab("system data", jPanel1);
 
-        submitButton.setText("Submit");
+        submitButton.setText("Acquire");
         submitButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 submitButtonActionPerformed(evt);
@@ -479,7 +468,6 @@ public class PWSConfigurator extends MMFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        studio_.data().notifyPipelineChanged();
     }//GEN-LAST:event_formWindowClosing
 
     private void wvStartFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wvStartFieldActionPerformed
@@ -493,8 +481,8 @@ public class PWSConfigurator extends MMFrame {
     }//GEN-LAST:event_filterComboBoxActionPerformed
 
     private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButtonActionPerformed
-        studio_.data().notifyPipelineChanged();
         submitButton.setBackground(Color.green);
+        acquire();
     }//GEN-LAST:event_submitButtonActionPerformed
 
     private void directoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_directoryButtonActionPerformed
@@ -564,12 +552,23 @@ public class PWSConfigurator extends MMFrame {
     //API
     public void setSavePath(String savepath) {
         directoryText.setText(savepath);
-        studio_.data().notifyPipelineChanged();
     }
     
     public void setCellNumber(int cellNum) {
         cellNumEdit.setText(String.valueOf(cellNum));
-        studio_.data().notifyPipelineChanged();
     }
 
+    public void acquire() {
+        if ((processor_==null) || (settingsStale_)){
+            saveSettings();
+            try{
+                processor_ = new PWSProcessor(studio_, (PropertyMap) settings_);
+                settingsStale_ = false;
+            } catch (Exception e) {
+                log_.showError(e);
+                return;
+            }
+        }
+        processor_.run();
+    }
 }
