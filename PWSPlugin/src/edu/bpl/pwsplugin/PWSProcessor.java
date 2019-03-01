@@ -3,7 +3,6 @@ package edu.bpl.pwsplugin;
 import org.micromanager.internal.utils.ReportingUtils;
 import java.util.concurrent.LinkedBlockingQueue;
 import mmcorej.StrVector;
-import org.micromanager.data.Processor;
 import org.micromanager.PropertyMap;
 import org.micromanager.Studio;
 import org.micromanager.data.ProcessorContext;
@@ -20,9 +19,8 @@ import java.time.format.DateTimeFormatter;
 
 
 
-public class PWSProcessor extends Processor {
+public class PWSProcessor {
     Studio studio_;
-    int numAverages_;
     LinkedBlockingQueue imageQueue;
     boolean debugLogEnabled_ = true;
     Image[] imageArray;
@@ -34,9 +32,9 @@ public class PWSProcessor extends Processor {
     String savePath;
     int cellNum;
     JSONObject metadata = new JSONObject();
+    
     public PWSProcessor(Studio studio, PropertyMap settings) throws Exception{
         studio_ = studio;
-        
         wv = settings.getIntegerList(PWSPlugin.wvSetting);
         filtLabel = settings.getString(PWSPlugin.filterLabelSetting, "");
         hardwareSequence = settings.getBoolean(PWSPlugin.sequenceSetting, false);
@@ -61,7 +59,6 @@ public class PWSProcessor extends Processor {
         metadata.put("linearityPoly", linPoly);
 
         filtProp = "Wavelength";
-        studio_.acquisitions().attachRunnable(-1, -1, -1, -1, new PWSRunnable(this)); 
         imageQueue = new LinkedBlockingQueue();
         
         if (hardwareSequence) {
@@ -87,63 +84,35 @@ public class PWSProcessor extends Processor {
         }             
     }
     
-    @Override
-    public void cleanup(ProcessorContext context) {
-            studio_.acquisitions().clearRunnables();
-    }
-    
-    @Override
-    public SummaryMetadata processSummaryMetadata(SummaryMetadata metadata) {
-        SummaryMetadata.Builder builder = metadata.copyBuilder();
-        builder.userName("PWSAcquisition");
-        return builder.build();
-    }
-    
-    @Override
-    public void processImage(Image image, ProcessorContext context) {
-        Image imageOnError = image;
+    public void run() {
         try { 
             if (studio_.live().getIsLiveModeOn()) { //Not supported
+                studio_.live().setLiveMode(false);
+            }
+            /*
+            while (Files.isDirectory(Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)))){ //Find a cell number that doesn't already exist.
+                cellNum++;
+            }
+            */
+            if (Files.isDirectory(Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)))){
+                ReportingUtils.showError("Cell " + cellNum + " already exists");
                 return;
             }
-            else {
-                Metadata md = image.getMetadata();
-                JSONObject jmd = new JSONObject(((DefaultMetadata)md).toPropertyMap().toJSON());
-                metadata.put("MicroManagerMetadata", jmd);
-                metadata.put("exposure", studio_.core().getExposure());
-                metadata.put("time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:SS")));
+                
 
-                /*
-                while (Files.isDirectory(Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)))){ //Find a cell number that doesn't already exist.
-                    cellNum++;
-                }
-                */
-                if (Files.isDirectory(Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)))){
-                    ReportingUtils.showError("Cell " + cellNum + " already exists");
-                    return;
-                }
-                ImSaverRaw imsaver = new ImSaverRaw(studio_, Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).toString(), imageQueue, metadata, wv, true);
-                if (!studio_.acquisitions().isAcquisitionRunning()) { //This means we must be in snap mode. There is no runnable so we must acquire the image here.
-                    acquireImages();
-                }
-                //Nothing extra needs to be done for acquisition mode
-                if (debugLogEnabled_) {
-                    ReportingUtils.logMessage("Queue has" + Integer.toString(imageQueue.size()));
-                }
+            ImSaverRaw imsaver = new ImSaverRaw(studio_, Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).toString(), imageQueue, metadata, wv, true);
+            acquireImages();
+            
+            if (debugLogEnabled_) {
+                ReportingUtils.logMessage("Queue has" + Integer.toString(imageQueue.size()));
             }
-
         } catch (Exception ex) {          
             ReportingUtils.logError("PWSPlugin, in processor: " + ex.toString());
             imageQueue.clear();
         }
-        finally {
-            context.outputImage(imageOnError);
-        }
     }
-
-    
-         
-    public void acquireImages() {
+      
+    private void acquireImages() {
         try {
             String cam = studio_.core().getCameraDevice();
             studio_.core().waitForDevice(cam);
