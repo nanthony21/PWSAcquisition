@@ -201,6 +201,7 @@ public class PWSConfigurator extends MMFrame {
         linearityCorrectionEdit = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         submitButton = new javax.swing.JButton();
+        attachButton = new javax.swing.JToggleButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -443,16 +444,25 @@ public class PWSConfigurator extends MMFrame {
             }
         });
 
+        attachButton.setText("Attach to AcqEngine");
+        attachButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                attachButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 40, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(submitButton)
+                .addGap(54, 54, 54)
+                .addComponent(attachButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -460,7 +470,9 @@ public class PWSConfigurator extends MMFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(submitButton)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(submitButton)
+                    .addComponent(attachButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -520,7 +532,16 @@ public class PWSConfigurator extends MMFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_linearityCorrectionEditActionPerformed
 
+    private void attachButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_attachButtonActionPerformed
+        if (attachButton.isSelected()) {
+            studio_.acquisitions().attachRunnable(-1, -1, -1, -1, new PWSRunnable(processor_));
+        } else {
+            studio_.acquisitions().clearRunnables();
+        }
+    }//GEN-LAST:event_attachButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton attachButton;
     private javax.swing.JTextField cellNumEdit;
     private javax.swing.JTextField darkCountsEdit;
     private javax.swing.JButton directoryButton;
