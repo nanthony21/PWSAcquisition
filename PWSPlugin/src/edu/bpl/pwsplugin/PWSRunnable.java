@@ -18,7 +18,7 @@ public class PWSRunnable implements Runnable {
         try {
             ReportingUtils.logMessage("PWS: entering runnable");
             studio_.acquisitions().setPause(true);
-            proc_.acquireImages();
+            proc_.run();
             studio_.acquisitions().setPause(false);
         } catch (Exception ex) {
             ex.printStackTrace();
