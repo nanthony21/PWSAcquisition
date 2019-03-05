@@ -119,4 +119,17 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
          }
       }
    }
+    
+    //API
+    public void setSavePath(String savepath) {
+        frame_.setSavePath(savepath);
+    }
+    
+    public void setCellNumber(int cellNum) {
+        frame_.setCellNumber(cellNum);
+    }
+
+    public void acquire() {
+        frame_.acquire();
+    }
 }
