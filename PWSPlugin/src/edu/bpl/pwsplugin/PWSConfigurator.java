@@ -535,6 +535,12 @@ public class PWSConfigurator extends MMFrame {
 
     private void attachButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_attachButtonActionPerformed
         if (attachButton.isSelected()) {
+            try {
+                configureProcessor();
+            } catch (Exception e) {
+                log_.showError(e);
+                return;
+            }
             studio_.acquisitions().attachRunnable(-1, -1, -1, -1, new PWSRunnable(processor_));
         } else {
             studio_.acquisitions().clearRunnables();
@@ -581,16 +587,21 @@ public class PWSConfigurator extends MMFrame {
     }
 
     public void acquire() {
-        if ((processor_==null) || (settingsStale_)){
-            saveSettings();
-            try{
-                processor_ = new PWSProcessor(studio_, (PropertyMap) settings_);
-                settingsStale_ = false;
-            } catch (Exception e) {
-                log_.showError(e);
-                return;
-            }
+        try {
+            configureProcessor();
+        } catch (Exception e) {
+            log_.showError(e);
+            return;
         }
         processor_.run();
+    }
+    
+    private void configureProcessor() throws Exception {
+        if ((processor_==null) || (settingsStale_)){
+            saveSettings();
+            processor_ = new PWSProcessor(studio_, settings_.toPropertyMap());
+            settingsStale_ = false;
+            submitButton.setBackground(Color.green);
+        }
     }
 }
