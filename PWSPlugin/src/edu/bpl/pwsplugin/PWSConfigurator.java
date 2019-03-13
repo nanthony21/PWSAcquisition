@@ -24,7 +24,8 @@ import java.util.Arrays;
 import org.micromanager.internal.utils.FileDialogs;
 import org.micromanager.internal.utils.ReportingUtils;
 import java.util.stream.Collectors;
-
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.ArrayUtils;
 
 public class PWSConfigurator extends MMFrame {
 
@@ -63,7 +64,7 @@ public class PWSConfigurator extends MMFrame {
             cellNumEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.cellNumSetting, 1)));
             systemNameEdit.setText(settings_.getString(PWSPlugin.systemNameSetting, ""));
             darkCountsEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.darkCountsSetting, 0)));
-            linearityCorrectionEdit.setText(String.join(",",Arrays.asList(settings_.getIntegerList(PWSPlugin.linearityPolySetting)).stream().map(Object::toString).collect(Collectors.toList()))); //convert from int[] to csv string.      
+            linearityCorrectionEdit.setText(StringUtils.join(ArrayUtils.toObject(settings_.getIntegerList(PWSPlugin.linearityPolySetting)), ","));  //String.join(",",Arrays.asList(settings_.getIntegerList(PWSPlugin.linearityPolySetting)).stream().map(Object::toString).collect(Collectors.toList()))); //convert from int[] to csv string.      
             //Do this last in case the filter is not available
             filterComboBox.setSelectedItem(settings_.getString(PWSPlugin.filterLabelSetting, ""));
         }
