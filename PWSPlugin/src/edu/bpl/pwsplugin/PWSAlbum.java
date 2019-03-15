@@ -33,26 +33,33 @@ import org.micromanager.display.DisplayWindow;
 import org.micromanager.internal.utils.ReportingUtils;
 import org.micromanager.Studio;
 import javax.swing.SwingUtilities;
+import org.micromanager.data.RewritableDatastore;
 
 public class PWSAlbum {
-   private Datastore store_;
+   private RewritableDatastore store_;
    private Studio studio_;
    private int idx = 0;
+   private DisplayWindow display = null;
    
    PWSAlbum(Studio studio) {
        studio_ = studio;
-        store_ = studio.data().createRAMDatastore();
-        store_.setSavePath(""); //So we don't get bothered about saving when we close the window.
-         studio_.displays().manage(store_);
-         DisplayWindow display = studio_.displays().createDisplay(store_);
-         display.setCustomTitle("PWS");
-         display.toFront();
+       store_ = studio_.data().createRewritableRAMDatastore();
    }
+   
    public Datastore getDatastore() {
       return store_;
    }
+   
+   public void clear() throws IOException{
+       idx = 0;
+       store_.deleteAllImages();
+   }
 
    public void addImage(Image image, int wavelength){   
+        if ((display==null) || (display.isClosed())) {
+            display = studio_.displays().createDisplay(store_);
+            display.setCustomTitle("PWS");
+        }
         Coords newCoords = image.getCoords().copyBuilder().t(idx).build();
         idx++;
 
