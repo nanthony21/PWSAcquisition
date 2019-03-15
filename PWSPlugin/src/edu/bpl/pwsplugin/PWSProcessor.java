@@ -4,19 +4,12 @@ import java.io.IOException;
 import org.micromanager.internal.utils.ReportingUtils;
 import java.util.concurrent.LinkedBlockingQueue;
 import mmcorej.StrVector;
-import org.micromanager.PropertyMap;
 import org.micromanager.Studio;
-import org.micromanager.data.ProcessorContext;
 import org.micromanager.data.Image;
-import org.micromanager.data.SummaryMetadata;
-import org.micromanager.data.Metadata;
-import org.micromanager.data.internal.DefaultMetadata;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import org.json.JSONException;
 
 

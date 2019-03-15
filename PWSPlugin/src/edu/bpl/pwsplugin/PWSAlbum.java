@@ -22,8 +22,6 @@
 package edu.bpl.pwsplugin;
 
 import java.io.IOException;
-import java.util.Collection;
-import org.micromanager.data.Coordinates;
 import org.micromanager.data.Coords;
 import org.micromanager.data.Datastore;
 import org.micromanager.data.DatastoreFrozenException;
