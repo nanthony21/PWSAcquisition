@@ -35,6 +35,7 @@ public class PWSProcessor implements Runnable{
     int cellNum;
     JSONObject metadata = new JSONObject();
     PWSAlbum album;
+    double exposure_;
     
     public PWSProcessor(Studio studio) {
         studio_ = studio;
@@ -46,7 +47,7 @@ public class PWSProcessor implements Runnable{
         cellNum = cellnum;
     }
     
-    public void setHardwareSettings(boolean externalTrigger, 
+    public void setSequenceSettings(boolean externalTrigger, 
             boolean hardwareTrigger, int[] Wv, String filterLabel) throws Exception {
         useExternalTrigger = externalTrigger;
         wv = Wv;
@@ -82,7 +83,7 @@ public class PWSProcessor implements Runnable{
         }  
     }
     
-    public void setMetadataSettings(int darkcounts, int[] linearPoly, String sysName) throws JSONException {
+    public void setOtherSettings(int darkcounts, int[] linearPoly, String sysName, double exposure) throws JSONException {
         int darkCounts = darkcounts;
         int[] linearityPolynomial = linearPoly;
         String systemName = sysName;
@@ -94,6 +95,8 @@ public class PWSProcessor implements Runnable{
         metadata.put("system", systemName);
         metadata.put("darkCounts", darkCounts);
         metadata.put("linearityPoly", linPoly);
+        
+        exposure_ = exposure;
     }
     
     public void setCellNum(int number){
@@ -140,13 +143,11 @@ public class PWSProcessor implements Runnable{
             String cam = studio_.core().getCameraDevice();
             studio_.core().waitForDevice(cam);
             studio_.core().clearCircularBuffer();     
+            studio_.core().setExposure(cam, exposure_);
+            
             long now = System.currentTimeMillis();
             
             if (hardwareSequence) {
-    //          CMMCore::startSequenceAcquisition(long numImages, double intervalMs, bool stopOnOverflow)
-    //          @param numImages Number of images requested from the camera
-    //          @param intervalMs interval between images, currently only supported by Andor cameras
-    //          @param stopOnOverflow whether or not the camera stops acquiring when the circular buffer is full
                 String origCameraTrigger="";  
                 if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")){
                     origCameraTrigger = studio_.core().getProperty(cam, "TRIGGER SOURCE");

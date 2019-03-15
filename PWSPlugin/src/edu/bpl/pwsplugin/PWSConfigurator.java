@@ -73,6 +73,7 @@ public class PWSConfigurator extends MMFrame {
             linearityCorrectionEdit.setText(StringUtils.join(ArrayUtils.toObject(settings_.getIntegerList(PWSPlugin.linearityPolySetting)), ","));  //String.join(",",Arrays.asList(settings_.getIntegerList(PWSPlugin.linearityPolySetting)).stream().map(Object::toString).collect(Collectors.toList()))); //convert from int[] to csv string.      
             //Do this last in case the filter is not available
             filterComboBox.setSelectedItem(settings_.getString(PWSPlugin.filterLabelSetting, ""));
+            exposureEdit.setText(String.valueOf(settings_.getDouble(PWSPlugin.exposureSetting, 100.0)))
         }
         catch (Exception e) {
             ReportingUtils.logError(e);
@@ -109,6 +110,7 @@ public class PWSConfigurator extends MMFrame {
             settings_.putBoolean(PWSPlugin.externalTriggerSetting,externalTriggerCheckBox.isSelected());
             settings_.putString(PWSPlugin.savePathSetting, directoryText.getText());
             settings_.putInteger(PWSPlugin.cellNumSetting, Integer.parseInt(cellNumEdit.getText()));
+            settings_.putDouble(PWSPlugin.exposureSetting, Double.parseDouble(exposureEdit.getText()));
         }
         catch(NumberFormatException e){
             log_.showMessage("A valid number was not specified.");
@@ -191,6 +193,8 @@ public class PWSConfigurator extends MMFrame {
         stepLabel = new javax.swing.JLabel();
         stopLabel = new javax.swing.JLabel();
         startLabel = new javax.swing.JLabel();
+        exposureEdit = new javax.swing.JTextField();
+        stepLabel2 = new javax.swing.JLabel();
         directoryText = new javax.swing.JTextField();
         directoryButton = new javax.swing.JButton();
         cellNumEdit = new javax.swing.JTextField();
@@ -241,6 +245,15 @@ public class PWSConfigurator extends MMFrame {
 
         startLabel.setText("Start");
 
+        exposureEdit.setText("100");
+        exposureEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exposureEditActionPerformed(evt);
+            }
+        });
+
+        stepLabel2.setText("Exposure");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -248,30 +261,38 @@ public class PWSConfigurator extends MMFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(startLabel)
-                        .addGap(27, 27, 27)
-                        .addComponent(stopLabel)
-                        .addGap(43, 43, 43)
-                        .addComponent(stepLabel))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(wvStartField, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(7, 7, 7)
                         .addComponent(wvStopField, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(wvStepField, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(wvStepField, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(startLabel)
+                        .addGap(27, 27, 27)
+                        .addComponent(stopLabel)
+                        .addGap(43, 43, 43)
+                        .addComponent(stepLabel)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(exposureEdit)
+                    .addComponent(stepLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 110, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(stopLabel)
-                    .addComponent(stepLabel)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(stepLabel)
+                        .addComponent(stepLabel2))
                     .addComponent(startLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(wvStopField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(wvStepField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(wvStepField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(exposureEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(wvStartField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 17, Short.MAX_VALUE))
         );
@@ -553,12 +574,17 @@ public class PWSConfigurator extends MMFrame {
         }
     }//GEN-LAST:event_attachButtonActionPerformed
 
+    private void exposureEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exposureEditActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_exposureEditActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton attachButton;
     private javax.swing.JTextField cellNumEdit;
     private javax.swing.JTextField darkCountsEdit;
     private javax.swing.JButton directoryButton;
     private javax.swing.JTextField directoryText;
+    private javax.swing.JTextField exposureEdit;
     private javax.swing.JCheckBox externalTriggerCheckBox;
     private javax.swing.JComboBox<String> filterComboBox;
     private javax.swing.JLabel filterLabel;
@@ -575,6 +601,7 @@ public class PWSConfigurator extends MMFrame {
     private javax.swing.JLabel startLabel;
     private javax.swing.JLabel stepLabel;
     private javax.swing.JLabel stepLabel1;
+    private javax.swing.JLabel stepLabel2;
     private javax.swing.JLabel stopLabel;
     private javax.swing.JButton submitButton;
     private javax.swing.JTextField systemNameEdit;

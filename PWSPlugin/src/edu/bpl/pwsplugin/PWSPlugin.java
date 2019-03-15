@@ -63,6 +63,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     public static String cellNumSetting  = "cellNum";
     public static String filterLabelSetting = "filtLabel";
     public static String systemNameSetting = "systemName";
+    public static String exposureSetting = "camExposure";
     
     private Studio studio_;  
     private PWSConfigurator frame_;
