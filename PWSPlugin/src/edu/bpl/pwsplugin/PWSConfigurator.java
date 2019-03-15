@@ -20,6 +20,9 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
 import mmcorej.StrVector;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Set;
+import javax.swing.JTextField;
 import org.micromanager.internal.utils.FileDialogs;
 import org.micromanager.internal.utils.ReportingUtils;
 import javax.swing.SwingWorker;
@@ -36,7 +39,9 @@ public class PWSConfigurator extends MMFrame {
     private MutablePropertyMapView settings_;
     private final LogManager log_;
     private PWSProcessor processor_;
-    private boolean settingsStale_ = true;
+    private boolean otherSettingsStale_ = true;
+    private boolean sequenceSettingsStale_ = true;
+    private boolean saveSettingsStale_ = true;
     
     /**
      * 
@@ -55,7 +60,7 @@ public class PWSConfigurator extends MMFrame {
         });
         
         initComponents();
-        customInitComponents();
+        addDocListeners();
         scanDevices();
         
         try {
@@ -146,30 +151,51 @@ public class PWSConfigurator extends MMFrame {
             }
     }
     
-    private void settingsChanged() {
-        settingsStale_ = true;
+    private void otherSettingsChanged() {
+        otherSettingsStale_ = true;
         submitButton.setBackground(Color.red);
     }
     
-    private void customInitComponents() {
-        javax.swing.JTextField[] fields = {wvStartField, wvStopField,
-            wvStepField, directoryText,
-            cellNumEdit, systemNameEdit, darkCountsEdit, linearityCorrectionEdit};
-        for (int i=0; i<fields.length; i++) {
-            fields[i].getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    settingsChanged();
-                }
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    settingsChanged();
-                }
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    settingsChanged();
-                }
-            });
+    private void sequenceSettingsChanged() {
+        sequenceSettingsStale_ = true;
+        submitButton.setBackground(Color.red);
+    }
+        
+    private void saveSettingsChanged() {
+        saveSettingsStale_ = true;
+        submitButton.setBackground(Color.red);
+    }
+    
+    private void addDocListeners() {
+        HashMap<String, JTextField[]> categories = new HashMap<String, JTextField[]>();
+        categories.put("other", new JTextField[] {systemNameEdit, darkCountsEdit, linearityCorrectionEdit, exposureEdit});
+        categories.put("sequence", new JTextField[] {wvStartField, wvStopField, wvStepField});
+        categories.put("save", new JTextField[] {cellNumEdit, directoryText});
+        
+        HashMap<String, Runnable> funcs = new HashMap<String, Runnable>();
+        funcs.put("other", this::otherSettingsChanged);
+        funcs.put("sequence", this::sequenceSettingsChanged);
+        funcs.put("save", this::saveSettingsChanged);
+        
+        for (HashMap.Entry<String, JTextField[]> entry : categories.entrySet()) {
+            String category = entry.getKey();
+            JTextField[] fields = entry.getValue();
+            for (int i=0; i<fields.length; i++) {
+                fields[i].getDocument().addDocumentListener(new DocumentListener() {
+                    @Override
+                    public void changedUpdate(DocumentEvent e) {
+                        funcs.get(category).run();//settingsChanged();
+                    }
+                    @Override
+                    public void removeUpdate(DocumentEvent e) {
+                        funcs.get(category).run();
+                    }
+                    @Override
+                    public void insertUpdate(DocumentEvent e) {
+                        funcs.get(category).run();
+                    }
+                });
+            }
         }
     }
 
@@ -515,7 +541,7 @@ public class PWSConfigurator extends MMFrame {
     }//GEN-LAST:event_wvStopFieldActionPerformed
 
     private void filterComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterComboBoxActionPerformed
-        settingsChanged();
+        sequenceSettingsChanged();
     }//GEN-LAST:event_filterComboBoxActionPerformed
 
     private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButtonActionPerformed
@@ -530,7 +556,7 @@ public class PWSConfigurator extends MMFrame {
     }//GEN-LAST:event_directoryButtonActionPerformed
 
     private void hardwareSequencingCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hardwareSequencingCheckBoxActionPerformed
-        settingsChanged();
+        sequenceSettingsChanged();
         boolean checked = hardwareSequencingCheckBox.isSelected();
         if (!checked) {
             externalTriggerCheckBox.setSelected(false);
@@ -543,7 +569,7 @@ public class PWSConfigurator extends MMFrame {
     }//GEN-LAST:event_cellNumEditActionPerformed
 
     private void externalTriggerCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_externalTriggerCheckBoxActionPerformed
-        settingsChanged();
+        sequenceSettingsChanged();
     }//GEN-LAST:event_externalTriggerCheckBoxActionPerformed
 
     private void systemNameEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_systemNameEditActionPerformed
@@ -631,33 +657,36 @@ public class PWSConfigurator extends MMFrame {
     }
     
     private void configureProcessor() throws Exception {
-        if (settingsStale_){
+        if (otherSettingsStale_ || sequenceSettingsStale_ || saveSettingsStale_){
             saveSettings();
-            // TODO keep track of the staleness of these settings sepearately and only update as needed. Constantly reinitializing the hardware just to change savepath is time consuming.
             
-            int cellNum = settings_.getInteger(PWSPlugin.cellNumSetting,1);
-            String savePath = settings_.getString(PWSPlugin.savePathSetting, "");
-            processor_.setCellNum(cellNum);
-            processor_.setSavePath(savePath);
-            
-            int darkCounts = settings_.getInteger(PWSPlugin.darkCountsSetting,0);
-            int[] linearityPolynomial = settings_.getIntegerList(PWSPlugin.linearityPolySetting);
-            String systemName = settings_.getString(PWSPlugin.systemNameSetting, "");
-            double exposure = settings_.getDouble(PWSPlugin.exposureSetting, 100);
-            processor_.setOtherSettings(darkCounts, linearityPolynomial, systemName, exposure);
-            
-            int[] wv = settings_.getIntegerList(PWSPlugin.wvSetting);
-            String filtLabel = settings_.getString(PWSPlugin.filterLabelSetting, "");
-            boolean hardwareSequence = settings_.getBoolean(PWSPlugin.sequenceSetting, false);
-            boolean useExternalTrigger = settings_.getBoolean(PWSPlugin.externalTriggerSetting, false);
-            processor_.setSequenceSettings(useExternalTrigger, hardwareSequence, wv, filtLabel);
-            
-            settingsStale_ = false;
+            if (saveSettingsStale_) {
+                int cellNum = settings_.getInteger(PWSPlugin.cellNumSetting,1);
+                String savePath = settings_.getString(PWSPlugin.savePathSetting, "");
+                processor_.setCellNum(cellNum);
+                processor_.setSavePath(savePath);
+                saveSettingsStale_ = false;
+            }
+            if (otherSettingsStale_) {      
+                int darkCounts = settings_.getInteger(PWSPlugin.darkCountsSetting,0);
+                int[] linearityPolynomial = settings_.getIntegerList(PWSPlugin.linearityPolySetting);
+                String systemName = settings_.getString(PWSPlugin.systemNameSetting, "");
+                double exposure = settings_.getDouble(PWSPlugin.exposureSetting, 100);
+                processor_.setOtherSettings(darkCounts, linearityPolynomial, systemName, exposure);
+                otherSettingsStale_ = false;
+            }
+            if (sequenceSettingsStale_) {
+                int[] wv = settings_.getIntegerList(PWSPlugin.wvSetting);
+                String filtLabel = settings_.getString(PWSPlugin.filterLabelSetting, "");
+                boolean hardwareSequence = settings_.getBoolean(PWSPlugin.sequenceSetting, false);
+                boolean useExternalTrigger = settings_.getBoolean(PWSPlugin.externalTriggerSetting, false);
+                processor_.setSequenceSettings(useExternalTrigger, hardwareSequence, wv, filtLabel);
+                sequenceSettingsStale_ = false;
+            }            
             submitButton.setBackground(Color.green);
         }
     }
-    
-    
+        
     protected class BackgroundWorker extends SwingWorker<Void, Void> {
         @Override
         public Void doInBackground() {
