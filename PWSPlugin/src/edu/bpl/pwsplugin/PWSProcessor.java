@@ -120,6 +120,7 @@ public class PWSProcessor implements Runnable{
                 return;
             }
             ImSaverRaw imsaver = new ImSaverRaw(studio_, Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).toString(), imageQueue, metadata, wv, true);
+            imsaver.start();
             acquireImages();
         } catch (Exception ex) {          
             ReportingUtils.logError("PWSPlugin, in processor: " + ex.toString());
