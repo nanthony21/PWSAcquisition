@@ -211,30 +211,34 @@ public class PWSConfigurator extends MMFrame {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
+        startLabel = new javax.swing.JLabel();
+        stopLabel = new javax.swing.JLabel();
+        stepLabel = new javax.swing.JLabel();
+        stepLabel2 = new javax.swing.JLabel();
+        stepLabel1 = new javax.swing.JLabel();
+        wvStartField = new javax.swing.JTextField();
         wvStopField = new javax.swing.JTextField();
         wvStepField = new javax.swing.JTextField();
-        wvStartField = new javax.swing.JTextField();
-        stepLabel = new javax.swing.JLabel();
-        stopLabel = new javax.swing.JLabel();
-        startLabel = new javax.swing.JLabel();
         exposureEdit = new javax.swing.JTextField();
-        stepLabel2 = new javax.swing.JLabel();
+        cellNumEdit = new javax.swing.JTextField();
         directoryText = new javax.swing.JTextField();
         directoryButton = new javax.swing.JButton();
-        cellNumEdit = new javax.swing.JTextField();
-        stepLabel1 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
         filterLabel = new javax.swing.JLabel();
-        filterComboBox = new javax.swing.JComboBox<String>();
         hardwareSequencingCheckBox = new javax.swing.JCheckBox();
+        filterComboBox = new javax.swing.JComboBox<String>();
         externalTriggerCheckBox = new javax.swing.JCheckBox();
         jPanel1 = new javax.swing.JPanel();
+        jPanel8 = new javax.swing.JPanel();
+        jPanel7 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
         systemNameEdit = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         darkCountsEdit = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        linearityCorrectionEdit = new javax.swing.JTextField();
+        jPanel6 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
+        linearityCorrectionEdit = new javax.swing.JTextField();
         submitButton = new javax.swing.JButton();
         attachButton = new javax.swing.JToggleButton();
 
@@ -246,14 +250,22 @@ public class PWSConfigurator extends MMFrame {
             }
         });
 
-        wvStopField.setText("700");
-        wvStopField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                wvStopFieldActionPerformed(evt);
-            }
-        });
+        jPanel3.setLayout(new java.awt.GridLayout(2, 5, 5, 0));
 
-        wvStepField.setText("2");
+        startLabel.setText("Start");
+        jPanel3.add(startLabel);
+
+        stopLabel.setText("Stop");
+        jPanel3.add(stopLabel);
+
+        stepLabel.setText("Step");
+        jPanel3.add(stepLabel);
+
+        stepLabel2.setText("Exposure");
+        jPanel3.add(stepLabel2);
+
+        stepLabel1.setText("Cell Number");
+        jPanel3.add(stepLabel1);
 
         wvStartField.setText("500");
         wvStartField.setName(""); // NOI18N
@@ -262,12 +274,18 @@ public class PWSConfigurator extends MMFrame {
                 wvStartFieldActionPerformed(evt);
             }
         });
+        jPanel3.add(wvStartField);
 
-        stepLabel.setText("Step");
+        wvStopField.setText("700");
+        wvStopField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                wvStopFieldActionPerformed(evt);
+            }
+        });
+        jPanel3.add(wvStopField);
 
-        stopLabel.setText("Stop");
-
-        startLabel.setText("Start");
+        wvStepField.setText("2");
+        jPanel3.add(wvStepField);
 
         exposureEdit.setText("100");
         exposureEdit.addActionListener(new java.awt.event.ActionListener() {
@@ -275,58 +293,7 @@ public class PWSConfigurator extends MMFrame {
                 exposureEditActionPerformed(evt);
             }
         });
-
-        stepLabel2.setText("Exposure");
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(wvStartField, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(7, 7, 7)
-                        .addComponent(wvStopField, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(wvStepField, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(startLabel)
-                        .addGap(27, 27, 27)
-                        .addComponent(stopLabel)
-                        .addGap(43, 43, 43)
-                        .addComponent(stepLabel)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(exposureEdit)
-                    .addComponent(stepLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 110, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(stopLabel)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(stepLabel)
-                        .addComponent(stepLabel2))
-                    .addComponent(startLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(wvStopField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(wvStepField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(exposureEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(wvStartField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 17, Short.MAX_VALUE))
-        );
-
-        directoryButton.setText("...");
-        directoryButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                directoryButtonActionPerformed(evt);
-            }
-        });
+        jPanel3.add(exposureEdit);
 
         cellNumEdit.setText("1");
         cellNumEdit.setToolTipText("Cell Number");
@@ -335,24 +302,28 @@ public class PWSConfigurator extends MMFrame {
                 cellNumEditActionPerformed(evt);
             }
         });
+        jPanel3.add(cellNumEdit);
 
-        stepLabel1.setText("Cell Number");
+        directoryButton.setText("...");
+        directoryButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                directoryButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(directoryText)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(directoryButton))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(77, 77, 77)
-                .addComponent(stepLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cellNumEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(161, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(directoryText, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(directoryButton)))
+                .addGap(0, 26, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -362,23 +333,15 @@ public class PWSConfigurator extends MMFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(directoryButton)
                     .addComponent(directoryText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cellNumEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(stepLabel1))
-                .addGap(0, 24, Short.MAX_VALUE))
+                .addGap(0, 71, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("tab1", jPanel2);
 
-        filterLabel.setText("Filter");
+        jPanel5.setLayout(new java.awt.GridLayout(2, 2));
 
-        filterComboBox.setModel(new javax.swing.DefaultComboBoxModel<String>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        filterComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                filterComboBoxActionPerformed(evt);
-            }
-        });
+        filterLabel.setText("Filter");
+        jPanel5.add(filterLabel);
 
         hardwareSequencingCheckBox.setLabel("Use Hardware Sequencing");
         hardwareSequencingCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -386,6 +349,15 @@ public class PWSConfigurator extends MMFrame {
                 hardwareSequencingCheckBoxActionPerformed(evt);
             }
         });
+        jPanel5.add(hardwareSequencingCheckBox);
+
+        filterComboBox.setModel(new javax.swing.DefaultComboBoxModel<String>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        filterComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                filterComboBoxActionPerformed(evt);
+            }
+        });
+        jPanel5.add(filterComboBox);
 
         externalTriggerCheckBox.setText("Use External Trigger");
         externalTriggerCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -393,61 +365,65 @@ public class PWSConfigurator extends MMFrame {
                 externalTriggerCheckBoxActionPerformed(evt);
             }
         });
+        jPanel5.add(externalTriggerCheckBox);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(filterLabel)
-                    .addComponent(filterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(250, Short.MAX_VALUE))
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(hardwareSequencingCheckBox)
-                    .addComponent(externalTriggerCheckBox))
-                .addGap(0, 166, Short.MAX_VALUE))
+                .addGap(32, 32, 32)
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(37, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(filterLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(filterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(hardwareSequencingCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
-                .addComponent(externalTriggerCheckBox)
-                .addContainerGap())
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(124, 124, 124))
         );
 
         jTabbedPane1.addTab("tab2", jPanel4);
+
+        jPanel8.setLayout(new java.awt.GridLayout(2, 1));
+
+        jPanel7.setLayout(new java.awt.GridLayout(2, 2));
+
+        jLabel2.setText("Dark Counts");
+        jPanel7.add(jLabel2);
 
         systemNameEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 systemNameEditActionPerformed(evt);
             }
         });
+        jPanel7.add(systemNameEdit);
 
         jLabel1.setText("Name");
+        jPanel7.add(jLabel1);
 
         darkCountsEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 darkCountsEditActionPerformed(evt);
             }
         });
+        jPanel7.add(darkCountsEdit);
 
-        jLabel2.setText("Dark Counts");
+        jPanel8.add(jPanel7);
+
+        jPanel6.setLayout(new java.awt.GridLayout(2, 1));
+
+        jLabel3.setText("Linearity Correction");
+        jPanel6.add(jLabel3);
 
         linearityCorrectionEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 linearityCorrectionEditActionPerformed(evt);
             }
         });
+        jPanel6.add(linearityCorrectionEdit);
 
-        jLabel3.setText("Linearity Correction");
+        jPanel8.add(jPanel6);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -455,36 +431,15 @@ public class PWSConfigurator extends MMFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(systemNameEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(darkCountsEdit)))
-                    .addComponent(jLabel3)
-                    .addComponent(linearityCorrectionEdit))
-                .addContainerGap(160, Short.MAX_VALUE))
+                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(252, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(darkCountsEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(systemNameEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(linearityCorrectionEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(50, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(46, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("system data", jPanel1);
@@ -508,14 +463,14 @@ public class PWSConfigurator extends MMFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 40, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(submitButton)
                 .addGap(54, 54, 54)
                 .addComponent(attachButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -620,6 +575,10 @@ public class PWSConfigurator extends MMFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField linearityCorrectionEdit;
     private javax.swing.JLabel startLabel;
