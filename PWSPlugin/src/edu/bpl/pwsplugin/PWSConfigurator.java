@@ -73,7 +73,7 @@ public class PWSConfigurator extends MMFrame {
             linearityCorrectionEdit.setText(StringUtils.join(ArrayUtils.toObject(settings_.getIntegerList(PWSPlugin.linearityPolySetting)), ","));  //String.join(",",Arrays.asList(settings_.getIntegerList(PWSPlugin.linearityPolySetting)).stream().map(Object::toString).collect(Collectors.toList()))); //convert from int[] to csv string.      
             //Do this last in case the filter is not available
             filterComboBox.setSelectedItem(settings_.getString(PWSPlugin.filterLabelSetting, ""));
-            exposureEdit.setText(String.valueOf(settings_.getDouble(PWSPlugin.exposureSetting, 100.0)))
+            exposureEdit.setText(String.valueOf(settings_.getDouble(PWSPlugin.exposureSetting, 100.0)));
         }
         catch (Exception e) {
             ReportingUtils.logError(e);
@@ -645,13 +645,14 @@ public class PWSConfigurator extends MMFrame {
             int darkCounts = settings_.getInteger(PWSPlugin.darkCountsSetting,0);
             int[] linearityPolynomial = settings_.getIntegerList(PWSPlugin.linearityPolySetting);
             String systemName = settings_.getString(PWSPlugin.systemNameSetting, "");
-            processor_.setMetadataSettings(darkCounts, linearityPolynomial, systemName);
+            double exposure = settings_.getDouble(PWSPlugin.exposureSetting, 100);
+            processor_.setOtherSettings(darkCounts, linearityPolynomial, systemName, exposure);
             
             int[] wv = settings_.getIntegerList(PWSPlugin.wvSetting);
             String filtLabel = settings_.getString(PWSPlugin.filterLabelSetting, "");
             boolean hardwareSequence = settings_.getBoolean(PWSPlugin.sequenceSetting, false);
             boolean useExternalTrigger = settings_.getBoolean(PWSPlugin.externalTriggerSetting, false);
-            processor_.setHardwareSettings(useExternalTrigger, hardwareSequence, wv, filtLabel);
+            processor_.setSequenceSettings(useExternalTrigger, hardwareSequence, wv, filtLabel);
             
             settingsStale_ = false;
             submitButton.setBackground(Color.green);
