@@ -84,8 +84,8 @@ public class ImSaverRaw implements Runnable {
             
             stack = new ImageStack(im.getWidth(), im.getHeight());
             stack.addSlice(imJConv.createProcessor(im));
-            PWSAlbum album = new PWSAlbum(studio_);
-            album.addImage(im, wv_[0]);
+            //PWSAlbum album = new PWSAlbum(studio_);
+            //album.addImage(im, wv_[0]);
             for (int i=1; i<expectedFrames_; i++) {
                 while (queue_.size()<1) { Thread.sleep(10);} //Wait for an image
                 im = (Image) queue_.take(); //Lets make an array with the queued images.
@@ -93,7 +93,7 @@ public class ImSaverRaw implements Runnable {
                     saveImBd(im); //Save the image from halfway through the sequence.
                 }
                 stack.addSlice(imJConv.createProcessor(im));
-                album.addImage(im, wv_[i]);
+                //album.addImage(im, wv_[i]);
             }
             ImagePlus imPlus = new ImagePlus("PWS", stack);
             imPlus.setProperty("Info", md_.toString());

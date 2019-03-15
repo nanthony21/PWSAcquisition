@@ -32,6 +32,7 @@ import org.micromanager.data.Image;
 import org.micromanager.display.DisplayWindow;
 import org.micromanager.internal.utils.ReportingUtils;
 import org.micromanager.Studio;
+import javax.swing.SwingUtilities;
 
 public class PWSAlbum {
    private Datastore store_;
@@ -51,21 +52,28 @@ public class PWSAlbum {
       return store_;
    }
 
-   public void addImage(Image image, int wavelength) throws IOException {
-      Coords newCoords = image.getCoords().copyBuilder().t(idx).build();
-      idx++;
+   public void addImage(Image image, int wavelength){   
+        Coords newCoords = image.getCoords().copyBuilder().t(idx).build();
+        idx++;
 
-      try {
-          store_.putImage(image.copyAtCoords(newCoords));
-      }
-      catch (DatastoreFrozenException e) {
-         ReportingUtils.showError(e, "Album datastore is locked.");
-      }
-      catch (DatastoreRewriteException e) {
-         // This should never happen.
-         ReportingUtils.showError(e, "Unable to add image at " + newCoords + 
-                 " to album as another image with those coords already exists.");
-      }
-   }
-
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    store_.putImage(image.copyAtCoords(newCoords));
+                }
+                catch (DatastoreFrozenException e) {
+                   ReportingUtils.showError(e, "Album datastore is locked.");
+                }
+                catch (DatastoreRewriteException e) {
+                   // This should never happen.
+                   ReportingUtils.showError(e, "Unable to add image at " + newCoords + 
+                           " to album as another image with those coords already exists.");
+                }
+                catch (IOException e) {
+                    ReportingUtils.showError(e, "PWSAlbum IOException");
+                }
+            }
+        });  
+    }
 }

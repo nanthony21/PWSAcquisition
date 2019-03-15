@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter;
 
 
 
-public class PWSProcessor {
+public class PWSProcessor implements Runnable{
     Studio studio_;
     LinkedBlockingQueue imageQueue;
     boolean debugLogEnabled_ = true;
@@ -32,9 +32,11 @@ public class PWSProcessor {
     String savePath;
     int cellNum;
     JSONObject metadata = new JSONObject();
+    PWSAlbum album;
     
     public PWSProcessor(Studio studio, PropertyMap settings) throws Exception{
         studio_ = studio;
+        album = new PWSAlbum(studio_);
         wv = settings.getIntegerList(PWSPlugin.wvSetting);
         filtLabel = settings.getString(PWSPlugin.filterLabelSetting, "");
         hardwareSequence = settings.getBoolean(PWSPlugin.sequenceSetting, false);
@@ -84,7 +86,11 @@ public class PWSProcessor {
         }             
     }
     
+    @Override
     public void run() {
+        if (studio_.acquisitions().isAcquisitionRunning()) {
+            studio_.acquisitions().setPause(true);
+        }
         try { 
             if (studio_.live().getIsLiveModeOn()) { //Not supported
                 studio_.live().setLiveMode(false);
@@ -109,6 +115,10 @@ public class PWSProcessor {
         } catch (Exception ex) {          
             ReportingUtils.logError("PWSPlugin, in processor: " + ex.toString());
             imageQueue.clear();
+        } finally {
+            if (studio_.acquisitions().isAcquisitionRunning()) {
+                studio_.acquisitions().setPause(false);
+            }
         }
     }
       
@@ -153,6 +163,7 @@ public class PWSProcessor {
                     }
                     
                     boolean canExit = false;
+                    int i = 0;
                     while (true) {
                         boolean remaining = (studio_.core().getRemainingImageCount() > 0);
                         boolean running = (studio_.core().isSequenceRunning(cam));
@@ -160,7 +171,10 @@ public class PWSProcessor {
                             break;  //Everything is taken care of.
                         }
                         if (remaining) {    //Process images
-                           imageQueue.add(studio_.data().convertTaggedImage(studio_.core().popNextTaggedImage()));
+                            Image im = studio_.data().convertTaggedImage(studio_.core().popNextTaggedImage());
+                            album.addImage(im, wv[i]);
+                            i++;
+                           imageQueue.add(im);
                         }
                         if (!running) {
                             canExit = true;
@@ -180,7 +194,9 @@ public class PWSProcessor {
                     studio_.core().setProperty(filtLabel, filtProp, wv[i]);
                     while (studio_.core().deviceBusy(filtLabel)) {Thread.sleep(1);} //Wait until the device says it is tuned.
                     studio_.core().snapImage();
-                    imageQueue.add(studio_.data().convertTaggedImage(studio_.core().getTaggedImage()));
+                    Image im = studio_.data().convertTaggedImage(studio_.core().getTaggedImage());
+                    album.addImage(im, wv[i]);
+                    imageQueue.add(im);
                 }
                 studio_.core().setProperty(filtLabel, filtProp, wv[0]);
             }

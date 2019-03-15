@@ -34,6 +34,7 @@ public class PWSConfigurator extends MMFrame {
     private final LogManager log_;
     private PWSProcessor processor_;
     private boolean settingsStale_ = true;
+    Thread thread;
     
     /**
      * 
@@ -541,7 +542,7 @@ public class PWSConfigurator extends MMFrame {
                 log_.showError(e);
                 return;
             }
-            studio_.acquisitions().attachRunnable(-1, -1, -1, -1, new PWSRunnable(processor_));
+            studio_.acquisitions().attachRunnable(-1, -1, -1, -1, processor_);
         } else {
             studio_.acquisitions().clearRunnables();
         }
@@ -593,13 +594,17 @@ public class PWSConfigurator extends MMFrame {
             log_.showError(e);
             return;
         }
-        processor_.run();
+        if !(thread.isAlive()) { // TODO disable button until thread dies.
+            thread.start();
+        }
+                
     }
     
     private void configureProcessor() throws Exception {
         if ((processor_==null) || (settingsStale_)){
             saveSettings();
             processor_ = new PWSProcessor(studio_, settings_.toPropertyMap());
+            thread = new Thread(processor_);
             settingsStale_ = false;
             submitButton.setBackground(Color.green);
         }

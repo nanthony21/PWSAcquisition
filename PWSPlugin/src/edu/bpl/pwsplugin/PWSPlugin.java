@@ -36,14 +36,8 @@ package edu.bpl.pwsplugin;
  */
 
 import com.google.common.eventbus.Subscribe;
-import javax.swing.JFrame;
-import mmcorej.CMMCore;
 import org.micromanager.Studio;
-import org.micromanager.acquisition.internal.AcquisitionWrapperEngine;
 import org.micromanager.MenuPlugin;
-import org.micromanager.data.ProcessorConfigurator;
-import org.micromanager.data.ProcessorFactory;
-import org.micromanager.PropertyMap;
 import org.micromanager.events.ShutdownCommencingEvent;
 
 import org.scijava.plugin.SciJavaPlugin;
