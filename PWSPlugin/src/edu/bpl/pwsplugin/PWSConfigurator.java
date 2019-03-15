@@ -24,9 +24,14 @@ import java.util.Arrays;
 import org.micromanager.internal.utils.FileDialogs;
 import org.micromanager.internal.utils.ReportingUtils;
 import java.util.stream.Collectors;
+import javax.swing.SwingWorker;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.ArrayUtils;
 
+/**
+ *
+ * @author N2-LiveCell
+ */
 public class PWSConfigurator extends MMFrame {
 
     private final Studio studio_;
@@ -34,13 +39,13 @@ public class PWSConfigurator extends MMFrame {
     private final LogManager log_;
     private PWSProcessor processor_;
     private boolean settingsStale_ = true;
-    Thread thread;
     
     /**
      * 
      */
     public PWSConfigurator(Studio studio) {
         studio_ = studio;
+        processor_ = new PWSProcessor(studio_);
         settings_ = studio_.profile().getSettings(PWSConfigurator.class);
         log_ = studio.logs();
         
@@ -594,19 +599,49 @@ public class PWSConfigurator extends MMFrame {
             log_.showError(e);
             return;
         }
-        if !(thread.isAlive()) { // TODO disable button until thread dies.
-            thread.start();
-        }
-                
+
+        BackgroundWorker worker = new BackgroundWorker();
+        worker.execute();
+        submitButton.setEnabled(false);            
     }
     
     private void configureProcessor() throws Exception {
-        if ((processor_==null) || (settingsStale_)){
+        if (settingsStale_){
             saveSettings();
-            processor_ = new PWSProcessor(studio_, settings_.toPropertyMap());
-            thread = new Thread(processor_);
+            // TODO keep track of the staleness of these settings sepearately and only update as needed. Constantly reinitializing the hardware just to change savepath is time consuming.
+            
+            int cellNum = settings_.getInteger(PWSPlugin.cellNumSetting,1);
+            String savePath = settings_.getString(PWSPlugin.savePathSetting, "");
+            processor_.setCellNum(cellNum);
+            processor_.setSavePath(savePath);
+            
+            int darkCounts = settings_.getInteger(PWSPlugin.darkCountsSetting,0);
+            int[] linearityPolynomial = settings_.getIntegerList(PWSPlugin.linearityPolySetting);
+            String systemName = settings_.getString(PWSPlugin.systemNameSetting, "");
+            processor_.setMetadataSettings(darkCounts, linearityPolynomial, systemName);
+            
+            int[] wv = settings_.getIntegerList(PWSPlugin.wvSetting);
+            String filtLabel = settings_.getString(PWSPlugin.filterLabelSetting, "");
+            boolean hardwareSequence = settings_.getBoolean(PWSPlugin.sequenceSetting, false);
+            boolean useExternalTrigger = settings_.getBoolean(PWSPlugin.externalTriggerSetting, false);
+            processor_.setHardwareSettings(useExternalTrigger, hardwareSequence, wv, filtLabel);
+            
             settingsStale_ = false;
             submitButton.setBackground(Color.green);
+        }
+    }
+    
+    
+    protected class BackgroundWorker extends SwingWorker<Void, Void> {
+        @Override
+        public Void doInBackground() {
+            processor_.run();
+            return null;
+        }
+
+        @Override
+        public void done() {
+            submitButton.setEnabled(true);
         }
     }
 }
