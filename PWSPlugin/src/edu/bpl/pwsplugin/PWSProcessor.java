@@ -1,5 +1,6 @@
 package edu.bpl.pwsplugin;
 
+import java.io.IOException;
 import org.micromanager.internal.utils.ReportingUtils;
 import java.util.concurrent.LinkedBlockingQueue;
 import mmcorej.StrVector;
@@ -16,17 +17,18 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import org.json.JSONException;
 
 
 
 public class PWSProcessor implements Runnable{
     Studio studio_;
-    LinkedBlockingQueue imageQueue;
+    LinkedBlockingQueue imageQueue = new LinkedBlockingQueue();
     boolean debugLogEnabled_ = true;
     Image[] imageArray;
     int[] wv;
     String filtLabel;
-    String filtProp;
+    final String filtProp  = "Wavelength";
     Boolean hardwareSequence;
     Boolean useExternalTrigger;
     String savePath;
@@ -34,34 +36,28 @@ public class PWSProcessor implements Runnable{
     JSONObject metadata = new JSONObject();
     PWSAlbum album;
     
-    public PWSProcessor(Studio studio, PropertyMap settings) throws Exception{
+    public PWSProcessor(Studio studio) {
         studio_ = studio;
         album = new PWSAlbum(studio_);
-        wv = settings.getIntegerList(PWSPlugin.wvSetting);
-        filtLabel = settings.getString(PWSPlugin.filterLabelSetting, "");
-        hardwareSequence = settings.getBoolean(PWSPlugin.sequenceSetting, false);
-        savePath = settings.getString(PWSPlugin.savePathSetting, "");
-        useExternalTrigger = settings.getBoolean(PWSPlugin.externalTriggerSetting, false);
-        cellNum = settings.getInteger(PWSPlugin.cellNumSetting,1);
-        int darkCounts = settings.getInteger(PWSPlugin.darkCountsSetting,0);
-        int[] linearityPolynomial = settings.getIntegerList(PWSPlugin.linearityPolySetting);
-        String systemName = settings.getString(PWSPlugin.systemNameSetting, "");
+    }
+    
+    public void setSaveSettings(String savepath, int cellnum) {
+        savePath = savepath;
+        cellNum = cellnum;
+    }
+    
+    public void setHardwareSettings(boolean externalTrigger, 
+            boolean hardwareTrigger, int[] Wv, String filterLabel) throws Exception {
+        useExternalTrigger = externalTrigger;
+        wv = Wv;
+        filtLabel = filterLabel;
+        hardwareSequence =  hardwareTrigger;
         
         JSONArray WV = new JSONArray();
         for (int i = 0; i < wv.length; i++) {
             WV.put(wv[i]);
-        }
-        JSONArray linPoly = new JSONArray();
-        for (int i=0; i<linearityPolynomial.length; i++) {
-            linPoly.put(linearityPolynomial[i]);
-        }
-        metadata.put("wavelengths", WV);  
-        metadata.put("system", systemName);
-        metadata.put("darkCounts", darkCounts);
-        metadata.put("linearityPoly", linPoly);
-
-        filtProp = "Wavelength";
-        imageQueue = new LinkedBlockingQueue();
+        }        
+        metadata.put("wavelengths", WV);             
         
         if (hardwareSequence) {
             try {
@@ -83,11 +79,34 @@ public class PWSProcessor implements Runnable{
                 ReportingUtils.showError(ex);
                 throw ex;
             }
-        }             
+        }  
+    }
+    
+    public void setMetadataSettings(int darkcounts, int[] linearPoly, String sysName) throws JSONException {
+        int darkCounts = darkcounts;
+        int[] linearityPolynomial = linearPoly;
+        String systemName = sysName;
+        
+        JSONArray linPoly = new JSONArray();
+        for (int i=0; i<linearityPolynomial.length; i++) {
+            linPoly.put(linearityPolynomial[i]);
+        }
+        metadata.put("system", systemName);
+        metadata.put("darkCounts", darkCounts);
+        metadata.put("linearityPoly", linPoly);
+    }
+    
+    public void setCellNum(int number){
+        cellNum = number;
+    }
+    
+    public void setSavePath(String path) {
+        savePath = path;
     }
     
     @Override
     public void run() {
+        try {album.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         if (studio_.acquisitions().isAcquisitionRunning()) {
             studio_.acquisitions().setPause(true);
         }
@@ -104,14 +123,8 @@ public class PWSProcessor implements Runnable{
                 ReportingUtils.showError("Cell " + cellNum + " already exists");
                 return;
             }
-                
-
             ImSaverRaw imsaver = new ImSaverRaw(studio_, Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).toString(), imageQueue, metadata, wv, true);
             acquireImages();
-            
-            if (debugLogEnabled_) {
-                ReportingUtils.logMessage("Queue has" + Integer.toString(imageQueue.size()));
-            }
         } catch (Exception ex) {          
             ReportingUtils.logError("PWSPlugin, in processor: " + ex.toString());
             imageQueue.clear();
