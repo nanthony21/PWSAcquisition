@@ -47,7 +47,7 @@ import org.scijava.plugin.Plugin;
 public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
 
     public static String menuName = "PWSAcquisition";
-    public static String tooltipDescription = "Hyperspectral Image";
+    public static String tooltipDescription = "Hyperspectral Imaging";
     public static String versionNumber = "0.2";
     public static String copyright = "Backman Photonics Lab";
     
@@ -126,5 +126,9 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
 
     public void acquire() {
         frame_.acquire();
+    }
+    
+    public String getFilterName() {
+        return frame_.getFilterName();
     }
 }

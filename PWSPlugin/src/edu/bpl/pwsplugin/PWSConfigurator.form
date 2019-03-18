@@ -56,14 +56,17 @@
   </Layout>
   <SubComponents>
     <Container class="javax.swing.JTabbedPane" name="jTabbedPane1">
+      <AccessibilityProperties>
+        <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="General"/>
+      </AccessibilityProperties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
       <SubComponents>
         <Container class="javax.swing.JPanel" name="jPanel2">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="tab1">
-                <Property name="tabTitle" type="java.lang.String" value="tab1"/>
+              <JTabbedPaneConstraints tabName="General">
+                <Property name="tabTitle" type="java.lang.String" value="General"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
@@ -189,8 +192,8 @@
         <Container class="javax.swing.JPanel" name="jPanel4">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="tab2">
-                <Property name="tabTitle" type="java.lang.String" value="tab2"/>
+              <JTabbedPaneConstraints tabName="Hardware">
+                <Property name="tabTitle" type="java.lang.String" value="Hardware"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
@@ -264,8 +267,8 @@
         <Container class="javax.swing.JPanel" name="jPanel1">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="system data">
-                <Property name="tabTitle" type="java.lang.String" value="system data"/>
+              <JTabbedPaneConstraints tabName="System Data">
+                <Property name="tabTitle" type="java.lang.String" value="System Data"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
@@ -308,21 +311,29 @@
                     <Component class="javax.swing.JLabel" name="jLabel2">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Dark Counts"/>
+                        <Property name="toolTipText" type="java.lang.String" value="# of counts per pixel when the camera is not exposed to any light. E.g if measuring dark counts with 2x2 binning the number here should be 1/4 of your measurement 2x2 binning pools 4 pixels."/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JTextField" name="systemNameEdit">
+                    <Component class="javax.swing.JTextField" name="darkCountsEdit">
+                      <Properties>
+                        <Property name="toolTipText" type="java.lang.String" value="# of counts per pixel when the camera is not exposed to any light. E.g if measuring dark counts with 2x2 binning the number here should be 1/4 of your measurement 2x2 binning pools 4 pixels."/>
+                      </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="systemNameEditActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="darkCountsEditActionPerformed"/>
                       </Events>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel1">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Name"/>
+                        <Property name="toolTipText" type="java.lang.String" value="The name of the system."/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JTextField" name="darkCountsEdit">
+                    <Component class="javax.swing.JTextField" name="systemNameEdit">
+                      <Properties>
+                        <Property name="toolTipText" type="java.lang.String" value="The name of the system."/>
+                      </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="darkCountsEditActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="systemNameEditActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>
@@ -337,9 +348,13 @@
                     <Component class="javax.swing.JLabel" name="jLabel3">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Linearity Correction"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Comma separated values representing the polynomial to linearize the counts from the camera. In the form &quot;A,B,C&quot; = Ax + Bx^2 + Cx^3. Type &quot;None&quot; or &quot;null&quot; if correction is not needed."/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="linearityCorrectionEdit">
+                      <Properties>
+                        <Property name="toolTipText" type="java.lang.String" value="Comma separated values representing the polynomial to linearize the counts from the camera. In the form &quot;A,B,C&quot; = Ax + Bx^2 + Cx^3. Type &quot;None&quot; or &quot;null&quot; if correction is not needed."/>
+                      </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="linearityCorrectionEditActionPerformed"/>
                       </Events>

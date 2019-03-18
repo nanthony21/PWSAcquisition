@@ -76,18 +76,19 @@ public class PWSProcessor implements Runnable{
         }  
     }
     
-    public void setOtherSettings(int darkcounts, int[] linearPoly, String sysName, double exposure) throws JSONException {
-        int darkCounts = darkcounts;
-        int[] linearityPolynomial = linearPoly;
-        String systemName = sysName;
-        
-        JSONArray linPoly = new JSONArray();
-        for (int i=0; i<linearityPolynomial.length; i++) {
-            linPoly.put(linearityPolynomial[i]);
+    public void setOtherSettings(int darkcounts, double[] linearPoly, String sysName, double exposure) throws JSONException {
+        JSONArray linPoly;
+        if (linearPoly.length > 0) {
+            linPoly = new JSONArray();
+            for (int i=0; i<linearPoly.length; i++) {
+                linPoly.put(linearPoly[i]);
+            }
+            metadata.put("linearityPoly", linPoly);
+        } else{
+            metadata.put("linearityPoly", JSONObject.NULL);
         }
-        metadata.put("system", systemName);
-        metadata.put("darkCounts", darkCounts);
-        metadata.put("linearityPoly", linPoly);
+        metadata.put("system", sysName);
+        metadata.put("darkCounts", darkcounts);
         
         exposure_ = exposure;
     }

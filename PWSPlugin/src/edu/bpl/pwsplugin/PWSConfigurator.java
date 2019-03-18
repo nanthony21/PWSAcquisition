@@ -52,13 +52,7 @@ public class PWSConfigurator extends MMFrame {
         settings_ = studio_.profile().getSettings(PWSConfigurator.class);
         log_ = studio.logs();
         
-        super.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(final WindowEvent e) {
-               saveSettings();
-            }
-        });
-        
+        super.setTitle(String.format("%s %s", PWSPlugin.menuName, PWSPlugin.versionNumber));
         initComponents();
         addDocListeners();
         scanDevices();
@@ -73,7 +67,12 @@ public class PWSConfigurator extends MMFrame {
             cellNumEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.cellNumSetting, 1)));
             systemNameEdit.setText(settings_.getString(PWSPlugin.systemNameSetting, ""));
             darkCountsEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.darkCountsSetting, 0)));
-            linearityCorrectionEdit.setText(StringUtils.join(ArrayUtils.toObject(settings_.getIntegerList(PWSPlugin.linearityPolySetting)), ","));  //String.join(",",Arrays.asList(settings_.getIntegerList(PWSPlugin.linearityPolySetting)).stream().map(Object::toString).collect(Collectors.toList()))); //convert from int[] to csv string.      
+            double[] linArray = settings_.getDoubleList(PWSPlugin.linearityPolySetting);
+            if (linArray.length > 0) {
+                linearityCorrectionEdit.setText(StringUtils.join(ArrayUtils.toObject(linArray), ","));
+            } else {
+                linearityCorrectionEdit.setText("null");
+            }
             //Do this last in case the filter is not available
             filterComboBox.setSelectedItem(settings_.getString(PWSPlugin.filterLabelSetting, ""));
             exposureEdit.setText(String.valueOf(settings_.getDouble(PWSPlugin.exposureSetting, 100.0)));
@@ -90,10 +89,16 @@ public class PWSConfigurator extends MMFrame {
             int stop = Integer.parseInt(wvStopField.getText().trim());
             int step = Integer.parseInt(wvStepField.getText().trim());
             int darkCounts = Integer.parseInt(darkCountsEdit.getText().trim());
-            int[] linearityPolynomial = Arrays.asList(linearityCorrectionEdit.getText().split(","))
+            String linText = linearityCorrectionEdit.getText().trim();
+            double[] linearityPolynomial;
+            if ((linText.equals("None")) || (linText.equals("null"))) {
+                linearityPolynomial = null;
+            } else {
+                linearityPolynomial = Arrays.asList(linText.split(","))
                                 .stream()
                                 .map(String::trim)
-                                .mapToInt(Integer::parseInt).toArray();
+                                .mapToDouble(Double::parseDouble).toArray();
+            }
             ArrayList<Integer> wvList = new ArrayList<Integer>();
             for (int i = start; i <= stop; i += step) {
                 wvList.add(i);
@@ -107,7 +112,7 @@ public class PWSConfigurator extends MMFrame {
             settings_.putInteger(PWSPlugin.stopSetting, stop);
             settings_.putInteger(PWSPlugin.stepSetting, step);    
             settings_.putInteger(PWSPlugin.darkCountsSetting, darkCounts);
-            settings_.putIntegerList(PWSPlugin.linearityPolySetting, linearityPolynomial);
+            settings_.putDoubleList(PWSPlugin.linearityPolySetting, linearityPolynomial);
             settings_.putString(PWSPlugin.systemNameSetting, systemNameEdit.getText());
             settings_.putBoolean(PWSPlugin.sequenceSetting, hardwareSequencingCheckBox.isSelected());
             settings_.putBoolean(PWSPlugin.externalTriggerSetting,externalTriggerCheckBox.isSelected());
@@ -233,9 +238,9 @@ public class PWSConfigurator extends MMFrame {
         jPanel8 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        systemNameEdit = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
         darkCountsEdit = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        systemNameEdit = new javax.swing.JTextField();
         jPanel6 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         linearityCorrectionEdit = new javax.swing.JTextField();
@@ -336,7 +341,7 @@ public class PWSConfigurator extends MMFrame {
                 .addGap(0, 71, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("tab1", jPanel2);
+        jTabbedPane1.addTab("General", jPanel2);
 
         jPanel5.setLayout(new java.awt.GridLayout(2, 2));
 
@@ -383,25 +388,17 @@ public class PWSConfigurator extends MMFrame {
                 .addGap(124, 124, 124))
         );
 
-        jTabbedPane1.addTab("tab2", jPanel4);
+        jTabbedPane1.addTab("Hardware", jPanel4);
 
         jPanel8.setLayout(new java.awt.GridLayout(2, 1));
 
         jPanel7.setLayout(new java.awt.GridLayout(2, 2));
 
         jLabel2.setText("Dark Counts");
+        jLabel2.setToolTipText("# of counts per pixel when the camera is not exposed to any light. E.g if measuring dark counts with 2x2 binning the number here should be 1/4 of your measurement 2x2 binning pools 4 pixels.");
         jPanel7.add(jLabel2);
 
-        systemNameEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                systemNameEditActionPerformed(evt);
-            }
-        });
-        jPanel7.add(systemNameEdit);
-
-        jLabel1.setText("Name");
-        jPanel7.add(jLabel1);
-
+        darkCountsEdit.setToolTipText("# of counts per pixel when the camera is not exposed to any light. E.g if measuring dark counts with 2x2 binning the number here should be 1/4 of your measurement 2x2 binning pools 4 pixels.");
         darkCountsEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 darkCountsEditActionPerformed(evt);
@@ -409,13 +406,27 @@ public class PWSConfigurator extends MMFrame {
         });
         jPanel7.add(darkCountsEdit);
 
+        jLabel1.setText("Name");
+        jLabel1.setToolTipText("The name of the system.");
+        jPanel7.add(jLabel1);
+
+        systemNameEdit.setToolTipText("The name of the system.");
+        systemNameEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                systemNameEditActionPerformed(evt);
+            }
+        });
+        jPanel7.add(systemNameEdit);
+
         jPanel8.add(jPanel7);
 
         jPanel6.setLayout(new java.awt.GridLayout(2, 1));
 
         jLabel3.setText("Linearity Correction");
+        jLabel3.setToolTipText("Comma separated values representing the polynomial to linearize the counts from the camera. In the form \"A,B,C\" = Ax + Bx^2 + Cx^3. Type \"None\" or \"null\" if correction is not needed.");
         jPanel6.add(jLabel3);
 
+        linearityCorrectionEdit.setToolTipText("Comma separated values representing the polynomial to linearize the counts from the camera. In the form \"A,B,C\" = Ax + Bx^2 + Cx^3. Type \"None\" or \"null\" if correction is not needed.");
         linearityCorrectionEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 linearityCorrectionEditActionPerformed(evt);
@@ -442,7 +453,7 @@ public class PWSConfigurator extends MMFrame {
                 .addContainerGap(46, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("system data", jPanel1);
+        jTabbedPane1.addTab("System Data", jPanel1);
 
         submitButton.setText("Acquire");
         submitButton.addActionListener(new java.awt.event.ActionListener() {
@@ -482,6 +493,8 @@ public class PWSConfigurator extends MMFrame {
                     .addComponent(attachButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        jTabbedPane1.getAccessibleContext().setAccessibleName("General");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -628,7 +641,7 @@ public class PWSConfigurator extends MMFrame {
             }
             if (otherSettingsStale_) {      
                 int darkCounts = settings_.getInteger(PWSPlugin.darkCountsSetting,0);
-                int[] linearityPolynomial = settings_.getIntegerList(PWSPlugin.linearityPolySetting);
+                double[] linearityPolynomial = settings_.getDoubleList(PWSPlugin.linearityPolySetting);
                 String systemName = settings_.getString(PWSPlugin.systemNameSetting, "");
                 double exposure = settings_.getDouble(PWSPlugin.exposureSetting, 100);
                 processor_.setOtherSettings(darkCounts, linearityPolynomial, systemName, exposure);
@@ -657,5 +670,9 @@ public class PWSConfigurator extends MMFrame {
         public void done() {
             submitButton.setEnabled(true);
         }
+    }
+    
+    public String getFilterName() {
+        return filterComboBox.getSelectedItem().toString();
     }
 }
