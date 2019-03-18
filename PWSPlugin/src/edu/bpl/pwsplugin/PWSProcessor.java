@@ -11,6 +11,10 @@ import java.nio.file.Paths;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
+import org.micromanager.data.Coords;
+import org.micromanager.data.Datastore;
+import org.micromanager.data.Pipeline;
+import org.micromanager.data.PipelineErrorException;
 
 
 
@@ -29,6 +33,7 @@ public class PWSProcessor implements Runnable{
     JSONObject metadata = new JSONObject();
     PWSAlbum album;
     double exposure_;
+    Pipeline pipeline_;
     
     public PWSProcessor(Studio studio) {
         studio_ = studio;
@@ -139,6 +144,7 @@ public class PWSProcessor implements Runnable{
             studio_.core().waitForDevice(cam);
             studio_.core().clearCircularBuffer();     
             studio_.core().setExposure(cam, exposure_);
+            pipeline_ = studio_.data().copyApplicationPipeline(studio_.data().createRAMDatastore(), true);
             
             long now = System.currentTimeMillis();
             
@@ -181,10 +187,8 @@ public class PWSProcessor implements Runnable{
                         }
                         if (remaining) {    //Process images
                             Image im = studio_.data().convertTaggedImage(studio_.core().popNextTaggedImage());
-                            //TODO run image through the pipeline. also do this in software acq.
-                            album.addImage(im, wv[i]);
+                            addImage(im, i);
                             i++;
-                            imageQueue.add(im);
                         }
                         if (!running) {
                             canExit = true;
@@ -204,8 +208,7 @@ public class PWSProcessor implements Runnable{
                     while (studio_.core().deviceBusy(filtLabel)) {Thread.sleep(1);} //Wait until the device says it is tuned.
                     studio_.core().snapImage();
                     Image im = studio_.data().convertTaggedImage(studio_.core().getTaggedImage());
-                    album.addImage(im, wv[i]);
-                    imageQueue.add(im);
+                    addImage(im, i);
                 }
                 studio_.core().setProperty(filtLabel, filtProp, wv[0]);
             }
@@ -226,4 +229,12 @@ public class PWSProcessor implements Runnable{
         }
     }
     
+    private void addImage(Image im, int idx) throws IOException, PipelineErrorException{
+        Coords newCoords = im.getCoords().copyBuilder().t(idx).build();
+        im = im.copyAtCoords(newCoords);
+        pipeline_.insertImage(im);
+        im = pipeline_.getDatastore().getImage(newCoords);
+        album.addImage(im);                   
+        imageQueue.add(im);
+    }
 }

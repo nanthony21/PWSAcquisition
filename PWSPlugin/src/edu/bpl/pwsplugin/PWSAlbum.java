@@ -53,7 +53,7 @@ public class PWSAlbum {
        store_.deleteAllImages();
    }
 
-   public void addImage(Image image, int wavelength){   
+   public void addImage(Image image){   
         if ((display==null) || (display.isClosed())) {
             display = studio_.displays().createDisplay(store_);
             display.setCustomTitle("PWS");
