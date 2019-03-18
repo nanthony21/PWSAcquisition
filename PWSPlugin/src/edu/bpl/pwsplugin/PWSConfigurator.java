@@ -42,6 +42,7 @@ public class PWSConfigurator extends MMFrame {
     private boolean otherSettingsStale_ = true;
     private boolean sequenceSettingsStale_ = true;
     private boolean saveSettingsStale_ = true;
+    private boolean acquisitionRunning_ = false;
     
     /**
      * 
@@ -365,6 +366,7 @@ public class PWSConfigurator extends MMFrame {
         jPanel5.add(filterComboBox);
 
         externalTriggerCheckBox.setText("Use External Trigger");
+        externalTriggerCheckBox.setEnabled(false);
         externalTriggerCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 externalTriggerCheckBoxActionPerformed(evt);
@@ -625,7 +627,12 @@ public class PWSConfigurator extends MMFrame {
 
         BackgroundWorker worker = new BackgroundWorker();
         worker.execute();
+        acquisitionRunning_ = true;
         submitButton.setEnabled(false);            
+    }
+    
+    public boolean isAcquisitionRunning() {
+        return acquisitionRunning_;
     }
     
     private void configureProcessor() throws Exception {
@@ -668,6 +675,7 @@ public class PWSConfigurator extends MMFrame {
 
         @Override
         public void done() {
+            acquisitionRunning_ = false;
             submitButton.setEnabled(true);
         }
     }

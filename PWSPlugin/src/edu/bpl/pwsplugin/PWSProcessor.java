@@ -181,15 +181,15 @@ public class PWSProcessor implements Runnable{
                         }
                         if (remaining) {    //Process images
                             Image im = studio_.data().convertTaggedImage(studio_.core().popNextTaggedImage());
+                            //TODO run image through the pipeline. also do this in software acq.
                             album.addImage(im, wv[i]);
                             i++;
-                           imageQueue.add(im);
+                            imageQueue.add(im);
                         }
                         if (!running) {
                             canExit = true;
                         }
                      }
-
                 }
                 finally {
                     studio_.core().stopSequenceAcquisition();

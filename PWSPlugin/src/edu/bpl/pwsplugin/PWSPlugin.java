@@ -124,8 +124,12 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
         frame_.setCellNumber(cellNum);
     }
 
-    public void acquire() {
+    public void  startAcquisition() {
         frame_.acquire();
+    }
+    
+    public boolean isAcquisitionRunning() {
+        return frame_.isAcquisitionRunning();
     }
     
     public String getFilterName() {
