@@ -77,7 +77,7 @@ public class ImSaverRaw implements Runnable {
             JSONObject jmd = new JSONObject(((DefaultMetadata)md).toPropertyMap().toJSON());
             md_.put("MicroManagerMetadata", jmd);
             md_.put("exposure", studio_.core().getExposure());
-            md_.put("time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:SS")));
+            md_.put("time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:SS")));
             writeMetadata();
             
             stack = new ImageStack(im.getWidth(), im.getHeight());
