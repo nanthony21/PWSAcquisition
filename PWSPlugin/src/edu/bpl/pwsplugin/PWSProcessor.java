@@ -232,9 +232,9 @@ public class PWSProcessor implements Runnable{
     private void addImage(Image im, int idx) throws IOException, PipelineErrorException{
         Coords newCoords = im.getCoords().copyBuilder().t(idx).build();
         im = im.copyAtCoords(newCoords);
-        pipeline_.insertImage(im);
-        im = pipeline_.getDatastore().getImage(newCoords);
-        album.addImage(im);                   
-        imageQueue.add(im);
+        pipeline_.insertImage(im); //Add image to the data pipeline for processing
+        im = pipeline_.getDatastore().getImage(newCoords); //Retrieve the processed image.
+        album.addImage(im); //Add the image to the album for display
+        imageQueue.add(im); //Add the image to a queue for multithreaded saving.
     }
 }
