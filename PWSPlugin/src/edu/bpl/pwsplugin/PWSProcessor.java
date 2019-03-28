@@ -125,6 +125,9 @@ public class PWSProcessor implements Runnable{
                 ReportingUtils.showError("Cell " + cellNum + " already exists");
                 return;
             }
+            if (studio_.core().getPixelSizeUm() == 0.0) {
+                ReportingUtils.showMessage("It is highly recommended that you provide MicroManager with a pixel size setting for the current setup. Having this information is useful for analysis.");
+            }
             ImSaverRaw imsaver = new ImSaverRaw(studio_, Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).toString(), imageQueue, metadata, wv, true);
             imsaver.start();
             acquireImages();
