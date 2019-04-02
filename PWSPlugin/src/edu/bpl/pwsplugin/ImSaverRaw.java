@@ -75,7 +75,7 @@ public class ImSaverRaw implements Runnable {
             
             Metadata md = im.getMetadata();
             JSONObject jmd = new JSONObject(((DefaultMetadata)md).toPropertyMap().toJSON());
-            md_.put("MicroManagerMetadata", jmd);
+            md_.put("MicroManagerMetadata", jmd.get("map"));
             md_.put("exposure", studio_.core().getExposure());
             md_.put("time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
             writeMetadata();
