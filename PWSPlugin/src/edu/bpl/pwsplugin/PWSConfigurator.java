@@ -636,15 +636,6 @@ public class PWSConfigurator extends MMFrame {
     private javax.swing.JTextField wvStopField;
     // End of variables declaration//GEN-END:variables
 
-    //API
-    public void setSavePath(String savepath) {
-        directoryText.setText(savepath);
-    }
-    
-    public void setCellNumber(int cellNum) {
-        cellNumEdit.setText(String.valueOf(cellNum));
-    }
-
     public void acquire() {
         try {
             configureProcessor();
@@ -708,7 +699,20 @@ public class PWSConfigurator extends MMFrame {
         }
     }
     
+    //API
+    public void setSavePath(String savepath) {
+        directoryText.setText(savepath);
+    }
+    
+    public void setCellNumber(int cellNum) {
+        cellNumEdit.setText(String.valueOf(cellNum));
+    }
+    
     public String getFilterName() {
         return filterComboBox.getSelectedItem().toString();
+    }
+    
+    public void setExposure(double exposureMs) {
+        exposureEdit.setText(String.valueOf(exposureMs));
     }
 }

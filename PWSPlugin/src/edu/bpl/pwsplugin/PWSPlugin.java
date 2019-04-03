@@ -123,6 +123,10 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     public void setCellNumber(int cellNum) {
         frame_.setCellNumber(cellNum);
     }
+    
+    public void setExposure(double exposureMs) {
+        frame_.setExposure(exposureMs);
+    }
 
     public void  startAcquisition() {
         frame_.acquire();
