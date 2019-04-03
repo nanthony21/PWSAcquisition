@@ -116,12 +116,13 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="stepLabel2">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Exposure"/>
+                    <Property name="text" type="java.lang.String" value="Exposure (ms)"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JTextField" name="wvStartField">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="500"/>
+                    <Property name="toolTipText" type="java.lang.String" value="In nanometers. The wavelength to start scanning at."/>
                     <Property name="name" type="java.lang.String" value="" noResource="true"/>
                   </Properties>
                   <Events>
@@ -131,6 +132,7 @@
                 <Component class="javax.swing.JTextField" name="wvStopField">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="700"/>
+                    <Property name="toolTipText" type="java.lang.String" value="In nanometers. The wavelength to stop scanning at."/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="wvStopFieldActionPerformed"/>
@@ -271,6 +273,7 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="hardwareSequencingCheckBox">
                   <Properties>
+                    <Property name="toolTipText" type="java.lang.String" value="Whether the camera should be configured to trigger wavelength changes in the filter over TTL. This may not be supported."/>
                     <Property name="label" type="java.lang.String" value="Use Hardware Sequencing"/>
                   </Properties>
                   <Events>
@@ -294,6 +297,7 @@
                 <Component class="javax.swing.JCheckBox" name="externalTriggerCheckBox">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Use External Trigger"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Whether the filter should trigger a new camera acquisition over TTL. This is not possible for LCTF but can be done with the VF-5 Filter."/>
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>

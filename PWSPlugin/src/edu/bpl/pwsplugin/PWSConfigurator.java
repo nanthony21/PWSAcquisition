@@ -268,10 +268,11 @@ public class PWSConfigurator extends MMFrame {
         stepLabel.setText("Step");
         jPanel3.add(stepLabel);
 
-        stepLabel2.setText("Exposure");
+        stepLabel2.setText("Exposure (ms)");
         jPanel3.add(stepLabel2);
 
         wvStartField.setText("500");
+        wvStartField.setToolTipText("In nanometers. The wavelength to start scanning at.");
         wvStartField.setName(""); // NOI18N
         wvStartField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -281,6 +282,7 @@ public class PWSConfigurator extends MMFrame {
         jPanel3.add(wvStartField);
 
         wvStopField.setText("700");
+        wvStopField.setToolTipText("In nanometers. The wavelength to stop scanning at.");
         wvStopField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 wvStopFieldActionPerformed(evt);
@@ -372,6 +374,7 @@ public class PWSConfigurator extends MMFrame {
         filterLabel.setText("Filter");
         jPanel5.add(filterLabel);
 
+        hardwareSequencingCheckBox.setToolTipText("Whether the camera should be configured to trigger wavelength changes in the filter over TTL. This may not be supported.");
         hardwareSequencingCheckBox.setLabel("Use Hardware Sequencing");
         hardwareSequencingCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -389,6 +392,7 @@ public class PWSConfigurator extends MMFrame {
         jPanel5.add(filterComboBox);
 
         externalTriggerCheckBox.setText("Use External Trigger");
+        externalTriggerCheckBox.setToolTipText("Whether the filter should trigger a new camera acquisition over TTL. This is not possible for LCTF but can be done with the VF-5 Filter.");
         externalTriggerCheckBox.setEnabled(false);
         externalTriggerCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
