@@ -139,4 +139,8 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     public String getFilterName() {
         return frame_.getFilterName();
     }
+    
+    public void dispose() { //Close the frame.
+        frame_.dispose();
+    }
 }
