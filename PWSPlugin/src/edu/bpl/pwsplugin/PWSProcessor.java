@@ -142,7 +142,9 @@ public class PWSProcessor implements Runnable{
     }
       
     private void acquireImages() {
-        try {
+        double initialWv = 550;
+        try {    
+            initialWv = Double.valueOf(studio_.core().getProperty(filtLabel, filtProp)); //Get initial wavelength
             String cam = studio_.core().getCameraDevice();
             studio_.core().waitForDevice(cam);
             studio_.core().clearCircularBuffer();     
@@ -203,6 +205,12 @@ public class PWSProcessor implements Runnable{
                     if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")){
                         studio_.core().setProperty(cam, "TRIGGER SOURCE", origCameraTrigger); //Set the trigger source back ot what it was originally
                     }
+                    try {
+                        studio_.core().stopPropertySequence(filtLabel, filtProp);//Got to make sure to stop the sequencing behaviour.
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        ReportingUtils.logMessage("ERROR: PWSPlugin: Stopping property sequence: " + ex.getMessage());
+                    }
                 }
             }
             else {  //Software sequenced acquisition
@@ -213,7 +221,6 @@ public class PWSProcessor implements Runnable{
                     Image im = studio_.data().convertTaggedImage(studio_.core().getTaggedImage());
                     addImage(im, i);
                 }
-                studio_.core().setProperty(filtLabel, filtProp, wv[0]);
             }
             long itTook = System.currentTimeMillis() - now;         
             if (debugLogEnabled_) {
@@ -223,11 +230,11 @@ public class PWSProcessor implements Runnable{
             ex.printStackTrace();
             ReportingUtils.logMessage("ERROR: PWSPlugin: " + ex.getMessage());
         } finally {
-            try {
-                studio_.core().stopPropertySequence(filtLabel, filtProp); //Got to make sure to stop the sequencing behaviour.
+            try{
+                studio_.core().setProperty(filtLabel, filtProp, initialWv); //Set back to initial wavelength
             } catch (Exception ex) {
                 ex.printStackTrace();
-                ReportingUtils.logMessage("ERROR: PWSPlugin: Stopping property sequence: " + ex.getMessage());
+                ReportingUtils.logMessage("ERROR: PWSPlugin: " + ex.getMessage());
             }
         }
     }
