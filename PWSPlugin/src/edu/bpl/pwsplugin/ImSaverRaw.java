@@ -95,7 +95,10 @@ public class ImSaverRaw implements Runnable {
             FileInfo info = new FileInfo();
             imPlus.setFileInfo(info);
             FileSaver saver = new FileSaver(imPlus);
-            saver.saveAsTiffStack(Paths.get(savePath_).resolve("pws.tif").toString());
+            boolean success = saver.saveAsTiffStack(Paths.get(savePath_).resolve("pws.tif").toString());
+            if (!success) { 
+                throw new IOException("Failed to save PWS image cube tiff");
+            }
 
             long itTook = System.currentTimeMillis() - now;
             if (debug_) {
@@ -103,7 +106,7 @@ public class ImSaverRaw implements Runnable {
             }
         } catch (Exception ex) {
             ReportingUtils.showError(ex);
-            ReportingUtils.logError("Error: PWSPlugin, while producing averaged img: "+ ex.toString());
+            ReportingUtils.logError("Error: PWSPlugin, while producing PWS image: "+ ex.toString());
         } 
     }
     
@@ -115,7 +118,7 @@ public class ImSaverRaw implements Runnable {
     }
             
 
-    private void saveImBd(Image im) {
+    private void saveImBd(Image im) throws IOException{
         ImagePlus imPlus = new ImagePlus("PWS", imJConv.createProcessor(im));
         ContrastEnhancer contrast = new ContrastEnhancer();
         contrast.stretchHistogram(imPlus,0.01); //I think this will saturate 0.01% of the image. or maybe its 1% idk. 
@@ -125,6 +128,13 @@ public class ImSaverRaw implements Runnable {
         FileInfo info = new FileInfo();
         imPlus.setFileInfo(info);
         FileSaver saver = new FileSaver(imPlus);
-        saver.saveAsTiff(Paths.get(savePath_).resolve("image_bd.tif").toString());
+        boolean success = saver.saveAsTiff(Paths.get(savePath_).resolve("image_bd.tif").toString());
+        if (!success) {
+            throw new IOException("Image BD failed to save");
+        }
+    }
+    
+    public void join() throws InterruptedException{
+        t.join(); //Wait for the thread to finish.
     }
 }

@@ -34,6 +34,7 @@ public class PWSProcessor implements Runnable{
     PWSAlbum album;
     double exposure_;
     Pipeline pipeline_;
+    ImSaverRaw imsaver_ = null;
     
     public PWSProcessor(Studio studio) {
         studio_ = studio;
@@ -112,15 +113,18 @@ public class PWSProcessor implements Runnable{
         if (studio_.acquisitions().isAcquisitionRunning()) {
             studio_.acquisitions().setPause(true);
         }
-        try { 
+        try {
+            if (imsaver_ != null) {//Imsaver has already being assigned meaning that the acquisition has been run before. We need to make sure that this saver finished saving before continuing.
+                imsaver_.join();
+                imsaver_ = null;
+                if (imageQueue.size() > 0) {
+                    ReportingUtils.showMessage(String.format("The image queue started a new acquisition with %d images already in it! Go find Nick.", imageQueue.size()));
+                    imageQueue.clear();
+                }
+            }
             if (studio_.live().getIsLiveModeOn()) { //Not supported
                 studio_.live().setLiveMode(false);
             }
-            /*
-            while (Files.isDirectory(Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)))){ //Find a cell number that doesn't already exist.
-                cellNum++;
-            }
-            */
             if (Files.isDirectory(Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)))){
                 ReportingUtils.showError("Cell " + cellNum + " already exists");
                 return;
@@ -128,8 +132,8 @@ public class PWSProcessor implements Runnable{
             if (studio_.core().getPixelSizeUm() == 0.0) {
                 ReportingUtils.showMessage("It is highly recommended that you provide MicroManager with a pixel size setting for the current setup. Having this information is useful for analysis.");
             }
-            ImSaverRaw imsaver = new ImSaverRaw(studio_, Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).toString(), imageQueue, metadata, wv, true);
-            imsaver.start();
+            imsaver_ = new ImSaverRaw(studio_, Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).toString(), imageQueue, metadata, wv, true);
+            imsaver_.start();
             acquireImages();
         } catch (Exception ex) {          
             ReportingUtils.logError("PWSPlugin, in processor: " + ex.toString());
