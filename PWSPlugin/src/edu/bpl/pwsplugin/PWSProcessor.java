@@ -164,9 +164,9 @@ public class PWSProcessor implements Runnable{
                 }
                 try {
                     studio_.core().startPropertySequence(filtLabel, filtProp);
-                    double delayMs = studio_.core().getDeviceDelayMs(filtLabel); //Use the delay defined by the device adapter.
+                    double delayMs = studio_.core().getDeviceDelayMs(filtLabel); //Use the delay defined by the tunable filter's device adapter.
                     if (useExternalTrigger) {
-                        if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { //This device adapter doesn't seem to support delays in the sequence acquisition. We instead set the master pulse interval. We have to assume that the camera is set to trigger from the master pulse. 
+                        if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { 
                             studio_.core().setProperty(cam, "TRIGGER SOURCE", "EXTERNAL");
                             studio_.core().setProperty(cam, "TRIGGER_DELAY", delayMs/1000); //This is in units of seconds.
                             studio_.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an eror if the interval is not 0.
@@ -175,14 +175,15 @@ public class PWSProcessor implements Runnable{
                         }   
                     }
                     else { //Since we're not using an external trigger we need to have the camera control the timing.
+                        double exposurems = studio_.core().getExposure();
+                        double readoutms = 10; //This is based on the frame rate calculation portion of the 13440-20CU camera. 9.7 us per line, reading two lines at once, 2048 lines -> 0.097*2048/2 ~= 10 ms
+                        double intervalMs = (exposurems+readoutms+delayMs);
                         if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { //This device adapter doesn't seem to support delays in the sequence acquisition. We instead set the master pulse interval.
-                            studio_.core().setProperty(cam, "TRIGGER SOURCE", "MASTER PULSE"); //Make sure that MAster Pulse is triggering the camera.
-                            double exposurems = studio_.core().getExposure();
-                            double readoutms = 10; //This is based on the frame rate calculation portion of the 13440-20CU camera. 9.7 us per line, reading two lines at once, 2048 lines -> 0.097*2048/2 ~= 10 ms
-                            studio_.core().setProperty(cam, "MASTER PULSE INTERVAL", (exposurems+readoutms+delayMs)/1000.0);
-                            studio_.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an eror if the interval is not 0.
+                            studio_.core().setProperty(cam, "TRIGGER SOURCE", "MASTER PULSE"); //Make sure that Master Pulse is triggering the camera.
+                            studio_.core().setProperty(cam, "MASTER PULSE INTERVAL", intervalMs/1000.0); //In units of seconds
+                            studio_.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an error if the interval is not 0.
                         } else{
-                            studio_.core().startSequenceAcquisition(wv.length, delayMs, false);
+                            studio_.core().startSequenceAcquisition(wv.length, intervalMs, false);
                         }
                     }
                     
