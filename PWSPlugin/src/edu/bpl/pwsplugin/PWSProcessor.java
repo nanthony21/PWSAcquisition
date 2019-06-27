@@ -183,7 +183,7 @@ public class PWSProcessor implements Runnable{
                             studio_.core().setProperty(cam, "MASTER PULSE INTERVAL", intervalMs/1000.0); //In units of seconds
                             studio_.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an error if the interval is not 0.
                         } else{
-                            studio_.core().startSequenceAcquisition(wv.length, intervalMs, false);
+                            studio_.core().startSequenceAcquisition(wv.length, intervalMs, false); //Supposedly having a non-zero interval acqually only works for Andor cameras.
                         }
                     }
                     

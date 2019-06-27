@@ -130,6 +130,9 @@ public class PWSConfigurator extends MMFrame {
         catch(NumberFormatException e){
             log_.showMessage("A valid string was not specified.");
         }
+        catch (Exception e){
+            log_.logError(e);
+        }
     }
     
     @Override
