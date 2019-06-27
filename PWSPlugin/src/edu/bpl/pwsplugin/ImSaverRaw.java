@@ -14,7 +14,7 @@ import org.micromanager.data.Image;
 import org.micromanager.internal.utils.ReportingUtils;
 import org.micromanager.data.Metadata;
 import org.micromanager.data.internal.DefaultMetadata;
-import org.micromanager.data.internal.DefaultImageJConverter;
+import org.micromanager.data.ImageJConverter;
 import ij.ImageStack;
 import ij.ImagePlus;
 import ij.io.FileSaver;
@@ -40,7 +40,7 @@ public class ImSaverRaw implements Runnable {
     int expectedFrames_;
     int[] wv_;
     String savePath_;
-    DefaultImageJConverter imJConv;
+    ImageJConverter imJConv;
 
     ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue, JSONObject metadata, int[] wavelengths, boolean debug){
         debug_ = debug;
@@ -50,7 +50,7 @@ public class ImSaverRaw implements Runnable {
         expectedFrames_ = wavelengths.length;
         savePath_ = savePath;
         wv_ = wavelengths;
-        imJConv = new DefaultImageJConverter(studio);
+        imJConv = studio.data().getImageJConverter();
     }
     
     public void start() {
