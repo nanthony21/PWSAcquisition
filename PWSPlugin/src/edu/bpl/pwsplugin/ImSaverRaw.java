@@ -50,7 +50,7 @@ public class ImSaverRaw implements Runnable {
         expectedFrames_ = wavelengths.length;
         savePath_ = savePath;
         wv_ = wavelengths;
-        imJConv = new DefaultImageJConverter();
+        imJConv = new DefaultImageJConverter(studio);
     }
     
     public void start() {
