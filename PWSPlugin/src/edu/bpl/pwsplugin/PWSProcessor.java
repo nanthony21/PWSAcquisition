@@ -132,6 +132,12 @@ public class PWSProcessor implements Runnable{
             if (studio_.core().getPixelSizeUm() == 0.0) {
                 ReportingUtils.showMessage("It is highly recommended that you provide MicroManager with a pixel size setting for the current setup. Having this information is useful for analysis.");
             }
+            if (metadata.get("system").equals("")) {
+                ReportingUtils.showMessage("The `system` metadata field is blank. It should contain the name of the system.");
+            }
+            if (metadata.get("darkCounts").equals(0)) {
+                ReportingUtils.showMessage("The `darkCounts` field of the metadata is 0. This can't be right.");
+            }
             imsaver_ = new ImSaverRaw(studio_, Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).toString(), imageQueue, metadata, wv, true);
             imsaver_.start();
             acquireImages();
