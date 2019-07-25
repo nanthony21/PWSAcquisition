@@ -17,6 +17,7 @@ import org.micromanager.data.internal.DefaultMetadata;
 import org.micromanager.data.ImageJConverter;
 import ij.ImageStack;
 import ij.ImagePlus;
+import ij.process.ImageProcessor;
 import ij.io.FileSaver;
 import ij.io.FileInfo;
 import org.json.JSONObject;
@@ -88,7 +89,8 @@ public class ImSaverRaw implements Runnable {
                 if (i == expectedFrames_/2) {
                     saveImBd(im); //Save the image from halfway through the sequence.
                 }
-                stack.addSlice(imJConv.createProcessor(im));
+                ImageProcessor proc = imJConv.createProcessor(im);
+                stack.addSlice(proc);
             }
             ImagePlus imPlus = new ImagePlus("PWS", stack);
             imPlus.setProperty("Info", md_.toString());

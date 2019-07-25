@@ -118,7 +118,7 @@ public class PWSProcessor implements Runnable{
                 imsaver_.join();
                 imsaver_ = null;
                 if (imageQueue.size() > 0) {
-                    ReportingUtils.showMessage(String.format("The image queue started a new acquisition with %d images already in it! Go find Nick.", imageQueue.size()));
+                    ReportingUtils.showMessage(String.format("The image queue started a new acquisition with %d images already in it! Go find Nick. This can mean that Java has not been allocated enough heap size.", imageQueue.size()));
                     imageQueue.clear();
                 }
             }
