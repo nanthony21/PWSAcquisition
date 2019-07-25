@@ -66,7 +66,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     public static String exposureSetting = "camExposure";
     
     private Studio studio_;  
-    private PWSConfigurator frame_;
+    private PWSFrame frame_;
     
     @Override
     public void setContext(Studio studio) {
@@ -76,7 +76,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     @Override
     public void onPluginSelected() {
         if (frame_ == null) {
-            frame_ = new PWSConfigurator(studio_);
+            frame_ = new PWSFrame(studio_);
         }
         frame_.setVisible(true);
     }
@@ -129,7 +129,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     }
 
     public void  startAcquisition() {
-        frame_.acquire();
+        frame_.acquirePWS();
     }
     
     public boolean isAcquisitionRunning() {

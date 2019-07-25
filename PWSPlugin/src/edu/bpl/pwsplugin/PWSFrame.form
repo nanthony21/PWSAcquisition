@@ -29,10 +29,12 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="submitButton" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
-              <Component id="attachButton" min="-2" max="-2" attributes="0"/>
+              <Component id="acqPWSButton" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="acqDynButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
+              <Component id="attachButton" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="80" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="1" attributes="0">
               <Component id="jTabbedPane1" min="-2" max="-2" attributes="0"/>
@@ -46,8 +48,9 @@
               <Component id="jTabbedPane1" min="-2" pref="184" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="submitButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="acqPWSButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="attachButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="acqDynButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -411,20 +414,29 @@
         </Container>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JButton" name="submitButton">
+    <Component class="javax.swing.JButton" name="acqPWSButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Acquire"/>
+        <Property name="text" type="java.lang.String" value="Acquire PWS"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="submitButtonActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="acqPWSButtonActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JToggleButton" name="attachButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="Attach to AcqEngine"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="attachButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="acqDynButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Acquire Dynamics"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="acqDynButtonActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

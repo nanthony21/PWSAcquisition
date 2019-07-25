@@ -33,12 +33,12 @@ import org.apache.commons.lang.ArrayUtils;
  *
  * @author N2-LiveCell
  */
-public class PWSConfigurator extends MMFrame {
+public class PWSFrame extends MMFrame {
 
     private final Studio studio_;
     private MutablePropertyMapView settings_;
     private final LogManager log_;
-    private PWSProcessor processor_;
+    private AcqManager acqManager_;
     private boolean otherSettingsStale_ = true;
     private boolean sequenceSettingsStale_ = true;
     private boolean saveSettingsStale_ = true;
@@ -47,10 +47,10 @@ public class PWSConfigurator extends MMFrame {
     /**
      * 
      */
-    public PWSConfigurator(Studio studio) {
+    public PWSFrame(Studio studio) {
         studio_ = studio;
-        processor_ = new PWSProcessor(studio_);
-        settings_ = studio_.profile().getSettings(PWSConfigurator.class);
+        acqManager_ = new AcqManager(studio_);
+        settings_ = studio_.profile().getSettings(PWSFrame.class);
         log_ = studio.logs();
         
         super.setTitle(String.format("%s %s", PWSPlugin.menuName, PWSPlugin.versionNumber));
@@ -162,17 +162,17 @@ public class PWSConfigurator extends MMFrame {
     
     private void otherSettingsChanged() {
         otherSettingsStale_ = true;
-        submitButton.setBackground(Color.red);
+        acqPWSButton.setBackground(Color.red);
     }
     
     private void sequenceSettingsChanged() {
         sequenceSettingsStale_ = true;
-        submitButton.setBackground(Color.red);
+        acqPWSButton.setBackground(Color.red);
     }
         
     private void saveSettingsChanged() {
         saveSettingsStale_ = true;
-        submitButton.setBackground(Color.red);
+        acqPWSButton.setBackground(Color.red);
     }
     
     private void addDocListeners() {
@@ -249,8 +249,9 @@ public class PWSConfigurator extends MMFrame {
         jPanel6 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         linearityCorrectionEdit = new javax.swing.JTextField();
-        submitButton = new javax.swing.JButton();
+        acqPWSButton = new javax.swing.JButton();
         attachButton = new javax.swing.JToggleButton();
+        acqDynButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -487,17 +488,25 @@ public class PWSConfigurator extends MMFrame {
 
         jTabbedPane1.addTab("System Data", jPanel1);
 
-        submitButton.setText("Acquire");
-        submitButton.addActionListener(new java.awt.event.ActionListener() {
+        acqPWSButton.setText("Acquire PWS");
+        acqPWSButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                submitButtonActionPerformed(evt);
+                acqPWSButtonActionPerformed(evt);
             }
         });
 
         attachButton.setText("Attach to AcqEngine");
+        attachButton.setEnabled(false);
         attachButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 attachButtonActionPerformed(evt);
+            }
+        });
+
+        acqDynButton.setText("Acquire Dynamics");
+        acqDynButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                acqDynButtonActionPerformed(evt);
             }
         });
 
@@ -507,10 +516,12 @@ public class PWSConfigurator extends MMFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(submitButton)
-                .addGap(54, 54, 54)
+                .addComponent(acqPWSButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(acqDynButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(attachButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(80, 80, 80))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
@@ -521,8 +532,9 @@ public class PWSConfigurator extends MMFrame {
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(submitButton)
-                    .addComponent(attachButton))
+                    .addComponent(acqPWSButton)
+                    .addComponent(attachButton)
+                    .addComponent(acqDynButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -544,10 +556,10 @@ public class PWSConfigurator extends MMFrame {
         sequenceSettingsChanged();
     }//GEN-LAST:event_filterComboBoxActionPerformed
 
-    private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButtonActionPerformed
-        submitButton.setBackground(Color.green);
-        acquire();
-    }//GEN-LAST:event_submitButtonActionPerformed
+    private void acqPWSButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acqPWSButtonActionPerformed
+        acqPWSButton.setBackground(Color.green);
+        acquirePWS();
+    }//GEN-LAST:event_acqPWSButtonActionPerformed
 
     private void directoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_directoryButtonActionPerformed
         File f = FileDialogs.openDir(this, "Directory to save to",
@@ -592,7 +604,7 @@ public class PWSConfigurator extends MMFrame {
                 log_.showError(e);
                 return;
             }
-            studio_.acquisitions().attachRunnable(-1, -1, -1, -1, processor_);
+            //studio_.acquisitions().attachRunnable(-1, -1, -1, -1, pwsManager_);
         } else {
             studio_.acquisitions().clearRunnables();
         }
@@ -602,7 +614,14 @@ public class PWSConfigurator extends MMFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_exposureEditActionPerformed
 
+    private void acqDynButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acqDynButtonActionPerformed
+        acqPWSButton.setBackground(Color.green);
+        acquireDynamics();
+    }//GEN-LAST:event_acqDynButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton acqDynButton;
+    private javax.swing.JButton acqPWSButton;
     private javax.swing.JToggleButton attachButton;
     private javax.swing.JTextField cellNumEdit;
     private javax.swing.JTextField darkCountsEdit;
@@ -632,14 +651,13 @@ public class PWSConfigurator extends MMFrame {
     private javax.swing.JLabel stepLabel1;
     private javax.swing.JLabel stepLabel2;
     private javax.swing.JLabel stopLabel;
-    private javax.swing.JButton submitButton;
     private javax.swing.JTextField systemNameEdit;
     private javax.swing.JTextField wvStartField;
     private javax.swing.JTextField wvStepField;
     private javax.swing.JTextField wvStopField;
     // End of variables declaration//GEN-END:variables
 
-    public void acquire() {
+    public void acquirePWS() {
         try {
             configureProcessor();
         } catch (Exception e) {
@@ -647,10 +665,24 @@ public class PWSConfigurator extends MMFrame {
             return;
         }
 
-        BackgroundWorker worker = new BackgroundWorker();
+        PWSBackgroundWorker worker = new PWSBackgroundWorker();
         worker.execute();
         acquisitionRunning_ = true;
-        submitButton.setEnabled(false);            
+        acqPWSButton.setEnabled(false);            
+    }
+    
+    public void acquireDynamics() {
+        try {
+            configureProcessor();
+        } catch (Exception e) {
+            log_.showError(e);
+            return;
+        }
+
+        DYNBackgroundWorker worker = new DYNBackgroundWorker();
+        worker.execute();
+        acquisitionRunning_ = true;
+        acqDynButton.setEnabled(false);
     }
     
     public boolean isAcquisitionRunning() {
@@ -664,8 +696,8 @@ public class PWSConfigurator extends MMFrame {
             if (saveSettingsStale_) {
                 int cellNum = settings_.getInteger(PWSPlugin.cellNumSetting,1);
                 String savePath = settings_.getString(PWSPlugin.savePathSetting, "");
-                processor_.setCellNum(cellNum);
-                processor_.setSavePath(savePath);
+                pwsManager_.setCellNum(cellNum);
+                pwsManager_.setSavePath(savePath);
                 saveSettingsStale_ = false;
             }
             if (otherSettingsStale_) {      
@@ -673,7 +705,7 @@ public class PWSConfigurator extends MMFrame {
                 double[] linearityPolynomial = settings_.getDoubleList(PWSPlugin.linearityPolySetting);
                 String systemName = settings_.getString(PWSPlugin.systemNameSetting, "");
                 double exposure = settings_.getDouble(PWSPlugin.exposureSetting, 100);
-                processor_.setOtherSettings(darkCounts, linearityPolynomial, systemName, exposure);
+                pwsManager_.setOtherSettings(darkCounts, linearityPolynomial, systemName, exposure);
                 otherSettingsStale_ = false;
             }
             if (sequenceSettingsStale_) {
@@ -681,24 +713,38 @@ public class PWSConfigurator extends MMFrame {
                 String filtLabel = settings_.getString(PWSPlugin.filterLabelSetting, "");
                 boolean hardwareSequence = settings_.getBoolean(PWSPlugin.sequenceSetting, false);
                 boolean useExternalTrigger = settings_.getBoolean(PWSPlugin.externalTriggerSetting, false);
-                processor_.setSequenceSettings(useExternalTrigger, hardwareSequence, wv, filtLabel);
+                pwsManager_.setSequenceSettings(useExternalTrigger, hardwareSequence, wv, filtLabel);
                 sequenceSettingsStale_ = false;
             }            
-            submitButton.setBackground(Color.green);
+            acqPWSButton.setBackground(Color.green);
         }
     }
         
-    protected class BackgroundWorker extends SwingWorker<Void, Void> {
+    protected class PWSBackgroundWorker extends SwingWorker<Void, Void> {
         @Override
         public Void doInBackground() {
-            processor_.run();
+            acqManager_.acquirePWS();
             return null;
         }
 
         @Override
         public void done() {
             acquisitionRunning_ = false;
-            submitButton.setEnabled(true);
+            acqPWSButton.setEnabled(true);
+        }
+    }
+    
+    protected class DYNBackgroundWorker extends SwingWorker<Void, Void> {
+        @Override
+        public Void doInBackground() {
+            acqManager_.acquireDynamics();
+            return null;
+        }
+
+        @Override
+        public void done() {
+            acquisitionRunning_ = false;
+            acqDynButton.setEnabled(true);
         }
     }
     

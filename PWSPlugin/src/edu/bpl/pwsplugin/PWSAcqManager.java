@@ -18,7 +18,7 @@ import org.micromanager.data.PipelineErrorException;
 
 
 
-public class PWSProcessor implements Runnable{
+public class PWSAcqManager implements Runnable{
     Studio studio_;
     LinkedBlockingQueue imageQueue = new LinkedBlockingQueue();
     boolean debugLogEnabled_ = true;
@@ -36,7 +36,7 @@ public class PWSProcessor implements Runnable{
     Pipeline pipeline_;
     ImSaverRaw imsaver_ = null;
     
-    public PWSProcessor(Studio studio) {
+    public PWSAcqManager(Studio studio) {
         studio_ = studio;
         album = new PWSAlbum(studio_);
     }
