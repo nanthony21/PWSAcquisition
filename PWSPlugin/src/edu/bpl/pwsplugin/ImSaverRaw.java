@@ -39,18 +39,16 @@ public class ImSaverRaw implements Runnable {
     Thread t;
     Studio studio_;
     int expectedFrames_;
-    int[] wv_;
     String savePath_;
     ImageJConverter imJConv;
 
-    ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue, JSONObject metadata, int[] wavelengths, boolean debug){
+    ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue, JSONObject metadata, int expectedFrames, boolean debug){
         debug_ = debug;
         md_ = metadata;
         queue_ = queue;
         studio_ = studio;
-        expectedFrames_ = wavelengths.length;
+        expectedFrames_ = expectedFrames;
         savePath_ = savePath;
-        wv_ = wavelengths;
         imJConv = studio.data().getImageJConverter();
     }
     

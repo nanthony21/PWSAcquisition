@@ -1,8 +1,8 @@
 package edu.bpl.pwsplugin.acquisitionManagers;
 
-import edu.bpl.pwsplugin.ImSaverRaw;
 import edu.bpl.pwsplugin.PWSAlbum;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import org.micromanager.internal.utils.ReportingUtils;
 import java.util.concurrent.LinkedBlockingQueue;
 import mmcorej.StrVector;
@@ -11,18 +11,16 @@ import org.micromanager.data.Image;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.micromanager.data.Coords;
-import org.micromanager.data.Datastore;
 import org.micromanager.data.Pipeline;
 import org.micromanager.data.PipelineErrorException;
 
 
 
-public class PWSAcqManager{
+public class PWSAcqManager implements AcquisitionManager{
     Studio studio_;
-    LinkedBlockingQueue imageQueue = new LinkedBlockingQueue();
     Image[] imageArray;
     int[] wv;
     String filtLabel;
@@ -30,25 +28,18 @@ public class PWSAcqManager{
     Boolean hardwareSequence;
     Boolean useExternalTrigger;
     double exposure_;
-    ImSaverRaw imsaver_ = null;
     
     public PWSAcqManager(Studio studio) {
         studio_ = studio;
     }
     
     public void setSequenceSettings(double exposure, boolean externalTrigger, 
-            boolean hardwareTrigger, int[] Wv, String filterLabel, JSONObject metadata) throws Exception {
+            boolean hardwareTrigger, int[] Wv, String filterLabel) throws Exception {
         exposure_ = exposure;
         useExternalTrigger = externalTrigger;
         wv = Wv;
         filtLabel = filterLabel;
-        hardwareSequence =  hardwareTrigger;
-        
-        JSONArray WV = new JSONArray();
-        for (int i = 0; i < wv.length; i++) {
-            WV.put(wv[i]);
-        }        
-        metadata.put("wavelengths", WV);             
+        hardwareSequence =  hardwareTrigger;           
         
         if (hardwareSequence) {
             try {
@@ -73,42 +64,32 @@ public class PWSAcqManager{
         }  
     }
     
-    public void run(int cellNum, String savePath, PWSAlbum album) {
-        try {album.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
-        if (studio_.acquisitions().isAcquisitionRunning()) {
-            studio_.acquisitions().setPause(true);
-        }
-        try {
-            if (imsaver_ != null) {//Imsaver has already being assigned meaning that the acquisition has been run before. We need to make sure that this saver finished saving before continuing.
-                imsaver_.join();
-                imsaver_ = null;
-                if (imageQueue.size() > 0) {
-                    ReportingUtils.showMessage(String.format("The image queue started a new acquisition with %d images already in it! Go find Nick. This can mean that Java has not been allocated enough heap size.", imageQueue.size()));
-                    imageQueue.clear();
-                }
-            }
-            if (studio_.live().getIsLiveModeOn()) { //Not supported
-                studio_.live().setLiveMode(false);
-            }
-            if (Files.isDirectory(Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)))){
-                ReportingUtils.showError("Cell " + cellNum + " already exists");
-                return;
-            }
-
-            imsaver_ = new ImSaverRaw(studio_, Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).toString(), imageQueue, metadata, wv, true);
-            imsaver_.start();
-            acquireImages(album);
-        } catch (Exception ex) {          
-            ReportingUtils.logError("PWSPlugin, in processor: " + ex.toString());
-            imageQueue.clear();
-        } finally {
-            if (studio_.acquisitions().isAcquisitionRunning()) {
-                studio_.acquisitions().setPause(false);
-            }
-        }
+    @Override
+    public JSONObject modifyMetadata(JSONObject metadata) throws JSONException {
+        JSONArray WV = new JSONArray();
+        for (int i = 0; i < wv.length; i++) {
+            WV.put(wv[i]);
+        }        
+        metadata.put("wavelengths", WV);  
+        return metadata;
+    }
+    
+    @Override
+    public int getExpectedFrames() {
+        return wv.length;
+    }
+    
+    @Override
+    public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException{
+        if (Files.isDirectory(Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)))){
+            ReportingUtils.showError("Cell " + cellNum + " already exists.");
+            throw new FileAlreadyExistsException("Cell " + cellNum + " already exists.");
+        } 
+        return Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).toString();
     }
       
-    private void acquireImages(PWSAlbum album) {
+    @Override
+    public void acquireImages(PWSAlbum album, LinkedBlockingQueue imageQueue) {
         double initialWv = 550;
         try {    
             initialWv = Double.valueOf(studio_.core().getProperty(filtLabel, filtProp)); //Get initial wavelength
@@ -160,7 +141,7 @@ public class PWSAcqManager{
                         }
                         if (remaining) {    //Process images
                             Image im = studio_.data().convertTaggedImage(studio_.core().popNextTaggedImage());
-                            addImage(im, i, album, pipeline);
+                            addImage(im, i, album, pipeline, imageQueue);
                             i++;
                         }
                         if (!running) {
@@ -187,7 +168,7 @@ public class PWSAcqManager{
                     while (studio_.core().deviceBusy(filtLabel)) {Thread.sleep(1);} //Wait until the device says it is tuned.
                     studio_.core().snapImage();
                     Image im = studio_.data().convertTaggedImage(studio_.core().getTaggedImage());
-                    addImage(im, i, album, pipeline);
+                    addImage(im, i, album, pipeline, imageQueue);
                 }
             }
             long itTook = System.currentTimeMillis() - now;         
@@ -204,7 +185,7 @@ public class PWSAcqManager{
         }
     }
     
-    private void addImage(Image im, int idx, PWSAlbum album, Pipeline pipeline) throws IOException, PipelineErrorException{
+    private void addImage(Image im, int idx, PWSAlbum album, Pipeline pipeline, LinkedBlockingQueue imageQueue) throws IOException, PipelineErrorException{
         Coords newCoords = im.getCoords().copyBuilder().t(idx).build();
         im = im.copyAtCoords(newCoords);
         pipeline.insertImage(im); //Add image to the data pipeline for processing

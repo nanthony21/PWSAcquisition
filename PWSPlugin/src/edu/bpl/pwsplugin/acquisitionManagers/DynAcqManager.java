@@ -6,13 +6,17 @@
 package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.PWSAlbum;
+import java.nio.file.FileAlreadyExistsException;
+import java.util.concurrent.LinkedBlockingQueue;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.micromanager.Studio;
 
 /**
  *
  * @author N2-LiveCell
  */
-public class DynAcqManager {
+public class DynAcqManager implements AcquisitionManager{
     private Studio studio_;
     double exposure_;
     String filtLabel_;
@@ -28,7 +32,23 @@ public class DynAcqManager {
         wavelength_ = wavelength;
     }
     
-    public void run(int cellNum, String savePath, PWSAlbum album) {
+    @Override
+    public void acquireImages(PWSAlbum album, LinkedBlockingQueue imageQueue) {
+        
+    }
+    
+    @Override
+    public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException {
+        
+    }
+    
+    @Override
+    public JSONObject modifyMetadata(JSONObject metadata) throws JSONException {
+        
+    }
+    
+    @Override
+    public int getExpectedFrames() {
         
     }
 }
