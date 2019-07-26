@@ -21,7 +21,6 @@ import org.micromanager.data.PipelineErrorException;
 
 public class PWSAcqManager implements AcquisitionManager{
     Studio studio_;
-    Image[] imageArray;
     int[] wv;
     String filtLabel;
     final String filtProp  = "Wavelength";
