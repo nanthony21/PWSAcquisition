@@ -37,14 +37,14 @@ public class PWSFrame extends MMFrame {
     private final LogManager log_;
     private AcqManager acqManager_;
     private boolean otherSettingsStale_ = true;
-    private boolean sequenceSettingsStale_ = true;
+    private boolean PWSSettingsStale_ = true;
     private boolean saveSettingsStale_ = true;    
     /**
      * 
      */
-    public PWSFrame(Studio studio) {
+    public PWSFrame(Studio studio, AcqManager manager) {
         studio_ = studio;
-        acqManager_ = new AcqManager(studio_);
+        acqManager_ = manager;
         settings_ = studio_.profile().getSettings(PWSFrame.class);
         log_ = studio.logs();
         
@@ -160,8 +160,8 @@ public class PWSFrame extends MMFrame {
         acqPWSButton.setBackground(Color.red);
     }
     
-    private void sequenceSettingsChanged() {
-        sequenceSettingsStale_ = true;
+    private void PWSSettingsChanged() {
+        PWSSettingsStale_ = true;
         acqPWSButton.setBackground(Color.red);
     }
         
@@ -172,13 +172,13 @@ public class PWSFrame extends MMFrame {
     
     private void addDocListeners() {
         HashMap<String, JTextField[]> categories = new HashMap<String, JTextField[]>();
-        categories.put("other", new JTextField[] {systemNameEdit, darkCountsEdit, linearityCorrectionEdit, exposureEdit});
-        categories.put("sequence", new JTextField[] {wvStartField, wvStopField, wvStepField});
+        categories.put("other", new JTextField[] {systemNameEdit, darkCountsEdit, linearityCorrectionEdit});
+        categories.put("PWS", new JTextField[] {wvStartField, wvStopField, wvStepField, exposureEdit});
         categories.put("save", new JTextField[] {cellNumEdit, directoryText});
         
         HashMap<String, Runnable> funcs = new HashMap<String, Runnable>();
         funcs.put("other", this::otherSettingsChanged);
-        funcs.put("sequence", this::sequenceSettingsChanged);
+        funcs.put("PWS", this::PWSSettingsChanged);
         funcs.put("save", this::saveSettingsChanged);
         
         for (HashMap.Entry<String, JTextField[]> entry : categories.entrySet()) {
@@ -548,7 +548,7 @@ public class PWSFrame extends MMFrame {
     }//GEN-LAST:event_wvStopFieldActionPerformed
 
     private void filterComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterComboBoxActionPerformed
-        sequenceSettingsChanged();
+        PWSSettingsChanged();
     }//GEN-LAST:event_filterComboBoxActionPerformed
 
     private void acqPWSButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acqPWSButtonActionPerformed
@@ -563,7 +563,7 @@ public class PWSFrame extends MMFrame {
     }//GEN-LAST:event_directoryButtonActionPerformed
 
     private void hardwareSequencingCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hardwareSequencingCheckBoxActionPerformed
-        sequenceSettingsChanged();
+        PWSSettingsChanged();
         boolean checked = hardwareSequencingCheckBox.isSelected();
         if (!checked) {
             externalTriggerCheckBox.setSelected(false);
@@ -576,7 +576,7 @@ public class PWSFrame extends MMFrame {
     }//GEN-LAST:event_cellNumEditActionPerformed
 
     private void externalTriggerCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_externalTriggerCheckBoxActionPerformed
-        sequenceSettingsChanged();
+        PWSSettingsChanged();
     }//GEN-LAST:event_externalTriggerCheckBoxActionPerformed
 
     private void systemNameEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_systemNameEditActionPerformed
@@ -594,7 +594,7 @@ public class PWSFrame extends MMFrame {
     private void attachButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_attachButtonActionPerformed
         if (attachButton.isSelected()) {
             try {
-                configureProcessor();
+                configureManager();
             } catch (Exception e) {
                 log_.showError(e);
                 return;
@@ -654,7 +654,7 @@ public class PWSFrame extends MMFrame {
 
     public void acquirePWS() {
         try {
-            configureProcessor();
+            configureManager();
         } catch (Exception e) {
             log_.showError(e);
             return;
@@ -664,7 +664,7 @@ public class PWSFrame extends MMFrame {
     
     public void acquireDynamics() {
         try {
-            configureProcessor();
+            configureManager();
         } catch (Exception e) {
             log_.showError(e);
             return;
@@ -672,8 +672,8 @@ public class PWSFrame extends MMFrame {
         DYNBackgroundWorker worker = new DYNBackgroundWorker();
     }
     
-    private void configureProcessor() throws Exception {
-        if (otherSettingsStale_ || sequenceSettingsStale_ || saveSettingsStale_){
+    private void configureManager() throws Exception {
+        if (otherSettingsStale_ || PWSSettingsStale_ || saveSettingsStale_){
             saveSettings(); 
             if (saveSettingsStale_) {
                 int cellNum = settings_.getInteger(PWSPlugin.cellNumSetting,1);
@@ -686,17 +686,17 @@ public class PWSFrame extends MMFrame {
                 int darkCounts = settings_.getInteger(PWSPlugin.darkCountsSetting,0);
                 double[] linearityPolynomial = settings_.getDoubleList(PWSPlugin.linearityPolySetting);
                 String systemName = settings_.getString(PWSPlugin.systemNameSetting, "");
-                double exposure = settings_.getDouble(PWSPlugin.exposureSetting, 100);
-                acqManager_.setOtherSettings(darkCounts, linearityPolynomial, systemName, exposure);
+                acqManager_.setSystemSettings(darkCounts, linearityPolynomial, systemName);
                 otherSettingsStale_ = false;
             }
-            if (sequenceSettingsStale_) {
+            if (PWSSettingsStale_) {
                 int[] wv = settings_.getIntegerList(PWSPlugin.wvSetting);
                 String filtLabel = settings_.getString(PWSPlugin.filterLabelSetting, "");
                 boolean hardwareSequence = settings_.getBoolean(PWSPlugin.sequenceSetting, false);
                 boolean useExternalTrigger = settings_.getBoolean(PWSPlugin.externalTriggerSetting, false);
-                acqManager_.setSequenceSettings(useExternalTrigger, hardwareSequence, wv, filtLabel);
-                sequenceSettingsStale_ = false;
+                double exposure = settings_.getDouble(PWSPlugin.exposureSetting, 100);
+                acqManager_.setPWSSettings(exposure, useExternalTrigger, hardwareSequence, wv, filtLabel);
+                PWSSettingsStale_ = false;
             }            
             acqPWSButton.setBackground(Color.green);
         }

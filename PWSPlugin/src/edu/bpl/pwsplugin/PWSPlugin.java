@@ -67,6 +67,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     
     private Studio studio_;  
     private PWSFrame frame_;
+    private AcqManager manager_; 
     
     @Override
     public void setContext(Studio studio) {
@@ -75,8 +76,11 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     
     @Override
     public void onPluginSelected() {
+        if (manager_ == null) {
+            manager_ = new AcqManager(studio_);
+        }
         if (frame_ == null) {
-            frame_ = new PWSFrame(studio_);
+            frame_ = new PWSFrame(studio_, manager_);
         }
         frame_.setVisible(true);
     }
@@ -133,7 +137,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     }
     
     public boolean isAcquisitionRunning() {
-        return frame_.isAcquisitionRunning();
+        return manager_.isAcquisitionRunning();
     }
     
     public String getFilterName() {
