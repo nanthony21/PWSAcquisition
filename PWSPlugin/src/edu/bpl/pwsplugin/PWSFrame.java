@@ -7,8 +7,6 @@ package edu.bpl.pwsplugin;
 
 
 import java.awt.Color;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import org.micromanager.internal.utils.MMFrame;
 import org.micromanager.propertymap.MutablePropertyMapView;
@@ -21,7 +19,6 @@ import javax.swing.event.DocumentEvent;
 import mmcorej.StrVector;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Set;
 import javax.swing.JTextField;
 import org.micromanager.internal.utils.FileDialogs;
 import org.micromanager.internal.utils.ReportingUtils;
@@ -41,9 +38,7 @@ public class PWSFrame extends MMFrame {
     private AcqManager acqManager_;
     private boolean otherSettingsStale_ = true;
     private boolean sequenceSettingsStale_ = true;
-    private boolean saveSettingsStale_ = true;
-    private boolean acquisitionRunning_ = false;
-    
+    private boolean saveSettingsStale_ = true;    
     /**
      * 
      */
@@ -664,11 +659,7 @@ public class PWSFrame extends MMFrame {
             log_.showError(e);
             return;
         }
-
         PWSBackgroundWorker worker = new PWSBackgroundWorker();
-        worker.execute();
-        acquisitionRunning_ = true;
-        acqPWSButton.setEnabled(false);            
     }
     
     public void acquireDynamics() {
@@ -678,26 +669,17 @@ public class PWSFrame extends MMFrame {
             log_.showError(e);
             return;
         }
-
         DYNBackgroundWorker worker = new DYNBackgroundWorker();
-        worker.execute();
-        acquisitionRunning_ = true;
-        acqDynButton.setEnabled(false);
-    }
-    
-    public boolean isAcquisitionRunning() {
-        return acquisitionRunning_;
     }
     
     private void configureProcessor() throws Exception {
         if (otherSettingsStale_ || sequenceSettingsStale_ || saveSettingsStale_){
-            saveSettings();
-            
+            saveSettings(); 
             if (saveSettingsStale_) {
                 int cellNum = settings_.getInteger(PWSPlugin.cellNumSetting,1);
                 String savePath = settings_.getString(PWSPlugin.savePathSetting, "");
-                pwsManager_.setCellNum(cellNum);
-                pwsManager_.setSavePath(savePath);
+                acqManager_.setCellNum(cellNum);
+                acqManager_.setSavePath(savePath);
                 saveSettingsStale_ = false;
             }
             if (otherSettingsStale_) {      
@@ -705,7 +687,7 @@ public class PWSFrame extends MMFrame {
                 double[] linearityPolynomial = settings_.getDoubleList(PWSPlugin.linearityPolySetting);
                 String systemName = settings_.getString(PWSPlugin.systemNameSetting, "");
                 double exposure = settings_.getDouble(PWSPlugin.exposureSetting, 100);
-                pwsManager_.setOtherSettings(darkCounts, linearityPolynomial, systemName, exposure);
+                acqManager_.setOtherSettings(darkCounts, linearityPolynomial, systemName, exposure);
                 otherSettingsStale_ = false;
             }
             if (sequenceSettingsStale_) {
@@ -713,7 +695,7 @@ public class PWSFrame extends MMFrame {
                 String filtLabel = settings_.getString(PWSPlugin.filterLabelSetting, "");
                 boolean hardwareSequence = settings_.getBoolean(PWSPlugin.sequenceSetting, false);
                 boolean useExternalTrigger = settings_.getBoolean(PWSPlugin.externalTriggerSetting, false);
-                pwsManager_.setSequenceSettings(useExternalTrigger, hardwareSequence, wv, filtLabel);
+                acqManager_.setSequenceSettings(useExternalTrigger, hardwareSequence, wv, filtLabel);
                 sequenceSettingsStale_ = false;
             }            
             acqPWSButton.setBackground(Color.green);
@@ -721,6 +703,11 @@ public class PWSFrame extends MMFrame {
     }
         
     protected class PWSBackgroundWorker extends SwingWorker<Void, Void> {
+        public PWSBackgroundWorker() {
+            acqPWSButton.setEnabled(false);            
+            this.execute();
+        }
+        
         @Override
         public Void doInBackground() {
             acqManager_.acquirePWS();
@@ -729,12 +716,16 @@ public class PWSFrame extends MMFrame {
 
         @Override
         public void done() {
-            acquisitionRunning_ = false;
             acqPWSButton.setEnabled(true);
         }
     }
     
     protected class DYNBackgroundWorker extends SwingWorker<Void, Void> {
+        public DYNBackgroundWorker() {
+            acqDynButton.setEnabled(false);
+            this.execute();
+        }
+              
         @Override
         public Void doInBackground() {
             acqManager_.acquireDynamics();
@@ -743,7 +734,6 @@ public class PWSFrame extends MMFrame {
 
         @Override
         public void done() {
-            acquisitionRunning_ = false;
             acqDynButton.setEnabled(true);
         }
     }

@@ -1,5 +1,7 @@
-package edu.bpl.pwsplugin;
+package edu.bpl.pwsplugin.acquisitionManagers;
 
+import edu.bpl.pwsplugin.ImSaverRaw;
+import edu.bpl.pwsplugin.PWSAlbum;
 import java.io.IOException;
 import org.micromanager.internal.utils.ReportingUtils;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -18,36 +20,25 @@ import org.micromanager.data.PipelineErrorException;
 
 
 
-public class PWSAcqManager implements Runnable{
+public class PWSAcqManager{
     Studio studio_;
     LinkedBlockingQueue imageQueue = new LinkedBlockingQueue();
-    boolean debugLogEnabled_ = true;
     Image[] imageArray;
     int[] wv;
     String filtLabel;
     final String filtProp  = "Wavelength";
     Boolean hardwareSequence;
     Boolean useExternalTrigger;
-    String savePath;
-    int cellNum;
-    JSONObject metadata = new JSONObject();
-    PWSAlbum album;
     double exposure_;
-    Pipeline pipeline_;
     ImSaverRaw imsaver_ = null;
     
     public PWSAcqManager(Studio studio) {
         studio_ = studio;
-        album = new PWSAlbum(studio_);
     }
     
-    public void setSaveSettings(String savepath, int cellnum) {
-        savePath = savepath;
-        cellNum = cellnum;
-    }
-    
-    public void setSequenceSettings(boolean externalTrigger, 
-            boolean hardwareTrigger, int[] Wv, String filterLabel) throws Exception {
+    public void setSequenceSettings(double exposure, boolean externalTrigger, 
+            boolean hardwareTrigger, int[] Wv, String filterLabel, JSONObject metadata) throws Exception {
+        exposure_ = exposure;
         useExternalTrigger = externalTrigger;
         wv = Wv;
         filtLabel = filterLabel;
@@ -82,33 +73,7 @@ public class PWSAcqManager implements Runnable{
         }  
     }
     
-    public void setOtherSettings(int darkcounts, double[] linearPoly, String sysName, double exposure) throws JSONException {
-        JSONArray linPoly;
-        if (linearPoly.length > 0) {
-            linPoly = new JSONArray();
-            for (int i=0; i<linearPoly.length; i++) {
-                linPoly.put(linearPoly[i]);
-            }
-            metadata.put("linearityPoly", linPoly);
-        } else{
-            metadata.put("linearityPoly", JSONObject.NULL);
-        }
-        metadata.put("system", sysName);
-        metadata.put("darkCounts", darkcounts);
-        
-        exposure_ = exposure;
-    }
-    
-    public void setCellNum(int number){
-        cellNum = number;
-    }
-    
-    public void setSavePath(String path) {
-        savePath = path;
-    }
-    
-    @Override
-    public void run() {
+    public void run(int cellNum, String savePath, PWSAlbum album) {
         try {album.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         if (studio_.acquisitions().isAcquisitionRunning()) {
             studio_.acquisitions().setPause(true);
@@ -129,18 +94,10 @@ public class PWSAcqManager implements Runnable{
                 ReportingUtils.showError("Cell " + cellNum + " already exists");
                 return;
             }
-            if (studio_.core().getPixelSizeUm() == 0.0) {
-                ReportingUtils.showMessage("It is highly recommended that you provide MicroManager with a pixel size setting for the current setup. Having this information is useful for analysis.");
-            }
-            if (metadata.get("system").equals("")) {
-                ReportingUtils.showMessage("The `system` metadata field is blank. It should contain the name of the system.");
-            }
-            if (metadata.get("darkCounts").equals(0)) {
-                ReportingUtils.showMessage("The `darkCounts` field of the metadata is 0. This can't be right.");
-            }
+
             imsaver_ = new ImSaverRaw(studio_, Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).toString(), imageQueue, metadata, wv, true);
             imsaver_.start();
-            acquireImages();
+            acquireImages(album);
         } catch (Exception ex) {          
             ReportingUtils.logError("PWSPlugin, in processor: " + ex.toString());
             imageQueue.clear();
@@ -151,7 +108,7 @@ public class PWSAcqManager implements Runnable{
         }
     }
       
-    private void acquireImages() {
+    private void acquireImages(PWSAlbum album) {
         double initialWv = 550;
         try {    
             initialWv = Double.valueOf(studio_.core().getProperty(filtLabel, filtProp)); //Get initial wavelength
@@ -159,7 +116,7 @@ public class PWSAcqManager implements Runnable{
             studio_.core().waitForDevice(cam);
             studio_.core().clearCircularBuffer();     
             studio_.core().setExposure(cam, exposure_);
-            pipeline_ = studio_.data().copyApplicationPipeline(studio_.data().createRAMDatastore(), true);
+            Pipeline pipeline = studio_.data().copyApplicationPipeline(studio_.data().createRAMDatastore(), true);
             
             long now = System.currentTimeMillis();
             
@@ -203,7 +160,7 @@ public class PWSAcqManager implements Runnable{
                         }
                         if (remaining) {    //Process images
                             Image im = studio_.data().convertTaggedImage(studio_.core().popNextTaggedImage());
-                            addImage(im, i);
+                            addImage(im, i, album, pipeline);
                             i++;
                         }
                         if (!running) {
@@ -230,13 +187,10 @@ public class PWSAcqManager implements Runnable{
                     while (studio_.core().deviceBusy(filtLabel)) {Thread.sleep(1);} //Wait until the device says it is tuned.
                     studio_.core().snapImage();
                     Image im = studio_.data().convertTaggedImage(studio_.core().getTaggedImage());
-                    addImage(im, i);
+                    addImage(im, i, album, pipeline);
                 }
             }
             long itTook = System.currentTimeMillis() - now;         
-            if (debugLogEnabled_) {
-                ReportingUtils.logMessage("PWS Acquisition took: " + itTook + " milliseconds for "+wv.length + " frames");
-            }
         } catch (Exception ex) {
             ex.printStackTrace();
             ReportingUtils.logMessage("ERROR: PWSPlugin: " + ex.getMessage());
@@ -250,11 +204,11 @@ public class PWSAcqManager implements Runnable{
         }
     }
     
-    private void addImage(Image im, int idx) throws IOException, PipelineErrorException{
+    private void addImage(Image im, int idx, PWSAlbum album, Pipeline pipeline) throws IOException, PipelineErrorException{
         Coords newCoords = im.getCoords().copyBuilder().t(idx).build();
         im = im.copyAtCoords(newCoords);
-        pipeline_.insertImage(im); //Add image to the data pipeline for processing
-        im = pipeline_.getDatastore().getImage(newCoords); //Retrieve the processed image.
+        pipeline.insertImage(im); //Add image to the data pipeline for processing
+        im = pipeline.getDatastore().getImage(newCoords); //Retrieve the processed image.
         album.addImage(im); //Add the image to the album for display
         imageQueue.add(im); //Add the image to a queue for multithreaded saving.
     }
