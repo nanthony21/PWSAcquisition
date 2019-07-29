@@ -67,7 +67,7 @@ public class ImSaverRaw implements Runnable {
             ImageStack stack;
             Image im;
                         
-            im = (Image) queue.poll(1, TimeUnit.SECONDS); //Lets make an array with the queued images.
+            im = (Image) queue.poll(5, TimeUnit.SECONDS); //Lets make an array with the queued images.
             if (im == null) {
                 ReportingUtils.showError("ImSaver timed out while waiting for image");
                 return;
