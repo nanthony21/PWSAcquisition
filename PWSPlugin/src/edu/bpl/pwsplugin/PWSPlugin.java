@@ -135,7 +135,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
         frame_.setPWSExposure(exposureMs);
     }
 
-    public void  acquirePWS() {
+    public void acquirePWS() {
         frame_.acquirePWS();
     }
     
