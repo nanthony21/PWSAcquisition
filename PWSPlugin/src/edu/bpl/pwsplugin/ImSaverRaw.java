@@ -40,9 +40,9 @@ public class ImSaverRaw implements Runnable {
     ImageJConverter imJConv;
     volatile JSONObject metadata_;
 
-    ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue, int expectedFrames, boolean debug){
+    ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue_, int expectedFrames, boolean debug){
         debug_ = debug;
-        queue = queue;
+        queue = queue_;
         studio_ = studio;
         expectedFrames_ = expectedFrames;
         savePath_ = savePath;
@@ -75,7 +75,15 @@ public class ImSaverRaw implements Runnable {
             stack = new ImageStack(im.getWidth(), im.getHeight());
             stack.addSlice(imJConv.createProcessor(im));
             for (int i=1; i<expectedFrames_; i++) {
-                while (queue.size()<1) { Thread.sleep(10);} //Wait for an image
+                int j = 0;
+                while (queue.size()<1) {
+                    Thread.sleep(10);
+                    j++;
+                    if (j > 100) {
+                        ReportingUtils.showError("ImSaver timed out while waiting for image");
+                        return;
+                    }
+                } //Wait for an image
                 im = (Image) queue.take(); //Lets make an array with the queued images.
                 if (i == expectedFrames_/2) {
                     saveImBd(im); //Save the image from halfway through the sequence.
@@ -84,8 +92,14 @@ public class ImSaverRaw implements Runnable {
                 stack.addSlice(proc);
             }
             ImagePlus imPlus = new ImagePlus("PWS", stack);
+            int i = 0;
             while (metadata_ == null) { //Wait for metadata to be set by the acquistion manager.
                 Thread.sleep(10);
+                i++;
+                if (i > 100) {
+                    ReportingUtils.showError("ImSaver timed out while waiting for metadata");
+                    return;
+                }
             }
             metadata_.put("MicroManagerMetadata", jmd.get("map"));
             writeMetadata();

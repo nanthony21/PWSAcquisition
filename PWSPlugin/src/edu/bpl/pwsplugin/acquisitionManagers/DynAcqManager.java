@@ -63,7 +63,7 @@ public class DynAcqManager implements AcquisitionManager{
                     Thread.sleep(10);
                 }
                 TaggedImage taggedIm = studio_.core().popNextTaggedImage();
-                times.put(taggedIm.tags.get("Time"));
+                times.put(taggedIm.tags.get("ElapsedTime-ms"));
                 Image im = studio_.data().convertTaggedImage(taggedIm);
                 Coords newCoords = im.getCoords().copyBuilder().t(i).build();
                 im = im.copyAtCoords(newCoords);
