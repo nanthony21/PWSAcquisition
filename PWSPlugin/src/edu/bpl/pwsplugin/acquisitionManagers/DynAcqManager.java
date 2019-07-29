@@ -63,13 +63,14 @@ public class DynAcqManager implements AcquisitionManager{
                     Thread.sleep(10);
                 }
                 TaggedImage taggedIm = studio_.core().popNextTaggedImage();
-                times.put(taggedIm.tags.get("ElapsedTime-ms"));
+                times.put(Double.parseDouble((String) taggedIm.tags.get("ElapsedTime-ms"))); //Convert to float and save to json array.
                 Image im = studio_.data().convertTaggedImage(taggedIm);
                 Coords newCoords = im.getCoords().copyBuilder().t(i).build();
                 im = im.copyAtCoords(newCoords);
                 pipeline.insertImage(im); //Add image to the data pipeline for processing
                 im = pipeline.getDatastore().getImage(newCoords); //Retrieve the processed image.
                 imSaver.queue.put(im);
+                album.addImage(im);
             }
             metadata.put("times", times);
             imSaver.setMetadata(metadata);

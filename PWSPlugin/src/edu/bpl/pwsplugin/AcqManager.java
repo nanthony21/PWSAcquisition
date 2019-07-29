@@ -29,7 +29,7 @@ public class AcqManager {
     private final DynAcqManager dynManager_;
     private final Studio studio_;
     private final LinkedBlockingQueue imageQueue;
-    private boolean acquisitionRunning_ = false;
+    private volatile boolean acquisitionRunning_ = false;
     private int cellNum_;
     private String savePath_;
     PWSAlbum album;
