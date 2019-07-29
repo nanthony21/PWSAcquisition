@@ -32,13 +32,12 @@
               <Component id="acqPWSButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="acqDynButton" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
-              <Component id="attachButton" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="80" max="-2" attributes="0"/>
+              <EmptySpace min="80" max="32767" attributes="0"/>
           </Group>
           <Group type="102" alignment="1" attributes="0">
+              <EmptySpace max="32767" attributes="0"/>
               <Component id="jTabbedPane1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -49,10 +48,8 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="acqPWSButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="attachButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="acqDynButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -68,8 +65,8 @@
         <Container class="javax.swing.JPanel" name="jPanel2">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="General">
-                <Property name="tabTitle" type="java.lang.String" value="General"/>
+              <JTabbedPaneConstraints tabName="PWS">
+                <Property name="tabTitle" type="java.lang.String" value="PWS"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
@@ -79,8 +76,12 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
-                      <Component id="jPanel3" min="-2" pref="388" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="26" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="externalTriggerCheckBox" min="-2" max="-2" attributes="0"/>
+                          <Component id="hardwareSequencingCheckBox" min="-2" max="-2" attributes="0"/>
+                          <Component id="jPanel3" min="-2" pref="388" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -88,7 +89,11 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="110" max="32767" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="hardwareSequencingCheckBox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="externalTriggerCheckBox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="60" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -104,17 +109,17 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="startLabel">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Start"/>
+                    <Property name="text" type="java.lang.String" value="Start (nm)"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="stopLabel">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Stop"/>
+                    <Property name="text" type="java.lang.String" value="Stop (nm)"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="stepLabel">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Step"/>
+                    <Property name="text" type="java.lang.String" value="Step (nm)"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="stepLabel2">
@@ -156,6 +161,126 @@
                 </Component>
               </SubComponents>
             </Container>
+            <Component class="javax.swing.JCheckBox" name="hardwareSequencingCheckBox">
+              <Properties>
+                <Property name="toolTipText" type="java.lang.String" value="Whether the camera should be configured to trigger wavelength changes in the filter over TTL. This may not be supported."/>
+                <Property name="label" type="java.lang.String" value="Use Hardware Sequencing"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hardwareSequencingCheckBoxActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="externalTriggerCheckBox">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Use External Trigger"/>
+                <Property name="toolTipText" type="java.lang.String" value="Whether the filter should trigger a new camera acquisition over TTL. This is not possible for LCTF but can be done with the VF-5 Filter."/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="externalTriggerCheckBoxActionPerformed"/>
+              </Events>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JPanel" name="jPanel10">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+              <JTabbedPaneConstraints tabName="Dynamics">
+                <Property name="tabTitle" type="java.lang.String" value="Dynamics"/>
+              </JTabbedPaneConstraints>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="stepLabel3" min="-2" pref="93" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="stepLabel4" min="-2" pref="93" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="dynWvEdit" min="-2" pref="93" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="dynExposureEdit" min="-2" pref="93" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="stepLabel5" alignment="0" min="-2" pref="93" max="-2" attributes="0"/>
+                          <Component id="dynFramesEdit" alignment="0" min="-2" pref="93" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="103" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="stepLabel5" min="-2" pref="20" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="dynFramesEdit" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="stepLabel3" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                                  <Component id="stepLabel4" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="dynWvEdit" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="dynExposureEdit" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                      <EmptySpace pref="99" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JTextField" name="dynWvEdit">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="550"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="stepLabel3">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Wavelength (nm)"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="stepLabel4">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Exposure (ms)"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="dynExposureEdit">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="100"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dynExposureEditActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JTextField" name="dynFramesEdit">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="200"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dynFramesEditActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="stepLabel5">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="# of Frames"/>
+              </Properties>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel9">
@@ -184,7 +309,7 @@
                               <Component id="cellNumEdit" min="-2" pref="73" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="26" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -201,7 +326,7 @@
                           <Component id="cellNumEdit" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="stepLabel1" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="76" max="32767" attributes="0"/>
+                      <EmptySpace pref="82" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -248,7 +373,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                       <Component id="jPanel5" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="37" max="32767" attributes="0"/>
+                      <EmptySpace pref="348" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -274,15 +399,6 @@
                     <Property name="text" type="java.lang.String" value="Filter"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JCheckBox" name="hardwareSequencingCheckBox">
-                  <Properties>
-                    <Property name="toolTipText" type="java.lang.String" value="Whether the camera should be configured to trigger wavelength changes in the filter over TTL. This may not be supported."/>
-                    <Property name="label" type="java.lang.String" value="Use Hardware Sequencing"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hardwareSequencingCheckBoxActionPerformed"/>
-                  </Events>
-                </Component>
                 <Component class="javax.swing.JComboBox" name="filterComboBox">
                   <Properties>
                     <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
@@ -296,16 +412,6 @@
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JComboBox&lt;String&gt;()"/>
                     <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                   </AuxValues>
-                </Component>
-                <Component class="javax.swing.JCheckBox" name="externalTriggerCheckBox">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Use External Trigger"/>
-                    <Property name="toolTipText" type="java.lang.String" value="Whether the filter should trigger a new camera acquisition over TTL. This is not possible for LCTF but can be done with the VF-5 Filter."/>
-                    <Property name="enabled" type="boolean" value="false"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="externalTriggerCheckBoxActionPerformed"/>
-                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -326,7 +432,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel8" min="-2" pref="163" max="-2" attributes="0"/>
-                      <EmptySpace pref="252" max="32767" attributes="0"/>
+                      <EmptySpace pref="235" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -420,15 +526,6 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="acqPWSButtonActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JToggleButton" name="attachButton">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Attach to AcqEngine"/>
-        <Property name="enabled" type="boolean" value="false"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="attachButtonActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="acqDynButton">

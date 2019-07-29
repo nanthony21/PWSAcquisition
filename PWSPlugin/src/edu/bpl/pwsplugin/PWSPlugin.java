@@ -61,9 +61,12 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     public static String externalTriggerSetting = "externalTrigger";
     public static String savePathSetting  = "savepath";
     public static String cellNumSetting  = "cellNum";
-    public static String filterLabelSetting = "filtLabel";
+    public static String filterLabelSetting = "filterLabel";
     public static String systemNameSetting = "systemName";
-    public static String exposureSetting = "camExposure";
+    public static String exposureSetting = "pwsExposure";
+    public static String dynExposureSetting = "dynExposure";
+    public static String dynWavelengthSetting = "dynWavelength";
+    public static String dynNumFramesSetting = "dynNumFrames";
     
     private Studio studio_;  
     private PWSFrame frame_;
@@ -128,12 +131,20 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
         frame_.setCellNumber(cellNum);
     }
     
-    public void setExposure(double exposureMs) {
-        frame_.setExposure(exposureMs);
+    public void setPWSExposure(double exposureMs) {
+        frame_.setPWSExposure(exposureMs);
     }
 
-    public void  startAcquisition() {
+    public void  acquirePWS() {
         frame_.acquirePWS();
+    }
+    
+    public void acquireDynamics() {
+        frame_.acquireDynamics();
+    }
+    
+    public void setDynamicsExposure(double exposureMs) {
+        frame_.setDynamicsExposure(exposureMs);
     }
     
     public boolean isAcquisitionRunning() {
