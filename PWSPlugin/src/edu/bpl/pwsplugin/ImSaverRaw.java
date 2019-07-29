@@ -40,8 +40,9 @@ public class ImSaverRaw implements Runnable {
     String savePath_;
     ImageJConverter imJConv;
     volatile JSONObject metadata_;
+    String filePrefix_;
 
-    ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue_, int expectedFrames, boolean debug){
+    ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue_, int expectedFrames, boolean debug, String filePrefix){
         debug_ = debug;
         queue = queue_;
         studio_ = studio;
@@ -49,6 +50,7 @@ public class ImSaverRaw implements Runnable {
         savePath_ = savePath;
         imJConv = studio.data().getImageJConverter();
         metadata_ = null;
+        filePrefix_ = filePrefix;
     }
     
     public void setMetadata(JSONObject md) {
@@ -90,7 +92,7 @@ public class ImSaverRaw implements Runnable {
                 ImageProcessor proc = imJConv.createProcessor(im);
                 stack.addSlice(proc);
             }
-            ImagePlus imPlus = new ImagePlus("PWS", stack);
+            ImagePlus imPlus = new ImagePlus(filePrefix_, stack);
             int i = 0;
             while (metadata_ == null) { //Wait for metadata to be set by the acquistion manager.
                 Thread.sleep(10);
@@ -106,9 +108,9 @@ public class ImSaverRaw implements Runnable {
             FileInfo info = new FileInfo();
             imPlus.setFileInfo(info);
             FileSaver saver = new FileSaver(imPlus);
-            boolean success = saver.saveAsTiffStack(Paths.get(savePath_).resolve("pws.tif").toString());
+            boolean success = saver.saveAsTiffStack(Paths.get(savePath_).resolve(filePrefix_ + ".tif").toString());
             if (!success) { 
-                throw new IOException("Failed to save PWS image cube tiff");
+                throw new IOException("Failed to save " + filePrefix_ + " image cube tiff");
             }
             long itTook = System.currentTimeMillis() - now;
             if (debug_) {
@@ -116,19 +118,19 @@ public class ImSaverRaw implements Runnable {
             }
         } catch (Exception ex) {
             ReportingUtils.showError(ex);
-            ReportingUtils.logError("Error: PWSPlugin, while producing PWS image: "+ ex.toString());
+            ReportingUtils.logError("Error: PWSPlugin, while producing " + filePrefix_ + " image: "+ ex.toString());
         } 
     }
     
     private void writeMetadata() throws IOException, JSONException {
-            FileWriter file = new FileWriter(Paths.get(savePath_).resolve("pwsmetadata.json").toString());
+            FileWriter file = new FileWriter(Paths.get(savePath_).resolve(filePrefix_ + "metadata.json").toString());
             file.write(metadata_.toString(4)); //4 spaces of indentation
             file.flush();
             file.close();
     }
             
     private void saveImBd(Image im) throws IOException{
-        ImagePlus imPlus = new ImagePlus("PWS", imJConv.createProcessor(im));
+        ImagePlus imPlus = new ImagePlus(filePrefix_, imJConv.createProcessor(im));
         ContrastEnhancer contrast = new ContrastEnhancer();
         contrast.stretchHistogram(imPlus,0.01); //I think this will saturate 0.01% of the image. or maybe its 1% idk. 
         ImageConverter converter = new ImageConverter(imPlus);

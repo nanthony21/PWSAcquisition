@@ -140,7 +140,7 @@ public class AcqManager {
                 imageQueue.clear();
             }
             String fullSavePath = manager.getSavePath(savePath_, cellNum_);
-            imsaver_ = new ImSaverRaw(studio_, fullSavePath, imageQueue, manager.getExpectedFrames(), true);
+            imsaver_ = new ImSaverRaw(studio_, fullSavePath, imageQueue, manager.getExpectedFrames(), true, manager.getFilePrefix());
             imsaver_.start();
             manager.acquireImages(album, imsaver_, metadata);
         } catch (Exception ex) {          

@@ -69,6 +69,11 @@ public class PWSAcqManager implements AcquisitionManager{
     }
     
     @Override
+    public String getFilePrefix() {
+        return "pws";
+    }
+    
+    @Override
     public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException{
         if (Files.isDirectory(Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)))){
             ReportingUtils.showError("Cell " + cellNum + " already exists.");

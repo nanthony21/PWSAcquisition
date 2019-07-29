@@ -89,6 +89,11 @@ public class DynAcqManager implements AcquisitionManager{
     }
     
     @Override
+    public String getFilePrefix() {
+        return "dyn";
+    }
+    
+    @Override
     public int getExpectedFrames() {
         return numFrames_;
     }

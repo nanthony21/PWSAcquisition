@@ -18,4 +18,5 @@ public interface AcquisitionManager {
     public void acquireImages(PWSAlbum album, ImSaverRaw imSaver, JSONObject metadata);
     public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException;
     public int getExpectedFrames();
+    public String getFilePrefix();
 }
