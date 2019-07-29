@@ -9,6 +9,8 @@ import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionManagers.PWSAcqManager;
 import edu.bpl.pwsplugin.acquisitionManagers.DynAcqManager;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,10 +25,10 @@ import org.micromanager.internal.utils.ReportingUtils;
 
 
 public class AcqManager {
-    private PWSAcqManager pwsManager_;
-    private DynAcqManager dynManager_;
-    private Studio studio_;
-    private LinkedBlockingQueue imageQueue = new LinkedBlockingQueue();
+    private final PWSAcqManager pwsManager_;
+    private final DynAcqManager dynManager_;
+    private final Studio studio_;
+    private final LinkedBlockingQueue imageQueue;
     private boolean acquisitionRunning_ = false;
     private int cellNum_;
     private String savePath_;
@@ -43,6 +45,7 @@ public class AcqManager {
         album = new PWSAlbum(studio_);
         pwsManager_ = new PWSAcqManager(studio_);
         dynManager_ = new DynAcqManager(studio_);
+        imageQueue = new LinkedBlockingQueue();
     }
     
     public void acquirePWS() {
@@ -93,6 +96,7 @@ public class AcqManager {
         }
         metadata.put("system", sysName_);
         metadata.put("darkCounts", darkCounts_);
+        metadata.put("time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
         return metadata;
     }
     
@@ -101,8 +105,8 @@ public class AcqManager {
         pwsManager_.setSequenceSettings(exposure, externalTrigger, hardwareTrigger, Wv, filterLabel);
     }
     
-    public void setDynamicsSettings(double exposure, String filterLabel, int wavelength) {
-        dynManager_.setSequenceSettings(exposure, filterLabel, wavelength);
+    public void setDynamicsSettings(double exposure, String filterLabel, int wavelength, int numFrames) {
+        dynManager_.setSequenceSettings(exposure, filterLabel, wavelength, numFrames);
     }
     
     private void run(AcquisitionManager manager) {
@@ -112,7 +116,6 @@ public class AcqManager {
         JSONObject metadata;
         try {
             metadata = generateMetadata();
-            metadata = manager.modifyMetadata(metadata);
             if (metadata.get("system").equals("")) {
                 ReportingUtils.showMessage("The `system` metadata field is blank. It should contain the name of the system.");
             }
@@ -133,15 +136,16 @@ public class AcqManager {
                 imsaver_ = null;
             }
             if (imageQueue.size() > 0) {
-                ReportingUtils.showMessage(String.format("The image queue started a new acquisition with %d images already in it! Go find Nick. This can mean that Java has not been allocated enough heap size.", imageQueue.size()));
+                ReportingUtils.showMessage(String.format("The image queue started a new acquisition with %d images already in it! This can mean that Java has not been allocated enough heap size.", imageQueue.size()));
                 imageQueue.clear();
             }
             String fullSavePath = manager.getSavePath(savePath_, cellNum_);
-            imsaver_ = new ImSaverRaw(studio_, fullSavePath, imageQueue, metadata, manager.getExpectedFrames(), true);
+            imsaver_ = new ImSaverRaw(studio_, fullSavePath, imageQueue, manager.getExpectedFrames(), true);
             imsaver_.start();
-            manager.acquireImages(album, imageQueue);
+            manager.acquireImages(album, imsaver_, metadata);
         } catch (Exception ex) {          
-            ReportingUtils.logError("PWSPlugin, in processor: " + ex.toString());
+            ReportingUtils.logError("PWSPlugin, in AcqManager: " + ex.toString());
+            ReportingUtils.showError("PWSPlugin, in AcqManager: " + ex.toString());
             imageQueue.clear();
         }
     }

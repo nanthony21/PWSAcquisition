@@ -1,5 +1,6 @@
 package edu.bpl.pwsplugin.acquisitionManagers;
 
+import edu.bpl.pwsplugin.ImSaverRaw;
 import edu.bpl.pwsplugin.PWSAlbum;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -11,7 +12,6 @@ import org.micromanager.data.Image;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.micromanager.data.Coords;
 import org.micromanager.data.Pipeline;
@@ -64,16 +64,6 @@ public class PWSAcqManager implements AcquisitionManager{
     }
     
     @Override
-    public JSONObject modifyMetadata(JSONObject metadata) throws JSONException {
-        JSONArray WV = new JSONArray();
-        for (int i = 0; i < wv.length; i++) {
-            WV.put(wv[i]);
-        }        
-        metadata.put("wavelengths", WV);  
-        return metadata;
-    }
-    
-    @Override
     public int getExpectedFrames() {
         return wv.length;
     }
@@ -88,7 +78,18 @@ public class PWSAcqManager implements AcquisitionManager{
     }
       
     @Override
-    public void acquireImages(PWSAlbum album, LinkedBlockingQueue imageQueue) {
+    public void acquireImages(PWSAlbum album, ImSaverRaw imSaver, JSONObject metadata) {
+        try {
+            JSONArray WV = new JSONArray();
+            for (int i = 0; i < wv.length; i++) {
+                WV.put(wv[i]);
+            }        
+            metadata.put("wavelengths", WV);
+            metadata.put("exposure", studio_.core().getExposure());
+            imSaver.setMetadata(metadata);
+        } catch (Exception e) {
+            ReportingUtils.showError(e);
+        }
         double initialWv = 550;
         try {    
             initialWv = Double.valueOf(studio_.core().getProperty(filtLabel, filtProp)); //Get initial wavelength
@@ -140,7 +141,7 @@ public class PWSAcqManager implements AcquisitionManager{
                         }
                         if (remaining) {    //Process images
                             Image im = studio_.data().convertTaggedImage(studio_.core().popNextTaggedImage());
-                            addImage(im, i, album, pipeline, imageQueue);
+                            addImage(im, i, album, pipeline, imSaver.queue);
                             i++;
                         }
                         if (!running) {
@@ -167,7 +168,7 @@ public class PWSAcqManager implements AcquisitionManager{
                     while (studio_.core().deviceBusy(filtLabel)) {Thread.sleep(1);} //Wait until the device says it is tuned.
                     studio_.core().snapImage();
                     Image im = studio_.data().convertTaggedImage(studio_.core().getTaggedImage());
-                    addImage(im, i, album, pipeline, imageQueue);
+                    addImage(im, i, album, pipeline, imSaver.queue);
                 }
             }
             long itTook = System.currentTimeMillis() - now;         
