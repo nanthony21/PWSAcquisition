@@ -25,6 +25,7 @@ import org.json.JSONException;
 import java.io.IOException;
 import ij.process.ImageConverter;
 import ij.plugin.ContrastEnhancer;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -66,8 +67,11 @@ public class ImSaverRaw implements Runnable {
             ImageStack stack;
             Image im;
                         
-            while (queue.size()<1) { Thread.sleep(10);} //Wait for an image
-            im = (Image) queue.take(); //Lets make an array with the queued images.
+            im = (Image) queue.poll(1, TimeUnit.SECONDS); //Lets make an array with the queued images.
+            if (im == null) {
+                ReportingUtils.showError("ImSaver timed out while waiting for image");
+                return;
+            }
             
             Metadata md = im.getMetadata();
             JSONObject jmd = new JSONObject(((DefaultMetadata)md).toPropertyMap().toJSON());
@@ -75,16 +79,11 @@ public class ImSaverRaw implements Runnable {
             stack = new ImageStack(im.getWidth(), im.getHeight());
             stack.addSlice(imJConv.createProcessor(im));
             for (int i=1; i<expectedFrames_; i++) {
-                int j = 0;
-                while (queue.size()<1) {
-                    Thread.sleep(10);
-                    j++;
-                    if (j > 100) {
-                        ReportingUtils.showError("ImSaver timed out while waiting for image");
-                        return;
-                    }
-                } //Wait for an image
-                im = (Image) queue.take(); //Lets make an array with the queued images.
+                im = (Image) queue.poll(1, TimeUnit.SECONDS); //Lets make an array with the queued images.
+                if (im == null) {
+                    ReportingUtils.showError("ImSaver timed out while waiting for image");
+                    return;
+                }
                 if (i == expectedFrames_/2) {
                     saveImBd(im); //Save the image from halfway through the sequence.
                 }
