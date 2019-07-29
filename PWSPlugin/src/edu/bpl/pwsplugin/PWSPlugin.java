@@ -26,9 +26,9 @@ package edu.bpl.pwsplugin;
  * the authors and should not be interpreted as representing official policies, 
  * either expressed or implied, of any organization.
  * 
- * Multiple-Frame Averaging plug-in for Micro-Manager
- * @author Amitabh Verma (averma@mbl.edu), Grant Harris (gharris@mbl.edu)
- * Marine Biological Laboratory, Woods Hole, Mass.
+ * PWS Acquisition Plugin
+ * @author Nick Anthony (nicholas.anthony@northwestern.edu)
+ * Backman Photonics Lab, Northwestern University, Evanston, IL.
  * 
  * 
  * Updated for Micromanager 2.0 by Nick Anthony (nicholas.anthony@northwestern.edu)
