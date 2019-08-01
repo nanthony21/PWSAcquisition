@@ -47,7 +47,7 @@ public class PWSAcqManager implements AcquisitionManager{
                     //ReportingUtils.showError("The filter device does not have a sequenceable 'Wavelength' property.");
                 }
                 if (studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp) < wv.length) {
-                    throw new Exception("The filter device does not support sequencing as many wavelenghts as have been specified. Max is " + Integer.toString(studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp)));
+                    throw new Exception("The filter device does not support sequencing as many wavelengths as have been specified. Max is " + Integer.toString(studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp)));
                     //ReportingUtils.showError("The filter device does not support sequencing as many wavelenghts as have been specified. Max is " + Integer.toString(studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp)));
                 }
                 StrVector strv = new StrVector();
