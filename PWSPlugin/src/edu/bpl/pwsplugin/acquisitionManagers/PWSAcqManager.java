@@ -111,7 +111,7 @@ public class PWSAcqManager implements AcquisitionManager{
                     if (useExternalTrigger) {
                         if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { 
                             studio_.core().setProperty(cam, "TRIGGER SOURCE", "EXTERNAL");
-                            studio_.core().setProperty(cam, "TRIGGER_DELAY", delayMs/1000); //This is in units of seconds.
+                            studio_.core().setProperty(cam, "TRIGGER DELAY", delayMs/1000); //This is in units of seconds.
                             studio_.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an eror if the interval is not 0.
                             int currWv = Integer.parseInt(studio_.core().getProperty(filtLabel, filtProp));
                             studio_.core().setProperty(filtLabel, filtProp, currWv+1); //Trigger a pulse which sets the whole thing off.
@@ -178,6 +178,7 @@ public class PWSAcqManager implements AcquisitionManager{
             try{
                 studio_.core().setProperty(filtLabel, filtProp, initialWv); //Set back to initial wavelength
             } catch (Exception ex) {
+                ReportingUtils.showError(ex);
                 ex.printStackTrace();
                 ReportingUtils.logMessage("ERROR: PWSPlugin: " + ex.getMessage());
             }
