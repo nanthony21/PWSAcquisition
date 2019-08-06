@@ -78,17 +78,6 @@ public class PWSAcqManager implements AcquisitionManager{
       
     @Override
     public void acquireImages(PWSAlbum album, ImSaverRaw imSaver, JSONObject metadata) {
-        try {
-            JSONArray WV = new JSONArray();
-            for (int i = 0; i < wv.length; i++) {
-                WV.put(wv[i]);
-            }        
-            metadata.put("wavelengths", WV);
-            metadata.put("exposure", studio_.core().getExposure());
-            imSaver.setMetadata(metadata);
-        } catch (Exception e) {
-            ReportingUtils.showError(e);
-        }
         double initialWv = 550;
         try {    
             initialWv = Double.valueOf(studio_.core().getProperty(filtLabel, filtProp)); //Get initial wavelength
@@ -97,6 +86,15 @@ public class PWSAcqManager implements AcquisitionManager{
             studio_.core().clearCircularBuffer();     
             studio_.core().setExposure(cam, exposure_);
             Pipeline pipeline = studio_.data().copyApplicationPipeline(studio_.data().createRAMDatastore(), true);
+            
+            //Prepare metadata and start imsaver
+            JSONArray WV = new JSONArray();
+            for (int i = 0; i < wv.length; i++) {
+                WV.put(wv[i]);
+            }        
+            metadata.put("wavelengths", WV);
+            metadata.put("exposure", studio_.core().getExposure()); //This must happen after we have set the camera to our desired exposure.
+            imSaver.setMetadata(metadata);
             
             long now = System.currentTimeMillis();
             

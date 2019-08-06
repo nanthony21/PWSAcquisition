@@ -56,7 +56,7 @@ public class DynAcqManager implements AcquisitionManager{
         Pipeline pipeline = studio_.data().copyApplicationPipeline(studio_.data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
         try {
             metadata.put("wavelength", wavelength_);
-            metadata.put("exposure", studio_.core().getExposure());
+            metadata.put("exposure", studio_.core().getExposure()); //This must happen after we have set our exposure.
             JSONArray times = new JSONArray();
             for (int i=0; i<numFrames_; i++) {
                 while (studio_.core().getRemainingImageCount() < 1) { //Wait for an image to be ready
