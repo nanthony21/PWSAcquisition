@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////////////
-//PROJECT:       Micro-Manager
-//SUBSYSTEM:     mmstudio
+//PROJECT:       PWS Plugin for Micro-Manager
+//
 //-----------------------------------------------------------------------------
 //
-// AUTHOR:       Chris Weisiger, 2015
+// AUTHOR:      Nick Anthony 2019
 //
-// COPYRIGHT:    University of California, San Francisco, 2006-2015
+// COPYRIGHT:    Northwestern University, Evanston, IL 2019
 //
 // LICENSE:      This file is distributed under the BSD license.
 //               License text is included with the source distribution.

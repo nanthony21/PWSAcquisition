@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Ant-Version: Apache Ant 1.10.4
-Created-By: 1.8.0_181-b13 (Oracle Corporation)
-Signature-Title: PWSPlugin
-Signature-Vendor: Backman Photonics Laboratory (Nick Anthony)
-Application-Plugin: Micro-Manager
-Built-By: N2-LiveCell
-Built-Date: 02-26-2019
-
