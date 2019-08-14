@@ -37,10 +37,10 @@ import org.micromanager.internal.utils.ReportingUtils;
 
 public class DynAcqManager implements AcquisitionManager{
     private Studio studio_;
-    double exposure_;
-    String filtLabel_;
-    int wavelength_;
-    int numFrames_;
+    double exposure_; //The camera exposure in milliseconds.
+    String filtLabel_; 
+    int wavelength_; //The wavelength to acquire images at
+    int numFrames_; // The number of images to acquire.
     
     public DynAcqManager(Studio studio){
         studio_ = studio;

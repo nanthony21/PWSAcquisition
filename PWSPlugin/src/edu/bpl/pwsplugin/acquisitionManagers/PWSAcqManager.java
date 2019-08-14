@@ -39,15 +39,14 @@ import org.micromanager.data.Pipeline;
 import org.micromanager.data.PipelineErrorException;
 
 
-
 public class PWSAcqManager implements AcquisitionManager{
     Studio studio_;
-    int[] wv;
-    String filtLabel;
-    final String filtProp  = "Wavelength";
-    Boolean hardwareSequence;
-    Boolean useExternalTrigger;
-    double exposure_;
+    int[] wv; //The array of wavelengths to image at.
+    String filtLabel; // The string identifying the spectral filter device of the pws system in micromanager.
+    final String filtProp  = "Wavelength"; //The property name of the filter that we want to tune.
+    Boolean hardwareSequence; // Whether or not to attempt to use TTL triggering between the camera and spectral filter.
+    Boolean useExternalTrigger; // Whether or not to let the spectral filter TTL trigger a new camera frame when it is done tuning.
+    double exposure_; // The camera exposure.
     
     public PWSAcqManager(Studio studio) {
         studio_ = studio;
@@ -64,11 +63,9 @@ public class PWSAcqManager implements AcquisitionManager{
         if (hardwareSequence) {
             if (!studio_.core().isPropertySequenceable(filtLabel, filtProp)){
                 throw new Exception("The filter device does not have a sequenceable 'Wavelength' property.");
-                //ReportingUtils.showError("The filter device does not have a sequenceable 'Wavelength' property.");
             }
             if (studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp) < wv.length) {
                 throw new Exception("The filter device does not support sequencing as many wavelengths as have been specified. Max is " + Integer.toString(studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp)));
-                //ReportingUtils.showError("The filter device does not support sequencing as many wavelenghts as have been specified. Max is " + Integer.toString(studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp)));
             }
             StrVector strv = new StrVector();
             for (int i = 0; i < wv.length; i++) {   //Convert wv from int to string for sending to the device.

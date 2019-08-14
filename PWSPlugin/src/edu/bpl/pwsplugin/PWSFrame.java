@@ -66,28 +66,28 @@ public class PWSFrame extends MMFrame {
         scanDevices();
         
         try {
-            wvStartField.setText(String.valueOf(settings_.getInteger(PWSPlugin.startSetting, 500)));
-            wvStopField.setText(String.valueOf(settings_.getInteger(PWSPlugin.stopSetting,700)));
-            wvStepField.setText(String.valueOf(settings_.getInteger(PWSPlugin.stepSetting,2)));
-            directoryText.setText(settings_.getString(PWSPlugin.savePathSetting,""));
-            hardwareSequencingCheckBox.setSelected(settings_.getBoolean(PWSPlugin.sequenceSetting,false));
-            externalTriggerCheckBox.setSelected(settings_.getBoolean(PWSPlugin.externalTriggerSetting,false));
-            cellNumEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.cellNumSetting, 1)));
-            systemNameEdit.setText(settings_.getString(PWSPlugin.systemNameSetting, ""));
-            darkCountsEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.darkCountsSetting, 0)));
-            double[] linArray = settings_.getDoubleList(PWSPlugin.linearityPolySetting);
+            wvStartField.setText(String.valueOf(settings_.getInteger(PWSPlugin.Settings.start, 500)));
+            wvStopField.setText(String.valueOf(settings_.getInteger(PWSPlugin.Settings.stop,700)));
+            wvStepField.setText(String.valueOf(settings_.getInteger(PWSPlugin.Settings.step,2)));
+            directoryText.setText(settings_.getString(PWSPlugin.Settings.savePath,""));
+            hardwareSequencingCheckBox.setSelected(settings_.getBoolean(PWSPlugin.Settings.sequence,false));
+            externalTriggerCheckBox.setSelected(settings_.getBoolean(PWSPlugin.Settings.externalTrigger,false));
+            cellNumEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.Settings.cellNum, 1)));
+            systemNameEdit.setText(settings_.getString(PWSPlugin.Settings.systemName, ""));
+            darkCountsEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.Settings.darkCounts, 0)));
+            double[] linArray = settings_.getDoubleList(PWSPlugin.Settings.linearityPoly);
             if (linArray.length > 0) {
                 linearityCorrectionEdit.setText(StringUtils.join(ArrayUtils.toObject(linArray), ","));
             } else {
                 linearityCorrectionEdit.setText("null");
             }
-            exposureEdit.setText(String.valueOf(settings_.getDouble(PWSPlugin.exposureSetting, 100.0)));
-            dynExposureEdit.setText(String.valueOf(settings_.getDouble(PWSPlugin.dynExposureSetting, 50.0)));
-            dynFramesEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.dynNumFramesSetting, 200)));
-            dynWvEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.dynWavelengthSetting, 550)));
+            exposureEdit.setText(String.valueOf(settings_.getDouble(PWSPlugin.Settings.exposure, 100.0)));
+            dynExposureEdit.setText(String.valueOf(settings_.getDouble(PWSPlugin.Settings.dynExposure, 50.0)));
+            dynFramesEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.Settings.dynNumFrames, 200)));
+            dynWvEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.Settings.dynWavelength, 550)));
       
             //Do this last in case the filter is not available
-            filterComboBox.setSelectedItem(settings_.getString(PWSPlugin.filterLabelSetting, ""));
+            filterComboBox.setSelectedItem(settings_.getString(PWSPlugin.Settings.filterLabel, ""));
         }
         catch (Exception e) {
             ReportingUtils.logError(e);
@@ -119,27 +119,27 @@ public class PWSFrame extends MMFrame {
             for (int i=0; i<wvList.size(); i++) {
                 wvArr[i] = wvList.get(i).intValue();
             }
-            settings_.putIntegerList(PWSPlugin.wvSetting, wvArr);
-            settings_.putInteger(PWSPlugin.startSetting, start);
-            settings_.putInteger(PWSPlugin.stopSetting, stop);
-            settings_.putInteger(PWSPlugin.stepSetting, step);    
-            settings_.putInteger(PWSPlugin.darkCountsSetting, darkCounts);
-            settings_.putDoubleList(PWSPlugin.linearityPolySetting, linearityPolynomial);
-            settings_.putString(PWSPlugin.systemNameSetting, systemNameEdit.getText());
-            settings_.putBoolean(PWSPlugin.sequenceSetting, hardwareSequencingCheckBox.isSelected());
-            settings_.putBoolean(PWSPlugin.externalTriggerSetting,externalTriggerCheckBox.isSelected());
-            settings_.putString(PWSPlugin.savePathSetting, directoryText.getText());
-            settings_.putInteger(PWSPlugin.cellNumSetting, Integer.parseInt(cellNumEdit.getText()));
-            settings_.putDouble(PWSPlugin.exposureSetting, Double.parseDouble(exposureEdit.getText()));
-            settings_.putDouble(PWSPlugin.dynExposureSetting, Double.parseDouble(dynExposureEdit.getText()));
-            settings_.putInteger(PWSPlugin.dynNumFramesSetting, Integer.parseInt(dynFramesEdit.getText()));
-            settings_.putInteger(PWSPlugin.dynWavelengthSetting, Integer.parseInt(dynWvEdit.getText()));
+            settings_.putIntegerList(PWSPlugin.Settings.wv, wvArr);
+            settings_.putInteger(PWSPlugin.Settings.start, start);
+            settings_.putInteger(PWSPlugin.Settings.stop, stop);
+            settings_.putInteger(PWSPlugin.Settings.step, step);    
+            settings_.putInteger(PWSPlugin.Settings.darkCounts, darkCounts);
+            settings_.putDoubleList(PWSPlugin.Settings.linearityPoly, linearityPolynomial);
+            settings_.putString(PWSPlugin.Settings.systemName, systemNameEdit.getText());
+            settings_.putBoolean(PWSPlugin.Settings.sequence, hardwareSequencingCheckBox.isSelected());
+            settings_.putBoolean(PWSPlugin.Settings.externalTrigger,externalTriggerCheckBox.isSelected());
+            settings_.putString(PWSPlugin.Settings.savePath, directoryText.getText());
+            settings_.putInteger(PWSPlugin.Settings.cellNum, Integer.parseInt(cellNumEdit.getText()));
+            settings_.putDouble(PWSPlugin.Settings.exposure, Double.parseDouble(exposureEdit.getText()));
+            settings_.putDouble(PWSPlugin.Settings.dynExposure, Double.parseDouble(dynExposureEdit.getText()));
+            settings_.putInteger(PWSPlugin.Settings.dynNumFrames, Integer.parseInt(dynFramesEdit.getText()));
+            settings_.putInteger(PWSPlugin.Settings.dynWavelength, Integer.parseInt(dynWvEdit.getText()));
         }
         catch(NumberFormatException e){
             log_.showMessage("A valid number was not specified.");
         }
         try{
-            settings_.putString(PWSPlugin.filterLabelSetting, filterComboBox.getSelectedItem().toString());
+            settings_.putString(PWSPlugin.Settings.filterLabel, filterComboBox.getSelectedItem().toString());
         }
         catch(NumberFormatException e){
             log_.showMessage("A valid string was not specified.");
@@ -767,33 +767,33 @@ public class PWSFrame extends MMFrame {
         if (otherSettingsStale_ || PWSSettingsStale_ || saveSettingsStale_ || DYNSettingsStale_){
             saveSettings(); 
             if (saveSettingsStale_) {
-                int cellNum = settings_.getInteger(PWSPlugin.cellNumSetting,1);
-                String savePath = settings_.getString(PWSPlugin.savePathSetting, "");
+                int cellNum = settings_.getInteger(PWSPlugin.Settings.cellNum,1);
+                String savePath = settings_.getString(PWSPlugin.Settings.savePath, "");
                 acqManager_.setCellNum(cellNum);
                 acqManager_.setSavePath(savePath);
                 saveSettingsStale_ = false;
             }
             if (otherSettingsStale_) {      
-                int darkCounts = settings_.getInteger(PWSPlugin.darkCountsSetting,0);
-                double[] linearityPolynomial = settings_.getDoubleList(PWSPlugin.linearityPolySetting);
-                String systemName = settings_.getString(PWSPlugin.systemNameSetting, "");
+                int darkCounts = settings_.getInteger(PWSPlugin.Settings.darkCounts,0);
+                double[] linearityPolynomial = settings_.getDoubleList(PWSPlugin.Settings.linearityPoly);
+                String systemName = settings_.getString(PWSPlugin.Settings.systemName, "");
                 acqManager_.setSystemSettings(darkCounts, linearityPolynomial, systemName);
                 otherSettingsStale_ = false;
             }
             if (PWSSettingsStale_) {
-                int[] wv = settings_.getIntegerList(PWSPlugin.wvSetting);
-                String filtLabel = settings_.getString(PWSPlugin.filterLabelSetting, "");
-                boolean hardwareSequence = settings_.getBoolean(PWSPlugin.sequenceSetting, false);
-                boolean useExternalTrigger = settings_.getBoolean(PWSPlugin.externalTriggerSetting, false);
-                double exposure = settings_.getDouble(PWSPlugin.exposureSetting, 100);
+                int[] wv = settings_.getIntegerList(PWSPlugin.Settings.wv);
+                String filtLabel = settings_.getString(PWSPlugin.Settings.filterLabel, "");
+                boolean hardwareSequence = settings_.getBoolean(PWSPlugin.Settings.sequence, false);
+                boolean useExternalTrigger = settings_.getBoolean(PWSPlugin.Settings.externalTrigger, false);
+                double exposure = settings_.getDouble(PWSPlugin.Settings.exposure, 100);
                 acqManager_.setPWSSettings(exposure, useExternalTrigger, hardwareSequence, wv, filtLabel);
                 PWSSettingsStale_ = false;
             }        
             if (DYNSettingsStale_) {
-                double exposure = settings_.getDouble(PWSPlugin.dynExposureSetting, 100);
-                String filterLabel = settings_.getString(PWSPlugin.filterLabelSetting, "");
-                int wavelength = settings_.getInteger(PWSPlugin.dynWavelengthSetting, 550);
-                int numFrames = settings_.getInteger(PWSPlugin.dynNumFramesSetting, 200);
+                double exposure = settings_.getDouble(PWSPlugin.Settings.dynExposure, 100);
+                String filterLabel = settings_.getString(PWSPlugin.Settings.filterLabel, "");
+                int wavelength = settings_.getInteger(PWSPlugin.Settings.dynWavelength, 550);
+                int numFrames = settings_.getInteger(PWSPlugin.Settings.dynNumFrames, 200);
                 acqManager_.setDynamicsSettings(exposure, filterLabel, wavelength, numFrames);
                 DYNSettingsStale_ = false;
             }

@@ -36,22 +36,25 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     public static String versionNumber = "0.2";
     public static String copyright = "Backman Photonics Lab";
     
-    public static String wvSetting = "wv";
-    public static String startSetting = "start";
-    public static String stopSetting = "stop";
-    public static String stepSetting = "step";
-    public static String darkCountsSetting = "darkCounts";
-    public static String linearityPolySetting = "linearityPoly";
-    public static String sequenceSetting = "sequence";
-    public static String externalTriggerSetting = "externalTrigger";
-    public static String savePathSetting  = "savepath";
-    public static String cellNumSetting  = "cellNum";
-    public static String filterLabelSetting = "filterLabel";
-    public static String systemNameSetting = "systemName";
-    public static String exposureSetting = "pwsExposure";
-    public static String dynExposureSetting = "dynExposure";
-    public static String dynWavelengthSetting = "dynWavelength";
-    public static String dynNumFramesSetting = "dynNumFrames";
+    //Strings which are used to save and load settings for the plugin.
+    public static class Settings {
+        public static String wv = "wv";
+        public static String start = "start";
+        public static String stop = "stop";
+        public static String step = "step";
+        public static String darkCounts = "darkCounts";
+        public static String linearityPoly = "linearityPoly";
+        public static String sequence = "sequence";
+        public static String externalTrigger = "externalTrigger";
+        public static String savePath  = "savepath";
+        public static String cellNum  = "cellNum";
+        public static String filterLabel = "filterLabel";
+        public static String systemName = "systemName";
+        public static String exposure = "pwsExposure";
+        public static String dynExposure = "dynExposure";
+        public static String dynWavelength = "dynWavelength";
+        public static String dynNumFrames = "dynNumFrames";
+    }
     
     private Studio studio_;  
     private PWSFrame frame_;

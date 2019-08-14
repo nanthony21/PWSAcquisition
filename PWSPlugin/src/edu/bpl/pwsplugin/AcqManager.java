@@ -34,11 +34,11 @@ import org.micromanager.Studio;
 import org.micromanager.internal.utils.ReportingUtils;
 
 
-public class AcqManager {
+public class AcqManager { // A parent acquisition manager that can direct commands down to more specific acquisition managers.
     private final PWSAcqManager pwsManager_;
     private final DynAcqManager dynManager_;
     private final Studio studio_;
-    private final LinkedBlockingQueue imageQueue;
+    private final LinkedBlockingQueue imageQueue; //This queue is used to pass images from one of the acquisition managers to the ImSaver which saves the file concurrently.
     private volatile boolean acquisitionRunning_ = false;
     private int cellNum_;
     private String savePath_;
