@@ -43,6 +43,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     private int cellNum_;
     private String savePath_;
     PWSAlbum album;
+    PWSAlbum dynAlbum;
     ImSaverRaw imsaver_ = null;
     
     int darkCounts_;
@@ -53,8 +54,9 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     public AcqManager(Studio studio) {
         studio_ = studio;
         album = new PWSAlbum(studio_);
-        pwsManager_ = new PWSAcqManager(studio_);
-        dynManager_ = new DynAcqManager(studio_);
+        dynAlbum = new PWSAlbum(studio_);
+        pwsManager_ = new PWSAcqManager(studio_, album);
+        dynManager_ = new DynAcqManager(studio_, dynAlbum);
         imageQueue = new LinkedBlockingQueue();
     }
     
@@ -136,7 +138,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
             ReportingUtils.showError(e);
             return;
         }
-        try {album.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
+        
         try {
             if (studio_.live().getIsLiveModeOn()) {
                 studio_.live().setLiveMode(false);
@@ -152,7 +154,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
             String fullSavePath = manager.getSavePath(savePath_, cellNum_);
             imsaver_ = new ImSaverRaw(studio_, fullSavePath, imageQueue, manager.getExpectedFrames(), true, manager.getFilePrefix());
             imsaver_.start();
-            manager.acquireImages(album, imsaver_, metadata);
+            manager.acquireImages(imsaver_, metadata);
         } catch (Exception ex) {          
             ReportingUtils.logError("PWSPlugin, in AcqManager: " + ex.toString());
             ReportingUtils.showError("PWSPlugin, in AcqManager: " + ex.toString());

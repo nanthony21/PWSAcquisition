@@ -22,6 +22,7 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.ImSaverRaw;
 import edu.bpl.pwsplugin.PWSAlbum;
+import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -41,9 +42,11 @@ public class DynAcqManager implements AcquisitionManager{
     String filtLabel_; 
     int wavelength_; //The wavelength to acquire images at
     int numFrames_; // The number of images to acquire.
+    PWSAlbum album_;
     
-    public DynAcqManager(Studio studio){
+    public DynAcqManager(Studio studio, PWSAlbum album){
         studio_ = studio;
+        album_ = album;
     }
     
     public void setSequenceSettings(double exposure, String filtLabel, int wavelength, int numFrames) {
@@ -54,7 +57,8 @@ public class DynAcqManager implements AcquisitionManager{
     }
     
     @Override
-    public void acquireImages(PWSAlbum album, ImSaverRaw imSaver, JSONObject metadata) {
+    public void acquireImages(ImSaverRaw imSaver, JSONObject metadata) {
+        try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         try {
             studio_.core().setProperty(filtLabel_, "Wavelength", wavelength_);
             studio_.core().setExposure(exposure_);
@@ -82,7 +86,7 @@ public class DynAcqManager implements AcquisitionManager{
                 pipeline.insertImage(im); //Add image to the data pipeline for processing
                 im = pipeline.getDatastore().getImage(newCoords); //Retrieve the processed image.
                 imSaver.queue.put(im);
-                album.addImage(im);
+                album_.addImage(im);
             }
             metadata.put("times", times);
             imSaver.setMetadata(metadata);

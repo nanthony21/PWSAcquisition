@@ -47,8 +47,10 @@ public class PWSAcqManager implements AcquisitionManager{
     Boolean hardwareSequence; // Whether or not to attempt to use TTL triggering between the camera and spectral filter.
     Boolean useExternalTrigger; // Whether or not to let the spectral filter TTL trigger a new camera frame when it is done tuning.
     double exposure_; // The camera exposure.
+    PWSAlbum album_;
     
-    public PWSAcqManager(Studio studio) {
+    public PWSAcqManager(Studio studio, PWSAlbum album) {
+        album_ = album;
         studio_ = studio;
     }
     
@@ -95,7 +97,8 @@ public class PWSAcqManager implements AcquisitionManager{
     }
       
     @Override
-    public void acquireImages(PWSAlbum album, ImSaverRaw imSaver, JSONObject metadata) {
+    public void acquireImages(ImSaverRaw imSaver, JSONObject metadata) {
+        try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         double initialWv = 550;
         try {    
             initialWv = Double.valueOf(studio_.core().getProperty(filtLabel, filtProp)); //Get initial wavelength
@@ -148,6 +151,8 @@ public class PWSAcqManager implements AcquisitionManager{
                     
                     boolean canExit = false;
                     int i = 0;
+                    int oldi = -1;
+                    long lastImTime = System.currentTimeMillis();
                     while (true) {
                         boolean remaining = (studio_.core().getRemainingImageCount() > 0);
                         boolean running = (studio_.core().isSequenceRunning(cam));
@@ -156,8 +161,13 @@ public class PWSAcqManager implements AcquisitionManager{
                         }
                         if (remaining) {    //Process images
                             Image im = studio_.data().convertTaggedImage(studio_.core().popNextTaggedImage());
-                            addImage(im, i, album, pipeline, imSaver.queue);
+                            addImage(im, i, album_, pipeline, imSaver.queue);
                             i++;
+                            lastImTime = System.currentTimeMillis();
+                        }
+                        if ((System.currentTimeMillis() - lastImTime) > 10000) { //Check for timeout if for some reason the acquisition is stalled.
+                            ReportingUtils.showError("PWSAcquisition timed out while waiting for images from camera.");
+                            canExit = true;
                         }
                         if (!running) {
                             canExit = true;
@@ -183,7 +193,7 @@ public class PWSAcqManager implements AcquisitionManager{
                     while (studio_.core().deviceBusy(filtLabel)) {Thread.sleep(1);} //Wait until the device says it is tuned.
                     studio_.core().snapImage();
                     Image im = studio_.data().convertTaggedImage(studio_.core().getTaggedImage());
-                    addImage(im, i, album, pipeline, imSaver.queue);
+                    addImage(im, i, album_, pipeline, imSaver.queue);
                 }
             }
             long itTook = System.currentTimeMillis() - now;         

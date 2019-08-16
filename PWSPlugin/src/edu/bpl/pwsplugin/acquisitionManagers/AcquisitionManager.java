@@ -27,7 +27,7 @@ import org.json.JSONObject;
 
 
 public interface AcquisitionManager {
-    public void acquireImages(PWSAlbum album, ImSaverRaw imSaver, JSONObject metadata); //Begin the acquisition process.
+    public void acquireImages(ImSaverRaw imSaver, JSONObject metadata); //Begin the acquisition process.
     public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException; // given a parent directory and a cell number, return the full path to save to.
     public int getExpectedFrames(); //The number of images that are expected from running `acquireImages`
     public String getFilePrefix(); //Return the prefix that the saved files should have.
