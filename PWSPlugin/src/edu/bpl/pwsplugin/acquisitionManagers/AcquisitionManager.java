@@ -20,14 +20,15 @@
 //
 package edu.bpl.pwsplugin.acquisitionManagers;
 
-import edu.bpl.pwsplugin.ImSaverRaw;
+import edu.bpl.pwsplugin.fileSavers.ImSaverRaw;
 import edu.bpl.pwsplugin.PWSAlbum;
 import java.nio.file.FileAlreadyExistsException;
+import java.util.concurrent.LinkedBlockingQueue;
 import org.json.JSONObject;
 
 
 public interface AcquisitionManager {
-    public void acquireImages(ImSaverRaw imSaver, JSONObject metadata); //Begin the acquisition process.
+    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata); //Begin the acquisition process.
     public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException; // given a parent directory and a cell number, return the full path to save to.
     public int getExpectedFrames(); //The number of images that are expected from running `acquireImages`
     public String getFilePrefix(); //Return the prefix that the saved files should have.

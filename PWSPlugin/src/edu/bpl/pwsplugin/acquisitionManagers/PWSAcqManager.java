@@ -21,7 +21,7 @@
 
 package edu.bpl.pwsplugin.acquisitionManagers;
 
-import edu.bpl.pwsplugin.ImSaverRaw;
+import edu.bpl.pwsplugin.fileSavers.ImSaverRaw;
 import edu.bpl.pwsplugin.PWSAlbum;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -97,7 +97,7 @@ public class PWSAcqManager implements AcquisitionManager{
     }
       
     @Override
-    public void acquireImages(ImSaverRaw imSaver, JSONObject metadata) {
+    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata) {
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         double initialWv = 550;
         try {    
@@ -115,7 +115,9 @@ public class PWSAcqManager implements AcquisitionManager{
             }        
             metadata.put("wavelengths", WV);
             metadata.put("exposure", studio_.core().getExposure()); //This must happen after we have set the camera to our desired exposure.
-            imSaver.setMetadata(metadata);
+            ImSaverRaw imSaver_ = new ImSaverRaw(studio_, this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), true, this.getFilePrefix());
+            imSaver_.setMetadata(metadata);
+            imSaver_.start();
             
             long now = System.currentTimeMillis();
             
@@ -148,7 +150,6 @@ public class PWSAcqManager implements AcquisitionManager{
                             studio_.core().startSequenceAcquisition(wv.length, intervalMs, false); //Supposedly having a non-zero interval acqually only works for Andor cameras.
                         }
                     }
-                    
                     boolean canExit = false;
                     int i = 0;
                     int oldi = -1;
@@ -161,7 +162,7 @@ public class PWSAcqManager implements AcquisitionManager{
                         }
                         if (remaining) {    //Process images
                             Image im = studio_.data().convertTaggedImage(studio_.core().popNextTaggedImage());
-                            addImage(im, i, album_, pipeline, imSaver.queue);
+                            addImage(im, i, album_, pipeline, imSaver_.queue);
                             i++;
                             lastImTime = System.currentTimeMillis();
                         }
@@ -193,10 +194,11 @@ public class PWSAcqManager implements AcquisitionManager{
                     while (studio_.core().deviceBusy(filtLabel)) {Thread.sleep(1);} //Wait until the device says it is tuned.
                     studio_.core().snapImage();
                     Image im = studio_.data().convertTaggedImage(studio_.core().getTaggedImage());
-                    addImage(im, i, album_, pipeline, imSaver.queue);
+                    addImage(im, i, album_, pipeline, imSaver_.queue);
                 }
             }
-            long itTook = System.currentTimeMillis() - now;         
+            long itTook = System.currentTimeMillis() - now;  
+            imSaver_.join();
         } catch (Exception ex) {
             ex.printStackTrace();
             ReportingUtils.logMessage("ERROR: PWSPlugin: " + ex.getMessage());
@@ -210,6 +212,7 @@ public class PWSAcqManager implements AcquisitionManager{
             }
         }
     }
+    
     
     private void addImage(Image im, int idx, PWSAlbum album, Pipeline pipeline, LinkedBlockingQueue imageQueue) throws IOException, PipelineErrorException{
         Coords newCoords = im.getCoords().copyBuilder().t(idx).build();

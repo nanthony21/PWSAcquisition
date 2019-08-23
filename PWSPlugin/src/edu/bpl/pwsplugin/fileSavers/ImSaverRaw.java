@@ -18,7 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
-package edu.bpl.pwsplugin;
+package edu.bpl.pwsplugin.fileSavers;
 
 import java.nio.file.Paths;
 import java.io.File;
@@ -54,7 +54,7 @@ public class ImSaverRaw implements Runnable {
     volatile JSONObject metadata_;
     String filePrefix_;
 
-    ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue_, int expectedFrames, boolean debug, String filePrefix){
+    public ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue_, int expectedFrames, boolean debug, String filePrefix){
         debug_ = debug;
         queue = queue_;
         studio_ = studio;

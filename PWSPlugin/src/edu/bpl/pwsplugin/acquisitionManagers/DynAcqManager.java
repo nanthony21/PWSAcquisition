@@ -20,12 +20,13 @@
 //
 package edu.bpl.pwsplugin.acquisitionManagers;
 
-import edu.bpl.pwsplugin.ImSaverRaw;
+import edu.bpl.pwsplugin.fileSavers.ImSaverRaw;
 import edu.bpl.pwsplugin.PWSAlbum;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.concurrent.LinkedBlockingQueue;
 import mmcorej.TaggedImage;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -57,7 +58,7 @@ public class DynAcqManager implements AcquisitionManager{
     }
     
     @Override
-    public void acquireImages(ImSaverRaw imSaver, JSONObject metadata) {
+    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata) {
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         try {
             studio_.core().setProperty(filtLabel_, "Wavelength", wavelength_);
@@ -68,9 +69,10 @@ public class DynAcqManager implements AcquisitionManager{
         } catch (Exception e) {
             ReportingUtils.showError(e);
         }
-        
         Pipeline pipeline = studio_.data().copyApplicationPipeline(studio_.data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
         try {
+            ImSaverRaw imSaver = new ImSaverRaw(studio_, this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), true, this.getFilePrefix());
+            imSaver.start();
             metadata.put("wavelength", wavelength_);
             metadata.put("exposure", studio_.core().getExposure()); //This must happen after we have set our exposure.
             JSONArray times = new JSONArray();
@@ -90,6 +92,7 @@ public class DynAcqManager implements AcquisitionManager{
             }
             metadata.put("times", times);
             imSaver.setMetadata(metadata);
+            imSaver.join();
         } catch (Exception e) {
             ReportingUtils.showError(e);
         }

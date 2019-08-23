@@ -20,6 +20,7 @@
 //
 package edu.bpl.pwsplugin;
 
+import edu.bpl.pwsplugin.fileSavers.ImSaverRaw;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionManagers.PWSAcqManager;
 import edu.bpl.pwsplugin.acquisitionManagers.DynAcqManager;
@@ -44,7 +45,6 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     private String savePath_;
     PWSAlbum album;
     PWSAlbum dynAlbum;
-    ImSaverRaw imsaver_ = null;
     
     int darkCounts_;
     double[] linearityPolynomial_;
@@ -143,18 +143,12 @@ public class AcqManager { // A parent acquisition manager that can direct comman
             if (studio_.live().getIsLiveModeOn()) {
                 studio_.live().setLiveMode(false);
             }
-            if (imsaver_ != null) {//Imsaver has already being assigned meaning that the acquisition has been run before. We need to make sure that this saver finished saving before continuing.
-                imsaver_.join();
-                imsaver_ = null;
-            }
             if (imageQueue.size() > 0) {
-                ReportingUtils.showMessage(String.format("The image queue started a new acquisition with %d images already in it! This can mean that Java has not been allocated enough heap size.", imageQueue.size()));
+                ReportingUtils.showMessage(String.format("The image queue started a new acquisition with %d images already in it! Your image file is likely corrupted. This can mean that Java has not been allocated enough heap size.", imageQueue.size()));
                 imageQueue.clear();
             }
             String fullSavePath = manager.getSavePath(savePath_, cellNum_);
-            imsaver_ = new ImSaverRaw(studio_, fullSavePath, imageQueue, manager.getExpectedFrames(), true, manager.getFilePrefix());
-            imsaver_.start();
-            manager.acquireImages(imsaver_, metadata);
+            manager.acquireImages(savePath_, cellNum_, imageQueue, metadata);
         } catch (Exception ex) {          
             ReportingUtils.logError("PWSPlugin, in AcqManager: " + ex.toString());
             ReportingUtils.showError("PWSPlugin, in AcqManager: " + ex.toString());
