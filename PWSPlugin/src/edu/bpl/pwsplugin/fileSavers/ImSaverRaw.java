@@ -43,7 +43,7 @@ import ij.plugin.ContrastEnhancer;
 import java.util.concurrent.TimeUnit;
 
 
-public class ImSaverRaw implements Runnable {
+public class ImSaverRaw extends SaverThread {
     boolean debug_;
     public LinkedBlockingQueue queue;
     Thread t;
@@ -65,6 +65,7 @@ public class ImSaverRaw implements Runnable {
         filePrefix_ = filePrefix;
     }
     
+    @Override
     public void setMetadata(JSONObject md) {
         metadata_ = md;
     }
@@ -156,13 +157,4 @@ public class ImSaverRaw implements Runnable {
             throw new IOException("Image BD failed to save");
         }
     }
-    
-    public void join() throws InterruptedException{
-        t.join(); //Wait for the thread to finish.
-    }
-    
-    public void start() {
-        t = new Thread(this, "PWS ImSaver");
-        t.start();
-    } 
 }
