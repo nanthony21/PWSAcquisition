@@ -133,18 +133,12 @@
                     <Property name="toolTipText" type="java.lang.String" value="In nanometers. The wavelength to start scanning at."/>
                     <Property name="name" type="java.lang.String" value="" noResource="true"/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="wvStartFieldActionPerformed"/>
-                  </Events>
                 </Component>
                 <Component class="javax.swing.JTextField" name="wvStopField">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="700"/>
                     <Property name="toolTipText" type="java.lang.String" value="In nanometers. The wavelength to stop scanning at."/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="wvStopFieldActionPerformed"/>
-                  </Events>
                 </Component>
                 <Component class="javax.swing.JTextField" name="wvStepField">
                   <Properties>
@@ -155,9 +149,6 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="100"/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exposureEditActionPerformed"/>
-                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -264,17 +255,11 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="100"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dynExposureEditActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="dynFramesEdit">
               <Properties>
                 <Property name="text" type="java.lang.String" value="200"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dynFramesEditActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="stepLabel5">
               <Properties>
@@ -358,9 +343,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="100"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="flExposureEditActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JComboBox" name="flFilterBlockCombo">
               <Properties>
@@ -373,6 +355,9 @@
                   </StringArray>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="flFilterBlockComboActionPerformed"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
               </AuxValues>
@@ -438,9 +423,6 @@
                 <Property name="text" type="java.lang.String" value="1"/>
                 <Property name="toolTipText" type="java.lang.String" value="Cell Number"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cellNumEditActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="stepLabel1">
               <Properties>
@@ -572,9 +554,6 @@
                       <Properties>
                         <Property name="toolTipText" type="java.lang.String" value="# of counts per pixel when the camera is not exposed to any light. E.g if measuring dark counts with 2x2 binning the number here should be 1/4 of your measurement 2x2 binning pools 4 pixels."/>
                       </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="darkCountsEditActionPerformed"/>
-                      </Events>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel1">
                       <Properties>
@@ -586,9 +565,6 @@
                       <Properties>
                         <Property name="toolTipText" type="java.lang.String" value="The name of the system."/>
                       </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="systemNameEditActionPerformed"/>
-                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -609,9 +585,6 @@
                       <Properties>
                         <Property name="toolTipText" type="java.lang.String" value="Comma separated values representing the polynomial to linearize the counts from the camera. In the form &quot;A,B,C&quot; = Ax + Bx^2 + Cx^3. Type &quot;None&quot; or &quot;null&quot; if correction is not needed."/>
                       </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="linearityCorrectionEditActionPerformed"/>
-                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>

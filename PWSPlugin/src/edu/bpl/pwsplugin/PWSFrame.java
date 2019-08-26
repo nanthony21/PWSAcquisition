@@ -34,6 +34,7 @@ import javax.swing.event.DocumentEvent;
 import mmcorej.StrVector;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import javax.swing.JTextField;
 import org.micromanager.internal.utils.FileDialogs;
 import org.micromanager.internal.utils.ReportingUtils;
@@ -51,6 +52,7 @@ public class PWSFrame extends MMFrame {
     private boolean PWSSettingsStale_ = true;
     private boolean saveSettingsStale_ = true;
     private boolean DYNSettingsStale_ = true;
+    private boolean FLSettingsStale_ = true;
     /**
      * 
      */
@@ -61,9 +63,10 @@ public class PWSFrame extends MMFrame {
         log_ = studio.logs();
         
         super.setTitle(String.format("%s %s", PWSPlugin.menuName, PWSPlugin.versionNumber));
-        initComponents();
-        addDocListeners();
-        scanDevices();
+        this.initComponents();
+        this.addDocListeners();
+        this.scanDevices();
+        this.scanFilterBlock();
         
         try {
             wvStartField.setText(String.valueOf(settings_.getInteger(PWSPlugin.Settings.start, 500)));
@@ -85,9 +88,11 @@ public class PWSFrame extends MMFrame {
             dynExposureEdit.setText(String.valueOf(settings_.getDouble(PWSPlugin.Settings.dynExposure, 50.0)));
             dynFramesEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.Settings.dynNumFrames, 200)));
             dynWvEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.Settings.dynWavelength, 550)));
-      
-            //Do this last in case the filter is not available
+            flExposureEdit.setText(String.valueOf(settings_.getDouble(PWSPlugin.Settings.flExposure, 1000)));
+            flWvEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.Settings.flWavelength, 550)));
+            //Do this last in case the filter is not available and an error is thrown.
             filterComboBox.setSelectedItem(settings_.getString(PWSPlugin.Settings.filterLabel, ""));
+            flFilterBlockCombo.setSelectedItem(settings_.getString(PWSPlugin.Settings.flFilterBlock, ""));
         }
         catch (Exception e) {
             ReportingUtils.logError(e);
@@ -134,12 +139,15 @@ public class PWSFrame extends MMFrame {
             settings_.putDouble(PWSPlugin.Settings.dynExposure, Double.parseDouble(dynExposureEdit.getText()));
             settings_.putInteger(PWSPlugin.Settings.dynNumFrames, Integer.parseInt(dynFramesEdit.getText()));
             settings_.putInteger(PWSPlugin.Settings.dynWavelength, Integer.parseInt(dynWvEdit.getText()));
+            settings_.putDouble(PWSPlugin.Settings.flExposure, Double.parseDouble(flExposureEdit.getText()));
+            settings_.putInteger(PWSPlugin.Settings.flWavelength, Integer.parseInt(flWvEdit.getText()));
         }
         catch(NumberFormatException e){
             log_.showMessage("A valid number was not specified.");
         }
         try{
             settings_.putString(PWSPlugin.Settings.filterLabel, filterComboBox.getSelectedItem().toString());
+            settings_.putString(PWSPlugin.Settings.flFilterBlock, flFilterBlockCombo.getSelectedItem().toString());
         }
         catch(NumberFormatException e){
             log_.showMessage("A valid string was not specified.");
@@ -157,6 +165,7 @@ public class PWSFrame extends MMFrame {
     
     private void scanDevices() {
         String[] devs = studio_.core().getLoadedDevices().toArray();
+        //Search for tunable spectral filters.
         StrVector newDevs = new StrVector();
         for (int i = 0; i < devs.length; i++) {
             try {
@@ -172,6 +181,26 @@ public class PWSFrame extends MMFrame {
             if (Arrays.asList(newDevs.toArray()).contains(oldName)) {
                 filterComboBox.setSelectedItem(oldName);
             }
+    }
+    
+    private void scanFilterBlock() {
+        Iterator<String> filterSettings = studio_.core().getAvailableConfigs("Filter").iterator();
+        StrVector settings = new StrVector();
+        while (filterSettings.hasNext()) {
+            settings.add(filterSettings.next());
+        }
+        if (settings.size() == 0) {
+            acqManager_.automaticFlFilterEnabled = false;
+            ReportingUtils.showMessage("Micromanager is missing a `Filter` config group which is needed for automated fluorescence. The first setting of the group should be the filter block used for PWS");
+        } else {
+            acqManager_.automaticFlFilterEnabled = true;
+            DefaultComboBoxModel model = new DefaultComboBoxModel(settings.toArray());
+            flFilterBlockCombo.setModel(model); //Update the available names.
+            String oldName = settings_.getString(PWSPlugin.Settings.flFilterBlock,"");
+            if (Arrays.asList(settings.toArray()).contains(oldName)) {
+                filterComboBox.setSelectedItem(oldName);
+            }
+        }
     }
     
     private void otherSettingsChanged() {
@@ -194,17 +223,24 @@ public class PWSFrame extends MMFrame {
         acqPWSButton.setBackground(Color.red);
     }
     
+    private void FLSettingsChanged() {
+        FLSettingsStale_ = true;
+        acqPWSButton.setBackground(Color.red);
+    }
+    
     private void addDocListeners() {
         HashMap<String, JTextField[]> categories = new HashMap<String, JTextField[]>();
         categories.put("other", new JTextField[] {systemNameEdit, darkCountsEdit, linearityCorrectionEdit});
         categories.put("PWS", new JTextField[] {wvStartField, wvStopField, wvStepField, exposureEdit});
         categories.put("DYN", new JTextField[] {dynExposureEdit, dynFramesEdit, dynWvEdit});
+        categories.put("FL", new JTextField[] {flExposureEdit, flWvEdit)
         categories.put("save", new JTextField[] {cellNumEdit, directoryText});
         
         HashMap<String, Runnable> funcs = new HashMap<String, Runnable>();
         funcs.put("other", this::otherSettingsChanged);
         funcs.put("PWS", this::PWSSettingsChanged);
         funcs.put("DYN", this::DYNSettingsChanged);
+        funcs.put("FL", this::fl)
         funcs.put("save", this::saveSettingsChanged);
         
         for (HashMap.Entry<String, JTextField[]> entry : categories.entrySet()) {
@@ -258,6 +294,13 @@ public class PWSFrame extends MMFrame {
         dynExposureEdit = new javax.swing.JTextField();
         dynFramesEdit = new javax.swing.JTextField();
         stepLabel5 = new javax.swing.JLabel();
+        jPanel11 = new javax.swing.JPanel();
+        flWvEdit = new javax.swing.JTextField();
+        stepLabel6 = new javax.swing.JLabel();
+        stepLabel7 = new javax.swing.JLabel();
+        flExposureEdit = new javax.swing.JTextField();
+        flFilterBlockCombo = new javax.swing.JComboBox<>();
+        stepLabel8 = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
         cellNumEdit = new javax.swing.JTextField();
         stepLabel1 = new javax.swing.JLabel();
@@ -305,31 +348,16 @@ public class PWSFrame extends MMFrame {
         wvStartField.setText("500");
         wvStartField.setToolTipText("In nanometers. The wavelength to start scanning at.");
         wvStartField.setName(""); // NOI18N
-        wvStartField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                wvStartFieldActionPerformed(evt);
-            }
-        });
         jPanel3.add(wvStartField);
 
         wvStopField.setText("700");
         wvStopField.setToolTipText("In nanometers. The wavelength to stop scanning at.");
-        wvStopField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                wvStopFieldActionPerformed(evt);
-            }
-        });
         jPanel3.add(wvStopField);
 
         wvStepField.setText("2");
         jPanel3.add(wvStepField);
 
         exposureEdit.setText("100");
-        exposureEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exposureEditActionPerformed(evt);
-            }
-        });
         jPanel3.add(exposureEdit);
 
         hardwareSequencingCheckBox.setToolTipText("Whether the camera should be configured to trigger wavelength changes in the filter over TTL. This may not be supported.");
@@ -381,18 +409,8 @@ public class PWSFrame extends MMFrame {
         stepLabel4.setText("Exposure (ms)");
 
         dynExposureEdit.setText("100");
-        dynExposureEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dynExposureEditActionPerformed(evt);
-            }
-        });
 
         dynFramesEdit.setText("200");
-        dynFramesEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dynFramesEditActionPerformed(evt);
-            }
-        });
 
         stepLabel5.setText("# of Frames");
 
@@ -439,13 +457,65 @@ public class PWSFrame extends MMFrame {
 
         jTabbedPane1.addTab("Dynamics", jPanel10);
 
-        cellNumEdit.setText("1");
-        cellNumEdit.setToolTipText("Cell Number");
-        cellNumEdit.addActionListener(new java.awt.event.ActionListener() {
+        flWvEdit.setText("550");
+
+        stepLabel6.setText("Wavelength (nm)");
+
+        stepLabel7.setText("Filter Block");
+
+        flExposureEdit.setText("100");
+
+        flFilterBlockCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        flFilterBlockCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cellNumEditActionPerformed(evt);
+                flFilterBlockComboActionPerformed(evt);
             }
         });
+
+        stepLabel8.setText("Exposure (ms)");
+
+        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
+        jPanel11.setLayout(jPanel11Layout);
+        jPanel11Layout.setHorizontalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel11Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel11Layout.createSequentialGroup()
+                        .addComponent(flWvEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(flExposureEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(flFilterBlockCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel11Layout.createSequentialGroup()
+                        .addComponent(stepLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(stepLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                        .addComponent(stepLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(98, 98, 98))
+        );
+        jPanel11Layout.setVerticalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel11Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(stepLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(stepLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(stepLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(flWvEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(flExposureEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(flFilterBlockCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(99, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Fluorescence", jPanel11);
+
+        cellNumEdit.setText("1");
+        cellNumEdit.setToolTipText("Cell Number");
 
         stepLabel1.setText("Cell Number");
 
@@ -529,11 +599,6 @@ public class PWSFrame extends MMFrame {
         jPanel7.add(jLabel2);
 
         darkCountsEdit.setToolTipText("# of counts per pixel when the camera is not exposed to any light. E.g if measuring dark counts with 2x2 binning the number here should be 1/4 of your measurement 2x2 binning pools 4 pixels.");
-        darkCountsEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                darkCountsEditActionPerformed(evt);
-            }
-        });
         jPanel7.add(darkCountsEdit);
 
         jLabel1.setText("Name");
@@ -541,11 +606,6 @@ public class PWSFrame extends MMFrame {
         jPanel7.add(jLabel1);
 
         systemNameEdit.setToolTipText("The name of the system.");
-        systemNameEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                systemNameEditActionPerformed(evt);
-            }
-        });
         jPanel7.add(systemNameEdit);
 
         jPanel8.add(jPanel7);
@@ -557,11 +617,6 @@ public class PWSFrame extends MMFrame {
         jPanel6.add(jLabel3);
 
         linearityCorrectionEdit.setToolTipText("Comma separated values representing the polynomial to linearize the counts from the camera. In the form \"A,B,C\" = Ax + Bx^2 + Cx^3. Type \"None\" or \"null\" if correction is not needed.");
-        linearityCorrectionEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                linearityCorrectionEditActionPerformed(evt);
-            }
-        });
         jPanel6.add(linearityCorrectionEdit);
 
         jPanel8.add(jPanel6);
@@ -632,12 +687,6 @@ public class PWSFrame extends MMFrame {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
     }//GEN-LAST:event_formWindowClosing
 
-    private void wvStartFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wvStartFieldActionPerformed
-    }//GEN-LAST:event_wvStartFieldActionPerformed
-
-    private void wvStopFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wvStopFieldActionPerformed
-    }//GEN-LAST:event_wvStopFieldActionPerformed
-
     private void filterComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterComboBoxActionPerformed
         PWSSettingsChanged();
     }//GEN-LAST:event_filterComboBoxActionPerformed
@@ -662,42 +711,18 @@ public class PWSFrame extends MMFrame {
         externalTriggerCheckBox.setEnabled(checked);
     }//GEN-LAST:event_hardwareSequencingCheckBoxActionPerformed
 
-    private void cellNumEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cellNumEditActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cellNumEditActionPerformed
-
     private void externalTriggerCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_externalTriggerCheckBoxActionPerformed
         PWSSettingsChanged();
     }//GEN-LAST:event_externalTriggerCheckBoxActionPerformed
-
-    private void systemNameEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_systemNameEditActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_systemNameEditActionPerformed
-
-    private void darkCountsEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_darkCountsEditActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_darkCountsEditActionPerformed
-
-    private void linearityCorrectionEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linearityCorrectionEditActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_linearityCorrectionEditActionPerformed
-
-    private void exposureEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exposureEditActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_exposureEditActionPerformed
 
     private void acqDynButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acqDynButtonActionPerformed
         acqPWSButton.setBackground(Color.green);
         acquireDynamics();
     }//GEN-LAST:event_acqDynButtonActionPerformed
 
-    private void dynExposureEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dynExposureEditActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_dynExposureEditActionPerformed
-
-    private void dynFramesEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dynFramesEditActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_dynFramesEditActionPerformed
+    private void flFilterBlockComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_flFilterBlockComboActionPerformed
+        FLSettingsChanged();
+    }//GEN-LAST:event_flFilterBlockComboActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton acqDynButton;
@@ -713,12 +738,16 @@ public class PWSFrame extends MMFrame {
     private javax.swing.JCheckBox externalTriggerCheckBox;
     private javax.swing.JComboBox<String> filterComboBox;
     private javax.swing.JLabel filterLabel;
+    private javax.swing.JTextField flExposureEdit;
+    private javax.swing.JComboBox<String> flFilterBlockCombo;
+    private javax.swing.JTextField flWvEdit;
     private javax.swing.JCheckBox hardwareSequencingCheckBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
+    private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -736,6 +765,9 @@ public class PWSFrame extends MMFrame {
     private javax.swing.JLabel stepLabel3;
     private javax.swing.JLabel stepLabel4;
     private javax.swing.JLabel stepLabel5;
+    private javax.swing.JLabel stepLabel6;
+    private javax.swing.JLabel stepLabel7;
+    private javax.swing.JLabel stepLabel8;
     private javax.swing.JLabel stopLabel;
     private javax.swing.JTextField systemNameEdit;
     private javax.swing.JTextField wvStartField;

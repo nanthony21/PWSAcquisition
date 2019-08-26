@@ -54,8 +54,11 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
         public static String dynExposure = "dynExposure";
         public static String dynWavelength = "dynWavelength";
         public static String dynNumFrames = "dynNumFrames";
+        public static String flFilterBlock = "flFilterBlock";
+        public static String flExposure = "flExposure";
+        public static String flWavelength = "flWavelength";
     }
-    
+        
     private Studio studio_;  
     private PWSFrame frame_;
     private AcqManager manager_; 
