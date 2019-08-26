@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.fileSavers.ImSaverRaw;
+import edu.bpl.pwsplugin.fileSavers.MMSaver;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -60,7 +61,7 @@ public class FluorAcqManager implements AcquisitionManager{
             Coords coords = img.getCoords();
             pipeline.insertImage(img); //Add image to the data pipeline for processing
             img = pipeline.getDatastore().getImage(coords); //Retrieve the processed image.                 
-            ImSaverRaw imSaver = new ImSaverRaw(studio_, this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), true, this.getFilePrefix());
+            MMSaver imSaver = new MMSaver(studio_, this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), this.getFilePrefix());
             imSaver.start();
             metadata.put("wavelength", wavelength_);
             metadata.put("exposure", studio_.core().getExposure()); //This must happen after we have set our exposure.

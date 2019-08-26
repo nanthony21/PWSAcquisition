@@ -31,15 +31,15 @@ import org.micromanager.data.Coords;
  * @author N2-LiveCell
  */
 public class MMSaver extends SaverThread {
-    LinkedBlockingQueue queue_;
+    public LinkedBlockingQueue queue;
     Studio studio_;
     int expectedFrames_;
     String savePath_;
     JSONObject metadata_;
     String filePrefix_;
 
-    MMSaver(Studio studio, String savePath, LinkedBlockingQueue queue, String filePrefix, int expectedFrames){
-        queue_ = queue;
+    public MMSaver(Studio studio, String savePath, LinkedBlockingQueue queue, int expectedFrames, String filePrefix){
+        queue = queue;
         studio_ = studio;
         expectedFrames_ = expectedFrames;
         savePath_ = savePath;
@@ -55,7 +55,7 @@ public class MMSaver extends SaverThread {
             Image im;
             Coords.Builder coords;
             for (int i=0; i<expectedFrames_; i++) {
-                im = (Image) queue_.poll(5, TimeUnit.SECONDS); //Wait for an image
+                im = (Image) queue.poll(5, TimeUnit.SECONDS); //Wait for an image
                 if (im == null) {
                     ReportingUtils.showError("ImSaver timed out while waiting for image");
                     return;
@@ -106,7 +106,7 @@ public class MMSaver extends SaverThread {
     }
     
     private void saveImBd(Image im) throws IOException{
-        ImagePlus imPlus = new ImagePlus(filePrefix_, imJConv.createProcessor(im));
+        ImagePlus imPlus = new ImagePlus(filePrefix_, studio_.data().ij().createProcessor(im));
         ContrastEnhancer contrast = new ContrastEnhancer();
         contrast.stretchHistogram(imPlus,0.01); //I think this will saturate 0.01% of the image. or maybe its 1% idk. 
         ImageConverter converter = new ImageConverter(imPlus);

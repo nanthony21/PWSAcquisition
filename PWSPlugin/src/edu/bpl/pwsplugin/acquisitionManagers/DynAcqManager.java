@@ -22,6 +22,7 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.fileSavers.ImSaverRaw;
 import edu.bpl.pwsplugin.PWSAlbum;
+import edu.bpl.pwsplugin.fileSavers.MMSaver;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -72,7 +73,7 @@ public class DynAcqManager implements AcquisitionManager{
         }
         Pipeline pipeline = studio_.data().copyApplicationPipeline(studio_.data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
         try {
-            ImSaverRaw imSaver = new ImSaverRaw(studio_, this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), true, this.getFilePrefix());
+            MMSaver imSaver = new MMSaver(studio_, this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), this.getFilePrefix());
             imSaver.start();
             metadata.put("wavelength", wavelength_);
             metadata.put("exposure", studio_.core().getExposure()); //This must happen after we have set our exposure.

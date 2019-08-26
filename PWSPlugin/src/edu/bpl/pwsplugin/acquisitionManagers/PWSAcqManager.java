@@ -23,6 +23,7 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.fileSavers.ImSaverRaw;
 import edu.bpl.pwsplugin.PWSAlbum;
+import edu.bpl.pwsplugin.fileSavers.MMSaver;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import org.micromanager.internal.utils.ReportingUtils;
@@ -117,7 +118,7 @@ public class PWSAcqManager implements AcquisitionManager{
             }        
             metadata.put("wavelengths", WV);
             metadata.put("exposure", studio_.core().getExposure()); //This must happen after we have set the camera to our desired exposure.
-            ImSaverRaw imSaver_ = new ImSaverRaw(studio_, this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), true, this.getFilePrefix());
+            MMSaver imSaver_ = new MMSaver(studio_, this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), this.getFilePrefix());
             imSaver_.setMetadata(metadata);
             imSaver_.start();
             
