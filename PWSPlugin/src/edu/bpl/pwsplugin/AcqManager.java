@@ -20,12 +20,10 @@
 //
 package edu.bpl.pwsplugin;
 
-import edu.bpl.pwsplugin.fileSavers.ImSaverRaw;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionManagers.PWSAcqManager;
 import edu.bpl.pwsplugin.acquisitionManagers.DynAcqManager;
 import edu.bpl.pwsplugin.acquisitionManagers.FluorAcqManager;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -52,7 +50,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     double[] linearityPolynomial_;
     String sysName_;
     public boolean automaticFlFilterEnabled;
-
+    public String flBFFilterBlock;
 
     
     public AcqManager(Studio studio) {
@@ -134,8 +132,8 @@ public class AcqManager { // A parent acquisition manager that can direct comman
         dynManager_.setSequenceSettings(exposure, filterLabel, wavelength, numFrames);
     }
     
-    public void setFluoresecenceSettings(double exposure, String flFilterBlock, String bfFilterBlock, int emissionWavelength) {
-        flManager_.setFluorescenceSettings(automaticFlFilterEnabled, bfFilterBlock, flFilterBlock, exposure, emissionWavelength);
+    public void setFluoresecenceSettings(double exposure, String flFilterBlock, int emissionWavelength) {
+        flManager_.setFluorescenceSettings(automaticFlFilterEnabled, this.flBFFilterBlock, flFilterBlock, exposure, emissionWavelength);
     }
     
     private void run(AcquisitionManager manager) {

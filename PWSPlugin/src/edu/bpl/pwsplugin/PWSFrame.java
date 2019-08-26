@@ -194,6 +194,7 @@ public class PWSFrame extends MMFrame {
             ReportingUtils.showMessage("Micromanager is missing a `Filter` config group which is needed for automated fluorescence. The first setting of the group should be the filter block used for PWS");
         } else {
             acqManager_.automaticFlFilterEnabled = true;
+            acqManager_.flBFFilterBlock = settings.toArray()[0];
             DefaultComboBoxModel model = new DefaultComboBoxModel(settings.toArray());
             flFilterBlockCombo.setModel(model); //Update the available names.
             String oldName = settings_.getString(PWSPlugin.Settings.flFilterBlock,"");
@@ -233,14 +234,14 @@ public class PWSFrame extends MMFrame {
         categories.put("other", new JTextField[] {systemNameEdit, darkCountsEdit, linearityCorrectionEdit});
         categories.put("PWS", new JTextField[] {wvStartField, wvStopField, wvStepField, exposureEdit});
         categories.put("DYN", new JTextField[] {dynExposureEdit, dynFramesEdit, dynWvEdit});
-        categories.put("FL", new JTextField[] {flExposureEdit, flWvEdit)
+        categories.put("FL", new JTextField[] {flExposureEdit, flWvEdit});
         categories.put("save", new JTextField[] {cellNumEdit, directoryText});
         
         HashMap<String, Runnable> funcs = new HashMap<String, Runnable>();
         funcs.put("other", this::otherSettingsChanged);
         funcs.put("PWS", this::PWSSettingsChanged);
         funcs.put("DYN", this::DYNSettingsChanged);
-        funcs.put("FL", this::fl)
+        funcs.put("FL", this::FLSettingsChanged);
         funcs.put("save", this::saveSettingsChanged);
         
         for (HashMap.Entry<String, JTextField[]> entry : categories.entrySet()) {
@@ -322,6 +323,7 @@ public class PWSFrame extends MMFrame {
         linearityCorrectionEdit = new javax.swing.JTextField();
         acqPWSButton = new javax.swing.JButton();
         acqDynButton = new javax.swing.JButton();
+        acqFlButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -654,6 +656,13 @@ public class PWSFrame extends MMFrame {
             }
         });
 
+        acqFlButton.setText("Acquire Fluorescence");
+        acqFlButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                acqFlButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -663,6 +672,8 @@ public class PWSFrame extends MMFrame {
                 .addComponent(acqPWSButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(acqDynButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(acqFlButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -676,7 +687,8 @@ public class PWSFrame extends MMFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(acqPWSButton)
-                    .addComponent(acqDynButton)))
+                    .addComponent(acqDynButton)
+                    .addComponent(acqFlButton)))
         );
 
         jTabbedPane1.getAccessibleContext().setAccessibleName("General");
@@ -692,7 +704,6 @@ public class PWSFrame extends MMFrame {
     }//GEN-LAST:event_filterComboBoxActionPerformed
 
     private void acqPWSButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acqPWSButtonActionPerformed
-        acqPWSButton.setBackground(Color.green);
         acquirePWS();
     }//GEN-LAST:event_acqPWSButtonActionPerformed
 
@@ -716,7 +727,6 @@ public class PWSFrame extends MMFrame {
     }//GEN-LAST:event_externalTriggerCheckBoxActionPerformed
 
     private void acqDynButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acqDynButtonActionPerformed
-        acqPWSButton.setBackground(Color.green);
         acquireDynamics();
     }//GEN-LAST:event_acqDynButtonActionPerformed
 
@@ -724,8 +734,13 @@ public class PWSFrame extends MMFrame {
         FLSettingsChanged();
     }//GEN-LAST:event_flFilterBlockComboActionPerformed
 
+    private void acqFlButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acqFlButtonActionPerformed
+        acquireDynamics();
+    }//GEN-LAST:event_acqFlButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton acqDynButton;
+    private javax.swing.JButton acqFlButton;
     private javax.swing.JButton acqPWSButton;
     private javax.swing.JTextField cellNumEdit;
     private javax.swing.JTextField darkCountsEdit;
@@ -795,6 +810,16 @@ public class PWSFrame extends MMFrame {
         DYNBackgroundWorker worker = new DYNBackgroundWorker();
     }
     
+    public void acquireFluorescence() {
+        try {
+            configureManager();
+        } catch (Exception e) {
+            log_.showError(e);
+            return;
+        }
+        FLBackgroundWorker worker = new FLBackgroundWorker();
+    }
+    
     private void configureManager() throws Exception {
         if (otherSettingsStale_ || PWSSettingsStale_ || saveSettingsStale_ || DYNSettingsStale_){
             saveSettings(); 
@@ -828,6 +853,12 @@ public class PWSFrame extends MMFrame {
                 int numFrames = settings_.getInteger(PWSPlugin.Settings.dynNumFrames, 200);
                 acqManager_.setDynamicsSettings(exposure, filterLabel, wavelength, numFrames);
                 DYNSettingsStale_ = false;
+            }
+            if (FLSettingsStale_) {
+                double exposure = settings_.getDouble(PWSPlugin.Settings.flExposure, 1000);
+                int wavelength = settings_.getInteger(PWSPlugin.Settings.flWavelength, 550);
+                String flFilterBlock = settings_.getString(PWSPlugin.Settings.flFilterBlock, "");
+                acqManager_.setFluoresecenceSettings(exposure, flFilterBlock, wavelength);
             }
             acqPWSButton.setBackground(Color.green);
         }
@@ -866,6 +897,24 @@ public class PWSFrame extends MMFrame {
         @Override
         public void done() {
             acqDynButton.setEnabled(true);
+        }
+    }
+    
+    protected class FLBackgroundWorker extends SwingWorker<Void, Void> {
+        public FLBackgroundWorker() {
+            acqFlButton.setEnabled(false);
+            this.execute();
+        }
+        
+        @Override
+        public Void doInBackground() {
+            acqManager_.acquireFluorescence();
+            return null;
+        }
+        
+        @Override
+        public void done() {
+            acqFlButton.setEnabled(true);
         }
     }
     
