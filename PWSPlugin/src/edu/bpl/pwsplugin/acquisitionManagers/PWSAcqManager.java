@@ -31,6 +31,7 @@ import mmcorej.StrVector;
 import org.micromanager.Studio;
 import org.micromanager.data.Image;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -89,11 +90,12 @@ public class PWSAcqManager implements AcquisitionManager{
     
     @Override
     public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException{
-        if (Files.isDirectory(Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)))){
-            ReportingUtils.showError("Cell " + cellNum + " already exists.");
-            throw new FileAlreadyExistsException("Cell " + cellNum + " already exists.");
+        Path path = Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).resolve("PWS");
+        if (Files.isDirectory(path)){
+            ReportingUtils.showError("Cell " + cellNum + " PWS already exists.");
+            throw new FileAlreadyExistsException("Cell " + cellNum + " PWS already exists.");
         } 
-        return Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).toString();
+        return path.toString();
     }
       
     @Override

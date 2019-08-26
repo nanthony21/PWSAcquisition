@@ -35,6 +35,7 @@ import org.micromanager.data.Coords;
 import org.micromanager.data.Image;
 import org.micromanager.data.Pipeline;
 import org.micromanager.internal.utils.ReportingUtils;
+import java.nio.file.Path;
 
 
 public class DynAcqManager implements AcquisitionManager{
@@ -100,11 +101,12 @@ public class DynAcqManager implements AcquisitionManager{
     
     @Override
     public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException {
-        if (Files.isDirectory(Paths.get(savePath).resolve("DYN_Cell" + String.valueOf(cellNum)))){
-            ReportingUtils.showError("DYN_Cell " + cellNum + " already exists.");
-            throw new FileAlreadyExistsException("DYN_Cell " + cellNum + " already exists.");
+        Path path = Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).resolve("Dynamics");
+        if (Files.isDirectory(path)){
+            ReportingUtils.showError("Cell " + cellNum + " dynamics already exists.");
+            throw new FileAlreadyExistsException("Cell " + cellNum + " dynamics already exists.");
         } 
-        return Paths.get(savePath).resolve("DYN_Cell" + String.valueOf(cellNum)).toString();
+        return path.toString();
     }
     
     @Override
