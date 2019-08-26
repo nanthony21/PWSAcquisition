@@ -793,20 +793,20 @@ public class PWSFrame extends MMFrame {
     private javax.swing.JTextField wvStopField;
     // End of variables declaration//GEN-END:variables
 
-    private SwingWorker<Void, Void> runInBackground(JButton button, Function<Void, Void> myFunc) {
+    private SwingWorker<Void, Void> runInBackground(JButton button, Runnable myFunc) {
         //This funciton will run myFunc in a separate thread. `button` will be disabled while the function is running.
         return new SwingWorker<Void, Void>() {
             Object o = new Object() {{button.setEnabled(false); execute();}}; //Fake constructor.
             
             @Override
-            public Void doInBackground() {myFunc.apply(null); return null;}
+            public Void doInBackground() {myFunc.run(); return null;}
 
             @Override
             public void done() {button.setEnabled(true);}
         };
     }
         
-    private void acquire(JButton button, Function<Void, Void> f) {
+    private void acquire(JButton button, Runnable f) {
         try {
             configureManager();
         } catch (Exception e) {
