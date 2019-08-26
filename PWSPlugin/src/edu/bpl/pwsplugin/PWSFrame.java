@@ -232,6 +232,7 @@ public class PWSFrame extends MMFrame {
     }
     
     private void addDocListeners() {
+        //If one of the below GUI elements changes we will set a flag telling us that the settings have been changed.
         HashMap<String, JTextField[]> categories = new HashMap<String, JTextField[]>();
         categories.put("other", new JTextField[] {systemNameEdit, darkCountsEdit, linearityCorrectionEdit});
         categories.put("PWS", new JTextField[] {wvStartField, wvStopField, wvStepField, exposureEdit});
@@ -737,7 +738,7 @@ public class PWSFrame extends MMFrame {
     }//GEN-LAST:event_flFilterBlockComboActionPerformed
 
     private void acqFlButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acqFlButtonActionPerformed
-        acquireDynamics();
+        acquireFluorescence();
     }//GEN-LAST:event_acqFlButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
