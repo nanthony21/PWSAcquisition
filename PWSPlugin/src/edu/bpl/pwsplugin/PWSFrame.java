@@ -35,12 +35,14 @@ import mmcorej.StrVector;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import javax.swing.JButton;
 import javax.swing.JTextField;
 import org.micromanager.internal.utils.FileDialogs;
 import org.micromanager.internal.utils.ReportingUtils;
 import javax.swing.SwingWorker;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.ArrayUtils;
+import java.util.function.Function;
 
 public class PWSFrame extends MMFrame {
 
@@ -790,34 +792,39 @@ public class PWSFrame extends MMFrame {
     private javax.swing.JTextField wvStopField;
     // End of variables declaration//GEN-END:variables
 
-    public void acquirePWS() {
+    private SwingWorker<Void, Void> runInBackground(JButton button, Function<Void, Void> myFunc) {
+        //This funciton will run myFunc in a separate thread. `button` will be disabled while the function is running.
+        return new SwingWorker<Void, Void>() {
+            Object o = new Object() {{button.setEnabled(false); execute();}}; //Fake constructor.
+            
+            @Override
+            public Void doInBackground() {myFunc.apply(null); return null;}
+
+            @Override
+            public void done() {button.setEnabled(true);}
+        };
+    }
+        
+    private void acquire(JButton button, Function<Void, Void> f) {
         try {
             configureManager();
         } catch (Exception e) {
             log_.showError(e);
             return;
         }
-        PWSBackgroundWorker worker = new PWSBackgroundWorker();
+        SwingWorker worker = runInBackground(button, f);
+    }
+    
+    public void acquirePWS() {
+        acquire(acqPWSButton, acqManager_::acquirePWS);
     }
     
     public void acquireDynamics() {
-        try {
-            configureManager();
-        } catch (Exception e) {
-            log_.showError(e);
-            return;
-        }
-        DYNBackgroundWorker worker = new DYNBackgroundWorker();
+        acquire(acqDynButton, acqManager_::acquireDynamics);
     }
     
     public void acquireFluorescence() {
-        try {
-            configureManager();
-        } catch (Exception e) {
-            log_.showError(e);
-            return;
-        }
-        FLBackgroundWorker worker = new FLBackgroundWorker();
+        acquire(acqFlButton, acqManager_::acquireFluorescence);
     }
     
     private void configureManager() throws Exception {
@@ -863,60 +870,7 @@ public class PWSFrame extends MMFrame {
             acqPWSButton.setBackground(Color.green);
         }
     }
-        
-    protected class PWSBackgroundWorker extends SwingWorker<Void, Void> {
-        public PWSBackgroundWorker() {
-            acqPWSButton.setEnabled(false);            
-            this.execute();
-        }
-        
-        @Override
-        public Void doInBackground() {
-            acqManager_.acquirePWS();
-            return null;
-        }
-
-        @Override
-        public void done() {
-            acqPWSButton.setEnabled(true);
-        }
-    }
     
-    protected class DYNBackgroundWorker extends SwingWorker<Void, Void> {
-        public DYNBackgroundWorker() {
-            acqDynButton.setEnabled(false);
-            this.execute();
-        }
-              
-        @Override
-        public Void doInBackground() {
-            acqManager_.acquireDynamics();
-            return null;
-        }
-
-        @Override
-        public void done() {
-            acqDynButton.setEnabled(true);
-        }
-    }
-    
-    protected class FLBackgroundWorker extends SwingWorker<Void, Void> {
-        public FLBackgroundWorker() {
-            acqFlButton.setEnabled(false);
-            this.execute();
-        }
-        
-        @Override
-        public Void doInBackground() {
-            acqManager_.acquireFluorescence();
-            return null;
-        }
-        
-        @Override
-        public void done() {
-            acqFlButton.setEnabled(true);
-        }
-    }
     
     //API
     public void setSavePath(String savepath) {
