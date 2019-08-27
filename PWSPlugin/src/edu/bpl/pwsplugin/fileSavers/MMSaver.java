@@ -10,8 +10,12 @@ import ij.io.FileInfo;
 import ij.io.FileSaver;
 import ij.plugin.ContrastEnhancer;
 import ij.process.ImageConverter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -51,7 +55,7 @@ public class MMSaver extends SaverThread {
         try {
             long now = System.currentTimeMillis(); 
             Datastore ds = studio_.data().createMultipageTIFFDatastore(savePath_, false, true);
-            ds.setName("PWS");
+            ds.setName("PWSPluginSaver");
             Image im;
             Coords.Builder coords;
             for (int i=0; i<expectedFrames_; i++) {
@@ -68,11 +72,14 @@ public class MMSaver extends SaverThread {
                     saveImBd(im); //Save the image from halfway through the sequence.
                 }
             }
-            ds.freeze();
+            ds.freeze(); //This must be called prior to closing or the file will be corrupted.
             ds.close();
 
-      
-            //make sure it's been set.
+            File oldFile = new File(savePath_).listFiles((dir, name) -> name.endsWith(".ome.tif") && name.startsWith("MMStack"))[0];
+            File newFile = new File(Paths.get(savePath_).resolve(filePrefix_ + ".tif").toString());
+            oldFile.renameTo(newFile);
+            
+            //make sure the metadata has been set.
             int i = 0;
             while (metadata_ == null) { //Wait for metadata to be set by the acquistion manager.
                 Thread.sleep(10);
