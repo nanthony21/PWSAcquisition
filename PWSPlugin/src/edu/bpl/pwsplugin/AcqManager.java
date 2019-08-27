@@ -55,8 +55,8 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     
     public AcqManager(Studio studio) {
         studio_ = studio;
-        album = new PWSAlbum(studio_);
-        dynAlbum = new PWSAlbum(studio_);
+        album = new PWSAlbum(studio_, "PWS");
+        dynAlbum = new PWSAlbum(studio_, "Dynamics");
         pwsManager_ = new PWSAcqManager(studio_, album);
         dynManager_ = new DynAcqManager(studio_, dynAlbum);
         flManager_ = new FluorAcqManager(studio_);

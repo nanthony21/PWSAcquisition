@@ -37,11 +37,13 @@ public class PWSAlbum {
    private RewritableDatastore store_;
    private Studio studio_;
    private int idx = 0;
+   String displayName_;
    private DisplayWindow display = null;
    
-   PWSAlbum(Studio studio) {
+   PWSAlbum(Studio studio, String displayName) {
        studio_ = studio;
        store_ = studio_.data().createRewritableRAMDatastore();
+       displayName_ = displayName;
    }
    
    public Datastore getDatastore() {
@@ -56,7 +58,7 @@ public class PWSAlbum {
    public void addImage(Image image){   
         if ((display==null) || (display.isClosed())) {
             display = studio_.displays().createDisplay(store_);
-            display.setCustomTitle("PWS");
+            display.setCustomTitle(displayName_);
         }
         Coords newCoords = image.getCoords().copyBuilder().t(idx).build();
         idx++;
