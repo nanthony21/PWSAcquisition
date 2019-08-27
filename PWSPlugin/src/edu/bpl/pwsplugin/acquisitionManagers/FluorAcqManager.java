@@ -50,7 +50,8 @@ public class FluorAcqManager implements AcquisitionManager{
         try {
             String fullSavePath = this.getSavePath(savePath, cellNum); //This also checks if the file already exists, throws error if it does.
             if (autoFilter_) {
-                studio_.core().setConfig("Filter", flFilterBlock_); //TODO make sure this waits for the device to switch.
+                studio_.core().setConfig("Filter", flFilterBlock_);
+                studio_.core().waitForConfig("Filter", flFilterBlock_); // Wait for the device to be ready.
             } else {
                 ReportingUtils.showMessage("Set the correct fluorescence filter and click `OK`."); //TODO make sure this actually blocks.
             }
@@ -76,12 +77,13 @@ public class FluorAcqManager implements AcquisitionManager{
         } finally {
             if (autoFilter_) {
                 try {
-                    studio_.core().setConfig("Filter", bfFilterBlock_); //TODO make sure this waits for the device to switch.
+                    studio_.core().setConfig("Filter", bfFilterBlock_);
+                    studio_.core().waitForConfig("Filter", bfFilterBlock_); // Wait for the device to be ready.
                 } catch (Exception e){
                     ReportingUtils.showError(e);
                 }
             } else {
-                ReportingUtils.showMessage("Return to the PWS filter block and click `OK`."); //TODO make sure this actually blocks.
+                ReportingUtils.showMessage("Return to the PWS filter block and click `OK`.");
             }
         }
     }
