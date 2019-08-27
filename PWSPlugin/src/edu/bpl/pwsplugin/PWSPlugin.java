@@ -163,7 +163,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
         return frame_.getFilterName();
     }
     
-    public void setFluorescenceEmissionWavelength(double wv) {
+    public void setFluorescenceEmissionWavelength(int wv) {
         frame_.setFluorescenceEmissionWavelength(wv);
     }
     

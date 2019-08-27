@@ -916,7 +916,7 @@ public class PWSFrame extends MMFrame {
         return names;
     }
     
-    public void setFluorescenceEmissionWavelength(double wv) {
+    public void setFluorescenceEmissionWavelength(int wv) {
         flWvEdit.setText(String.valueOf(wv));
     }
 }
