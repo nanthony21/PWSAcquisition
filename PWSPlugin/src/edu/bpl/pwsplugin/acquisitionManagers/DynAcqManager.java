@@ -104,7 +104,6 @@ public class DynAcqManager implements AcquisitionManager{
     public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException {
         Path path = Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).resolve("Dynamics");
         if (Files.isDirectory(path)){
-            ReportingUtils.showError("Cell " + cellNum + " dynamics already exists.");
             throw new FileAlreadyExistsException("Cell " + cellNum + " dynamics already exists.");
         } 
         return path.toString();
