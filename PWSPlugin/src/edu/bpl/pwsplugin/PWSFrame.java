@@ -35,6 +35,8 @@ import mmcorej.StrVector;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import org.micromanager.internal.utils.FileDialogs;
@@ -892,5 +894,29 @@ public class PWSFrame extends MMFrame {
     
     public void setDynamicsExposure(double exposureMs) {
         dynExposureEdit.setText(String.valueOf(exposureMs));
+    }
+    
+    public void setFluorescenceExposure(double exposureMs) {
+        flExposureEdit.setText(String.valueOf(exposureMs));
+    }
+    
+    public void setFluorescenceFilter(String filterBlockName) {
+       if (!this.getFluorescenceFilterNames().contains(filterBlockName)) {
+           ReportingUtils.showMessage(filterBlockName + " is not a valid filter block name.");
+       } else {
+        flFilterBlockCombo.setSelectedItem(filterBlockName);
+       }
+    }
+    
+    public Vector<String> getFluorescenceFilterNames() {
+        Vector<String> names = new Vector<String>();
+        for (int i=0; i<flFilterBlockCombo.getItemCount(); i++) {
+            names.add(flFilterBlockCombo.getItemAt(i));
+        }
+        return names;
+    }
+    
+    public void setFluorescenceEmissionWavelength(double wv) {
+        flWvEdit.setText(String.valueOf(wv));
     }
 }

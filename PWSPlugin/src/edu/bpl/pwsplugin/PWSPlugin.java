@@ -21,6 +21,7 @@ package edu.bpl.pwsplugin;
 //
 
 import com.google.common.eventbus.Subscribe;
+import java.util.Vector;
 import org.micromanager.Studio;
 import org.micromanager.MenuPlugin;
 import org.micromanager.events.ShutdownCommencingEvent;
@@ -134,8 +135,24 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
         frame_.acquireDynamics();
     }
     
+    public void acquireFluorescence() {
+        frame_.acquireFluorescence();
+    }
+    
     public void setDynamicsExposure(double exposureMs) {
         frame_.setDynamicsExposure(exposureMs);
+    }
+    
+    public void setFluorescenceExposure(double exposureMs) {
+        frame_.setFluorescenceExposure(exposureMs);
+    }
+    
+    public void setFluorescenceFilter(String filterBlockName) {
+        frame_.setFluorescenceFilter(filterBlockName);
+    }
+    
+    public Vector<String> getFluorescenceFilterNames() {
+        return frame_.getFluorescenceFilterNames();
     }
     
     public boolean isAcquisitionRunning() {
@@ -144,6 +161,10 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     
     public String getFilterName() {
         return frame_.getFilterName();
+    }
+    
+    public void setFluorescenceEmissionWavelength(double wv) {
+        frame_.setFluorescenceEmissionWavelength(wv);
     }
     
     public void dispose() { //Close the frame.
