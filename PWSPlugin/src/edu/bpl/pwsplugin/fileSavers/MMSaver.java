@@ -38,8 +38,8 @@ public class MMSaver extends SaverThread {
     JSONObject metadata_;
     String filePrefix_;
 
-    public MMSaver(Studio studio, String savePath, LinkedBlockingQueue queue, int expectedFrames, String filePrefix){
-        queue = queue;
+    public MMSaver(Studio studio, String savePath, LinkedBlockingQueue imageQueue, int expectedFrames, String filePrefix){
+        queue = imageQueue;
         studio_ = studio;
         expectedFrames_ = expectedFrames;
         savePath_ = savePath;

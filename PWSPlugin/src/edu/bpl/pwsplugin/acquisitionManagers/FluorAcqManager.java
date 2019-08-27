@@ -36,8 +36,9 @@ public class FluorAcqManager implements AcquisitionManager{
         studio_ = studio;
     }
     
-    public void setFluorescenceSettings(boolean autoFilter, String bfFilter, String flFilter, double exposure, int emissionWV) {
+    public void setFluorescenceSettings(boolean autoFilter, String bfFilter, String flFilter, double exposure, int emissionWV, String tunableFilterLabel) {
         autoFilter_ = autoFilter;
+        filtLabel_ = tunableFilterLabel;
         flFilterBlock_ = flFilter;
         bfFilterBlock_ = bfFilter;
         exposure_ = exposure;
@@ -47,6 +48,7 @@ public class FluorAcqManager implements AcquisitionManager{
     @Override
     public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata) {
         try {
+            String fullSavePath = this.getSavePath(savePath, cellNum); //This also checks if the file already exists, throws error if it does.
             if (autoFilter_) {
                 studio_.core().setConfig("Filter", flFilterBlock_); //TODO make sure this waits for the device to switch.
             } else {
@@ -61,7 +63,7 @@ public class FluorAcqManager implements AcquisitionManager{
             Coords coords = img.getCoords();
             pipeline.insertImage(img); //Add image to the data pipeline for processing
             img = pipeline.getDatastore().getImage(coords); //Retrieve the processed image.                 
-            MMSaver imSaver = new MMSaver(studio_, this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), this.getFilePrefix());
+            MMSaver imSaver = new MMSaver(studio_, fullSavePath, imagequeue, this.getExpectedFrames(), this.getFilePrefix());
             imSaver.start();
             metadata.put("wavelength", wavelength_);
             metadata.put("exposure", studio_.core().getExposure()); //This must happen after we have set our exposure.
@@ -88,7 +90,6 @@ public class FluorAcqManager implements AcquisitionManager{
     public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException {
         Path path = Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).resolve("Fluorescence");
         if (Files.isDirectory(path)){
-            ReportingUtils.showError("Cell " + cellNum + " fluorescence already exists.");
             throw new FileAlreadyExistsException("Cell " + cellNum + " fluorescence already exists.");
         } 
         return path.toString();

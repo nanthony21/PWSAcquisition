@@ -132,8 +132,8 @@ public class AcqManager { // A parent acquisition manager that can direct comman
         dynManager_.setSequenceSettings(exposure, filterLabel, wavelength, numFrames);
     }
     
-    public void setFluoresecenceSettings(double exposure, String flFilterBlock, int emissionWavelength) {
-        flManager_.setFluorescenceSettings(automaticFlFilterEnabled, this.flBFFilterBlock, flFilterBlock, exposure, emissionWavelength);
+    public void setFluoresecenceSettings(double exposure, String flFilterBlock, int emissionWavelength, String filterLabel) {
+        flManager_.setFluorescenceSettings(this.automaticFlFilterEnabled, this.flBFFilterBlock, flFilterBlock, exposure, emissionWavelength, filterLabel);
     }
     
     private void run(AcquisitionManager manager) {
