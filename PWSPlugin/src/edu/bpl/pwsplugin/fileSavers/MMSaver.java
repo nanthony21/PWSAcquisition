@@ -29,6 +29,7 @@ import org.micromanager.data.Metadata;
 import org.micromanager.PropertyMaps;
 import org.micromanager.data.Datastore;
 import org.micromanager.data.Coords;
+import org.micromanager.data.internal.DefaultMetadata;
 
 /**
  *
@@ -58,8 +59,13 @@ public class MMSaver extends SaverThread {
             ds.setName("PWSPluginSaver");
             Image im;
             Coords.Builder coords;
+            JSONObject jmd = null;
             for (int i=0; i<expectedFrames_; i++) {
                 im = (Image) queue.poll(5, TimeUnit.SECONDS); //Wait for an image
+                if (i==0) {
+                    Metadata md = im.getMetadata();
+                    jmd = new JSONObject(((DefaultMetadata)md).toPropertyMap().toJSON()); //Save the micromanager metadata from the first image.
+                }
                 if (im == null) {
                     ReportingUtils.showError("ImSaver timed out while waiting for image");
                     return;
@@ -89,6 +95,7 @@ public class MMSaver extends SaverThread {
                     return;
                 }
             }
+            metadata_.put("MicroManagerMetadata", jmd.get("map")); //Add the micromanager metadata.
             writeMetadata();
             
             long itTook = System.currentTimeMillis() - now;
