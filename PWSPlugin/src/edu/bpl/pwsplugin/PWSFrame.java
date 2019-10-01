@@ -173,7 +173,7 @@ public class PWSFrame extends MMFrame {
         StrVector newDevs = new StrVector();
         for (int i = 0; i < devs.length; i++) {
             try {
-                if (studio_.core().isPropertySequenceable(devs[i], "Wavelength")) {
+                if (studio_.core().hasProperty(devs[i], "Wavelength")) {
                     newDevs.add(devs[i]);
                 }
             }
