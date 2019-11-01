@@ -196,7 +196,6 @@ public class PWSFrame extends MMFrame {
             ReportingUtils.showMessage("Micromanager is missing a `Filter` config group which is needed for automated fluorescence. The first setting of the group should be the filter block used for PWS");
         } else {
             acqManager_.automaticFlFilterEnabled = true;
-            acqManager_.flBFFilterBlock = settings.toArray()[0];
             DefaultComboBoxModel model = new DefaultComboBoxModel(settings.toArray());
             flFilterBlockCombo.setModel(model); //Update the available names.
             String oldName = settings_.getString(PWSPlugin.Settings.flFilterBlock,"");
