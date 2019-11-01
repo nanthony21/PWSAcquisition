@@ -21,6 +21,7 @@
 
 package edu.bpl.pwsplugin.acquisitionManagers;
 
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.fileSavers.ImSaverRaw;
 import edu.bpl.pwsplugin.PWSAlbum;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
@@ -42,7 +43,6 @@ import org.micromanager.data.PipelineErrorException;
 
 
 public class PWSAcqManager implements AcquisitionManager{
-    Studio studio_;
     int[] wv; //The array of wavelengths to image at.
     String filtLabel; // The string identifying the spectral filter device of the pws system in micromanager.
     final String filtProp  = "Wavelength"; //The property name of the filter that we want to tune.
@@ -51,9 +51,8 @@ public class PWSAcqManager implements AcquisitionManager{
     double exposure_; // The camera exposure.
     PWSAlbum album_;
     
-    public PWSAcqManager(Studio studio, PWSAlbum album) {
+    public PWSAcqManager(PWSAlbum album) {
         album_ = album;
-        studio_ = studio;
     }
     
     public void setSequenceSettings(double exposure, boolean externalTrigger, 
@@ -65,17 +64,17 @@ public class PWSAcqManager implements AcquisitionManager{
         hardwareSequence =  hardwareTrigger;           
         
         if (hardwareSequence) {
-            if (!studio_.core().isPropertySequenceable(filtLabel, filtProp)){
+            if (!Globals.mm().core().isPropertySequenceable(filtLabel, filtProp)){
                 throw new Exception("The filter device does not have a sequenceable 'Wavelength' property.");
             }
-            if (studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp) < wv.length) {
-                throw new Exception("The filter device does not support sequencing as many wavelengths as have been specified. Max is " + Integer.toString(studio_.core().getPropertySequenceMaxLength(filtLabel, filtProp)));
+            if (Globals.mm().core().getPropertySequenceMaxLength(filtLabel, filtProp) < wv.length) {
+                throw new Exception("The filter device does not support sequencing as many wavelengths as have been specified. Max is " + Integer.toString(Globals.core().getPropertySequenceMaxLength(filtLabel, filtProp)));
             }
             StrVector strv = new StrVector();
             for (int i = 0; i < wv.length; i++) {   //Convert wv from int to string for sending to the device.
                 strv.add(String.valueOf(wv[i]));
             }
-            studio_.core().loadPropertySequence(filtLabel, filtProp, strv);
+            Globals.mm().core().loadPropertySequence(filtLabel, filtProp, strv);
         }  
     }
     
@@ -103,12 +102,12 @@ public class PWSAcqManager implements AcquisitionManager{
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         double initialWv = 550;
         try {    
-            initialWv = Double.valueOf(studio_.core().getProperty(filtLabel, filtProp)); //Get initial wavelength
-            String cam = studio_.core().getCameraDevice();
-            studio_.core().waitForDevice(cam);
-            studio_.core().clearCircularBuffer();     
-            studio_.core().setExposure(cam, exposure_);
-            Pipeline pipeline = studio_.data().copyApplicationPipeline(studio_.data().createRAMDatastore(), true);
+            initialWv = Double.valueOf(Globals.core().getProperty(filtLabel, filtProp)); //Get initial wavelength
+            String cam = Globals.core().getCameraDevice();
+            Globals.core().waitForDevice(cam);
+            Globals.core().clearCircularBuffer();     
+            Globals.core().setExposure(cam, exposure_);
+            Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true);
             
             //Prepare metadata and start imsaver
             JSONArray WV = new JSONArray();
@@ -116,8 +115,8 @@ public class PWSAcqManager implements AcquisitionManager{
                 WV.put(wv[i]);
             }        
             metadata.put("wavelengths", WV);
-            metadata.put("exposure", studio_.core().getExposure()); //This must happen after we have set the camera to our desired exposure.
-            MMSaver imSaver_ = new MMSaver(studio_, this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), this.getFilePrefix());
+            metadata.put("exposure", Globals.core().getExposure()); //This must happen after we have set the camera to our desired exposure.
+            MMSaver imSaver_ = new MMSaver(this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), this.getFilePrefix());
             imSaver_.setMetadata(metadata);
             imSaver_.start();
             
@@ -125,31 +124,31 @@ public class PWSAcqManager implements AcquisitionManager{
             
             if (hardwareSequence) {
                 String origCameraTrigger="";  
-                if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")){
-                    origCameraTrigger = studio_.core().getProperty(cam, "TRIGGER SOURCE");
+                if (Globals.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")){
+                    origCameraTrigger = Globals.core().getProperty(cam, "TRIGGER SOURCE");
                 }
                 try {
-                    studio_.core().startPropertySequence(filtLabel, filtProp);
-                    double delayMs = studio_.core().getDeviceDelayMs(filtLabel); //Use the delay defined by the tunable filter's device adapter.
+                    Globals.core().startPropertySequence(filtLabel, filtProp);
+                    double delayMs = Globals.core().getDeviceDelayMs(filtLabel); //Use the delay defined by the tunable filter's device adapter.
                     if (useExternalTrigger) {
-                        if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { 
-                            studio_.core().setProperty(cam, "TRIGGER SOURCE", "EXTERNAL");
-                            studio_.core().setProperty(cam, "TRIGGER DELAY", delayMs/1000); //This is in units of seconds.
-                            studio_.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an eror if the interval is not 0.
-                            int currWv = Integer.parseInt(studio_.core().getProperty(filtLabel, filtProp));
-                            studio_.core().setProperty(filtLabel, filtProp, currWv+1); //Trigger a pulse which sets the whole thing off.
+                        if (Globals.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { 
+                            Globals.core().setProperty(cam, "TRIGGER SOURCE", "EXTERNAL");
+                            Globals.core().setProperty(cam, "TRIGGER DELAY", delayMs/1000); //This is in units of seconds.
+                            Globals.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an eror if the interval is not 0.
+                            int currWv = Integer.parseInt(Globals.core().getProperty(filtLabel, filtProp));
+                            Globals.core().setProperty(filtLabel, filtProp, currWv+1); //Trigger a pulse which sets the whole thing off.
                         }   
                     }
                     else { //Since we're not using an external trigger we need to have the camera control the timing.
-                        double exposurems = studio_.core().getExposure();
+                        double exposurems = Globals.core().getExposure();
                         double readoutms = 10; //This is based on the frame rate calculation portion of the 13440-20CU camera. 9.7 us per line, reading two lines at once, 2048 lines -> 0.097*2048/2 ~= 10 ms
                         double intervalMs = (exposurems+readoutms+delayMs);
-                        if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { //This device adapter doesn't seem to support delays in the sequence acquisition. We instead set the master pulse interval.
-                            studio_.core().setProperty(cam, "TRIGGER SOURCE", "MASTER PULSE"); //Make sure that Master Pulse is triggering the camera.
-                            studio_.core().setProperty(cam, "MASTER PULSE INTERVAL", intervalMs/1000.0); //In units of seconds
-                            studio_.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an error if the interval is not 0.
+                        if (Globals.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { //This device adapter doesn't seem to support delays in the sequence acquisition. We instead set the master pulse interval.
+                            Globals.core().setProperty(cam, "TRIGGER SOURCE", "MASTER PULSE"); //Make sure that Master Pulse is triggering the camera.
+                            Globals.core().setProperty(cam, "MASTER PULSE INTERVAL", intervalMs/1000.0); //In units of seconds
+                            Globals.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an error if the interval is not 0.
                         } else{
-                            studio_.core().startSequenceAcquisition(wv.length, intervalMs, false); //Supposedly having a non-zero interval acqually only works for Andor cameras.
+                            Globals.core().startSequenceAcquisition(wv.length, intervalMs, false); //Supposedly having a non-zero interval acqually only works for Andor cameras.
                         }
                     }
                     boolean canExit = false;
@@ -157,13 +156,13 @@ public class PWSAcqManager implements AcquisitionManager{
                     int oldi = -1;
                     long lastImTime = System.currentTimeMillis();
                     while (true) {
-                        boolean remaining = (studio_.core().getRemainingImageCount() > 0);
-                        boolean running = (studio_.core().isSequenceRunning(cam));
+                        boolean remaining = (Globals.core().getRemainingImageCount() > 0);
+                        boolean running = (Globals.core().isSequenceRunning(cam));
                         if ((!remaining) && (canExit)) {
                             break;  //Everything is taken care of.
                         }
                         if (remaining) {    //Process images
-                            Image im = studio_.data().convertTaggedImage(studio_.core().popNextTaggedImage());
+                            Image im = Globals.mm().data().convertTaggedImage(Globals.core().popNextTaggedImage());
                             addImage(im, i, album_, pipeline, imSaver_.queue);
                             i++;
                             lastImTime = System.currentTimeMillis();
@@ -178,12 +177,12 @@ public class PWSAcqManager implements AcquisitionManager{
                      }
                 }
                 finally {
-                    studio_.core().stopSequenceAcquisition();
-                    if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")){
-                        studio_.core().setProperty(cam, "TRIGGER SOURCE", origCameraTrigger); //Set the trigger source back ot what it was originally
+                    Globals.core().stopSequenceAcquisition();
+                    if (Globals.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")){
+                        Globals.core().setProperty(cam, "TRIGGER SOURCE", origCameraTrigger); //Set the trigger source back ot what it was originally
                     }
                     try {
-                        studio_.core().stopPropertySequence(filtLabel, filtProp);//Got to make sure to stop the sequencing behaviour.
+                        Globals.core().stopPropertySequence(filtLabel, filtProp);//Got to make sure to stop the sequencing behaviour.
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         ReportingUtils.logMessage("ERROR: PWSPlugin: Stopping property sequence: " + ex.getMessage());
@@ -192,10 +191,10 @@ public class PWSAcqManager implements AcquisitionManager{
             }
             else {  //Software sequenced acquisition
                 for (int i=0; i<wv.length; i++) {
-                    studio_.core().setProperty(filtLabel, filtProp, wv[i]);
-                    while (studio_.core().deviceBusy(filtLabel)) {Thread.sleep(1);} //Wait until the device says it is tuned.
-                    studio_.core().snapImage();
-                    Image im = studio_.data().convertTaggedImage(studio_.core().getTaggedImage());
+                    Globals.core().setProperty(filtLabel, filtProp, wv[i]);
+                    while (Globals.core().deviceBusy(filtLabel)) {Thread.sleep(1);} //Wait until the device says it is tuned.
+                    Globals.core().snapImage();
+                    Image im = Globals.mm().data().convertTaggedImage(Globals.core().getTaggedImage());
                     addImage(im, i, album_, pipeline, imSaver_.queue);
                 }
             }
@@ -206,7 +205,7 @@ public class PWSAcqManager implements AcquisitionManager{
             ReportingUtils.logMessage("ERROR: PWSPlugin: " + ex.getMessage());
         } finally {
             try{
-                studio_.core().setProperty(filtLabel, filtProp, initialWv); //Set back to initial wavelength
+                Globals.core().setProperty(filtLabel, filtProp, initialWv); //Set back to initial wavelength
             } catch (Exception ex) {
                 ReportingUtils.showError(ex);
                 ex.printStackTrace();

@@ -48,7 +48,6 @@ import java.util.function.Function;
 
 public class PWSFrame extends MMFrame {
 
-    private final Studio studio_;
     private MutablePropertyMapView settings_;
     private final LogManager log_;
     private AcqManager acqManager_;
@@ -60,11 +59,10 @@ public class PWSFrame extends MMFrame {
     /**
      * 
      */
-    public PWSFrame(Studio studio, AcqManager manager) {
-        studio_ = studio;
+    public PWSFrame(AcqManager manager) {
         acqManager_ = manager;
-        settings_ = studio_.profile().getSettings(PWSFrame.class);
-        log_ = studio.logs();
+        settings_ = Globals.mm().profile().getSettings(PWSFrame.class);
+        log_ = Globals.mm().logs();
         
         super.setTitle(String.format("%s %s", PWSPlugin.menuName, PWSPlugin.versionNumber));
         this.initComponents();
@@ -168,12 +166,12 @@ public class PWSFrame extends MMFrame {
     }
     
     private void scanDevices() {
-        String[] devs = studio_.core().getLoadedDevices().toArray();
+        String[] devs = Globals.core().getLoadedDevices().toArray();
         //Search for tunable spectral filters.
         StrVector newDevs = new StrVector();
         for (int i = 0; i < devs.length; i++) {
             try {
-                if (studio_.core().hasProperty(devs[i], "Wavelength")) {
+                if (Globals.core().hasProperty(devs[i], "Wavelength")) {
                     newDevs.add(devs[i]);
                 }
             }
@@ -188,7 +186,7 @@ public class PWSFrame extends MMFrame {
     }
     
     private void scanFilterBlock() {
-        Iterator<String> filterSettings = studio_.core().getAvailableConfigs("Filter").iterator();
+        Iterator<String> filterSettings = Globals.core().getAvailableConfigs("Filter").iterator();
         StrVector settings = new StrVector();
         while (filterSettings.hasNext()) {
             settings.add(filterSettings.next());

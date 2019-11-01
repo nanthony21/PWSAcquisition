@@ -29,20 +29,17 @@ import org.micromanager.data.DatastoreRewriteException;
 import org.micromanager.data.Image;
 import org.micromanager.display.DisplayWindow;
 import org.micromanager.internal.utils.ReportingUtils;
-import org.micromanager.Studio;
 import javax.swing.SwingUtilities;
 import org.micromanager.data.RewritableDatastore;
 
 public class PWSAlbum {
    private RewritableDatastore store_;
-   private Studio studio_;
    private int idx = 0;
    String displayName_;
    private DisplayWindow display = null;
    
-   PWSAlbum(Studio studio, String displayName) {
-       studio_ = studio;
-       store_ = studio_.data().createRewritableRAMDatastore();
+   PWSAlbum(String displayName) {
+       store_ = Globals.mm().data().createRewritableRAMDatastore();
        displayName_ = displayName;
    }
    
@@ -57,7 +54,7 @@ public class PWSAlbum {
 
    public void addImage(Image image){   
         if ((display==null) || (display.isClosed())) {
-            display = studio_.displays().createDisplay(store_);
+            display = Globals.mm().displays().createDisplay(store_);
             display.setCustomTitle(displayName_);
         }
         Coords newCoords = image.getCoords().copyBuilder().t(idx).build();

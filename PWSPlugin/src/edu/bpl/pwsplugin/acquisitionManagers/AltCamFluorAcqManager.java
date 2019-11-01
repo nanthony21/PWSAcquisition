@@ -9,6 +9,6 @@ package edu.bpl.pwsplugin.acquisitionManagers;
  *
  * @author LCPWS3
  */
-public class FluorAcqManager {
+public class AltCamFluorAcqManager {
     
 }

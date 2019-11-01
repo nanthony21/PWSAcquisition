@@ -23,22 +23,20 @@ package edu.bpl.pwsplugin;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionManagers.PWSAcqManager;
 import edu.bpl.pwsplugin.acquisitionManagers.DynAcqManager;
-import edu.bpl.pwsplugin.acquisitionManagers.FluorAcqManager;
+import edu.bpl.pwsplugin.acquisitionManagers.LCTFFluorAcqManager;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.micromanager.Studio;
 import org.micromanager.internal.utils.ReportingUtils;
 
 
 public class AcqManager { // A parent acquisition manager that can direct commands down to more specific acquisition managers.
     private final PWSAcqManager pwsManager_;
     private final DynAcqManager dynManager_;
-    private final FluorAcqManager flManager_;
-    private final Studio studio_;
+    private final LCTFFluorAcqManager flManager_;
     private final LinkedBlockingQueue imageQueue; //This queue is used to pass images from one of the acquisition managers to the ImSaver which saves the file concurrently.
     private volatile boolean acquisitionRunning_ = false;
     private int cellNum_;
@@ -53,13 +51,12 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     public String flBFFilterBlock;
 
     
-    public AcqManager(Studio studio) {
-        studio_ = studio;
-        album = new PWSAlbum(studio_, "PWS");
-        dynAlbum = new PWSAlbum(studio_, "Dynamics");
-        pwsManager_ = new PWSAcqManager(studio_, album);
-        dynManager_ = new DynAcqManager(studio_, dynAlbum);
-        flManager_ = new FluorAcqManager(studio_);
+    public AcqManager() {
+        album = new PWSAlbum("PWS");
+        dynAlbum = new PWSAlbum("Dynamics");
+        pwsManager_ = new PWSAcqManager(album);
+        dynManager_ = new DynAcqManager(dynAlbum);
+        flManager_ = new LCTFFluorAcqManager();
         imageQueue = new LinkedBlockingQueue();
     }
     
@@ -137,7 +134,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     }
     
     private void run(AcquisitionManager manager) {
-        if (studio_.core().getPixelSizeUm() == 0.0) {
+        if (Globals.core().getPixelSizeUm() == 0.0) {
             ReportingUtils.showMessage("It is highly recommended that you provide MicroManager with a pixel size setting for the current setup. Having this information is useful for analysis.");
         }
         JSONObject metadata;
@@ -155,8 +152,8 @@ public class AcqManager { // A parent acquisition manager that can direct comman
         }
         
         try {
-            if (studio_.live().getIsLiveModeOn()) {
-                studio_.live().setLiveMode(false);
+            if (Globals.mm().live().getIsLiveModeOn()) {
+                Globals.mm().live().setLiveMode(false);
             }
             if (imageQueue.size() > 0) {
                 ReportingUtils.showMessage(String.format("The image queue started a new acquisition with %d images already in it! Your image file is likely corrupted. This can mean that Java has not been allocated enough heap size.", imageQueue.size()));

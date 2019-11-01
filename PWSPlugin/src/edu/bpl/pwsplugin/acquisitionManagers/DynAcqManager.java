@@ -20,6 +20,7 @@
 //
 package edu.bpl.pwsplugin.acquisitionManagers;
 
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.fileSavers.ImSaverRaw;
 import edu.bpl.pwsplugin.PWSAlbum;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
@@ -40,15 +41,13 @@ import java.nio.file.Path;
 
 
 public class DynAcqManager implements AcquisitionManager{
-    private Studio studio_;
     double exposure_; //The camera exposure in milliseconds.
     String filtLabel_; 
     int wavelength_; //The wavelength to acquire images at
     int numFrames_; // The number of images to acquire.
     PWSAlbum album_;
     
-    public DynAcqManager(Studio studio, PWSAlbum album){
-        studio_ = studio;
+    public DynAcqManager(PWSAlbum album){
         album_ = album;
     }
     
@@ -63,28 +62,28 @@ public class DynAcqManager implements AcquisitionManager{
     public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata) {
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         try {
-            studio_.core().setProperty(filtLabel_, "Wavelength", wavelength_);
-            studio_.core().setExposure(exposure_);
-            studio_.core().setCircularBufferMemoryFootprint(1000); //increase the circular buffer to 1Gb to avoid weird issues with lost images
-            studio_.core().clearCircularBuffer();
-            studio_.core().startSequenceAcquisition(numFrames_, 0, false);
+            Globals.core().setProperty(filtLabel_, "Wavelength", wavelength_);
+            Globals.core().setExposure(exposure_);
+            Globals.core().setCircularBufferMemoryFootprint(1000); //increase the circular buffer to 1Gb to avoid weird issues with lost images
+            Globals.core().clearCircularBuffer();
+            Globals.core().startSequenceAcquisition(numFrames_, 0, false);
         } catch (Exception e) {
             ReportingUtils.showError(e);
         }
-        Pipeline pipeline = studio_.data().copyApplicationPipeline(studio_.data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
+        Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
         try {
-            MMSaver imSaver = new MMSaver(studio_, this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), this.getFilePrefix());
+            MMSaver imSaver = new MMSaver(this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), this.getFilePrefix());
             imSaver.start();
             metadata.put("wavelength", wavelength_);
-            metadata.put("exposure", studio_.core().getExposure()); //This must happen after we have set our exposure.
+            metadata.put("exposure", Globals.core().getExposure()); //This must happen after we have set our exposure.
             JSONArray times = new JSONArray();
             for (int i=0; i<numFrames_; i++) {
-                while (studio_.core().getRemainingImageCount() < 1) { //Wait for an image to be ready
+                while (Globals.core().getRemainingImageCount() < 1) { //Wait for an image to be ready
                     Thread.sleep(10);
                 }
-                TaggedImage taggedIm = studio_.core().popNextTaggedImage();
+                TaggedImage taggedIm = Globals.core().popNextTaggedImage();
                 times.put(Double.parseDouble((String) taggedIm.tags.get("ElapsedTime-ms"))); //Convert to float and save to json array.
-                Image im = studio_.data().convertTaggedImage(taggedIm);
+                Image im = Globals.mm().data().convertTaggedImage(taggedIm);
                 Coords newCoords = im.getCoords().copyBuilder().t(i).build();
                 im = im.copyAtCoords(newCoords);
                 pipeline.insertImage(im); //Add image to the data pipeline for processing

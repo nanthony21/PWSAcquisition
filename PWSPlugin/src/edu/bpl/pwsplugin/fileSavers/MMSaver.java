@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.fileSavers;
 
+import edu.bpl.pwsplugin.Globals;
 import ij.ImagePlus;
 import ij.io.FileInfo;
 import ij.io.FileSaver;
@@ -37,15 +38,13 @@ import org.micromanager.data.internal.DefaultMetadata;
  */
 public class MMSaver extends SaverThread {
     public LinkedBlockingQueue queue;
-    Studio studio_;
     int expectedFrames_;
     String savePath_;
     JSONObject metadata_;
     String filePrefix_;
 
-    public MMSaver(Studio studio, String savePath, LinkedBlockingQueue imageQueue, int expectedFrames, String filePrefix){
+    public MMSaver(String savePath, LinkedBlockingQueue imageQueue, int expectedFrames, String filePrefix){
         queue = imageQueue;
-        studio_ = studio;
         expectedFrames_ = expectedFrames;
         savePath_ = savePath;
         filePrefix_ = filePrefix;
@@ -55,7 +54,7 @@ public class MMSaver extends SaverThread {
     public void run(){
         try {
             long now = System.currentTimeMillis(); 
-            Datastore ds = studio_.data().createMultipageTIFFDatastore(savePath_, false, true);
+            Datastore ds = Globals.mm().data().createMultipageTIFFDatastore(savePath_, false, true);
             ds.setName("PWSPluginSaver");
             Image im;
             Coords.Builder coords;
@@ -120,7 +119,7 @@ public class MMSaver extends SaverThread {
     }
     
     private void saveImBd(Image im) throws IOException{
-        ImagePlus imPlus = new ImagePlus(filePrefix_, studio_.data().ij().createProcessor(im));
+        ImagePlus imPlus = new ImagePlus(filePrefix_, Globals.mm().data().ij().createProcessor(im));
         ContrastEnhancer contrast = new ContrastEnhancer();
         contrast.stretchHistogram(imPlus,0.01); //I think this will saturate 0.01% of the image. or maybe its 1% idk. 
         ImageConverter converter = new ImageConverter(imPlus);

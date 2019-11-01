@@ -63,6 +63,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     private Studio studio_;  
     private PWSFrame frame_;
     private AcqManager manager_; 
+    private boolean initialized_ = false;
     
     @Override
     public void setContext(Studio studio) {
@@ -71,11 +72,11 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     
     @Override
     public void onPluginSelected() {
-        if (manager_ == null) {
-            manager_ = new AcqManager(studio_);
-        }
-        if (frame_ == null) {
-            frame_ = new PWSFrame(studio_, manager_);
+        if (!initialized_) {
+            Globals.init(studio_);
+            manager_ = new AcqManager();
+            frame_ = new PWSFrame(manager_);
+            initialized_ = false;
         }
         frame_.setVisible(true);
     }
