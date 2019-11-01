@@ -48,7 +48,6 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     double[] linearityPolynomial_;
     String sysName_;
     public boolean automaticFlFilterEnabled;
-    public String flBFFilterBlock;
 
     
     public AcqManager() {
@@ -130,7 +129,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     }
     
     public void setFluoresecenceSettings(double exposure, String flFilterBlock, int emissionWavelength, String filterLabel) {
-        flManager_.setFluorescenceSettings(this.automaticFlFilterEnabled, this.flBFFilterBlock, flFilterBlock, exposure, emissionWavelength, filterLabel);
+        flManager_.setFluorescenceSettings(this.automaticFlFilterEnabled, flFilterBlock, exposure, emissionWavelength, filterLabel);
     }
     
     private void run(AcquisitionManager manager) {
