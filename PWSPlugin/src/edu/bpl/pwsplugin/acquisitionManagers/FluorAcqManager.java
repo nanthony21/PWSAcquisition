@@ -5,10 +5,37 @@
  */
 package edu.bpl.pwsplugin.acquisitionManagers;
 
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.concurrent.LinkedBlockingQueue;
+import org.json.JSONObject;
+
 /**
  *
  * @author LCPWS3
  */
-public class FluorAcqManager {
+public abstract class FluorAcqManager implements AcquisitionManager{
+    @Override
+    public String getFilePrefix() {
+        return "fluor";
+    }
     
+    @Override
+    public int getExpectedFrames() {
+        return 1;
+    }
+    
+    @Override
+    public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException {
+        Path path = Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).resolve("Fluorescence");
+        if (Files.isDirectory(path)){
+            throw new FileAlreadyExistsException("Cell " + cellNum + " fluorescence already exists.");
+        } 
+        return path.toString();
+    }
+    
+    @Override
+    public abstract void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata);
 }
