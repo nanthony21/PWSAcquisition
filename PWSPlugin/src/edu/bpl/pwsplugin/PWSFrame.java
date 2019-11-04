@@ -159,7 +159,11 @@ public class PWSFrame extends MMFrame {
             } else {
                 transform = Arrays.asList(transformText.split(",")).stream().map(String::trim).mapToDouble(Double::parseDouble).toArray();
             }
-            settings_.putDoubleList(PWSPlugin.Settings.camTransform, transform);
+            if (transform.length==6 || transform==null) {
+                settings_.putDoubleList(PWSPlugin.Settings.camTransform, transform);
+            } else {
+                ReportingUtils.showError("The camera transform must be of length 6. Translates to a 2x3 affine transformation.");
+            }
         }
         catch(NumberFormatException e){
             log_.showMessage("A valid number was not specified.");
