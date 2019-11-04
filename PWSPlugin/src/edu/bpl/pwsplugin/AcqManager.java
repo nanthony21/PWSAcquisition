@@ -23,6 +23,8 @@ package edu.bpl.pwsplugin;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionManagers.PWSAcqManager;
 import edu.bpl.pwsplugin.acquisitionManagers.DynAcqManager;
+import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.AltCamFluorAcqManager;
+import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.FluorAcqManager;
 import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.LCTFFluorAcqManager;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -36,7 +38,7 @@ import org.micromanager.internal.utils.ReportingUtils;
 public class AcqManager { // A parent acquisition manager that can direct commands down to more specific acquisition managers.
     private final PWSAcqManager pwsManager_;
     private final DynAcqManager dynManager_;
-    private final LCTFFluorAcqManager flManager_;
+    private FluorAcqManager flManager_;
     private final LinkedBlockingQueue imageQueue; //This queue is used to pass images from one of the acquisition managers to the ImSaver which saves the file concurrently.
     private volatile boolean acquisitionRunning_ = false;
     private int cellNum_;
@@ -55,7 +57,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
         dynAlbum = new PWSAlbum("Dynamics");
         pwsManager_ = new PWSAcqManager(album);
         dynManager_ = new DynAcqManager(dynAlbum);
-        flManager_ = new LCTFFluorAcqManager();
+        flManager_ = null;
         imageQueue = new LinkedBlockingQueue();
     }
     
@@ -129,7 +131,16 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     }
     
     public void setFluoresecenceSettings(double exposure, String flFilterBlock, int emissionWavelength, String filterLabel) {
-        flManager_.setFluorescenceSettings(this.automaticFlFilterEnabled, flFilterBlock, exposure, emissionWavelength, filterLabel);
+        //Acquire fluorescence through the LCTF filter using the same camera.
+        flManager_ = new LCTFFluorAcqManager();
+        ((LCTFFluorAcqManager) flManager_).setFluorescenceSettings(this.automaticFlFilterEnabled, flFilterBlock, exposure, emissionWavelength, filterLabel);
+    }
+    
+    public void setFluorescenceSettings(double exposure, String flFilterBlock, String flCamera, double[] camTransform) {
+        //Acquire fluorescence with another camera so you don't have to go through the LCTF.
+        flManager_ = new AltCamFluorAcqManager();
+        ((AltCamFluorAcqManager) flManager_).setFluorescenceSettings(this.automaticFlFilterEnabled, flFilterBlock, flCamera, exposure, camTransform);
+        
     }
     
     private void run(AcquisitionManager manager) {
