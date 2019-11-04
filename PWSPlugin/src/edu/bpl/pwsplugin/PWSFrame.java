@@ -70,7 +70,7 @@ public class PWSFrame extends MMFrame {
         this.scanDevices();
         this.scanFilterBlock();
         
-        try {
+        try { //load settings
             wvStartField.setText(String.valueOf(settings_.getInteger(PWSPlugin.Settings.start, 500)));
             wvStopField.setText(String.valueOf(settings_.getInteger(PWSPlugin.Settings.stop,700)));
             wvStepField.setText(String.valueOf(settings_.getInteger(PWSPlugin.Settings.step,2)));
@@ -92,9 +92,17 @@ public class PWSFrame extends MMFrame {
             dynWvEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.Settings.dynWavelength, 550)));
             flExposureEdit.setText(String.valueOf(settings_.getDouble(PWSPlugin.Settings.flExposure, 1000)));
             flWvEdit.setText(String.valueOf(settings_.getInteger(PWSPlugin.Settings.flWavelength, 550)));
+            altCamCheckBox.setSelected(settings_.getBoolean(PWSPlugin.Settings.altCamFl, false));
+            double[] camTransformArray = settings_.getDoubleList(PWSPlugin.Settings.camTransform);
+            if (camTransformArray.length > 0) {
+                altCamTransformEdit.setText(StringUtils.join(ArrayUtils.toObject(camTransformArray), ","));
+            } else {
+                altCamTransformEdit.setText("null");
+            }
             //Do this last in case the filter is not available and an error is thrown.
             filterComboBox.setSelectedItem(settings_.getString(PWSPlugin.Settings.filterLabel, ""));
             flFilterBlockCombo.setSelectedItem(settings_.getString(PWSPlugin.Settings.flFilterBlock, ""));
+            altCamNameCombo.setSelectedItem(settings_.getString(PWSPlugin.Settings.flAltCamName, ""));
         }
         catch (Exception e) {
             ReportingUtils.logError(e);
@@ -143,6 +151,15 @@ public class PWSFrame extends MMFrame {
             settings_.putInteger(PWSPlugin.Settings.dynWavelength, Integer.parseInt(dynWvEdit.getText()));
             settings_.putDouble(PWSPlugin.Settings.flExposure, Double.parseDouble(flExposureEdit.getText()));
             settings_.putInteger(PWSPlugin.Settings.flWavelength, Integer.parseInt(flWvEdit.getText()));
+            settings_.putBoolean(PWSPlugin.Settings.altCamFl, altCamCheckBox.isSelected());
+            String transformText = altCamTransformEdit.getText().trim();
+            double[] transform;
+            if (transformText.equals("null")) {
+                transform = null;
+            } else {
+                transform = Arrays.asList(transformText.split(",")).stream().map(String::trim).mapToDouble(Double::parseDouble).toArray();
+            }
+            settings_.putDoubleList(PWSPlugin.Settings.camTransform, transform);
         }
         catch(NumberFormatException e){
             log_.showMessage("A valid number was not specified.");
@@ -150,6 +167,7 @@ public class PWSFrame extends MMFrame {
         try{
             settings_.putString(PWSPlugin.Settings.filterLabel, filterComboBox.getSelectedItem().toString());
             settings_.putString(PWSPlugin.Settings.flFilterBlock, flFilterBlockCombo.getSelectedItem().toString());
+            settings_.putString(PWSPlugin.Settings.flAltCamName, altCamNameCombo.getSelectedItem().toString());
         }
         catch(NumberFormatException e){
             log_.showMessage("A valid string was not specified.");
@@ -198,10 +216,20 @@ public class PWSFrame extends MMFrame {
             acqManager_.automaticFlFilterEnabled = true;
             DefaultComboBoxModel model = new DefaultComboBoxModel(settings.toArray());
             flFilterBlockCombo.setModel(model); //Update the available names.
-            String oldName = settings_.getString(PWSPlugin.Settings.flFilterBlock,"");
-            if (Arrays.asList(settings.toArray()).contains(oldName)) {
-                filterComboBox.setSelectedItem(oldName);
-            }
+        }
+        
+        Iterator<String> cameras = Globals.core().getAvailableConfigs("Camera").iterator();
+        StrVector camSettings = new StrVector();
+        while (cameras.hasNext()) {
+            camSettings.add(cameras.next());
+        }
+        if (camSettings.size()==0) {
+            altCamCheckBox.setSelected(false);
+            altCamCheckBox.setEnabled(false);
+            ReportingUtils.showMessage("Could not find a `Camera` config group. This group should be set to allow switching between multiple cameras for different imaging modalities.");
+        } else {
+            DefaultComboBoxModel model = new DefaultComboBoxModel(camSettings.toArray());
+            altCamNameCombo.setModel(model);
         }
     }
     
@@ -236,7 +264,7 @@ public class PWSFrame extends MMFrame {
         categories.put("other", new JTextField[] {systemNameEdit, darkCountsEdit, linearityCorrectionEdit});
         categories.put("PWS", new JTextField[] {wvStartField, wvStopField, wvStepField, exposureEdit});
         categories.put("DYN", new JTextField[] {dynExposureEdit, dynFramesEdit, dynWvEdit});
-        categories.put("FL", new JTextField[] {flExposureEdit, flWvEdit});
+        categories.put("FL", new JTextField[] {flExposureEdit, flWvEdit, altCamTransformEdit});
         categories.put("save", new JTextField[] {cellNumEdit, directoryText});
         
         HashMap<String, Runnable> funcs = new HashMap<String, Runnable>();
@@ -304,6 +332,11 @@ public class PWSFrame extends MMFrame {
         flExposureEdit = new javax.swing.JTextField();
         flFilterBlockCombo = new javax.swing.JComboBox<>();
         stepLabel8 = new javax.swing.JLabel();
+        altCamCheckBox = new javax.swing.JCheckBox();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        altCamTransformEdit = new javax.swing.JTextField();
+        altCamNameCombo = new javax.swing.JComboBox<>();
         jPanel9 = new javax.swing.JPanel();
         cellNumEdit = new javax.swing.JTextField();
         stepLabel1 = new javax.swing.JLabel();
@@ -437,7 +470,7 @@ public class PWSFrame extends MMFrame {
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(stepLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(dynFramesEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(104, Short.MAX_VALUE))
+                .addContainerGap(161, Short.MAX_VALUE))
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -478,41 +511,76 @@ public class PWSFrame extends MMFrame {
 
         stepLabel8.setText("Exposure (ms)");
 
+        altCamCheckBox.setText("Use Alternate Camera");
+        altCamCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                altCamCheckBoxActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("Camera Name");
+
+        jLabel5.setText("Affine Transform");
+
+        altCamTransformEdit.setText("jTextField2");
+
+        altCamNameCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        altCamNameCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                altCamNameComboActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
         jPanel11.setLayout(jPanel11Layout);
         jPanel11Layout.setHorizontalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel11Layout.createSequentialGroup()
-                        .addComponent(flWvEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(flExposureEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(flFilterBlockCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel11Layout.createSequentialGroup()
-                        .addComponent(stepLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(stepLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(stepLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(87, Short.MAX_VALUE))
+                        .addContainerGap()
+                        .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel11Layout.createSequentialGroup()
+                                .addComponent(altCamCheckBox)
+                                .addGap(16, 16, 16)
+                                .addComponent(stepLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel4)
+                                .addComponent(flExposureEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(altCamNameCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(stepLabel6)
+                    .addComponent(flWvEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(flFilterBlockCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(stepLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
+                    .addComponent(altCamTransformEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(58, Short.MAX_VALUE))
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(stepLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(stepLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(stepLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(stepLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(altCamCheckBox))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(flExposureEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(flFilterBlockCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15)
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(stepLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(flWvEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(flExposureEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(flFilterBlockCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(92, Short.MAX_VALUE))
+                    .addComponent(altCamTransformEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(altCamNameCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Fluorescence", jPanel11);
@@ -582,7 +650,7 @@ public class PWSFrame extends MMFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(32, 32, 32)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(351, Short.MAX_VALUE))
+                .addContainerGap(406, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -631,7 +699,7 @@ public class PWSFrame extends MMFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(239, Short.MAX_VALUE))
+                .addContainerGap(293, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -739,10 +807,21 @@ public class PWSFrame extends MMFrame {
         acquireFluorescence();
     }//GEN-LAST:event_acqFlButtonActionPerformed
 
+    private void altCamCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_altCamCheckBoxActionPerformed
+        FLSettingsChanged();
+    }//GEN-LAST:event_altCamCheckBoxActionPerformed
+
+    private void altCamNameComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_altCamNameComboActionPerformed
+        FLSettingsChanged();
+    }//GEN-LAST:event_altCamNameComboActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton acqDynButton;
     private javax.swing.JButton acqFlButton;
     private javax.swing.JButton acqPWSButton;
+    private javax.swing.JCheckBox altCamCheckBox;
+    private javax.swing.JComboBox<String> altCamNameCombo;
+    private javax.swing.JTextField altCamTransformEdit;
     private javax.swing.JTextField cellNumEdit;
     private javax.swing.JTextField darkCountsEdit;
     private javax.swing.JButton directoryButton;
@@ -761,6 +840,8 @@ public class PWSFrame extends MMFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
@@ -862,10 +943,20 @@ public class PWSFrame extends MMFrame {
             }
             if (FLSettingsStale_) {
                 double exposure = settings_.getDouble(PWSPlugin.Settings.flExposure, 1000);
-                int wavelength = settings_.getInteger(PWSPlugin.Settings.flWavelength, 550);
                 String flFilterBlock = settings_.getString(PWSPlugin.Settings.flFilterBlock, "");
-                String filterLabel = settings_.getString(PWSPlugin.Settings.filterLabel, "");
-                acqManager_.setFluoresecenceSettings(exposure, flFilterBlock, wavelength, filterLabel);
+                if (settings_.getBoolean(PWSPlugin.Settings.altCamFl, false)) {
+                    String flCamera = settings_.getString(PWSPlugin.Settings.flAltCamName, "");
+                    double[] camTransformPlaceholder = {1.0, 2.0 , 3.0, 4.0, 5.0, 6.0};
+                    double[] camTransform = settings_.getDoubleList(PWSPlugin.Settings.camTransform, camTransformPlaceholder);
+                    if (camTransform.length != 6){
+                        ReportingUtils.showError("The affine transformation for the alternate fluorescence camera is not of length 6!");
+                    }
+                    acqManager_.setFluorescenceSettings(exposure, flFilterBlock, flCamera, camTransform);
+                } else {
+                    int wavelength = settings_.getInteger(PWSPlugin.Settings.flWavelength, 550);
+                    String filterLabel = settings_.getString(PWSPlugin.Settings.filterLabel, "");
+                    acqManager_.setFluoresecenceSettings(exposure, flFilterBlock, wavelength, filterLabel);
+                }
             }
             acqPWSButton.setBackground(Color.green);
         }
