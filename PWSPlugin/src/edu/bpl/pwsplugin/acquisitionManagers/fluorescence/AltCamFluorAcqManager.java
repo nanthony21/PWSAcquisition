@@ -1,16 +1,13 @@
- /*
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.acquisitionManagers;
+package edu.bpl.pwsplugin.acquisitionManagers.fluorescence;
 
+import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.FluorAcqManager;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.json.JSONObject;
 import org.micromanager.data.Coords;
@@ -20,21 +17,21 @@ import org.micromanager.internal.utils.ReportingUtils;
 
 /**
  *
- * @author backman05
+ * @author LCPWS3
  */
-public class LCTFFluorAcqManager extends FluorAcqManager{
+public class AltCamFluorAcqManager extends FluorAcqManager{
     double exposure_; //The camera exposure in milliseconds.
-    String filtLabel_; //The name of the spectral filter device
-    int wavelength_; //The wavelength to acquire images at
     String flFilterBlock_; // The name of the fluorescence filter block config setting.
-    boolean autoFilter_;
+    boolean autoFilter_; //Whether or not the device can automatically switch filter blocks or needs user input.
+    String flCam_; //The name of the config in the "Camera" config group that switches to fluoresence mode.
+    double[][] camTransform_; //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera
     
-    public void setFluorescenceSettings(boolean autoFilter, String flFilter, double exposure, int emissionWV, String tunableFilterLabel) {
+    public void setFluorescenceSettings(boolean autoFilter, String flFilter, String flCamera, double exposure, double[][] camTransform) {
         autoFilter_ = autoFilter;
-        filtLabel_ = tunableFilterLabel;
         flFilterBlock_ = flFilter;
+        flCam_ = flCamera;
         exposure_ = exposure;
-        wavelength_ = emissionWV;
+        camTransform_ = camTransform;
     }
     
     @Override
@@ -60,10 +57,16 @@ public class LCTFFluorAcqManager extends FluorAcqManager{
             return;
         }
         try {
-            Globals.core().setProperty(filtLabel_, "Wavelength", wavelength_);
+            String origCam = Globals.core().getCurrentConfig("Camera");
+            Globals.core().setConfig("Camera", flCam_);
+            Globals.core().waitForConfig("Camera", flCam_);
             Globals.core().setExposure(exposure_);
             Globals.core().clearCircularBuffer();
             Globals.core().snapImage();
+            metadata.put("exposure", Globals.core().getExposure()); //This must happen after we have set our exposure.
+            metadata.put("filterBlock", flFilterBlock_);
+            metadata.put("altCameraTransform", camTransform_); //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera.
+            Globals.core().setConfig("Camera", origCam);
             Image img = Globals.mm().data().convertTaggedImage(Globals.core().getTaggedImage());
             Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
             Coords coords = img.getCoords();
@@ -71,12 +74,11 @@ public class LCTFFluorAcqManager extends FluorAcqManager{
             img = pipeline.getDatastore().getImage(coords); //Retrieve the processed image.                 
             MMSaver imSaver = new MMSaver(fullSavePath, imagequeue, this.getExpectedFrames(), this.getFilePrefix());
             imSaver.start();
-            metadata.put("wavelength", wavelength_);
-            metadata.put("exposure", Globals.core().getExposure()); //This must happen after we have set our exposure.
-            metadata.put("filterBlock", flFilterBlock_);
+
             imSaver.setMetadata(metadata);
             imSaver.queue.put(img);
             imSaver.join();
+            Globals.core().waitForConfig("Camera", origCam);
         } catch (Exception e) {
             ReportingUtils.showError(e);
         } finally {

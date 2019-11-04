@@ -23,7 +23,7 @@ package edu.bpl.pwsplugin;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionManagers.PWSAcqManager;
 import edu.bpl.pwsplugin.acquisitionManagers.DynAcqManager;
-import edu.bpl.pwsplugin.acquisitionManagers.LCTFFluorAcqManager;
+import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.LCTFFluorAcqManager;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.LinkedBlockingQueue;
