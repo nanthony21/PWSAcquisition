@@ -32,9 +32,9 @@ import org.scijava.plugin.Plugin;
 @Plugin(type = MenuPlugin.class)
 public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
 
-    public static String menuName = "PWSAcquisition";
+    public static String menuName = "PWS Acquisition";
     public static String tooltipDescription = "Hyperspectral Imaging";
-    public static String versionNumber = "0.2";
+    public static String versionNumber = "0.3";
     public static String copyright = "Backman Photonics Lab";
     
     //Strings which are used to save and load settings for the plugin.
