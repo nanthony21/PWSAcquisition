@@ -39,25 +39,28 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     
     //Strings which are used to save and load settings for the plugin.
     public static class Settings {
-        public static String wv = "wv";
-        public static String start = "start";
-        public static String stop = "stop";
-        public static String step = "step";
-        public static String darkCounts = "darkCounts";
-        public static String linearityPoly = "linearityPoly";
-        public static String sequence = "sequence";
-        public static String externalTrigger = "externalTrigger";
-        public static String savePath  = "savepath";
-        public static String cellNum  = "cellNum";
-        public static String filterLabel = "filterLabel";
-        public static String systemName = "systemName";
-        public static String exposure = "pwsExposure";
-        public static String dynExposure = "dynExposure";
-        public static String dynWavelength = "dynWavelength";
-        public static String dynNumFrames = "dynNumFrames";
-        public static String flFilterBlock = "flFilterBlock";
-        public static String flExposure = "flExposure";
-        public static String flWavelength = "flWavelength";
+        public static String wv = "wv"; //The array of wavelengths to image at.
+        public static String start = "start"; //The first wavelength to image
+        public static String stop = "stop"; //The last wavelength to image
+        public static String step = "step"; //The interval between each wavelength
+        public static String darkCounts = "darkCounts"; // The darkcounts of the PWS camera. darkcounts-per-pixel.
+        public static String linearityPoly = "linearityPoly"; //A polynomial that linearizes the counts of the camera to intensity. This is measured by measuring a sample over a range of exposure times.
+        public static String sequence = "sequence"; //Whether or not to use hardware triggering between the camera and the spectral filter. Speeds up acquisition but makes the software more complex sometimes.
+        public static String externalTrigger = "externalTrigger"; //Whether the camera exposures should be triggered by some external hardware. This feature is hardly supported.
+        public static String savePath  = "savepath"; // The path to save to
+        public static String cellNum  = "cellNum"; //The number of the acquisiiton folder.
+        public static String filterLabel = "filterLabel"; //The micromanager device name for the spectral filter.
+        public static String systemName = "systemName"; //The identifying name for this system.
+        public static String exposure = "pwsExposure"; //The exposure time for the camera for PWS
+        public static String dynExposure = "dynExposure"; //The exposure time for dynamics.
+        public static String dynWavelength = "dynWavelength"; //The wavelength that the LCTF should be set to for dynamics.
+        public static String dynNumFrames = "dynNumFrames"; //The number of frames to acquire for dynamics.
+        public static String flFilterBlock = "flFilterBlock"; //The filter block to switch to for fluorescence images.
+        public static String flExposure = "flExposure"; //The exposure time to use for fluorescence.
+        public static String flWavelength = "flWavelength"; //The wavelength to set the filter to when imaging fluorescence through the spectral filter.
+        public static String altCamFl = "altCamFl"; //Whether or not we are imaging fluorescence using the same camera as for PWS or using a separate camera.
+        public static String flAltCamName = "flAltCamName";  //If we are using another camera what is it's name in our "Camera" config group.
+        public static String camTransform = "camTransform"; //An affine transform between the two cameras.
     }
         
     private Studio studio_;  

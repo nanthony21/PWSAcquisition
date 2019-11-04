@@ -24,9 +24,9 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
     String flFilterBlock_; // The name of the fluorescence filter block config setting.
     boolean autoFilter_; //Whether or not the device can automatically switch filter blocks or needs user input.
     String flCam_; //The name of the config in the "Camera" config group that switches to fluoresence mode.
-    double[][] camTransform_; //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera
+    double[] camTransform_; //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera. For simplicity we store this array as a 1d array of length 6
     
-    public void setFluorescenceSettings(boolean autoFilter, String flFilter, String flCamera, double exposure, double[][] camTransform) {
+    public void setFluorescenceSettings(boolean autoFilter, String flFilter, String flCamera, double exposure, double[] camTransform) {
         autoFilter_ = autoFilter;
         flFilterBlock_ = flFilter;
         flCam_ = flCamera;
