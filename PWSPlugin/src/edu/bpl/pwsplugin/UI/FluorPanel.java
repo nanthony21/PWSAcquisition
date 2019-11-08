@@ -10,6 +10,7 @@ import java.util.Iterator;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
@@ -43,6 +44,7 @@ public class FluorPanel extends ChangeListenJPanel implements SaveableLoadableUI
             altCamNameCombo.setEnabled(s);
         });
         
+        this.addDocumentChangeListeners(new JComponent[] {wvSpinner, exposureSpinner, filterCombo, altCamNameCombo, useAltCamCheckbox});
         
         super.add(new JLabel("Wavelength (nm)"));
         super.add(new JLabel("Exposure (ms)"));
