@@ -313,18 +313,6 @@ public class PWSFrame extends MMFrame {
     private void initComponents() {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel2 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        startLabel = new javax.swing.JLabel();
-        stopLabel = new javax.swing.JLabel();
-        stepLabel = new javax.swing.JLabel();
-        stepLabel2 = new javax.swing.JLabel();
-        wvStartField = new javax.swing.JTextField();
-        wvStopField = new javax.swing.JTextField();
-        wvStepField = new javax.swing.JTextField();
-        exposureEdit = new javax.swing.JTextField();
-        hardwareSequencingCheckBox = new javax.swing.JCheckBox();
-        externalTriggerCheckBox = new javax.swing.JCheckBox();
         jPanel11 = new javax.swing.JPanel();
         flWvEdit = new javax.swing.JTextField();
         stepLabel6 = new javax.swing.JLabel();
@@ -367,77 +355,6 @@ public class PWSFrame extends MMFrame {
                 formWindowClosing(evt);
             }
         });
-
-        jPanel3.setLayout(new java.awt.GridLayout(2, 5, 5, 0));
-
-        startLabel.setText("Start (nm)");
-        jPanel3.add(startLabel);
-
-        stopLabel.setText("Stop (nm)");
-        jPanel3.add(stopLabel);
-
-        stepLabel.setText("Step (nm)");
-        jPanel3.add(stepLabel);
-
-        stepLabel2.setText("Exposure (ms)");
-        jPanel3.add(stepLabel2);
-
-        wvStartField.setText("500");
-        wvStartField.setToolTipText("In nanometers. The wavelength to start scanning at.");
-        wvStartField.setName(""); // NOI18N
-        jPanel3.add(wvStartField);
-
-        wvStopField.setText("700");
-        wvStopField.setToolTipText("In nanometers. The wavelength to stop scanning at.");
-        jPanel3.add(wvStopField);
-
-        wvStepField.setText("2");
-        jPanel3.add(wvStepField);
-
-        exposureEdit.setText("100");
-        jPanel3.add(exposureEdit);
-
-        hardwareSequencingCheckBox.setToolTipText("Whether the camera should be configured to trigger wavelength changes in the filter over TTL. This may not be supported.");
-        hardwareSequencingCheckBox.setLabel("Use Hardware Sequencing");
-        hardwareSequencingCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                hardwareSequencingCheckBoxActionPerformed(evt);
-            }
-        });
-
-        externalTriggerCheckBox.setText("Use External Trigger");
-        externalTriggerCheckBox.setToolTipText("Whether the filter should trigger a new camera acquisition over TTL. This is not possible for LCTF but can be done with the VF-5 Filter.");
-        externalTriggerCheckBox.setEnabled(false);
-        externalTriggerCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                externalTriggerCheckBoxActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(13, 13, 13)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(externalTriggerCheckBox)
-                    .addComponent(hardwareSequencingCheckBox)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(hardwareSequencingCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(externalTriggerCheckBox)
-                .addGap(0, 60, Short.MAX_VALUE))
-        );
-
-        jTabbedPane1.addTab("PWS", jPanel2);
 
         flWvEdit.setText("550");
 
@@ -747,19 +664,6 @@ public class PWSFrame extends MMFrame {
         FLSettingsChanged();
     }//GEN-LAST:event_flFilterBlockComboActionPerformed
 
-    private void externalTriggerCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_externalTriggerCheckBoxActionPerformed
-        PWSSettingsChanged();
-    }//GEN-LAST:event_externalTriggerCheckBoxActionPerformed
-
-    private void hardwareSequencingCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hardwareSequencingCheckBoxActionPerformed
-        PWSSettingsChanged();
-        boolean checked = hardwareSequencingCheckBox.isSelected();
-        if (!checked) {
-            externalTriggerCheckBox.setSelected(false);
-        }
-        externalTriggerCheckBox.setEnabled(checked);
-    }//GEN-LAST:event_hardwareSequencingCheckBoxActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton acqDynButton;
     private javax.swing.JButton acqFlButton;
@@ -771,14 +675,11 @@ public class PWSFrame extends MMFrame {
     private javax.swing.JTextField darkCountsEdit;
     private javax.swing.JButton directoryButton;
     private javax.swing.JTextField directoryText;
-    private javax.swing.JTextField exposureEdit;
-    private javax.swing.JCheckBox externalTriggerCheckBox;
     private javax.swing.JComboBox<String> filterComboBox;
     private javax.swing.JLabel filterLabel;
     private javax.swing.JTextField flExposureEdit;
     private javax.swing.JComboBox<String> flFilterBlockCombo;
     private javax.swing.JTextField flWvEdit;
-    private javax.swing.JCheckBox hardwareSequencingCheckBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -786,8 +687,6 @@ public class PWSFrame extends MMFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel11;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
@@ -796,18 +695,11 @@ public class PWSFrame extends MMFrame {
     private javax.swing.JPanel jPanel9;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField linearityCorrectionEdit;
-    private javax.swing.JLabel startLabel;
-    private javax.swing.JLabel stepLabel;
     private javax.swing.JLabel stepLabel1;
-    private javax.swing.JLabel stepLabel2;
     private javax.swing.JLabel stepLabel6;
     private javax.swing.JLabel stepLabel7;
     private javax.swing.JLabel stepLabel8;
-    private javax.swing.JLabel stopLabel;
     private javax.swing.JTextField systemNameEdit;
-    private javax.swing.JTextField wvStartField;
-    private javax.swing.JTextField wvStepField;
-    private javax.swing.JTextField wvStopField;
     // End of variables declaration//GEN-END:variables
 
     private SwingWorker<Void, Void> runInBackground(JButton button, Runnable myFunc) {
