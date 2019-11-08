@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.UI;
 
+import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -18,7 +19,7 @@ import org.micromanager.PropertyMap;
  *
  * @author nick
  */
-public class PWSPanel extends ChangeListenJPanel implements SaveableLoadableUI{
+public class PWSPanel extends SingleBuilderJPanel<PWSSettings>{
     private JSpinner exposureSpinner;
     private JSpinner wvStartSpinner;
     private JSpinner wvStopSpinner;
@@ -66,14 +67,5 @@ public class PWSPanel extends ChangeListenJPanel implements SaveableLoadableUI{
 
 
     }
-        
-    @Override
-    public PropertyMap toSettings() {
-        
-    }
-    
-    @Override
-    public void fromSettings(PropertyMap map) {
-        
-    }
+
 }

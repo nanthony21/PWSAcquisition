@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.UI;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import java.util.Iterator;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
@@ -23,7 +24,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author nick
  */
-public class FluorPanel extends ChangeListenJPanel implements SaveableLoadableUI{
+public class FluorPanel extends SingleBuilderJPanel<FluorSettings>{
     private JSpinner wvSpinner;
     private JSpinner exposureSpinner;
     private JComboBox filterCombo;
@@ -57,15 +58,6 @@ public class FluorPanel extends ChangeListenJPanel implements SaveableLoadableUI
         super.add(altCamNameCombo);
     }
     
-    @Override
-    public PropertyMap toSettings() {
-        
-    }
-    
-    @Override
-    public void fromSettings(PropertyMap map) {
-        
-    }
     
     private DefaultComboBoxModel<String> getFilterComboModel() {    
         Iterator<String> filterSettings = Globals.core().getAvailableConfigs("Filter").iterator();

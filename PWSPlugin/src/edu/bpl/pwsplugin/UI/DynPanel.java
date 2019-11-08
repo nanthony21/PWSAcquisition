@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.UI;
 
+import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
@@ -16,7 +17,7 @@ import org.micromanager.PropertyMap;
  *
  * @author nick
  */
-public class DynPanel extends ChangeListenJPanel implements SaveableLoadableUI{
+public class DynPanel extends SingleBuilderJPanel<DynSettings>{
     private JSpinner wvSpinner = new JSpinner();
     private JSpinner framesSpinner = new JSpinner();
     private JSpinner exposureSpinner = new JSpinner();
