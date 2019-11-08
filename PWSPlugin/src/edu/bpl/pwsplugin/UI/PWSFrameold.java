@@ -18,9 +18,12 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
-package edu.bpl.pwsplugin;
+package edu.bpl.pwsplugin.UI;
 
 
+import edu.bpl.pwsplugin.AcqManager;
+import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.PWSPlugin;
 import java.awt.Color;
 import java.io.File;
 import org.micromanager.internal.utils.MMFrame;
@@ -322,13 +325,6 @@ public class PWSFrame extends MMFrame {
         exposureEdit = new javax.swing.JTextField();
         hardwareSequencingCheckBox = new javax.swing.JCheckBox();
         externalTriggerCheckBox = new javax.swing.JCheckBox();
-        jPanel10 = new javax.swing.JPanel();
-        dynWvEdit = new javax.swing.JTextField();
-        stepLabel3 = new javax.swing.JLabel();
-        stepLabel4 = new javax.swing.JLabel();
-        dynExposureEdit = new javax.swing.JTextField();
-        dynFramesEdit = new javax.swing.JTextField();
-        stepLabel5 = new javax.swing.JLabel();
         jPanel11 = new javax.swing.JPanel();
         flWvEdit = new javax.swing.JTextField();
         stepLabel6 = new javax.swing.JLabel();
@@ -442,61 +438,6 @@ public class PWSFrame extends MMFrame {
         );
 
         jTabbedPane1.addTab("PWS", jPanel2);
-
-        dynWvEdit.setText("550");
-
-        stepLabel3.setText("Wavelength (nm)");
-
-        stepLabel4.setText("Exposure (ms)");
-
-        dynExposureEdit.setText("100");
-
-        dynFramesEdit.setText("200");
-
-        stepLabel5.setText("# of Frames");
-
-        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
-        jPanel10.setLayout(jPanel10Layout);
-        jPanel10Layout.setHorizontalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel10Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel10Layout.createSequentialGroup()
-                        .addComponent(stepLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(stepLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel10Layout.createSequentialGroup()
-                        .addComponent(dynWvEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(dynExposureEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(stepLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dynFramesEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(161, Short.MAX_VALUE))
-        );
-        jPanel10Layout.setVerticalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel10Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel10Layout.createSequentialGroup()
-                        .addComponent(stepLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(dynFramesEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel10Layout.createSequentialGroup()
-                        .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(stepLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(stepLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(dynWvEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dynExposureEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(99, Short.MAX_VALUE))
-        );
-
-        jTabbedPane1.addTab("Dynamics", jPanel10);
 
         flWvEdit.setText("550");
 
@@ -772,19 +713,43 @@ public class PWSFrame extends MMFrame {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
     }//GEN-LAST:event_formWindowClosing
 
-    private void filterComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterComboBoxActionPerformed
-        PWSSettingsChanged();
-    }//GEN-LAST:event_filterComboBoxActionPerformed
-
     private void acqPWSButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acqPWSButtonActionPerformed
         acquirePWS();
     }//GEN-LAST:event_acqPWSButtonActionPerformed
 
+    private void acqDynButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acqDynButtonActionPerformed
+        acquireDynamics();
+    }//GEN-LAST:event_acqDynButtonActionPerformed
+
+    private void acqFlButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acqFlButtonActionPerformed
+        acquireFluorescence();
+    }//GEN-LAST:event_acqFlButtonActionPerformed
+
+    private void filterComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterComboBoxActionPerformed
+        PWSSettingsChanged();
+    }//GEN-LAST:event_filterComboBoxActionPerformed
+
     private void directoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_directoryButtonActionPerformed
         File f = FileDialogs.openDir(this, "Directory to save to",
-        new FileDialogs.FileType("SaveDir", "Save Directory", "D:\\Data", true, ""));
+            new FileDialogs.FileType("SaveDir", "Save Directory", "D:\\Data", true, ""));
         directoryText.setText(f.getAbsolutePath());
     }//GEN-LAST:event_directoryButtonActionPerformed
+
+    private void altCamNameComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_altCamNameComboActionPerformed
+        FLSettingsChanged();
+    }//GEN-LAST:event_altCamNameComboActionPerformed
+
+    private void altCamCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_altCamCheckBoxActionPerformed
+        FLSettingsChanged();
+    }//GEN-LAST:event_altCamCheckBoxActionPerformed
+
+    private void flFilterBlockComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_flFilterBlockComboActionPerformed
+        FLSettingsChanged();
+    }//GEN-LAST:event_flFilterBlockComboActionPerformed
+
+    private void externalTriggerCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_externalTriggerCheckBoxActionPerformed
+        PWSSettingsChanged();
+    }//GEN-LAST:event_externalTriggerCheckBoxActionPerformed
 
     private void hardwareSequencingCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hardwareSequencingCheckBoxActionPerformed
         PWSSettingsChanged();
@@ -794,30 +759,6 @@ public class PWSFrame extends MMFrame {
         }
         externalTriggerCheckBox.setEnabled(checked);
     }//GEN-LAST:event_hardwareSequencingCheckBoxActionPerformed
-
-    private void externalTriggerCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_externalTriggerCheckBoxActionPerformed
-        PWSSettingsChanged();
-    }//GEN-LAST:event_externalTriggerCheckBoxActionPerformed
-
-    private void acqDynButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acqDynButtonActionPerformed
-        acquireDynamics();
-    }//GEN-LAST:event_acqDynButtonActionPerformed
-
-    private void flFilterBlockComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_flFilterBlockComboActionPerformed
-        FLSettingsChanged();
-    }//GEN-LAST:event_flFilterBlockComboActionPerformed
-
-    private void acqFlButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acqFlButtonActionPerformed
-        acquireFluorescence();
-    }//GEN-LAST:event_acqFlButtonActionPerformed
-
-    private void altCamCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_altCamCheckBoxActionPerformed
-        FLSettingsChanged();
-    }//GEN-LAST:event_altCamCheckBoxActionPerformed
-
-    private void altCamNameComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_altCamNameComboActionPerformed
-        FLSettingsChanged();
-    }//GEN-LAST:event_altCamNameComboActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton acqDynButton;
@@ -830,9 +771,6 @@ public class PWSFrame extends MMFrame {
     private javax.swing.JTextField darkCountsEdit;
     private javax.swing.JButton directoryButton;
     private javax.swing.JTextField directoryText;
-    private javax.swing.JTextField dynExposureEdit;
-    private javax.swing.JTextField dynFramesEdit;
-    private javax.swing.JTextField dynWvEdit;
     private javax.swing.JTextField exposureEdit;
     private javax.swing.JCheckBox externalTriggerCheckBox;
     private javax.swing.JComboBox<String> filterComboBox;
@@ -847,7 +785,6 @@ public class PWSFrame extends MMFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -863,9 +800,6 @@ public class PWSFrame extends MMFrame {
     private javax.swing.JLabel stepLabel;
     private javax.swing.JLabel stepLabel1;
     private javax.swing.JLabel stepLabel2;
-    private javax.swing.JLabel stepLabel3;
-    private javax.swing.JLabel stepLabel4;
-    private javax.swing.JLabel stepLabel5;
     private javax.swing.JLabel stepLabel6;
     private javax.swing.JLabel stepLabel7;
     private javax.swing.JLabel stepLabel8;

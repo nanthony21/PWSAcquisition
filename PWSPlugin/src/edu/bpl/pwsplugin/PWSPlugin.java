@@ -20,6 +20,7 @@ package edu.bpl.pwsplugin;
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
+import edu.bpl.pwsplugin.UI.PWSFrame;
 import com.google.common.eventbus.Subscribe;
 import java.util.Vector;
 import org.micromanager.Studio;
