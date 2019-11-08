@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.UI;
 
+import edu.bpl.pwsplugin.UI.utils.ListCardUI;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
@@ -16,7 +17,7 @@ import net.miginfocom.swing.MigLayout;
 public class HWConfPanel extends ChangeListenJPanel{
     private JComboBox tunableFilterCombo = new JComboBox();
     private JTextField sysNameEdit = new JTextField();
-    
+    private ListCardUI<List<CamSettings>, CamSettings> = new ListCardUI("Camera:");
     
     public HWConfPanel() {
         super(new MigLayout());

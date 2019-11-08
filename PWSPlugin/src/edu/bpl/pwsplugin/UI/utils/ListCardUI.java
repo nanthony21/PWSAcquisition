@@ -19,13 +19,14 @@ import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
 import edu.bpl.pwsplugin.UI.utils.UIFactory;
 import edu.bpl.pwsplugin.utils.JsonableParam;
+import edu.bpl.pwsplugin.utils.UIBuildable;
 import org.micromanager.internal.utils.ReportingUtils;
 
 /**
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class ListCardUI<T extends List<S>, S extends JsonableParam & UIBuildable> extends ListBuilderJPanel<T> implements ItemListener {
+public class ListCardUI<T extends List<S>, S extends JsonableParam & UIBuildable> extends BuilderJPanel<T> implements ItemListener {
     private JComboBox<String> combo = new JComboBox<String>();
     private JPanel cardPanel = new JPanel(new CardLayout());
     JButton addButton = new JButton("Add");
@@ -66,7 +67,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam & UIBuildable
         components = new ArrayList<BuilderJPanel<S>>();
         Integer i = 1;
         for (S s : t) {
-            BuilderJPanel<S> p = UIFactories.BuilderPanelFactory.getUIPanel((Class<? extends UIBuildable>) s.getClass());
+            BuilderJPanel<S> p = UIFactory.getUI((Class<? extends UIBuildable>) s.getClass());
             cardPanel.add(p, i.toString()); //Must add to layout before populating or we get a null pointer error.
             p.populateFields(s);
             components.add(p);

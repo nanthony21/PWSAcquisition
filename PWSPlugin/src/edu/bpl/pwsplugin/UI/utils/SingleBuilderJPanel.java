@@ -1,6 +1,7 @@
 
 package edu.bpl.pwsplugin.UI.utils;
 
+import edu.bpl.pwsplugin.utils.UIBuildable;
 import java.awt.LayoutManager;
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -43,8 +44,6 @@ public abstract class SingleBuilderJPanel<T> extends BuilderJPanel<T>{
                     prop.set(t, ((BuilderJPanel) field).build());
                 } else if (field instanceof DirectorySelector) {
                     prop.set(t, ((DirectorySelector) field).getText());
-                } else if (field instanceof PopulableJPanel) {
-                    prop.set(t, ((PopulableJPanel) field).getStoredInstance());
                 }else {
                     throw new UnsupportedOperationException("Build() does not support type: " + field.getClass().getName());
                 }
@@ -73,8 +72,6 @@ public abstract class SingleBuilderJPanel<T> extends BuilderJPanel<T>{
                     ((BuilderJPanel) field).populateFields((UIBuildable) prop.get(t));
                 } else if (field instanceof DirectorySelector) {
                     ((DirectorySelector) field).setText((String) prop.get(t));
-                } else if (field instanceof PopulableJPanel) {
-                    ((PopulableJPanel) field).storeInstance(prop.get(t));
                 }else {
                     throw new UnsupportedOperationException("Build() does not support type: " + field.getName());
                 }

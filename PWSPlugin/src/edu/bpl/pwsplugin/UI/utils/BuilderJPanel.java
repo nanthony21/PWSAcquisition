@@ -1,7 +1,9 @@
 
 package edu.bpl.pwsplugin.UI.utils;
 
+import edu.bpl.pwsplugin.utils.UIBuildable;
 import java.awt.LayoutManager;
+import java.util.List;
 import javax.swing.JPanel;
 
 /**

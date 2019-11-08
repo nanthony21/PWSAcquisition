@@ -22,6 +22,7 @@ package edu.bpl.pwsplugin;
 
 import edu.bpl.pwsplugin.UI.PWSFrame;
 import com.google.common.eventbus.Subscribe;
+import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.Vector;
 import org.micromanager.Studio;
 import org.micromanager.MenuPlugin;
@@ -78,7 +79,17 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
         if (!initialized_) {
             Globals.init(studio_);
             frame_ = new PWSFrame(Globals.acqManager());
-            initialized_ = false;
+            
+            //In order for json serial/deserialization to work, each class must be 
+            //registered with Gson. Let's do that now to make sure.
+            //They also register themselves when they are instantiated but that may not happen in time.
+            JsonableParam.registerClass(FluorSettings.class);
+            JsonableParam.registerClass(PWSSettings.class);
+            JsonableParam.registerClass(DynSettings.class);
+            JsonableParam.registerClass(SysConfig.class);
+            JsonableParam.registerClass(CamSettings.class);
+            
+            initialized_ = true;
         }
         frame_.setVisible(true);
     }
@@ -116,6 +127,8 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
          }
       }
    }
+    
+
     
     //API
     public void setSavePath(String savepath) {
