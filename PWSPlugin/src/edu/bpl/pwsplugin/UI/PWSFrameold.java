@@ -28,26 +28,19 @@ import java.awt.Color;
 import java.io.File;
 import org.micromanager.internal.utils.MMFrame;
 import org.micromanager.propertymap.MutablePropertyMapView;
-import org.micromanager.Studio;
 import org.micromanager.LogManager;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.DocumentEvent;
 import mmcorej.StrVector;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Vector;
 import javax.swing.JButton;
-import javax.swing.JTextField;
 import org.micromanager.internal.utils.FileDialogs;
 import org.micromanager.internal.utils.ReportingUtils;
 import javax.swing.SwingWorker;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.ArrayUtils;
-import java.util.function.Function;
 
 public class PWSFrame extends MMFrame {
 
@@ -240,68 +233,7 @@ public class PWSFrame extends MMFrame {
         }
     }
     
-    private void otherSettingsChanged() {
-        otherSettingsStale_ = true;
-        acqPWSButton.setBackground(Color.red);
-    }
     
-    private void PWSSettingsChanged() {
-        PWSSettingsStale_ = true;
-        acqPWSButton.setBackground(Color.red);
-    }
-        
-    private void saveSettingsChanged() {
-        saveSettingsStale_ = true;
-        acqPWSButton.setBackground(Color.red);
-    }
-    
-    private void DYNSettingsChanged() {
-        DYNSettingsStale_ = true;
-        acqPWSButton.setBackground(Color.red);
-    }
-    
-    private void FLSettingsChanged() {
-        FLSettingsStale_ = true;
-        acqPWSButton.setBackground(Color.red);
-    }
-    
-    private void addDocListeners() {
-        //If one of the below GUI elements changes we will set a flag telling us that the settings have been changed.
-        HashMap<String, JTextField[]> categories = new HashMap<String, JTextField[]>();
-        categories.put("other", new JTextField[] {systemNameEdit, darkCountsEdit, linearityCorrectionEdit});
-        categories.put("PWS", new JTextField[] {wvStartField, wvStopField, wvStepField, exposureEdit});
-        categories.put("DYN", new JTextField[] {dynExposureEdit, dynFramesEdit, dynWvEdit});
-        categories.put("FL", new JTextField[] {flExposureEdit, flWvEdit, altCamTransformEdit});
-        categories.put("save", new JTextField[] {cellNumEdit, directoryText});
-        
-        HashMap<String, Runnable> funcs = new HashMap<String, Runnable>();
-        funcs.put("other", this::otherSettingsChanged);
-        funcs.put("PWS", this::PWSSettingsChanged);
-        funcs.put("DYN", this::DYNSettingsChanged);
-        funcs.put("FL", this::FLSettingsChanged);
-        funcs.put("save", this::saveSettingsChanged);
-        
-        for (HashMap.Entry<String, JTextField[]> entry : categories.entrySet()) {
-            String category = entry.getKey();
-            JTextField[] fields = entry.getValue();
-            for (int i=0; i<fields.length; i++) {
-                fields[i].getDocument().addDocumentListener(new DocumentListener() {
-                    @Override
-                    public void changedUpdate(DocumentEvent e) {
-                        funcs.get(category).run();//settingsChanged();
-                    }
-                    @Override
-                    public void removeUpdate(DocumentEvent e) {
-                        funcs.get(category).run();
-                    }
-                    @Override
-                    public void insertUpdate(DocumentEvent e) {
-                        funcs.get(category).run();
-                    }
-                });
-            }
-        }
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.

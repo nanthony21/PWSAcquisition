@@ -7,18 +7,16 @@ package edu.bpl.pwsplugin.UI;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
+import org.micromanager.PropertyMap;
 
 /**
  *
  * @author nick
  */
-public class DynPanel extends ChangeListenJPanel{
+public class DynPanel extends ChangeListenJPanel implements SaveableLoadableUI{
     private JSpinner wvSpinner = new JSpinner();
     private JSpinner framesSpinner = new JSpinner();
     private JSpinner exposureSpinner = new JSpinner();
@@ -37,5 +35,15 @@ public class DynPanel extends ChangeListenJPanel{
         super.add(exposureSpinner, "wrap");
         super.add(new JLabel("# of Frames"));
         super.add(framesSpinner, "wrap");
+    }
+       
+    @Override
+    public PropertyMap toSettings() {
+        
+    }
+    
+    @Override
+    public void fromSettings(PropertyMap map) {
+        
     }
 }

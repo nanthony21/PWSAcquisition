@@ -12,12 +12,13 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
+import org.micromanager.PropertyMap;
 
 /**
  *
  * @author nick
  */
-public class PWSPanel extends ChangeListenJPanel{
+public class PWSPanel extends ChangeListenJPanel implements SaveableLoadableUI{
     private JSpinner exposureSpinner;
     private JSpinner wvStartSpinner;
     private JSpinner wvStopSpinner;
@@ -66,4 +67,13 @@ public class PWSPanel extends ChangeListenJPanel{
 
     }
         
+    @Override
+    public PropertyMap toSettings() {
+        
+    }
+    
+    @Override
+    public void fromSettings(PropertyMap map) {
+        
+    }
 }
