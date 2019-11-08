@@ -66,7 +66,6 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
         
     private Studio studio_;  
     private PWSFrame frame_;
-    private AcqManager manager_; 
     private boolean initialized_ = false;
     
     @Override
@@ -78,8 +77,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     public void onPluginSelected() {
         if (!initialized_) {
             Globals.init(studio_);
-            manager_ = new AcqManager();
-            frame_ = new PWSFrame(manager_);
+            frame_ = new PWSFrame(Globals.acqManager());
             initialized_ = false;
         }
         frame_.setVisible(true);
@@ -161,7 +159,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     }
     
     public boolean isAcquisitionRunning() {
-        return manager_.isAcquisitionRunning();
+        return Globals.acqManager().isAcquisitionRunning();
     }
     
     public String getFilterName() {

@@ -14,9 +14,11 @@ import org.micromanager.Studio;
  */
 public class Globals {
     private static Studio studio_ = null;
+    private static AcqManager acqMan_ = null;
     
     public static void init(Studio studio) {
         studio_ = studio;
+        acqMan_ = new AcqManager();
     }
             
     public static Studio mm() {
@@ -25,6 +27,10 @@ public class Globals {
     
     public static CMMCore core() {
         return studio_.core();
+    }
+    
+    public static AcqManager acqManager() {
+        return acqMan_;
     }
     
 }
