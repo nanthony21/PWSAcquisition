@@ -11,9 +11,6 @@ import org.micromanager.internal.utils.ReportingUtils;
  */
 public class UIFactory {
     public static BuilderJPanel getUI(Class<? extends UIBuildable> clazz) {
-        
-   
-        
         if (clazz.equals(PWSSettings.class)) {
             return new PWSPanel();
         } else if (clazz.equals(DynSettings.class)) {

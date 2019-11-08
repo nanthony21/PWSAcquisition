@@ -27,6 +27,10 @@ public class CamUI extends SingleBuilderJPanel<CamSettings>{
     public CamUI() {
         super(new MigLayout());
         
+        darkCountsSpinner.setToolTipText("# of counts per pixel when the camera is not exposed to any light. E.g if measuring dark counts with 2x2 binning the number here should be 1/4 of your measurement 2x2 binning pools 4 pixels.");
+        linEdit.setToolTipText("Comma separated values representing the polynomial to linearize the counts from the camera. In the form \"A,B,C\" = Ax + Bx^2 + Cx^3. Type \"None\" or \"null\" if correction is not needed.");
+
+        
         super.add(new JLabel("Camera:"));
         super.add(camCombo, "wrap");
         super.add(new JLabel("Dark Counts:"));
