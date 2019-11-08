@@ -18,7 +18,7 @@ public class Globals {
     
     public static void init(Studio studio) {
         studio_ = studio;
-        acqMan_ = new AcqManager();
+        acqMan_ = new AcqManager(); //Very important that this is instantiated after studio. this is probably bade design actually.
     }
             
     public static Studio mm() {

@@ -8,6 +8,7 @@ package edu.bpl.pwsplugin.UI;
 import java.awt.LayoutManager;
 import java.util.HashMap;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -34,6 +35,8 @@ public abstract class ChangeListenJPanel extends JPanel{
                 this.addDocListeners(((JSpinner.DefaultEditor)((JSpinner) field).getEditor()).getTextField());
             } else if (field instanceof JCheckBox){
                 ((JCheckBox) field).addActionListener((evt)->{ this.stale=true; });
+            } else if (field instanceof JComboBox) {
+                ((JComboBox) field).addActionListener((evt)->{ this.stale=true; });
             }
         }
     }
