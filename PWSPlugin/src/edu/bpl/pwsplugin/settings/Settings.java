@@ -1,6 +1,7 @@
 
 package edu.bpl.pwsplugin.settings;
 
+import edu.bpl.pwsplugin.utils.JsonableParam;
 import edu.bpl.pwsplugin.utils.UIBuildable;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
  * @author nick
  */
 public class Settings {
-    public static class PWSSettings implements UIBuildable{
+    public static class PWSSettings extends JsonableParam implements UIBuildable{
         public int wvStart;
         public int wvStop;
         public int wvStep;
@@ -18,13 +19,13 @@ public class Settings {
         public boolean externalCamTriggering;
     }
     
-    public static class DynSettings implements UIBuildable {
+    public static class DynSettings extends JsonableParam implements UIBuildable {
         public double exposure;
         public int wavelength;
         public int numFrames;
     }
     
-    public static class FluorSettings implements UIBuildable {
+    public static class FluorSettings extends JsonableParam implements UIBuildable {
         public double exposure;
         public String filterConfigName;
         public boolean useAltCamera;
@@ -32,13 +33,13 @@ public class Settings {
         public int tfWavelength;
     }
     
-    public static class SysConfig implements UIBuildable {
+    public static class HWConfiguration extends JsonableParam implements UIBuildable {
      //TODO
         public String systemName;
         public List<CamSettings> cameras;
     }
     
-    public static class CamSettings implements UIBuildable {
+    public static class CamSettings extends JsonableParam implements UIBuildable {
         public String name;
         public String linearityPolynomial; //DO we want to use a string for this?
         public int darkCounts;
