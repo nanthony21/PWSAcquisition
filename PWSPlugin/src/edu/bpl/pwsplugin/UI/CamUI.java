@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.UI;
 
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.settings.Settings;
+import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -44,8 +45,14 @@ public class CamUI extends SingleBuilderJPanel<Settings.CamSettings>{
         super.add(tunableFilterCombo);
     }
     
+    @Override
     public Map<String, JComponent> getPropertyFieldMap() {
-        Map<String, JComponent> map = new Map<String, JComponent>();
-        map.put("", )
+        Map<String, JComponent> map = new HashMap<String, JComponent>();
+        map.put("name", camCombo);
+        map.put("linearityPolynomial", linEdit);
+        map.put("darkCounts", darkCountsSpinner);
+        map.put("hasTunableFilter", hasTFCheckbox);
+        map.put("tunableFilterName", tunableFilterCombo);
+        return map;
     }
 }

@@ -2,6 +2,7 @@
 package edu.bpl.pwsplugin.settings;
 
 import edu.bpl.pwsplugin.utils.UIBuildable;
+import java.util.List;
 
 /**
  *
@@ -32,10 +33,16 @@ public class Settings {
     }
     
     public static class SysConfig implements UIBuildable {
-     //TODO   
+     //TODO
+        public String systemName;
+        public List<CamSettings> cameras;
     }
     
     public static class CamSettings implements UIBuildable {
-        //TODO
+        public String name;
+        public String linearityPolynomial; //DO we want to use a string for this?
+        public int darkCounts;
+        public boolean hasTunableFilter;
+        public String tunableFilterName;
     }
 }
