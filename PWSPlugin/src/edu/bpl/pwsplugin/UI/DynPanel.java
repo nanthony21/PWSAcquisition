@@ -6,6 +6,9 @@
 package edu.bpl.pwsplugin.UI;
 
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
+import edu.bpl.pwsplugin.settings.Settings;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
@@ -17,13 +20,13 @@ import org.micromanager.PropertyMap;
  *
  * @author nick
  */
-public class DynPanel extends SingleBuilderJPanel<DynSettings>{
+public class DynPanel extends SingleBuilderJPanel<Settings.DynSettings>{
     private JSpinner wvSpinner = new JSpinner();
     private JSpinner framesSpinner = new JSpinner();
     private JSpinner exposureSpinner = new JSpinner();
     
     public DynPanel() {
-        super(new MigLayout());
+        super(new MigLayout(), Settings.DynSettings.class);
         wvSpinner.setModel(new SpinnerNumberModel(550, 400,1000, 5));
         framesSpinner.setModel(new SpinnerNumberModel(200, 1, 1000, 1));
         exposureSpinner.setModel(new SpinnerNumberModel(50, 1, 500, 5));
@@ -37,14 +40,13 @@ public class DynPanel extends SingleBuilderJPanel<DynSettings>{
         super.add(new JLabel("# of Frames"));
         super.add(framesSpinner, "wrap");
     }
-       
-    @Override
-    public PropertyMap toSettings() {
-        
-    }
     
     @Override
-    public void fromSettings(PropertyMap map) {
-        
+    public Map<String, JComponent> getPropertyFieldMap() {
+        Map<String, JComponent> map = new HashMap<String, JComponent>();
+        map.put("exposure", exposureSpinner);
+        map.put("wavelength", wvSpinner);
+        map.put("numFrames", framesSpinner);
+        return map;
     }
 }

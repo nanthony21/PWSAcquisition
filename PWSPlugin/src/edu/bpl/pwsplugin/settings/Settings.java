@@ -30,4 +30,12 @@ public class Settings {
         public String altCamName;
         public int tfWavelength;
     }
+    
+    public static class SysConfig implements UIBuildable {
+     //TODO   
+    }
+    
+    public static class CamSettings implements UIBuildable {
+        //TODO
+    }
 }

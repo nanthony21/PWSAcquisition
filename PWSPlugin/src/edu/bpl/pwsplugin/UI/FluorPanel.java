@@ -7,7 +7,10 @@ package edu.bpl.pwsplugin.UI;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
+import edu.bpl.pwsplugin.settings.Settings;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -24,7 +27,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author nick
  */
-public class FluorPanel extends SingleBuilderJPanel<FluorSettings>{
+public class FluorPanel extends SingleBuilderJPanel<Settings.FluorSettings>{
     private JSpinner wvSpinner;
     private JSpinner exposureSpinner;
     private JComboBox filterCombo;
@@ -32,7 +35,7 @@ public class FluorPanel extends SingleBuilderJPanel<FluorSettings>{
     private JCheckBox useAltCamCheckbox = new JCheckBox("Use Alternate Camera");
     
     public FluorPanel() {
-        super(new MigLayout());
+        super(new MigLayout(), Settings.FluorSettings.class);
         
         wvSpinner = new JSpinner(new SpinnerNumberModel(550, 400, 1000, 5));
         exposureSpinner = new JSpinner(new SpinnerNumberModel(1000, 1, 5000, 100));
@@ -92,5 +95,15 @@ public class FluorPanel extends SingleBuilderJPanel<FluorSettings>{
             return model;
         }
     }
-        
+    
+    @Override
+    public Map<String, JComponent> getPropertyFieldMap() {
+        Map<String, JComponent> map = new HashMap<String, JComponent>();
+        map.put("exposure", exposureSpinner);
+        map.put("filterConfigName", filterCombo);
+        map.put("useAltCamera", useAltCamCheckbox);
+        map.put("altCamName", exposureSpinner);
+        map.put("tfWavelength", wvSpinner);
+        return map;
+    }  
 }

@@ -6,8 +6,11 @@
 package edu.bpl.pwsplugin.UI;
 
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
+import edu.bpl.pwsplugin.settings.Settings;
+import java.util.Map;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -17,7 +20,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author nick
  */
-public class CamUI extends SingleBuilderJPanel<CamSettings>{
+public class CamUI extends SingleBuilderJPanel<Settings.CamSettings>{
     private JComboBox camCombo = new JComboBox();
     private JSpinner darkCountsSpinner = new JSpinner();
     private JTextField linEdit = new JTextField();
@@ -39,5 +42,10 @@ public class CamUI extends SingleBuilderJPanel<CamSettings>{
         super.add(linEdit, "wrap");
         super.add(hasTFCheckbox);
         super.add(tunableFilterCombo);
+    }
+    
+    public Map<String, JComponent> getPropertyFieldMap() {
+        Map<String, JComponent> map = new Map<String, JComponent>();
+        map.put("", )
     }
 }

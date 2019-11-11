@@ -6,6 +6,9 @@
 package edu.bpl.pwsplugin.UI;
 
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
+import edu.bpl.pwsplugin.settings.Settings;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -19,7 +22,7 @@ import org.micromanager.PropertyMap;
  *
  * @author nick
  */
-public class PWSPanel extends SingleBuilderJPanel<PWSSettings>{
+public class PWSPanel extends SingleBuilderJPanel<Settings.PWSSettings>{
     private JSpinner exposureSpinner;
     private JSpinner wvStartSpinner;
     private JSpinner wvStopSpinner;
@@ -28,7 +31,7 @@ public class PWSPanel extends SingleBuilderJPanel<PWSSettings>{
     private JCheckBox externalTriggerCheckBox = new JCheckBox("Use External TTL Trigger");
     
     public PWSPanel() {
-        super(new MigLayout());
+        super(new MigLayout(), Settings.PWSSettings.class);
         
         exposureSpinner = new JSpinner(new SpinnerNumberModel(100, 1, 1000, 5));
         wvStartSpinner = new JSpinner(new SpinnerNumberModel(500, 400, 1000, 5));
@@ -64,8 +67,17 @@ public class PWSPanel extends SingleBuilderJPanel<PWSSettings>{
         super.add(exposureSpinner, "wrap");
         super.add(ttlTriggerCheckbox, "wrap");
         super.add(externalTriggerCheckBox, "wrap");
-
-
     }
 
+    @Override
+    public Map<String, JComponent> getPropertyFieldMap() {
+        Map<String, JComponent> map = new HashMap<String, JComponent>();
+        map.put("wvStart", wvStartSpinner);
+        map.put("wvStop", wvStopSpinner);
+        map.put("wvStep", wvStepSpinner);
+        map.put("exposure", exposureSpinner);
+        map.put("ttlTriggering", ttlTriggerCheckbox);
+        map.put("externalCamTriggering", externalTriggerCheckBox);
+        return map;
+    }
 }

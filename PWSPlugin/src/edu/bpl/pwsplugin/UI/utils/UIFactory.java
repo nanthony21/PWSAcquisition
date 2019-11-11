@@ -1,6 +1,11 @@
 
 package edu.bpl.pwsplugin.UI.utils;
 
+import edu.bpl.pwsplugin.UI.CamUI;
+import edu.bpl.pwsplugin.UI.DynPanel;
+import edu.bpl.pwsplugin.UI.HWConfPanel;
+import edu.bpl.pwsplugin.UI.PWSPanel;
+import edu.bpl.pwsplugin.settings.Settings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import edu.bpl.pwsplugin.utils.UIBuildable;
 import org.micromanager.internal.utils.ReportingUtils;
@@ -11,14 +16,16 @@ import org.micromanager.internal.utils.ReportingUtils;
  */
 public class UIFactory {
     public static BuilderJPanel getUI(Class<? extends UIBuildable> clazz) {
-        if (clazz.equals(PWSSettings.class)) {
+        if (clazz.equals(Settings.PWSSettings.class)) {
             return new PWSPanel();
-        } else if (clazz.equals(DynSettings.class)) {
+        } else if (clazz.equals(Settings.DynSettings.class)) {
             return new DynPanel();
-        } else if (clazz.equals(SysConfig.class)) {
+        } else if (clazz.equals(Settings.SysConfig.class)) {
             return new HWConfPanel();
-        } else if (clazz.equals(CamSettings.class)) {
-            return new CamPanel();
+        } else if (clazz.equals(Settings.CamSettings.class)) {
+            return new CamUI();
+        } else if (clazz.equals(Settings.FluorSettings.class)) {
+            return new FluorPanel();
         } else {
             ReportingUtils.showError("Could not build UI for class: " + clazz);
             return null;
