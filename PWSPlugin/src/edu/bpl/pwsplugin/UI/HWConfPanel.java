@@ -32,7 +32,6 @@ public class HWConfPanel extends SingleBuilderJPanel<Settings.HWConfiguration>{
     
     @Override
     public Map<String, JComponent> getPropertyFieldMap() {
-        //TODO fix
         Map<String, JComponent> map = new HashMap<String, JComponent>();
         map.put("systemName", sysNameEdit);
         map.put("cameras", cameras);

@@ -3,6 +3,7 @@ package edu.bpl.pwsplugin.UI.utils;
 
 import edu.bpl.pwsplugin.UI.CamUI;
 import edu.bpl.pwsplugin.UI.DynPanel;
+import edu.bpl.pwsplugin.UI.FluorPanel;
 import edu.bpl.pwsplugin.UI.HWConfPanel;
 import edu.bpl.pwsplugin.UI.PWSPanel;
 import edu.bpl.pwsplugin.settings.Settings;
@@ -20,7 +21,7 @@ public class UIFactory {
             return new PWSPanel();
         } else if (clazz.equals(Settings.DynSettings.class)) {
             return new DynPanel();
-        } else if (clazz.equals(Settings.SysConfig.class)) {
+        } else if (clazz.equals(Settings.HWConfiguration.class)) {
             return new HWConfPanel();
         } else if (clazz.equals(Settings.CamSettings.class)) {
             return new CamUI();
