@@ -20,7 +20,6 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import mmcorej.StrVector;
 import net.miginfocom.swing.MigLayout;
-import org.micromanager.PropertyMap;
 import org.micromanager.internal.utils.ReportingUtils;
 
 /**
