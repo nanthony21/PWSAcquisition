@@ -22,6 +22,7 @@ package edu.bpl.pwsplugin;
 
 import edu.bpl.pwsplugin.UI.PWSFrame;
 import com.google.common.eventbus.Subscribe;
+import edu.bpl.pwsplugin.settings.Settings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.Vector;
 import org.micromanager.Studio;
@@ -35,12 +36,10 @@ import org.scijava.plugin.Plugin;
 public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
 
     public static String menuName = "PWS Acquisition";
-    public static String tooltipDescription = "Hyperspectral Imaging";
-    public static String versionNumber = "0.3";
-    public static String copyright = "Backman Photonics Lab";
+    public static String versionNumber = "0.4";
     
     //Strings which are used to save and load settings for the plugin.
-    public static class Settings {
+    public static class oldSettings {
         public static String wv = "wv"; //The array of wavelengths to image at.
         public static String start = "start"; //The first wavelength to image
         public static String stop = "stop"; //The last wavelength to image
@@ -83,11 +82,11 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
             //In order for json serial/deserialization to work, each class must be 
             //registered with Gson. Let's do that now to make sure.
             //They also register themselves when they are instantiated but that may not happen in time.
-            JsonableParam.registerClass(FluorSettings.class);
-            JsonableParam.registerClass(PWSSettings.class);
-            JsonableParam.registerClass(DynSettings.class);
-            JsonableParam.registerClass(SysConfig.class);
-            JsonableParam.registerClass(CamSettings.class);
+            JsonableParam.registerClass(Settings.FluorSettings.class);
+            JsonableParam.registerClass(Settings.PWSSettings.class);
+            JsonableParam.registerClass(Settings.DynSettings.class);
+            JsonableParam.registerClass(Settings.HWConfiguration.class);
+            JsonableParam.registerClass(Settings.CamSettings.class);
             
             initialized_ = true;
         }
@@ -101,7 +100,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
 
     @Override
     public String getHelpText() {
-        return tooltipDescription;
+        return "Partial Wave Spectroscopic Microscopy";
     }
 
     @Override
@@ -116,7 +115,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
 
     @Override
     public String getCopyright() {
-        return copyright;
+        return "Backman Photonics Lab";
     }
     
     @Subscribe
