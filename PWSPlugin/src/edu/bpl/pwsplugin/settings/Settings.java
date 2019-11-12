@@ -56,5 +56,9 @@ public class Settings {
         public PWSSettings pwsSettings;
         public String saveDir;
         public int cellNum;
+        
+        public static PWSPluginSettings fromJsonString(String str) {
+            return (PWSPluginSettings) JsonableParam.fromJsonString(str, PWSPluginSettings.class);
+        }
     }
 }

@@ -62,14 +62,17 @@ public class PluginFrame extends MMFrame{
         super.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         super.setResizable(false);
         
+        dirSelect = new DirectorySelector(DirectorySelector.DefaultMMFunctions.MMDataSetDirectory);
+        cellNumSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
+        
         this.settings_ = Globals.mm().profile().getSettings(PluginFrame.class);
+        this.loadSettings();
         
         acqDynButton.addActionListener((e)->{ this.acquireDynamics(); });
         acqFlButton.addActionListener((e)->{ this.acquireFluorescence(); });
         acqPwsButton.addActionListener((e)->{ this.acquirePws(); });
         
-        dirSelect = new DirectorySelector(DirectorySelector.DefaultMMFunctions.MMDataSetDirectory);
-        cellNumSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
+
         
         super.add(tabs, "wrap, span");
         tabs.addTab("PWS", this.pwsPanel);
@@ -101,9 +104,14 @@ public class PluginFrame extends MMFrame{
         this.settings_.putString("settings", this.getSettings().toJsonString());
     }
     
-    public void loadSettings() {
-        PWSPluginSettings set = PWSPluginSettings.fromJsonString(this.settings_.getString("settings", ""));
-        /todo unpack
+    public final void loadSettings() {
+        Settings.PWSPluginSettings set = Settings.PWSPluginSettings.fromJsonString(this.settings_.getString("settings", ""));
+        this.pwsPanel.populateFields(set.pwsSettings);
+        this.dynPanel.populateFields(set.dynSettings);
+        this.flPanel.populateFields(set.flSettings);
+        this.hwPanel.populateFields(set.hwConfiguration);
+        this.dirSelect.setText(set.saveDir);
+        this.cellNumSpinner.setValue(set.cellNum);
     }
     
     @Override
@@ -112,8 +120,8 @@ public class PluginFrame extends MMFrame{
         super.dispose();
     }
     
-        private SwingWorker<Void, Void> runInBackground(JButton button, Runnable myFunc) {
-        //This funciton will run myFunc in a separate thread. `button` will be disabled while the function is running.
+    private SwingWorker<Void, Void> runInBackground(JButton button, Runnable myFunc) {
+        //This function will run myFunc in a separate thread. `button` will be disabled while the function is running.
         return new SwingWorker<Void, Void>() {
             Object o = new Object() {{button.setEnabled(false); execute();}}; //Fake constructor.
             
