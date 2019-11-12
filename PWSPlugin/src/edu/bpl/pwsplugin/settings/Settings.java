@@ -46,4 +46,15 @@ public class Settings {
         public boolean hasTunableFilter;
         public String tunableFilterName;
     }
+    
+    public static class PWSPluginSettings extends JsonableParam {
+        //This is just a container for all the other settings. this is the main object that gets
+        //passed around, saved, loaded, etc.
+        public HWConfiguration hwConfiguration;
+        public FluorSettings flSettings;
+        public DynSettings dynSettings;
+        public PWSSettings pwsSettings;
+        public String saveDir;
+        public int cellNum;
+    }
 }

@@ -27,6 +27,7 @@ import edu.bpl.pwsplugin.UI.subpages.FluorPanel;
 import edu.bpl.pwsplugin.UI.subpages.HWConfPanel;
 import edu.bpl.pwsplugin.UI.subpages.PWSPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
+import edu.bpl.pwsplugin.settings.Settings;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
@@ -36,6 +37,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingWorker;
 import org.micromanager.internal.utils.MMFrame;
+import org.micromanager.propertymap.MutablePropertyMapView;
 
 /**
  *
@@ -52,12 +54,15 @@ public class PluginFrame extends MMFrame{
     private FluorPanel flPanel = new FluorPanel();
     private DynPanel dynPanel = new DynPanel();
     private HWConfPanel hwPanel = new HWConfPanel();
+    private MutablePropertyMapView settings_;
 
     public PluginFrame() {
         super();
         super.setTitle(String.format("%s %s", PWSPlugin.menuName, PWSPlugin.versionNumber));
         super.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         super.setResizable(false);
+        
+        this.settings_ = Globals.mm().profile().getSettings(PluginFrame.class);
         
         acqDynButton.addActionListener((e)->{ this.acquireDynamics(); });
         acqFlButton.addActionListener((e)->{ this.acquireFluorescence(); });
@@ -80,6 +85,27 @@ public class PluginFrame extends MMFrame{
         
         super.pack();
     }
+    
+    public Settings.PWSPluginSettings getSettings() {
+        Settings.PWSPluginSettings set = new Settings.PWSPluginSettings();
+        set.pwsSettings = this.pwsPanel.build();
+        set.dynSettings = this.dynPanel.build();
+        set.flSettings = this.flPanel.build();
+        set.hwConfiguration = this.hwPanel.build();
+        set.saveDir = this.dirSelect.getText();
+        set.cellNum = (int) this.cellNumSpinner.getValue();
+        return set;
+    }
+    
+    public void saveSettings() {
+        this.settings_.putString("settings", this.getSettings().toJsonString());
+    }
+    
+    public void loadSettings() {
+        PWSPluginSettings set = PWSPluginSettings.fromJsonString(this.settings_.getString("settings", ""));
+        /todo unpack
+    }
+    
     @Override
     public void dispose() {
         this.saveSettings();
