@@ -44,8 +44,6 @@ import org.apache.commons.lang.ArrayUtils;
 public class PWSFrame extends MMFrame {
 
     private MutablePropertyMapView settings_;
-    private final LogManager log_;
-    private AcqManager acqManager_;
     private boolean otherSettingsStale_ = true;
     private boolean PWSSettingsStale_ = true;
     private boolean saveSettingsStale_ = true;
@@ -54,10 +52,8 @@ public class PWSFrame extends MMFrame {
     /**
      * 
      */
-    public PWSFrame(AcqManager manager) {
-        acqManager_ = manager;
-        settings_ = Globals.mm().profile().getSettings(PWSFrame.class);
-        log_ = Globals.mm().logs();
+    public PWSFrame() {
+        settings_ = Globals.mm().profile().getSettings(PWSFrame.class);;
         
         super.setTitle(String.format("%s %s", PWSPlugin.menuName, PWSPlugin.versionNumber));
         this.initComponents();
@@ -175,12 +171,6 @@ public class PWSFrame extends MMFrame {
         }
     }
     
-    @Override
-    public void dispose() {
-        saveSettings();
-        super.dispose();
-    }
-    
     private void scanDevices() {
         //TODO change this to store lists of all available relevant config groups. add warnings, disable features, etc.
         String[] devs = Globals.core().getLoadedDevices().toArray();
@@ -221,9 +211,6 @@ public class PWSFrame extends MMFrame {
         stepLabel1 = new javax.swing.JLabel();
         directoryText = new javax.swing.JTextField();
         directoryButton = new javax.swing.JButton();
-        acqPWSButton = new javax.swing.JButton();
-        acqDynButton = new javax.swing.JButton();
-        acqFlButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -278,39 +265,10 @@ public class PWSFrame extends MMFrame {
 
         jTabbedPane1.addTab("Save Path", jPanel9);
 
-        acqPWSButton.setText("Acquire PWS");
-        acqPWSButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                acqPWSButtonActionPerformed(evt);
-            }
-        });
-
-        acqDynButton.setText("Acquire Dynamics");
-        acqDynButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                acqDynButtonActionPerformed(evt);
-            }
-        });
-
-        acqFlButton.setText("Acquire Fluorescence");
-        acqFlButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                acqFlButtonActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(acqPWSButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(acqDynButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(acqFlButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -320,11 +278,7 @@ public class PWSFrame extends MMFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(acqPWSButton)
-                    .addComponent(acqDynButton)
-                    .addComponent(acqFlButton)))
+                .addGap(29, 29, 29))
         );
 
         jTabbedPane1.getAccessibleContext().setAccessibleName("General");
@@ -335,18 +289,6 @@ public class PWSFrame extends MMFrame {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
     }//GEN-LAST:event_formWindowClosing
 
-    private void acqPWSButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acqPWSButtonActionPerformed
-        acquirePWS();
-    }//GEN-LAST:event_acqPWSButtonActionPerformed
-
-    private void acqDynButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acqDynButtonActionPerformed
-        acquireDynamics();
-    }//GEN-LAST:event_acqDynButtonActionPerformed
-
-    private void acqFlButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acqFlButtonActionPerformed
-        acquireFluorescence();
-    }//GEN-LAST:event_acqFlButtonActionPerformed
-
     private void directoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_directoryButtonActionPerformed
         File f = FileDialogs.openDir(this, "Directory to save to",
             new FileDialogs.FileType("SaveDir", "Save Directory", "D:\\Data", true, ""));
@@ -354,9 +296,6 @@ public class PWSFrame extends MMFrame {
     }//GEN-LAST:event_directoryButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton acqDynButton;
-    private javax.swing.JButton acqFlButton;
-    private javax.swing.JButton acqPWSButton;
     private javax.swing.JTextField cellNumEdit;
     private javax.swing.JButton directoryButton;
     private javax.swing.JTextField directoryText;

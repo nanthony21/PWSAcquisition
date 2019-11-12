@@ -24,7 +24,7 @@ import edu.bpl.pwsplugin.UI.PWSFrame;
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.settings.Settings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
-import java.util.Vector;
+import java.util.List;
 import org.micromanager.Studio;
 import org.micromanager.MenuPlugin;
 import org.micromanager.events.ShutdownCommencingEvent;
@@ -166,7 +166,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
         frame_.setFluorescenceFilter(filterBlockName);
     }
     
-    public Vector<String> getFluorescenceFilterNames() {
+    public List<String> getFluorescenceFilterNames() {
         return frame_.getFluorescenceFilterNames();
     }
     
