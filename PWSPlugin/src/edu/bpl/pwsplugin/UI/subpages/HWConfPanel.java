@@ -3,16 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.UI;
+package edu.bpl.pwsplugin.UI.subpages;
 
-import clojure.lang.Settable;
 import edu.bpl.pwsplugin.UI.utils.ListCardUI;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.settings.Settings;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;

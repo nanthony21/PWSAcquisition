@@ -20,6 +20,7 @@ import javax.swing.event.DocumentListener;
  *
  * @author nick
  */
+//Deprecated. better to just compare the settings output by each UI component to look for changes.
 public abstract class ChangeListenJPanel extends JPanel{
     private boolean stale=false;
             

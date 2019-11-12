@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.UI;
+package edu.bpl.pwsplugin.UI.subpages;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
@@ -46,9 +46,7 @@ public class FluorPanel extends SingleBuilderJPanel<Settings.FluorSettings>{
             wvSpinner.setEnabled(!s);
             altCamNameCombo.setEnabled(s);
         });
-        
-        this.addDocumentChangeListeners(new JComponent[] {wvSpinner, exposureSpinner, filterCombo, altCamNameCombo, useAltCamCheckbox});
-        
+                
         super.add(new JLabel("Wavelength (nm)"));
         super.add(new JLabel("Exposure (ms)"));
         super.add(new JLabel("Filter Set"), "wrap");
@@ -62,7 +60,7 @@ public class FluorPanel extends SingleBuilderJPanel<Settings.FluorSettings>{
     
     
     private DefaultComboBoxModel<String> getFilterComboModel() {    
-        Iterator<String> filterSettings = Globals.core().getAvailableConfigs("Filter").iterator();
+        Iterator<String> filterSettings = Globals.core().getAvailableConfigs("Filter").iterator();//TODO Centralize all config scanning somewhere else and refer to that instead.
         StrVector settings = new StrVector();
         while (filterSettings.hasNext()) {
             settings.add(filterSettings.next());

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.UI;
+package edu.bpl.pwsplugin.UI.subpages;
 
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.settings.Settings;
@@ -54,9 +54,7 @@ public class PWSPanel extends SingleBuilderJPanel<Settings.PWSSettings>{
         
         externalTriggerCheckBox.setToolTipText("Whether the filter should trigger a new camera acquisition over TTL. This is not possible for LCTF but can be done with the VF-5 Filter.");
         externalTriggerCheckBox.setEnabled(false);
-        
-        this.addDocumentChangeListeners(new JComponent[] {exposureSpinner, wvStartSpinner, wvStepSpinner, wvStepSpinner, ttlTriggerCheckbox, externalTriggerCheckBox});
-        
+                
         super.add(new JLabel("Start (nm"));
         super.add(new JLabel("Stop (nm)"));
         super.add(new JLabel("Step (nm)"));

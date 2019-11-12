@@ -1,11 +1,11 @@
 
 package edu.bpl.pwsplugin.UI.utils;
 
-import edu.bpl.pwsplugin.UI.CamUI;
-import edu.bpl.pwsplugin.UI.DynPanel;
-import edu.bpl.pwsplugin.UI.FluorPanel;
-import edu.bpl.pwsplugin.UI.HWConfPanel;
-import edu.bpl.pwsplugin.UI.PWSPanel;
+import edu.bpl.pwsplugin.UI.subpages.CamUI;
+import edu.bpl.pwsplugin.UI.subpages.DynPanel;
+import edu.bpl.pwsplugin.UI.subpages.FluorPanel;
+import edu.bpl.pwsplugin.UI.subpages.HWConfPanel;
+import edu.bpl.pwsplugin.UI.subpages.PWSPanel;
 import edu.bpl.pwsplugin.settings.Settings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import edu.bpl.pwsplugin.utils.UIBuildable;

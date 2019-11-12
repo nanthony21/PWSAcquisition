@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.UI;
+package edu.bpl.pwsplugin.UI.subpages;
 
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.settings.Settings;
@@ -14,7 +14,6 @@ import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
-import org.micromanager.PropertyMap;
 
 /**
  *
@@ -31,7 +30,6 @@ public class DynPanel extends SingleBuilderJPanel<Settings.DynSettings>{
         framesSpinner.setModel(new SpinnerNumberModel(200, 1, 1000, 1));
         exposureSpinner.setModel(new SpinnerNumberModel(50, 1, 500, 5));
         
-        this.addDocumentChangeListeners(new JComponent[] {wvSpinner, framesSpinner, exposureSpinner});
         
         super.add(new JLabel("Wavelength (nm"));
         super.add(wvSpinner, "wrap");
