@@ -27,6 +27,8 @@ import edu.bpl.pwsplugin.UI.subpages.FluorPanel;
 import edu.bpl.pwsplugin.UI.subpages.HWConfPanel;
 import edu.bpl.pwsplugin.UI.subpages.PWSPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
@@ -54,6 +56,8 @@ public class PluginFrame extends MMFrame{
     public PluginFrame() {
         super();
         super.setTitle(String.format("%s %s", PWSPlugin.menuName, PWSPlugin.versionNumber));
+        super.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        super.setResizable(false);
         
         acqDynButton.addActionListener((e)->{ this.acquireDynamics(); });
         acqFlButton.addActionListener((e)->{ this.acquireFluorescence(); });
@@ -97,7 +101,7 @@ public class PluginFrame extends MMFrame{
         
     private void acquire(JButton button, Runnable f) {
         try {
-            configureManager();
+            this.configureManager();
         } catch (Exception e) {
             Globals.mm().logs().showError(e);
             return;
@@ -150,8 +154,8 @@ public class PluginFrame extends MMFrame{
        }
     }
     
-    public Vector<String> getFluorescenceFilterNames() {
-        Vector<String> names = new Vector<String>();
+    public List<String> getFluorescenceFilterNames() {
+        List<String> names = new ArrayList<String>();
         for (int i=0; i<flFilterBlockCombo.getItemCount(); i++) {
             names.add(flFilterBlockCombo.getItemAt(i));
         }

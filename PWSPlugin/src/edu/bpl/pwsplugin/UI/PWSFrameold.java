@@ -206,11 +206,6 @@ public class PWSFrame extends MMFrame {
     private void initComponents() {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel9 = new javax.swing.JPanel();
-        cellNumEdit = new javax.swing.JTextField();
-        stepLabel1 = new javax.swing.JLabel();
-        directoryText = new javax.swing.JTextField();
-        directoryButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -219,51 +214,6 @@ public class PWSFrame extends MMFrame {
                 formWindowClosing(evt);
             }
         });
-
-        cellNumEdit.setText("1");
-        cellNumEdit.setToolTipText("Cell Number");
-
-        stepLabel1.setText("Cell Number");
-
-        directoryButton.setText("...");
-        directoryButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                directoryButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addComponent(directoryText, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(directoryButton))
-                    .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addComponent(stepLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cellNumEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(directoryButton)
-                    .addComponent(directoryText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cellNumEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(stepLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(76, Short.MAX_VALUE))
-        );
-
-        jTabbedPane1.addTab("Save Path", jPanel9);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -289,55 +239,11 @@ public class PWSFrame extends MMFrame {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
     }//GEN-LAST:event_formWindowClosing
 
-    private void directoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_directoryButtonActionPerformed
-        File f = FileDialogs.openDir(this, "Directory to save to",
-            new FileDialogs.FileType("SaveDir", "Save Directory", "D:\\Data", true, ""));
-        directoryText.setText(f.getAbsolutePath());
-    }//GEN-LAST:event_directoryButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField cellNumEdit;
-    private javax.swing.JButton directoryButton;
-    private javax.swing.JTextField directoryText;
-    private javax.swing.JPanel jPanel9;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JLabel stepLabel1;
     // End of variables declaration//GEN-END:variables
 
-    private SwingWorker<Void, Void> runInBackground(JButton button, Runnable myFunc) {
-        //This funciton will run myFunc in a separate thread. `button` will be disabled while the function is running.
-        return new SwingWorker<Void, Void>() {
-            Object o = new Object() {{button.setEnabled(false); execute();}}; //Fake constructor.
-            
-            @Override
-            public Void doInBackground() {myFunc.run(); return null;}
 
-            @Override
-            public void done() {button.setEnabled(true);}
-        };
-    }
-        
-    private void acquire(JButton button, Runnable f) {
-        try {
-            configureManager();
-        } catch (Exception e) {
-            log_.showError(e);
-            return;
-        }
-        SwingWorker worker = runInBackground(button, f);
-    }
-    
-    public void acquirePWS() {
-        acquire(acqPWSButton, acqManager_::acquirePWS);
-    }
-    
-    public void acquireDynamics() {
-        acquire(acqDynButton, acqManager_::acquireDynamics);
-    }
-    
-    public void acquireFluorescence() {
-        acquire(acqFlButton, acqManager_::acquireFluorescence);
-    }
     
     private void configureManager() throws Exception {
         if (otherSettingsStale_ || PWSSettingsStale_ || saveSettingsStale_ || DYNSettingsStale_ || FLSettingsStale_){
@@ -395,48 +301,5 @@ public class PWSFrame extends MMFrame {
     }
     
     
-    //API
-    public void setSavePath(String savepath) {
-        directoryText.setText(savepath);
-    }
-    
-    public void setCellNumber(int cellNum) {
-        cellNumEdit.setText(String.valueOf(cellNum));
-    }
-    
-    public String getFilterName() {
-        return filterComboBox.getSelectedItem().toString();
-    }
-    
-    public void setPWSExposure(double exposureMs) {
-        exposureEdit.setText(String.valueOf(exposureMs));
-    }
-    
-    public void setDynamicsExposure(double exposureMs) {
-        dynExposureEdit.setText(String.valueOf(exposureMs));
-    }
-    
-    public void setFluorescenceExposure(double exposureMs) {
-        flExposureEdit.setText(String.valueOf(exposureMs));
-    }
-    
-    public void setFluorescenceFilter(String filterBlockName) {
-       if (!this.getFluorescenceFilterNames().contains(filterBlockName)) {
-           ReportingUtils.showMessage(filterBlockName + " is not a valid filter block name.");
-       } else {
-        flFilterBlockCombo.setSelectedItem(filterBlockName);
-       }
-    }
-    
-    public Vector<String> getFluorescenceFilterNames() {
-        Vector<String> names = new Vector<String>();
-        for (int i=0; i<flFilterBlockCombo.getItemCount(); i++) {
-            names.add(flFilterBlockCombo.getItemAt(i));
-        }
-        return names;
-    }
-    
-    public void setFluorescenceEmissionWavelength(int wv) {
-        flWvEdit.setText(String.valueOf(wv));
-    }
+
 }
