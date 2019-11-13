@@ -26,7 +26,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class ListCardUI<T extends List<S>, S extends JsonableParam & UIBuildable> extends BuilderJPanel<T> implements ItemListener {
+public class ListCardUI<S extends JsonableParam & UIBuildable> extends BuilderJPanel<List<S>> implements ItemListener {
     private JComboBox<String> combo = new JComboBox<String>();
     private JPanel cardPanel = new JPanel(new CardLayout());
     JButton addButton = new JButton("Add");
@@ -34,7 +34,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam & UIBuildable
     private List<BuilderJPanel<S>> components = new ArrayList<BuilderJPanel<S>>();
      
     
-    public ListCardUI(Class<T> clazz,  String msg) {
+    public ListCardUI(Class<List<S>> clazz,  String msg) {
         super(new MigLayout(), clazz);
   
         this.cardPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
@@ -61,7 +61,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam & UIBuildable
     
     
     @Override
-    public void populateFields(T t) {
+    public void populateFields(List<S> t) {
         cardPanel.removeAll(); //Make sure to remove the old stuff if this is a refresh.
         combo.removeAllItems();
         components = new ArrayList<BuilderJPanel<S>>();
@@ -77,8 +77,8 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam & UIBuildable
     }
     
     @Override
-    public T build() {
-        T t;
+    public List<S> build() {
+        List<S> t;
         try {
             t = this.typeParamClass.newInstance();
         } catch (Exception e) {
@@ -94,7 +94,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam & UIBuildable
     } 
     
     private void addStepAction() {
-        T t = this.build();
+        List<S> t = this.build();
         S s = t.get(t.size()-1);
         S newS = (S) S.fromJsonString(s.toJsonString(), s.getClass());
         t.add(newS);
@@ -102,7 +102,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam & UIBuildable
     }
             
     private void removeStepAction() {
-        T t = this.build();
+        List<S> t = this.build();
         t.remove(this.combo.getSelectedIndex());
         this.populateFields(t);
     }

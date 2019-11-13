@@ -8,6 +8,7 @@ package edu.bpl.pwsplugin.UI.subpages;
 import edu.bpl.pwsplugin.UI.utils.ListCardUI;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.settings.Settings;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ import net.miginfocom.swing.MigLayout;
  */
 public class HWConfPanel extends SingleBuilderJPanel<Settings.HWConfiguration>{
     private JTextField sysNameEdit = new JTextField();
-    private ListCardUI<List<Settings.CamSettings>, Settings.CamSettings> cameras = new ListCardUI<List<Settings.CamSettings>, Settings.CamSettings>(Settings.CamSettings.class, "Camera:");
+    private ListCardUI<Settings.CamSettings> cameras = new ListCardUI<Settings.CamSettings>((Class<List<Settings.CamSettings>>)(Object) ArrayList.class, "Camera:");
     
     public HWConfPanel() {
         super(new MigLayout(), Settings.HWConfiguration.class);
