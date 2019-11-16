@@ -19,7 +19,7 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 package edu.bpl.pwsplugin.UI;
-F
+
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.PWSPlugin;
 import edu.bpl.pwsplugin.UI.subpages.DynPanel;
