@@ -101,7 +101,7 @@ public class FluorPanel extends SingleBuilderJPanel<Settings.FluorSettings>{
         map.put("exposure", exposureSpinner);
         map.put("filterConfigName", filterCombo);
         map.put("useAltCamera", useAltCamCheckbox);
-        map.put("altCamName", exposureSpinner);
+        map.put("altCamName", altCamNameCombo);
         map.put("tfWavelength", wvSpinner);
         return map;
     }  
