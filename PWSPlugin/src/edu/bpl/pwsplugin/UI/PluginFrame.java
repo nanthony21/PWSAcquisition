@@ -75,9 +75,7 @@ public class PluginFrame extends MMFrame{
         acqDynButton.addActionListener((e)->{ this.acquireDynamics(); });
         acqFlButton.addActionListener((e)->{ this.acquireFluorescence(); });
         acqPwsButton.addActionListener((e)->{ this.acquirePws(); });
-        
 
-        
         super.add(tabs, "wrap, span");
         tabs.addTab("PWS", this.pwsPanel);
         tabs.addTab("Fluorescence", this.flPanel);
@@ -85,7 +83,7 @@ public class PluginFrame extends MMFrame{
         
         super.add(dirSelect);
         super.add(new JLabel("Cell#:"));
-        super.add(cellNumSpinner);
+        super.add(cellNumSpinner, "wrap");
         super.add(acqPwsButton);
         super.add(acqFlButton);
         super.add(acqDynButton);

@@ -6,6 +6,7 @@ import java.awt.LayoutManager;
 import java.lang.reflect.Field;
 import java.util.Map;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -44,6 +45,8 @@ public abstract class SingleBuilderJPanel<T> extends BuilderJPanel<T>{
                     prop.set(t, ((BuilderJPanel) field).build());
                 } else if (field instanceof DirectorySelector) {
                     prop.set(t, ((DirectorySelector) field).getText());
+                } else if (field instanceof JComboBox) {
+                    prop.set(t, ((JComboBox) field).getSelectedItem());
                 }else {
                     throw new UnsupportedOperationException("Build() does not support type: " + field.getClass().getName());
                 }
@@ -69,11 +72,13 @@ public abstract class SingleBuilderJPanel<T> extends BuilderJPanel<T>{
                 } else if (field instanceof JCheckBox) {
                     ((JCheckBox) field).setSelected((boolean) prop.get(t));
                 } else if (field instanceof BuilderJPanel) {
-                    ((BuilderJPanel) field).populateFields((UIBuildable) prop.get(t));
+                    ((BuilderJPanel) field).populateFields(prop.get(t));
                 } else if (field instanceof DirectorySelector) {
                     ((DirectorySelector) field).setText((String) prop.get(t));
+                } else if (field instanceof JComboBox) {
+                    ((JComboBox) field).setSelectedItem(prop.get(t));
                 }else {
-                    throw new UnsupportedOperationException("Build() does not support type: " + field.getName());
+                    throw new UnsupportedOperationException("populateFields() does not support type: " + field.getClass().getName());
                 }
             }
         } catch (Exception e) {

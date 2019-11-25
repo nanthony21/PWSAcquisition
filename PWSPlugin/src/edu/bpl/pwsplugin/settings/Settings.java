@@ -10,6 +10,7 @@ import java.util.List;
  * @author nick
  */
 public class Settings {
+    //Make sure that everything here that extends jsonableparam gets registered on startup in the plugin class.
     public static class PWSSettings extends JsonableParam implements UIBuildable{
         public int wvStart;
         public int wvStop;

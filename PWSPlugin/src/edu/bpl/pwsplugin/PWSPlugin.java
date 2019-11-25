@@ -50,9 +50,6 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     @Override
     public void onPluginSelected() {
         if (!initialized_) {
-            Globals.init(studio_);
-            frame_ = new PluginFrame();
-            
             //In order for json serial/deserialization to work, each class must be 
             //registered with Gson. Let's do that now to make sure.
             //They also register themselves when they are instantiated but that may not happen in time.
@@ -61,6 +58,10 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
             JsonableParam.registerClass(Settings.DynSettings.class);
             JsonableParam.registerClass(Settings.HWConfiguration.class);
             JsonableParam.registerClass(Settings.CamSettings.class);
+            JsonableParam.registerClass(Settings.PWSPluginSettings.class);
+            
+            Globals.init(studio_);
+            frame_ = new PluginFrame();
             
             initialized_ = true;
         }
