@@ -20,7 +20,6 @@ package edu.bpl.pwsplugin;
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-import edu.bpl.pwsplugin.UI.PWSFrame;
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.UI.PluginFrame;
 import edu.bpl.pwsplugin.settings.Settings;

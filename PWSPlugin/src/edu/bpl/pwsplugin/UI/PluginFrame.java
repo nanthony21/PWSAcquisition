@@ -28,7 +28,7 @@ import edu.bpl.pwsplugin.UI.subpages.HWConfPanel;
 import edu.bpl.pwsplugin.UI.subpages.PWSPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
 import edu.bpl.pwsplugin.settings.Settings;
-import java.util.ArrayList;
+import java.awt.Color;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -36,7 +36,9 @@ import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingWorker;
+import net.miginfocom.swing.MigLayout;
 import org.micromanager.internal.utils.MMFrame;
+import org.micromanager.internal.utils.ReportingUtils;
 import org.micromanager.propertymap.MutablePropertyMapView;
 
 /**
@@ -57,7 +59,9 @@ public class PluginFrame extends MMFrame{
     private final MutablePropertyMapView settings_;
 
     public PluginFrame() {
-        super();
+        super("PWS Plugin");
+        super.loadAndRestorePosition(100, 100);
+        super.setLayout(new MigLayout());
         super.setTitle(String.format("%s %s", PWSPlugin.menuName, PWSPlugin.versionNumber));
         super.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         super.setResizable(false);
@@ -106,12 +110,16 @@ public class PluginFrame extends MMFrame{
     
     public final void loadSettings() {
         Settings.PWSPluginSettings set = Settings.PWSPluginSettings.fromJsonString(this.settings_.getString("settings", ""));
-        this.pwsPanel.populateFields(set.pwsSettings);
-        this.dynPanel.populateFields(set.dynSettings);
-        this.flPanel.populateFields(set.flSettings);
-        this.hwPanel.populateFields(set.hwConfiguration);
-        this.dirSelect.setText(set.saveDir);
-        this.cellNumSpinner.setValue(set.cellNum);
+        if (set==null) {
+            Globals.mm().logs().logMessage("PWS Plugin: no settings found in user profile.");
+        } else {
+            this.pwsPanel.populateFields(set.pwsSettings);
+            this.dynPanel.populateFields(set.dynSettings);
+            this.flPanel.populateFields(set.flSettings);
+            this.hwPanel.populateFields(set.hwConfiguration);
+            this.dirSelect.setText(set.saveDir);
+            this.cellNumSpinner.setValue(set.cellNum);
+        }
     }
     
     @Override
@@ -135,13 +143,69 @@ public class PluginFrame extends MMFrame{
         
     private void acquire(JButton button, Runnable f) {
         try {
-            this.configureManager();
+            //this.configureManager();
         } catch (Exception e) {
             Globals.mm().logs().showError(e);
             return;
         }
         SwingWorker worker = runInBackground(button, f);
     }
+    
+   /* private void configureManager() throws Exception {
+        
+        if (otherSettingsStale_ || PWSSettingsStale_ || saveSettingsStale_ || DYNSettingsStale_ || FLSettingsStale_){
+            saveSettings(); 
+            if (saveSettingsStale_) {
+                int cellNum = settings_.getInteger(PWSPlugin.Settings.cellNum,1);
+                String savePath = settings_.getString(PWSPlugin.Settings.savePath, "");
+                Globals.acqManager().setCellNum(cellNum);
+                Globals.acqManager().setSavePath(savePath);
+                saveSettingsStale_ = false;
+            }
+            if (otherSettingsStale_) {      
+                int darkCounts = settings_.getInteger(PWSPlugin.Settings.darkCounts,0);
+                double[] linearityPolynomial = settings_.getDoubleList(PWSPlugin.Settings.linearityPoly);
+                String systemName = settings_.getString(PWSPlugin.Settings.systemName, "");
+                Globals.acqManager().setSystemSettings(darkCounts, linearityPolynomial, systemName);
+                otherSettingsStale_ = false;
+            }
+            if (PWSSettingsStale_) {
+                int[] wv = settings_.getIntegerList(PWSPlugin.Settings.wv);
+                String filtLabel = settings_.getString(PWSPlugin.Settings.filterLabel, "");
+                boolean hardwareSequence = settings_.getBoolean(PWSPlugin.Settings.sequence, false);
+                boolean useExternalTrigger = settings_.getBoolean(PWSPlugin.Settings.externalTrigger, false);
+                double exposure = settings_.getDouble(PWSPlugin.Settings.exposure, 100);
+                Globals.acqManager().setPWSSettings(exposure, useExternalTrigger, hardwareSequence, wv, filtLabel);
+                PWSSettingsStale_ = false;
+            }        
+            if (DYNSettingsStale_) {
+                double exposure = settings_.getDouble(PWSPlugin.Settings.dynExposure, 100);
+                String filterLabel = settings_.getString(PWSPlugin.Settings.filterLabel, "");
+                int wavelength = settings_.getInteger(PWSPlugin.Settings.dynWavelength, 550);
+                int numFrames = settings_.getInteger(PWSPlugin.Settings.dynNumFrames, 200);
+                Globals.acqManager().setDynamicsSettings(exposure, filterLabel, wavelength, numFrames);
+                DYNSettingsStale_ = false;
+            }
+            if (FLSettingsStale_) {
+                double exposure = settings_.getDouble(PWSPlugin.Settings.flExposure, 1000);
+                String flFilterBlock = settings_.getString(PWSPlugin.Settings.flFilterBlock, "");
+                if (settings_.getBoolean(PWSPlugin.Settings.altCamFl, false)) {
+                    String flCamera = settings_.getString(PWSPlugin.Settings.flAltCamName, "");
+                    double[] camTransformPlaceholder = {1.0, 2.0 , 3.0, 4.0, 5.0, 6.0};
+                    double[] camTransform = settings_.getDoubleList(PWSPlugin.Settings.camTransform, camTransformPlaceholder);
+                    if (camTransform.length != 6){
+                        ReportingUtils.showError("The affine transformation for the alternate fluorescence camera is not of length 6!");
+                    }
+                    Globals.acqManager().setFluorescenceSettings(exposure, flFilterBlock, flCamera, camTransform);
+                } else {
+                    int wavelength = settings_.getInteger(PWSPlugin.Settings.flWavelength, 550);
+                    String filterLabel = settings_.getString(PWSPlugin.Settings.filterLabel, "");
+                    Globals.acqManager().setFluoresecenceSettings(exposure, flFilterBlock, wavelength, filterLabel);
+                }
+            }
+            acqPWSButton.setBackground(Color.green);
+        }
+    }*/
     
     //Public API
     public void acquirePws() {

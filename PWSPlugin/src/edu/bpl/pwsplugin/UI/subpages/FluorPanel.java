@@ -31,8 +31,8 @@ import org.micromanager.internal.utils.ReportingUtils;
 public class FluorPanel extends SingleBuilderJPanel<Settings.FluorSettings>{
     private JSpinner wvSpinner;
     private JSpinner exposureSpinner;
-    private JComboBox<String> filterCombo;
-    private JComboBox<String> altCamNameCombo;
+    private JComboBox<String> filterCombo = new JComboBox<>();
+    private JComboBox<String> altCamNameCombo = new JComboBox<>();
     private JCheckBox useAltCamCheckbox = new JCheckBox("Use Alternate Camera");
     
     public FluorPanel() {
