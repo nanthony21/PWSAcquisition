@@ -47,4 +47,9 @@ public class DynPanel extends SingleBuilderJPanel<Settings.DynSettings>{
         map.put("numFrames", framesSpinner);
         return map;
     }
+    
+    //API
+    public void setExposure(double exposureMs) {
+        this.exposureSpinner.setValue(exposureMs);
+    }
 }

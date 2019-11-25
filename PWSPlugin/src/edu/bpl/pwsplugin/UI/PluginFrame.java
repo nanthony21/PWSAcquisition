@@ -44,17 +44,17 @@ import org.micromanager.propertymap.MutablePropertyMapView;
  * @author Nick Anthony
  */
 public class PluginFrame extends MMFrame{
-    private JTabbedPane tabs = new JTabbedPane();
-    private JButton acqDynButton = new JButton("Acquire Dynamics");
-    private JButton acqFlButton = new JButton("Acquire Fluorescence");
-    private JButton acqPwsButton = new JButton("Acquire PWS");
-    private DirectorySelector dirSelect;
-    private JSpinner cellNumSpinner;
-    private PWSPanel pwsPanel = new PWSPanel();
-    private FluorPanel flPanel = new FluorPanel();
-    private DynPanel dynPanel = new DynPanel();
-    private HWConfPanel hwPanel = new HWConfPanel();
-    private MutablePropertyMapView settings_;
+    private final JTabbedPane tabs = new JTabbedPane();
+    private final JButton acqDynButton = new JButton("Acquire Dynamics");
+    private final JButton acqFlButton = new JButton("Acquire Fluorescence");
+    private final JButton acqPwsButton = new JButton("Acquire PWS");
+    private final DirectorySelector dirSelect;
+    private final JSpinner cellNumSpinner;
+    private final PWSPanel pwsPanel = new PWSPanel();
+    private final FluorPanel flPanel = new FluorPanel();
+    private final DynPanel dynPanel = new DynPanel();
+    private final HWConfPanel hwPanel = new HWConfPanel();
+    private final MutablePropertyMapView settings_;
 
     public PluginFrame() {
         super();
@@ -165,38 +165,37 @@ public class PluginFrame extends MMFrame{
     }
     
     public String getFilterName() {
-        return filterComboBox.getSelectedItem().toString();
+        return this.flPanel.getSelectedFilterName();
     }
     
     public void setPWSExposure(double exposureMs) {
-        exposureEdit.setText(String.valueOf(exposureMs));
+        this.pwsPanel.setExposure(exposureMs);
     }
     
     public void setDynamicsExposure(double exposureMs) {
-        dynExposureEdit.setText(String.valueOf(exposureMs));
+        this.dynPanel.setExposure(exposureMs);
     }
     
     public void setFluorescenceExposure(double exposureMs) {
-        flExposureEdit.setText(String.valueOf(exposureMs));
+        this.flPanel.setExposure(exposureMs);
     }
     
     public void setFluorescenceFilter(String filterBlockName) {
        if (!this.getFluorescenceFilterNames().contains(filterBlockName)) {
-           ReportingUtils.showMessage(filterBlockName + " is not a valid filter block name.");
+           Globals.mm().logs().showMessage(filterBlockName + " is not a valid filter block name.");
        } else {
-        flFilterBlockCombo.setSelectedItem(filterBlockName);
+           boolean success = this.flPanel.setFluorescenceFilter(filterBlockName);
+           if (!success) {
+               Globals.mm().logs().showMessage("Error settings fluoresence filter via API.");
+           }
        }
     }
     
     public List<String> getFluorescenceFilterNames() {
-        List<String> names = new ArrayList<String>();
-        for (int i=0; i<flFilterBlockCombo.getItemCount(); i++) {
-            names.add(flFilterBlockCombo.getItemAt(i));
-        }
-        return names;
+        return this.flPanel.getFluorescenceFilterNames();
     }
     
     public void setFluorescenceEmissionWavelength(int wv) {
-        flWvEdit.setText(String.valueOf(wv));
+        this.flPanel.setEmissionWavelength(wv);
     }
 }

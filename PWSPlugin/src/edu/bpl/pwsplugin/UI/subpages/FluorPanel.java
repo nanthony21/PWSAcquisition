@@ -8,8 +8,10 @@ package edu.bpl.pwsplugin.UI.subpages;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.settings.Settings;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
@@ -29,8 +31,8 @@ import org.micromanager.internal.utils.ReportingUtils;
 public class FluorPanel extends SingleBuilderJPanel<Settings.FluorSettings>{
     private JSpinner wvSpinner;
     private JSpinner exposureSpinner;
-    private JComboBox filterCombo;
-    private JComboBox altCamNameCombo;
+    private JComboBox<String> filterCombo;
+    private JComboBox<String> altCamNameCombo;
     private JCheckBox useAltCamCheckbox = new JCheckBox("Use Alternate Camera");
     
     public FluorPanel() {
@@ -103,4 +105,34 @@ public class FluorPanel extends SingleBuilderJPanel<Settings.FluorSettings>{
         map.put("tfWavelength", wvSpinner);
         return map;
     }  
+    
+    //API
+    public boolean setFluorescenceFilter(String filter) { //Returns true if success
+        this.filterCombo.setSelectedItem(filter);
+        if (this.filterCombo.getSelectedItem() != filter) {//Selection won't change if the above command didn't work
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    public String getSelectedFilterName() {
+        return this.filterCombo.getSelectedItem().toString();
+    }
+    
+    public List<String> getFluorescenceFilterNames() {
+        List<String> names = new ArrayList<String>();
+        for (int i=0; i<this.filterCombo.getItemCount(); i++) {
+            names.add(this.filterCombo.getItemAt(i));
+        }
+        return names;
+    }
+    
+    public void setExposure(double exposureMs) {
+        this.exposureSpinner.setValue(exposureMs);
+    }
+    
+    public void setEmissionWavelength(int wavelength) {
+        this.wvSpinner.setValue(wavelength);
+    }
 }

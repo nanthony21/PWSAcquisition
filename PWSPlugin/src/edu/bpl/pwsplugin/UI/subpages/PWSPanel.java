@@ -78,4 +78,9 @@ public class PWSPanel extends SingleBuilderJPanel<Settings.PWSSettings>{
         map.put("externalCamTriggering", externalTriggerCheckBox);
         return map;
     }
+    
+    //API
+    public void setExposure(double exposureMs) {
+        this.exposureSpinner.setValue(exposureMs);
+    }
 }
