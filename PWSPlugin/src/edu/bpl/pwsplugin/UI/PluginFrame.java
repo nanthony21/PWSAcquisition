@@ -141,7 +141,7 @@ public class PluginFrame extends MMFrame{
         
     private void acquire(JButton button, Runnable f) {
         try {
-            //this.configureManager();
+            this.configureManager();
         } catch (Exception e) {
             Globals.mm().logs().showError(e);
             return;
@@ -150,7 +150,7 @@ public class PluginFrame extends MMFrame{
     }
     
    /* private void configureManager() throws Exception {
-        
+        todo implement a way of checking for stale settings.
         if (otherSettingsStale_ || PWSSettingsStale_ || saveSettingsStale_ || DYNSettingsStale_ || FLSettingsStale_){
             saveSettings(); 
             if (saveSettingsStale_) {
