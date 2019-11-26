@@ -57,6 +57,10 @@ public class PluginFrame extends MMFrame{
     private final DynPanel dynPanel = new DynPanel();
     private final HWConfPanel hwPanel = new HWConfPanel();
     private final MutablePropertyMapView settings_;
+    
+    private Settings.PWSSettings lastPWSSettings;
+    private Settings.DynSettings lastDynSettings;
+    private Settings.FluorSettings lastFluorSettings;
 
     public PluginFrame() {
         super("PWS Plugin");
@@ -149,9 +153,25 @@ public class PluginFrame extends MMFrame{
         SwingWorker worker = runInBackground(button, f);
     }
     
-   /* private void configureManager() throws Exception {
-        todo implement a way of checking for stale settings.
-        if (otherSettingsStale_ || PWSSettingsStale_ || saveSettingsStale_ || DYNSettingsStale_ || FLSettingsStale_){
+    private void configureManager() throws Exception {        
+        //TODO implement `equals` for all the settings.
+        Settings.PWSSettings pwsSettings = this.pwsPanel.build();
+        if (!pwsSettings.equals(this.lastPWSSettings)) {
+            this.lastPWSSettings = pwsSettings;
+            Globals.acqManager().setPWSSettings(pwsSettings);
+        }
+        Settings.DynSettings dynSettings = this.dynPanel.build();
+        if (!dynSettings.equals(this.lastDynSettings)) {
+            this.lastDynSettings = dynSettings;
+            Globals.acqManager().setDynamicsSettings(dynSettings);
+        }
+        Settings.FluorSettings fluorSettings = flPanel.build();
+        if (!fluorSettings.equals(this.lastFluorSettings)) {
+            this.lastFluorSettings = fluorSettings;
+            Globals.acqManager().setFluorescenceSettings(fluorSettings);
+        }
+        
+        if (otherSettingsStale_ || || saveSettingsStale_ || ){
             saveSettings(); 
             if (saveSettingsStale_) {
                 int cellNum = settings_.getInteger(PWSPlugin.Settings.cellNum,1);
@@ -166,44 +186,10 @@ public class PluginFrame extends MMFrame{
                 String systemName = settings_.getString(PWSPlugin.Settings.systemName, "");
                 Globals.acqManager().setSystemSettings(darkCounts, linearityPolynomial, systemName);
                 otherSettingsStale_ = false;
-            }
-            if (PWSSettingsStale_) {
-                int[] wv = settings_.getIntegerList(PWSPlugin.Settings.wv);
-                String filtLabel = settings_.getString(PWSPlugin.Settings.filterLabel, "");
-                boolean hardwareSequence = settings_.getBoolean(PWSPlugin.Settings.sequence, false);
-                boolean useExternalTrigger = settings_.getBoolean(PWSPlugin.Settings.externalTrigger, false);
-                double exposure = settings_.getDouble(PWSPlugin.Settings.exposure, 100);
-                Globals.acqManager().setPWSSettings(exposure, useExternalTrigger, hardwareSequence, wv, filtLabel);
-                PWSSettingsStale_ = false;
-            }        
-            if (DYNSettingsStale_) {
-                double exposure = settings_.getDouble(PWSPlugin.Settings.dynExposure, 100);
-                String filterLabel = settings_.getString(PWSPlugin.Settings.filterLabel, "");
-                int wavelength = settings_.getInteger(PWSPlugin.Settings.dynWavelength, 550);
-                int numFrames = settings_.getInteger(PWSPlugin.Settings.dynNumFrames, 200);
-                Globals.acqManager().setDynamicsSettings(exposure, filterLabel, wavelength, numFrames);
-                DYNSettingsStale_ = false;
-            }
-            if (FLSettingsStale_) {
-                double exposure = settings_.getDouble(PWSPlugin.Settings.flExposure, 1000);
-                String flFilterBlock = settings_.getString(PWSPlugin.Settings.flFilterBlock, "");
-                if (settings_.getBoolean(PWSPlugin.Settings.altCamFl, false)) {
-                    String flCamera = settings_.getString(PWSPlugin.Settings.flAltCamName, "");
-                    double[] camTransformPlaceholder = {1.0, 2.0 , 3.0, 4.0, 5.0, 6.0};
-                    double[] camTransform = settings_.getDoubleList(PWSPlugin.Settings.camTransform, camTransformPlaceholder);
-                    if (camTransform.length != 6){
-                        ReportingUtils.showError("The affine transformation for the alternate fluorescence camera is not of length 6!");
-                    }
-                    Globals.acqManager().setFluorescenceSettings(exposure, flFilterBlock, flCamera, camTransform);
-                } else {
-                    int wavelength = settings_.getInteger(PWSPlugin.Settings.flWavelength, 550);
-                    String filterLabel = settings_.getString(PWSPlugin.Settings.filterLabel, "");
-                    Globals.acqManager().setFluoresecenceSettings(exposure, flFilterBlock, wavelength, filterLabel);
-                }
-            }
-            acqPWSButton.setBackground(Color.green);
+            }      
+    
         }
-    }*/
+    }
     
     //Public API
     public void acquirePws() {
