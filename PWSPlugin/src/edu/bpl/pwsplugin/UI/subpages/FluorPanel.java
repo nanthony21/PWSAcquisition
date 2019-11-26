@@ -7,7 +7,7 @@ package edu.bpl.pwsplugin.UI.subpages;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
-import edu.bpl.pwsplugin.settings.Settings;
+import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,7 +28,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author nick
  */
-public class FluorPanel extends SingleBuilderJPanel<Settings.FluorSettings>{
+public class FluorPanel extends SingleBuilderJPanel<PWSPluginSettings.FluorSettings>{
     private JSpinner wvSpinner;
     private JSpinner exposureSpinner;
     private JComboBox<String> filterCombo = new JComboBox<>();
@@ -36,7 +36,7 @@ public class FluorPanel extends SingleBuilderJPanel<Settings.FluorSettings>{
     private JCheckBox useAltCamCheckbox = new JCheckBox("Use Alternate Camera");
     
     public FluorPanel() {
-        super(new MigLayout(), Settings.FluorSettings.class);
+        super(new MigLayout(), PWSPluginSettings.FluorSettings.class);
         
         wvSpinner = new JSpinner(new SpinnerNumberModel(550, 400, 1000, 5));
         exposureSpinner = new JSpinner(new SpinnerNumberModel(1000, 1, 5000, 100));

@@ -22,7 +22,7 @@ package edu.bpl.pwsplugin;
 
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.UI.PluginFrame;
-import edu.bpl.pwsplugin.settings.Settings;
+import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.List;
 import org.micromanager.Studio;
@@ -53,12 +53,12 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
             //In order for json serial/deserialization to work, each class must be 
             //registered with Gson. Let's do that now to make sure.
             //They also register themselves when they are instantiated but that may not happen in time.
-            JsonableParam.registerClass(Settings.FluorSettings.class);
-            JsonableParam.registerClass(Settings.PWSSettings.class);
-            JsonableParam.registerClass(Settings.DynSettings.class);
-            JsonableParam.registerClass(Settings.HWConfiguration.class);
-            JsonableParam.registerClass(Settings.CamSettings.class);
-            JsonableParam.registerClass(Settings.PWSPluginSettings.class);
+            JsonableParam.registerClass(PWSPluginSettings.FluorSettings.class);
+            JsonableParam.registerClass(PWSPluginSettings.PWSSettings.class);
+            JsonableParam.registerClass(PWSPluginSettings.DynSettings.class);
+            JsonableParam.registerClass(PWSPluginSettings.HWConfiguration.class);
+            JsonableParam.registerClass(PWSPluginSettings.HWConfiguration.CamSettings.class);
+            JsonableParam.registerClass(PWSPluginSettings.class);
             
             Globals.init(studio_);
             frame_ = new PluginFrame();

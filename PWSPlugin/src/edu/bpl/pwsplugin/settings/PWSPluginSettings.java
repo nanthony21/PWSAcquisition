@@ -9,7 +9,20 @@ import java.util.List;
  *
  * @author nick
  */
-public class Settings {
+public class PWSPluginSettings extends JsonableParam {
+    //This is just a container for all the other settings. this is the main object that gets
+    //passed around, saved, loaded, etc.
+    public HWConfiguration hwConfiguration;
+    public FluorSettings flSettings;
+    public DynSettings dynSettings;
+    public PWSSettings pwsSettings;
+    public String saveDir;
+    public int cellNum;
+
+    public static PWSPluginSettings fromJsonString(String str) {
+        return (PWSPluginSettings) JsonableParam.fromJsonString(str, PWSPluginSettings.class);
+    }
+    
     //Make sure that everything here that extends jsonableparam gets registered on startup in the plugin class.
     public static class PWSSettings extends JsonableParam implements UIBuildable{
         public int wvStart;
@@ -38,28 +51,13 @@ public class Settings {
      //TODO
         public String systemName;
         public List<CamSettings> cameras;
-    }
-    
-    public static class CamSettings extends JsonableParam implements UIBuildable {
-        public String name;
-        public String linearityPolynomial; //DO we want to use a string for this?
-        public int darkCounts;
-        public boolean hasTunableFilter;
-        public String tunableFilterName;
-    }
-    
-    public static class PWSPluginSettings extends JsonableParam {
-        //This is just a container for all the other settings. this is the main object that gets
-        //passed around, saved, loaded, etc.
-        public HWConfiguration hwConfiguration;
-        public FluorSettings flSettings;
-        public DynSettings dynSettings;
-        public PWSSettings pwsSettings;
-        public String saveDir;
-        public int cellNum;
         
-        public static PWSPluginSettings fromJsonString(String str) {
-            return (PWSPluginSettings) JsonableParam.fromJsonString(str, PWSPluginSettings.class);
+        public static class CamSettings extends JsonableParam implements UIBuildable {
+            public String name;
+            public String linearityPolynomial; //DO we want to use a string for this?
+            public int darkCounts;
+            public boolean hasTunableFilter;
+            public String tunableFilterName;
         }
     }
 }

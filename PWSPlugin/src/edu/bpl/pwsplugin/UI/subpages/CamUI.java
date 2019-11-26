@@ -6,7 +6,7 @@
 package edu.bpl.pwsplugin.UI.subpages;
 
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
-import edu.bpl.pwsplugin.settings.Settings;
+import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JCheckBox;
@@ -21,7 +21,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author nick
  */
-public class CamUI extends SingleBuilderJPanel<Settings.CamSettings>{
+public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration.CamSettings>{
     private JComboBox camCombo = new JComboBox();
     private JSpinner darkCountsSpinner = new JSpinner();
     private JTextField linEdit = new JTextField();
@@ -29,7 +29,7 @@ public class CamUI extends SingleBuilderJPanel<Settings.CamSettings>{
     private JComboBox tunableFilterCombo = new JComboBox();
     
     public CamUI() {
-        super(new MigLayout(), Settings.CamSettings.class);
+        super(new MigLayout(), PWSPluginSettings.HWConfiguration.CamSettings.class);
         
         darkCountsSpinner.setToolTipText("# of counts per pixel when the camera is not exposed to any light. E.g if measuring dark counts with 2x2 binning the number here should be 1/4 of your measurement 2x2 binning pools 4 pixels.");
         linEdit.setToolTipText("Comma separated values representing the polynomial to linearize the counts from the camera. In the form \"A,B,C\" = Ax + Bx^2 + Cx^3. Type \"None\" or \"null\" if correction is not needed.");
