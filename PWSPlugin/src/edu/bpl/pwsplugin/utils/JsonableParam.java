@@ -58,4 +58,13 @@ public class JsonableParam {
         Gson gson = GsonUtils.getGson();
         return (JsonableParam) gson.fromJson(jsonStr, clazz);
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this.getClass()!=o.getClass()) {
+            return false;
+        } else {
+            return this.toJsonString().equals(((JsonableParam) o).toJsonString());
+        }
+    }
 }
