@@ -27,7 +27,7 @@ import edu.bpl.pwsplugin.UI.subpages.FluorPanel;
 import edu.bpl.pwsplugin.UI.subpages.HWConfPanel;
 import edu.bpl.pwsplugin.UI.subpages.PWSPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
-import edu.bpl.pwsplugin.settings.Settings;
+import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.awt.Color;
 import java.util.List;
 import javax.swing.JButton;
@@ -155,17 +155,17 @@ public class PluginFrame extends MMFrame{
     
     private void configureManager() throws Exception {        
         //TODO implement `equals` for all the settings.
-        Settings.PWSSettings pwsSettings = this.pwsPanel.build();
+        PWSPluginSettings.PWSSettings pwsSettings = this.pwsPanel.build();
         if (!pwsSettings.equals(this.lastPWSSettings)) {
             this.lastPWSSettings = pwsSettings;
             Globals.acqManager().setPWSSettings(pwsSettings);
         }
-        Settings.DynSettings dynSettings = this.dynPanel.build();
+        PWSPluginSettings.DynSettings dynSettings = this.dynPanel.build();
         if (!dynSettings.equals(this.lastDynSettings)) {
             this.lastDynSettings = dynSettings;
             Globals.acqManager().setDynamicsSettings(dynSettings);
         }
-        Settings.FluorSettings fluorSettings = flPanel.build();
+        PWSPluginSettings.FluorSettings fluorSettings = flPanel.build();
         if (!fluorSettings.equals(this.lastFluorSettings)) {
             this.lastFluorSettings = fluorSettings;
             Globals.acqManager().setFluorescenceSettings(fluorSettings);
