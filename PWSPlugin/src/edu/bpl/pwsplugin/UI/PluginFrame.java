@@ -58,9 +58,9 @@ public class PluginFrame extends MMFrame{
     private final HWConfPanel hwPanel = new HWConfPanel();
     private final MutablePropertyMapView settings_;
     
-    private Settings.PWSSettings lastPWSSettings;
-    private Settings.DynSettings lastDynSettings;
-    private Settings.FluorSettings lastFluorSettings;
+    private PWSPluginSettings.PWSSettings lastPWSSettings;
+    private PWSPluginSettings.DynSettings lastDynSettings;
+    private PWSPluginSettings.FluorSettings lastFluorSettings;
 
     public PluginFrame() {
         super("PWS Plugin");
@@ -95,8 +95,8 @@ public class PluginFrame extends MMFrame{
         super.pack();
     }
     
-    public Settings.PWSPluginSettings getSettings() {
-        Settings.PWSPluginSettings set = new Settings.PWSPluginSettings();
+    public PWSPluginSettings getSettings() {
+        PWSPluginSettings set = new PWSPluginSettings();
         set.pwsSettings = this.pwsPanel.build();
         set.dynSettings = this.dynPanel.build();
         set.flSettings = this.flPanel.build();
@@ -111,7 +111,7 @@ public class PluginFrame extends MMFrame{
     }
     
     public final void loadSettings() {
-        Settings.PWSPluginSettings set = Settings.PWSPluginSettings.fromJsonString(this.settings_.getString("settings", ""));
+        PWSPluginSettings set = PWSPluginSettings.fromJsonString(this.settings_.getString("settings", ""));
         if (set==null) {
             Globals.mm().logs().logMessage("PWS Plugin: no settings found in user profile.");
         } else {
