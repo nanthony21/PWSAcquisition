@@ -26,6 +26,7 @@ import edu.bpl.pwsplugin.acquisitionManagers.DynAcqManager;
 import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.AltCamFluorAcqManager;
 import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.FluorAcqManager;
 import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.LCTFFluorAcqManager;
+import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -103,6 +104,26 @@ public class AcqManager { // A parent acquisition manager that can direct comman
         sysName_ = sysName;
     }
     
+    public void setPWSSettings(PWSPluginSettings.PWSSettings settings) throws Exception {
+        pwsManager_.setSequenceSettings(settings);
+    }
+    
+    public void setDynamicsSettings(PWSPluginSettings.DynSettings settings) {
+        dynManager_.setSequenceSettings(settings);
+    }
+    
+    public void setFluoresecenceSettings(PWSPluginSettings.FluorSettings settings) {
+        if (settings.useAltCamera) {
+            //Acquire fluorescence with another camera so you don't have to go through the LCTF.
+            flManager_ = new AltCamFluorAcqManager();
+            ((AltCamFluorAcqManager) flManager_).setFluorescenceSettings(this.automaticFlFilterEnabled, settings);
+        } else {
+            //Acquire fluorescence through the LCTF filter using the same camera.
+            flManager_ = new LCTFFluorAcqManager();
+            ((LCTFFluorAcqManager) flManager_).setFluorescenceSettings(this.automaticFlFilterEnabled, settings);
+        }
+    }
+    
     private JSONObject generateMetadata() throws JSONException {
         JSONObject metadata = new JSONObject();
         JSONArray linPoly;
@@ -119,28 +140,6 @@ public class AcqManager { // A parent acquisition manager that can direct comman
         metadata.put("darkCounts", darkCounts_);
         metadata.put("time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
         return metadata;
-    }
-    
-    public void setPWSSettings(double exposure, boolean externalTrigger, 
-            boolean hardwareTrigger, int[] Wv, String filterLabel) throws Exception {
-        pwsManager_.setSequenceSettings(exposure, externalTrigger, hardwareTrigger, Wv, filterLabel);
-    }
-    
-    public void setDynamicsSettings(double exposure, String filterLabel, int wavelength, int numFrames) {
-        dynManager_.setSequenceSettings(exposure, filterLabel, wavelength, numFrames);
-    }
-    
-    public void setFluoresecenceSettings(double exposure, String flFilterBlock, int emissionWavelength, String filterLabel) {
-        //Acquire fluorescence through the LCTF filter using the same camera.
-        flManager_ = new LCTFFluorAcqManager();
-        ((LCTFFluorAcqManager) flManager_).setFluorescenceSettings(this.automaticFlFilterEnabled, flFilterBlock, exposure, emissionWavelength, filterLabel);
-    }
-    
-    public void setFluorescenceSettings(double exposure, String flFilterBlock, String flCamera, double[] camTransform) {
-        //Acquire fluorescence with another camera so you don't have to go through the LCTF.
-        flManager_ = new AltCamFluorAcqManager();
-        ((AltCamFluorAcqManager) flManager_).setFluorescenceSettings(this.automaticFlFilterEnabled, flFilterBlock, flCamera, exposure, camTransform);
-        
     }
     
     private void run(AcquisitionManager manager) {

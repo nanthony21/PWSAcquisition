@@ -25,6 +25,7 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.fileSavers.ImSaverRaw;
 import edu.bpl.pwsplugin.PWSAlbum;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
+import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import org.micromanager.internal.utils.ReportingUtils;
@@ -55,13 +56,15 @@ public class PWSAcqManager implements AcquisitionManager{
         album_ = album;
     }
     
-    public void setSequenceSettings(double exposure, boolean externalTrigger, 
-            boolean hardwareTrigger, int[] Wv, String filterLabel) throws Exception {
-        exposure_ = exposure;
-        useExternalTrigger = externalTrigger;
+    public void setSequenceSettings(PWSPluginSettings.PWSSettings settings) {
+            
+            //double exposure, boolean externalTrigger, 
+            //boolean hardwareTrigger, int[] Wv, String filterLabel) throws Exception {
+        exposure_ = settings.exposure;
+        useExternalTrigger = settings.externalCamTriggering;
         wv = Wv;
         filtLabel = filterLabel;
-        hardwareSequence =  hardwareTrigger;           
+        hardwareSequence =  settings.ttlTriggering;           
         
         if (hardwareSequence) {
             if (!Globals.mm().core().isPropertySequenceable(filtLabel, filtProp)){

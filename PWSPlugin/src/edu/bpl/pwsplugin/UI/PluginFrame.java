@@ -154,7 +154,6 @@ public class PluginFrame extends MMFrame{
     }
     
     private void configureManager() throws Exception {        
-        //TODO implement `equals` for all the settings.
         PWSPluginSettings.PWSSettings pwsSettings = this.pwsPanel.build();
         if (!pwsSettings.equals(this.lastPWSSettings)) {
             this.lastPWSSettings = pwsSettings;
