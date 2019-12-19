@@ -100,6 +100,7 @@ public class PWSAcqManager implements AcquisitionManager{
       
     @Override
     public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata) {
+        long configStartTime = System.currentTimeMillis();
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         double initialWv = 550;
         try {    
@@ -121,8 +122,9 @@ public class PWSAcqManager implements AcquisitionManager{
             imSaver_.setMetadata(metadata);
             imSaver_.start();
             
-            long now = System.currentTimeMillis();
-            
+            long seqEndTime=0;
+            long collectionEndTime=0;
+            long seqStartTime=0;
             if (hardwareSequence) {
                 String origCameraTrigger="";  
                 if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")){
@@ -130,6 +132,7 @@ public class PWSAcqManager implements AcquisitionManager{
                 }
                 try {
                     studio_.core().startPropertySequence(filtLabel, filtProp);
+                   
                     double delayMs = studio_.core().getDeviceDelayMs(filtLabel); //Use the delay defined by the tunable filter's device adapter.
                     if (useExternalTrigger) {
                         if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { 
@@ -137,18 +140,21 @@ public class PWSAcqManager implements AcquisitionManager{
                             studio_.core().setProperty(cam, "TRIGGER DELAY", delayMs/1000); //This is in units of seconds.
                             studio_.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an eror if the interval is not 0.
                             int currWv = Integer.parseInt(studio_.core().getProperty(filtLabel, filtProp));
+                            seqStartTime = System.currentTimeMillis();
                             studio_.core().setProperty(filtLabel, filtProp, currWv+1); //Trigger a pulse which sets the whole thing off.
                         }   
                     }
                     else { //Since we're not using an external trigger we need to have the camera control the timing.
                         double exposurems = studio_.core().getExposure();
-                        double readoutms = 10; //This is based on the frame rate calculation portion of the 13440-20CU camera. 9.7 us per line, reading two lines at once, 2048 lines -> 0.097*2048/2 ~= 10 ms
+                        double readoutms = 12; //This is based on the frame rate calculation portion of the 13440-20CU camera. 9.7 us per line, reading two lines at once, 2048 lines -> 0.097*2048/2 ~= 10 ms. However testing has shown if we set this exactly then we end up missing every other frame and getting half our frame rate add a buffer of 2ms to be safe.
                         double intervalMs = (exposurems+readoutms+delayMs);
                         if (studio_.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { //This device adapter doesn't seem to support delays in the sequence acquisition. We instead set the master pulse interval.
                             studio_.core().setProperty(cam, "TRIGGER SOURCE", "MASTER PULSE"); //Make sure that Master Pulse is triggering the camera.
                             studio_.core().setProperty(cam, "MASTER PULSE INTERVAL", intervalMs/1000.0); //In units of seconds
+                            seqStartTime = System.currentTimeMillis();
                             studio_.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an error if the interval is not 0.
                         } else{
+                            seqStartTime = System.currentTimeMillis();
                             studio_.core().startSequenceAcquisition(wv.length, intervalMs, false); //Supposedly having a non-zero interval acqually only works for Andor cameras.
                         }
                     }
@@ -167,15 +173,18 @@ public class PWSAcqManager implements AcquisitionManager{
                             addImage(im, i, album_, pipeline, imSaver_.queue);
                             i++;
                             lastImTime = System.currentTimeMillis();
+                            collectionEndTime = System.currentTimeMillis();
                         }
                         if ((System.currentTimeMillis() - lastImTime) > 10000) { //Check for timeout if for some reason the acquisition is stalled.
+                            seqEndTime = System.currentTimeMillis();
                             ReportingUtils.showError("PWSAcquisition timed out while waiting for images from camera.");
                             canExit = true;
                         }
                         if (!running) {
+                            seqEndTime = System.currentTimeMillis();
                             canExit = true;
                         }
-                     }
+                    }
                 }
                 finally {
                     studio_.core().stopSequenceAcquisition();
@@ -188,6 +197,8 @@ public class PWSAcqManager implements AcquisitionManager{
                         ex.printStackTrace();
                         ReportingUtils.logMessage("ERROR: PWSPlugin: Stopping property sequence: " + ex.getMessage());
                     }
+                    String timeMsg = "PWSPlugin: Hardware Sequenced Acq: ConfigurationTime:" + (seqStartTime-configStartTime)/1000.0 + "HWAcqTime:"+(seqEndTime-seqStartTime)/1000.0+"ImgCollectionTime:"+(collectionEndTime-seqEndTime)/1000.0;
+                    ReportingUtils.logMessage(timeMsg);
                 }
             }
             else {  //Software sequenced acquisition
@@ -199,7 +210,6 @@ public class PWSAcqManager implements AcquisitionManager{
                     addImage(im, i, album_, pipeline, imSaver_.queue);
                 }
             }
-            long itTook = System.currentTimeMillis() - now;  
             imSaver_.join();
         } catch (Exception ex) {
             ex.printStackTrace();
