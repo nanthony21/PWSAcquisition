@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionManagers.fluorescence;
 
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
+import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +19,8 @@ import org.json.JSONObject;
  * @author LCPWS3
  */
 public abstract class FluorAcqManager implements AcquisitionManager{
+    PWSPluginSettings.FluorSettings settings;
+    
     @Override
     public String getFilePrefix() {
         return "fluor";
@@ -39,4 +42,8 @@ public abstract class FluorAcqManager implements AcquisitionManager{
     
     @Override
     public abstract void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata);
+    
+    public void setFluorescenceSettings(PWSPluginSettings.FluorSettings settings) {
+        this.settings = settings;
+    }
 }

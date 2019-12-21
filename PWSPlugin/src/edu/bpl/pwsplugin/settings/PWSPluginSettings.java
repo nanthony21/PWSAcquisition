@@ -55,6 +55,7 @@ public class PWSPluginSettings extends JsonableParam {
      //TODO
         public String systemName;
         public List<CamSettings> cameras;
+        public boolean autoFilterSwitching;
         
         public static class CamSettings extends JsonableParam implements UIBuildable {
             public String name;
@@ -62,6 +63,7 @@ public class PWSPluginSettings extends JsonableParam {
             public int darkCounts;
             public boolean hasTunableFilter;
             public String tunableFilterName;
+            public double[] affineTransform; //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera. For simplicity we store this array as a 1d array of length 6
         }
     }
 }

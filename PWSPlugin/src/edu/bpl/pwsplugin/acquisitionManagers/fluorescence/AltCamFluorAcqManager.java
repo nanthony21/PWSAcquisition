@@ -8,6 +8,7 @@ package edu.bpl.pwsplugin.acquisitionManagers.fluorescence;
 import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.FluorAcqManager;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
+import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.json.JSONObject;
 import org.micromanager.data.Coords;
@@ -23,15 +24,17 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
     double exposure_; //The camera exposure in milliseconds.
     String flFilterBlock_; // The name of the fluorescence filter block config setting.
     boolean autoFilter_; //Whether or not the device can automatically switch filter blocks or needs user input.
-    String flCam_; //The name of the config in the "Camera" config group that switches to fluoresence mode.
-    double[] camTransform_; //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera. For simplicity we store this array as a 1d array of length 6
+    PWSPluginSettings.HWConfiguration.CamSettings camera;
     
-    public void setFluorescenceSettings(boolean autoFilter, String flFilter, String flCamera, double exposure, double[] camTransform) {
-        autoFilter_ = autoFilter;
-        flFilterBlock_ = flFilter;
-        flCam_ = flCamera;
-        exposure_ = exposure;
-        camTransform_ = camTransform;
+    public AltCamFluorAcqManager(PWSPluginSettings.HWConfiguration config) {
+        this.camera = config.cameras.get(0);//TODO add a way to choose whic caamera to use.
+        this.autoFilter_ = config.autoFilterSwitching;
+    }
+    
+    public void setFluorescenceSettings(PWSPluginSettings.FluorSettings settings) {
+        super.setFluorescenceSettings(settings);
+        flFilterBlock_ = settings.filterConfigName;
+        exposure_ = settings.exposure;
     }
     
     @Override
@@ -58,14 +61,14 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
         }
         try {
             String origCam = Globals.core().getCurrentConfig("Camera");
-            Globals.core().setConfig("Camera", flCam_);
-            Globals.core().waitForConfig("Camera", flCam_);
+            Globals.core().setConfig("Camera", camera.name);
+            Globals.core().waitForConfig("Camera", camera.name);
             Globals.core().setExposure(exposure_);
             Globals.core().clearCircularBuffer();
             Globals.core().snapImage();
             metadata.put("exposure", Globals.core().getExposure()); //This must happen after we have set our exposure.
             metadata.put("filterBlock", flFilterBlock_);
-            metadata.put("altCameraTransform", camTransform_); //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera.
+            metadata.put("altCameraTransform", camera.affineTransform); //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera.
             Globals.core().setConfig("Camera", origCam);
             Image img = Globals.mm().data().convertTaggedImage(Globals.core().getTaggedImage());
             Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)

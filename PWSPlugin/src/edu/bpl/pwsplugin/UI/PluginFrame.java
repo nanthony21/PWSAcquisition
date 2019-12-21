@@ -28,7 +28,6 @@ import edu.bpl.pwsplugin.UI.subpages.HWConfPanel;
 import edu.bpl.pwsplugin.UI.subpages.PWSPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
-import java.awt.Color;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;

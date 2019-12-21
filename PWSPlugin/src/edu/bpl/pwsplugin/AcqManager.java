@@ -46,6 +46,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     private String savePath_;
     PWSAlbum album;
     PWSAlbum dynAlbum;
+    PWSPluginSettings.HWConfiguration config;
     
     int darkCounts_;
     double[] linearityPolynomial_;
@@ -54,6 +55,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
 
     
     public AcqManager(PWSPluginSettings.HWConfiguration config) {
+        this.config = config;
         album = new PWSAlbum("PWS");
         dynAlbum = new PWSAlbum("Dynamics");
         pwsManager_ = new PWSAcqManager(album, config);
@@ -112,16 +114,15 @@ public class AcqManager { // A parent acquisition manager that can direct comman
         dynManager_.setSequenceSettings(settings);
     }
     
-    public void setFluoresecenceSettings(PWSPluginSettings.FluorSettings settings) {
+    public void setFluorescenceSettings(PWSPluginSettings.FluorSettings settings) {
         if (settings.useAltCamera) {
             //Acquire fluorescence with another camera so you don't have to go through the LCTF.
-            flManager_ = new AltCamFluorAcqManager();
-            ((AltCamFluorAcqManager) flManager_).setFluorescenceSettings(this.automaticFlFilterEnabled, settings);
+            flManager_ = new AltCamFluorAcqManager(this.config);
         } else {
             //Acquire fluorescence through the LCTF filter using the same camera.
-            flManager_ = new LCTFFluorAcqManager();
-            ((LCTFFluorAcqManager) flManager_).setFluorescenceSettings(this.automaticFlFilterEnabled, settings);
+            flManager_ = new LCTFFluorAcqManager(this.config);
         }
+        flManager_.setFluorescenceSettings(settings);
     }
     
     private JSONObject generateMetadata() throws JSONException {

@@ -7,10 +7,7 @@ package edu.bpl.pwsplugin.acquisitionManagers.fluorescence;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.json.JSONObject;
 import org.micromanager.data.Coords;
@@ -28,13 +25,21 @@ public class LCTFFluorAcqManager extends FluorAcqManager{
     int wavelength_; //The wavelength to acquire images at
     String flFilterBlock_; // The name of the fluorescence filter block config setting.
     boolean autoFilter_;
+    PWSPluginSettings.HWConfiguration.CamSettings camera;
     
-    public void setFluorescenceSettings(boolean autoFilter, String flFilter, double exposure, int emissionWV, String tunableFilterLabel) {
-        autoFilter_ = autoFilter;
-        filtLabel_ = tunableFilterLabel;
-        flFilterBlock_ = flFilter;
-        exposure_ = exposure;
-        wavelength_ = emissionWV;
+    public LCTFFluorAcqManager(PWSPluginSettings.HWConfiguration config) {
+        this.autoFilter_ = config.autoFilterSwitching;
+        this.camera = config.cameras.get(0); //TODO add a way to choose whic caamera to use.
+        filtLabel_ = camera.tunableFilterName;
+    }
+    
+    @Override
+    public void setFluorescenceSettings(PWSPluginSettings.FluorSettings settings) {
+        //TODO refactor out all these variables and just use the `settings`
+        super.setFluorescenceSettings(settings);
+        flFilterBlock_ = settings.filterConfigName;
+        exposure_ = settings.exposure;
+        wavelength_ = settings.tfWavelength;
     }
     
     @Override

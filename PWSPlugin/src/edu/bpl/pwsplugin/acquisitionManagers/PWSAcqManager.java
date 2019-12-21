@@ -58,7 +58,7 @@ public class PWSAcqManager implements AcquisitionManager{
         this.config = config;
     }
     
-    public void setSequenceSettings(PWSPluginSettings.PWSSettings settings) {
+    public void setSequenceSettings(PWSPluginSettings.PWSSettings settings) throws Exception {
             
             //double exposure, boolean externalTrigger, 
             //boolean hardwareTrigger, int[] Wv, String filterLabel) throws Exception {
