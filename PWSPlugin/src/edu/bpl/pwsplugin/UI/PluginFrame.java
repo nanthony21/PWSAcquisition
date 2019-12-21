@@ -37,7 +37,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingWorker;
 import net.miginfocom.swing.MigLayout;
 import org.micromanager.internal.utils.MMFrame;
-import org.micromanager.internal.utils.ReportingUtils;
 import org.micromanager.propertymap.MutablePropertyMapView;
 
 /**
@@ -174,19 +173,11 @@ public class PluginFrame extends MMFrame{
         if (!fluorSettings.equals(this.lastFluorSettings)) {
             this.lastFluorSettings = fluorSettings;
             Globals.acqManager().setFluorescenceSettings(fluorSettings);
-        }
-        
-        if (otherSettingsStale_ || || saveSettingsStale_ || ){
-            saveSettings(); 
-            if (saveSettingsStale_) {
-                int cellNum = settings_.getInteger(PWSPlugin.Settings.cellNum,1);
-                String savePath = settings_.getString(PWSPlugin.Settings.savePath, "");
-                Globals.acqManager().setCellNum(cellNum);
-                Globals.acqManager().setSavePath(savePath);
-                saveSettingsStale_ = false;
-            }   
-    
-        }
+        }        
+        String savePath = this.dirSelect.getText();
+        //TODO validate path
+        Globals.acqManager().setCellNum((int) this.cellNumSpinner.getValue());
+        Globals.acqManager().setSavePath(savePath);
     }
     
     //Public API
