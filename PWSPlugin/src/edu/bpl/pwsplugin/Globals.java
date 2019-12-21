@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin;
 
+import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import mmcorej.CMMCore;
 import org.micromanager.Studio;
 
@@ -18,7 +19,7 @@ public class Globals {
     
     public static void init(Studio studio) {
         studio_ = studio;
-        acqMan_ = new AcqManager(); //Very important that this is instantiated after studio. this is probably bade design actually.
+        acqMan_ = new AcqManager(new PWSPluginSettings.HWConfiguration()); //Very important that this is instantiated after studio. this is probably bad design actually.
     }
             
     public static Studio mm() {
@@ -31,6 +32,10 @@ public class Globals {
     
     public static AcqManager acqManager() {
         return acqMan_;
+    }
+    
+    public static void setHardwareConfiguration(PWSPluginSettings.HWConfiguration config) {
+        acqMan_ = new AcqManager(config);
     }
     
 }

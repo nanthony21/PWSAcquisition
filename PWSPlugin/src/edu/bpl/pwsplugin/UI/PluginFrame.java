@@ -118,6 +118,7 @@ public class PluginFrame extends MMFrame{
             this.dynPanel.populateFields(set.dynSettings);
             this.flPanel.populateFields(set.flSettings);
             this.hwPanel.populateFields(set.hwConfiguration);
+            Globals.setHardwareConfiguration(set.hwConfiguration);
             this.dirSelect.setText(set.saveDir);
             this.cellNumSpinner.setValue(set.cellNum);
         }

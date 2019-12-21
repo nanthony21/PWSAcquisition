@@ -3,6 +3,7 @@ package edu.bpl.pwsplugin.settings;
 
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import edu.bpl.pwsplugin.utils.UIBuildable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,7 +34,14 @@ public class PWSPluginSettings extends JsonableParam {
         public boolean externalCamTriggering;
         
         public int[] getWavelengthArray() {
-            
+            int numWvs = java.lang.Math.abs(wvStart - wvStop) / wvStep + 1;
+            int[] wvs = new int[numWvs];
+            int index = 0;
+            for (int i = wvStart; i <= wvStop; i += wvStep) {
+                wvs[index] = i;
+                index++;
+            }   
+            return wvs;
         }
     }
     
