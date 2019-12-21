@@ -28,9 +28,11 @@ import edu.bpl.pwsplugin.UI.subpages.HWConfPanel;
 import edu.bpl.pwsplugin.UI.subpages.PWSPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
+import java.awt.Dimension;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.SpinnerNumberModel;
@@ -79,17 +81,21 @@ public class PluginFrame extends MMFrame{
         acqFlButton.addActionListener((e)->{ this.acquireFluorescence(); });
         acqPwsButton.addActionListener((e)->{ this.acquirePws(); });
 
-        super.add(tabs, "wrap, span");
+        super.add(tabs, "wrap, span, grow");
         tabs.addTab("PWS", this.pwsPanel);
         tabs.addTab("Fluorescence", this.flPanel);
         tabs.addTab("Dynamics", this.dynPanel);
         
-        super.add(dirSelect);
-        super.add(new JLabel("Cell#:"));
-        super.add(cellNumSpinner, "wrap");
-        super.add(acqPwsButton);
-        super.add(acqFlButton);
-        super.add(acqDynButton);
+        JPanel bottomPanel = new JPanel(new MigLayout());
+        bottomPanel.add(dirSelect);
+        bottomPanel.add(new JLabel("Cell#:"), "shrink");
+        bottomPanel.add(cellNumSpinner, "wrap");
+        JPanel buttons = new JPanel(new MigLayout());
+        buttons.add(acqPwsButton);
+        buttons.add(acqFlButton);
+        buttons.add(acqDynButton);
+        bottomPanel.add(buttons, "span, align center");
+        super.add(bottomPanel, "dock south");
         
         super.pack();
     }

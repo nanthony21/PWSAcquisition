@@ -55,7 +55,7 @@ public class PWSPanel extends SingleBuilderJPanel<PWSPluginSettings.PWSSettings>
         externalTriggerCheckBox.setToolTipText("Whether the filter should trigger a new camera acquisition over TTL. This is not possible for LCTF but can be done with the VF-5 Filter.");
         externalTriggerCheckBox.setEnabled(false);
                 
-        super.add(new JLabel("Start (nm"));
+        super.add(new JLabel("Start (nm)"));
         super.add(new JLabel("Stop (nm)"));
         super.add(new JLabel("Step (nm)"));
         super.add(new JLabel("Exposure (ms)"), "wrap");
@@ -63,8 +63,8 @@ public class PWSPanel extends SingleBuilderJPanel<PWSPluginSettings.PWSSettings>
         super.add(wvStopSpinner);
         super.add(wvStepSpinner);
         super.add(exposureSpinner, "wrap");
-        super.add(ttlTriggerCheckbox, "wrap");
-        super.add(externalTriggerCheckBox, "wrap");
+        super.add(ttlTriggerCheckbox, "wrap, span");
+        super.add(externalTriggerCheckBox, "wrap, span");
     }
 
     @Override
