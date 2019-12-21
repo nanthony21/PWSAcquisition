@@ -57,6 +57,7 @@ public class PluginFrame extends MMFrame{
     private final HWConfPanel hwPanel = new HWConfPanel();
     private final MutablePropertyMapView settings_;
     
+    private PWSPluginSettings.HWConfiguration lastHWConfig;
     private PWSPluginSettings.PWSSettings lastPWSSettings;
     private PWSPluginSettings.DynSettings lastDynSettings;
     private PWSPluginSettings.FluorSettings lastFluorSettings;
@@ -153,7 +154,12 @@ public class PluginFrame extends MMFrame{
         SwingWorker worker = runInBackground(button, f);
     }
     
-    private void configureManager() throws Exception {        
+    private void configureManager() throws Exception {
+        PWSPluginSettings.HWConfiguration config = this.hwPanel.build();
+        if (!config.equals(this.lastHWConfig)) {
+            this.lastHWConfig = config;
+            Globals.setHardwareConfiguration(config); //TODO this will reconstruct all the acq managers meaning that the settings need to be re-set. bad design?
+        }
         PWSPluginSettings.PWSSettings pwsSettings = this.pwsPanel.build();
         if (!pwsSettings.equals(this.lastPWSSettings)) {
             this.lastPWSSettings = pwsSettings;
@@ -178,14 +184,7 @@ public class PluginFrame extends MMFrame{
                 Globals.acqManager().setCellNum(cellNum);
                 Globals.acqManager().setSavePath(savePath);
                 saveSettingsStale_ = false;
-            }
-            if (otherSettingsStale_) {      
-                int darkCounts = settings_.getInteger(PWSPlugin.Settings.darkCounts,0);
-                double[] linearityPolynomial = settings_.getDoubleList(PWSPlugin.Settings.linearityPoly);
-                String systemName = settings_.getString(PWSPlugin.Settings.systemName, "");
-                Globals.acqManager().setSystemSettings(darkCounts, linearityPolynomial, systemName);
-                otherSettingsStale_ = false;
-            }      
+            }   
     
         }
     }
