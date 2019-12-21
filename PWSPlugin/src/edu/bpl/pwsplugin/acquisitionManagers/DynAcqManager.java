@@ -24,6 +24,7 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.fileSavers.ImSaverRaw;
 import edu.bpl.pwsplugin.PWSAlbum;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
+import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -32,7 +33,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import mmcorej.TaggedImage;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.micromanager.Studio;
 import org.micromanager.data.Coords;
 import org.micromanager.data.Image;
 import org.micromanager.data.Pipeline;
@@ -42,27 +42,28 @@ import java.nio.file.Path;
 
 public class DynAcqManager implements AcquisitionManager{
     double exposure_; //The camera exposure in milliseconds.
-    String filtLabel_; 
     int wavelength_; //The wavelength to acquire images at
     int numFrames_; // The number of images to acquire.
     PWSAlbum album_;
+    PWSPluginSettings.HWConfiguration config;
     
-    public DynAcqManager(PWSAlbum album){
+    public DynAcqManager(PWSAlbum album, PWSPluginSettings.HWConfiguration config){
         album_ = album;
+        this.config = config;
     }
     
-    public void setSequenceSettings(double exposure, String filtLabel, int wavelength, int numFrames) {
-        exposure_ = exposure;
-        filtLabel_ = filtLabel;
-        wavelength_ = wavelength;
-        numFrames_ = numFrames;
+    public void setSequenceSettings(PWSPluginSettings.DynSettings settings) {
+            this.exposure_ = settings.exposure;
+            this.wavelength_ = settings.wavelength;
+            this.numFrames_ = settings.numFrames;
     }
     
     @Override
     public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata) {
+        PWSPluginSettings.HWConfiguration.CamSettings camera = this.config.cameras.get(0);
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         try {
-            Globals.core().setProperty(filtLabel_, "Wavelength", wavelength_);
+            Globals.core().setProperty(camera.tunableFilterName, "Wavelength", wavelength_);
             Globals.core().setExposure(exposure_);
             Globals.core().setCircularBufferMemoryFootprint(1000); //increase the circular buffer to 1Gb to avoid weird issues with lost images
             Globals.core().clearCircularBuffer();

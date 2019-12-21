@@ -53,11 +53,11 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     public boolean automaticFlFilterEnabled;
 
     
-    public AcqManager() {
+    public AcqManager(PWSPluginSettings.HWConfiguration config) {
         album = new PWSAlbum("PWS");
         dynAlbum = new PWSAlbum("Dynamics");
-        pwsManager_ = new PWSAcqManager(album);
-        dynManager_ = new DynAcqManager(dynAlbum);
+        pwsManager_ = new PWSAcqManager(album, config);
+        dynManager_ = new DynAcqManager(dynAlbum, config);
         flManager_ = null;
         imageQueue = new LinkedBlockingQueue();
     }

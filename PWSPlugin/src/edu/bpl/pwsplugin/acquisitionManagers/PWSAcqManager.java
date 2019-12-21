@@ -21,6 +21,7 @@
 
 package edu.bpl.pwsplugin.acquisitionManagers;
 
+import com.drew.metadata.exif.CanonMakernoteDirectory;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.fileSavers.ImSaverRaw;
 import edu.bpl.pwsplugin.PWSAlbum;
@@ -45,39 +46,40 @@ import org.micromanager.data.PipelineErrorException;
 
 public class PWSAcqManager implements AcquisitionManager{
     int[] wv; //The array of wavelengths to image at.
-    String filtLabel; // The string identifying the spectral filter device of the pws system in micromanager.
     final String filtProp  = "Wavelength"; //The property name of the filter that we want to tune.
     Boolean hardwareSequence; // Whether or not to attempt to use TTL triggering between the camera and spectral filter.
     Boolean useExternalTrigger; // Whether or not to let the spectral filter TTL trigger a new camera frame when it is done tuning.
     double exposure_; // The camera exposure.
     PWSAlbum album_;
+    PWSPluginSettings.HWConfiguration config;
     
-    public PWSAcqManager(PWSAlbum album) {
+    public PWSAcqManager(PWSAlbum album, PWSPluginSettings.HWConfiguration config) {
         album_ = album;
+        this.config = config;
     }
     
     public void setSequenceSettings(PWSPluginSettings.PWSSettings settings) {
             
             //double exposure, boolean externalTrigger, 
             //boolean hardwareTrigger, int[] Wv, String filterLabel) throws Exception {
+        PWSPluginSettings.HWConfiguration.CamSettings camera = this.config.cameras.get(0);
         exposure_ = settings.exposure;
         useExternalTrigger = settings.externalCamTriggering;
-        wv = Wv;
-        filtLabel = filterLabel;
+        wv = settings.getWavelengthArray();
         hardwareSequence =  settings.ttlTriggering;           
         
         if (hardwareSequence) {
-            if (!Globals.mm().core().isPropertySequenceable(filtLabel, filtProp)){
+            if (!Globals.mm().core().isPropertySequenceable(camera.tunableFilterName, filtProp)){
                 throw new Exception("The filter device does not have a sequenceable 'Wavelength' property.");
             }
-            if (Globals.mm().core().getPropertySequenceMaxLength(filtLabel, filtProp) < wv.length) {
-                throw new Exception("The filter device does not support sequencing as many wavelengths as have been specified. Max is " + Integer.toString(Globals.core().getPropertySequenceMaxLength(filtLabel, filtProp)));
+            if (Globals.mm().core().getPropertySequenceMaxLength(camera.tunableFilterName, filtProp) < wv.length) {
+                throw new Exception("The filter device does not support sequencing as many wavelengths as have been specified. Max is " + Integer.toString(Globals.core().getPropertySequenceMaxLength(camera.tunableFilterName, filtProp)));
             }
             StrVector strv = new StrVector();
             for (int i = 0; i < wv.length; i++) {   //Convert wv from int to string for sending to the device.
                 strv.add(String.valueOf(wv[i]));
             }
-            Globals.mm().core().loadPropertySequence(filtLabel, filtProp, strv);
+            Globals.mm().core().loadPropertySequence(camera.tunableFilterName, filtProp, strv);
         }  
     }
     
@@ -105,8 +107,9 @@ public class PWSAcqManager implements AcquisitionManager{
         long configStartTime = System.currentTimeMillis();
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         double initialWv = 550;
+        PWSPluginSettings.HWConfiguration.CamSettings camera = this.config.cameras.get(0);
         try {    
-            initialWv = Double.valueOf(Globals.core().getProperty(filtLabel, filtProp)); //Get initial wavelength
+            initialWv = Double.valueOf(Globals.core().getProperty(camera.tunableFilterName, filtProp)); //Get initial wavelength
             String cam = Globals.core().getCameraDevice();
             Globals.core().waitForDevice(cam);
             Globals.core().clearCircularBuffer();     
@@ -133,15 +136,15 @@ public class PWSAcqManager implements AcquisitionManager{
                     origCameraTrigger = Globals.core().getProperty(cam, "TRIGGER SOURCE");
                 }
                 try {
-                    Globals.core().startPropertySequence(filtLabel, filtProp);
-                    double delayMs = Globals.core().getDeviceDelayMs(filtLabel); //Use the delay defined by the tunable filter's device adapter.
+                    Globals.core().startPropertySequence(camera.tunableFilterName, filtProp);
+                    double delayMs = Globals.core().getDeviceDelayMs(camera.tunableFilterName); //Use the delay defined by the tunable filter's device adapter.
                     if (useExternalTrigger) {
                         if (Globals.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { 
                             Globals.core().setProperty(cam, "TRIGGER SOURCE", "EXTERNAL");
                             Globals.core().setProperty(cam, "TRIGGER DELAY", delayMs/1000); //This is in units of seconds.
                             Globals.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an eror if the interval is not 0.
-                            int currWv = Integer.parseInt(Globals.core().getProperty(filtLabel, filtProp));
-                            Globals.core().setProperty(filtLabel, filtProp, currWv+1); //Trigger a pulse which sets the whole thing off.
+                            int currWv = Integer.parseInt(Globals.core().getProperty(camera.tunableFilterName, filtProp));
+                            Globals.core().setProperty(camera.tunableFilterName, filtProp, currWv+1); //Trigger a pulse which sets the whole thing off.
                             seqStartTime = System.currentTimeMillis();
                         }   
                     }
@@ -193,7 +196,7 @@ public class PWSAcqManager implements AcquisitionManager{
                         Globals.core().setProperty(cam, "TRIGGER SOURCE", origCameraTrigger); //Set the trigger source back ot what it was originally
                     }
                     try {
-                        Globals.core().stopPropertySequence(filtLabel, filtProp);//Got to make sure to stop the sequencing behaviour.
+                        Globals.core().stopPropertySequence(camera.tunableFilterName, filtProp);//Got to make sure to stop the sequencing behaviour.
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         ReportingUtils.logMessage("ERROR: PWSPlugin: Stopping property sequence: " + ex.getMessage());
@@ -204,8 +207,8 @@ public class PWSAcqManager implements AcquisitionManager{
             }
             else {  //Software sequenced acquisition
                 for (int i=0; i<wv.length; i++) {
-                    Globals.core().setProperty(filtLabel, filtProp, wv[i]);
-                    while (Globals.core().deviceBusy(filtLabel)) {Thread.sleep(1);} //Wait until the device says it is tuned.
+                    Globals.core().setProperty(camera.tunableFilterName, filtProp, wv[i]);
+                    while (Globals.core().deviceBusy(camera.tunableFilterName)) {Thread.sleep(1);} //Wait until the device says it is tuned.
                     Globals.core().snapImage();
                     Image im = Globals.mm().data().convertTaggedImage(Globals.core().getTaggedImage());
                     addImage(im, i, album_, pipeline, imSaver_.queue);
@@ -217,7 +220,7 @@ public class PWSAcqManager implements AcquisitionManager{
             ReportingUtils.logMessage("ERROR: PWSPlugin: " + ex.getMessage());
         } finally {
             try{
-                Globals.core().setProperty(filtLabel, filtProp, initialWv); //Set back to initial wavelength
+                Globals.core().setProperty(camera.tunableFilterName, filtProp, initialWv); //Set back to initial wavelength
             } catch (Exception ex) {
                 ReportingUtils.showError(ex);
                 ex.printStackTrace();

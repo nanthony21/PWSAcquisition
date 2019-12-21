@@ -55,6 +55,7 @@ public class PWSAlbum {
    public void addImage(Image image){   
         if ((display==null) || (display.isClosed())) {
             display = Globals.mm().displays().createDisplay(store_);
+            display.setZoom(0.25);
             display.setCustomTitle(displayName_);
         }
         Coords newCoords = image.getCoords().copyBuilder().t(idx).build();

@@ -31,6 +31,10 @@ public class PWSPluginSettings extends JsonableParam {
         public double exposure;
         public boolean ttlTriggering;
         public boolean externalCamTriggering;
+        
+        public int[] getWavelengthArray() {
+            
+        }
     }
     
     public static class DynSettings extends JsonableParam implements UIBuildable {
@@ -54,7 +58,7 @@ public class PWSPluginSettings extends JsonableParam {
         
         public static class CamSettings extends JsonableParam implements UIBuildable {
             public String name;
-            public String linearityPolynomial; //DO we want to use a string for this?
+            public String linearityPolynomial; //TODO  do we want to use a string for this?
             public int darkCounts;
             public boolean hasTunableFilter;
             public String tunableFilterName;
