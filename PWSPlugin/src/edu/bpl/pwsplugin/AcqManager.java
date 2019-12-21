@@ -51,7 +51,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     int darkCounts_;
     double[] linearityPolynomial_;
     String sysName_;
-    public boolean automaticFlFilterEnabled;
+    boolean automaticFlFilterEnabled;
 
     
     public AcqManager(PWSPluginSettings.HWConfiguration config) {

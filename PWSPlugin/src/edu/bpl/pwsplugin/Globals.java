@@ -6,8 +6,12 @@
 package edu.bpl.pwsplugin;
 
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
+import java.util.Arrays;
+import java.util.List;
 import mmcorej.CMMCore;
+import mmcorej.DeviceType;
 import org.micromanager.Studio;
+import org.micromanager.internal.utils.ReportingUtils;
 
 /**
  *
@@ -16,10 +20,13 @@ import org.micromanager.Studio;
 public class Globals {
     private static Studio studio_ = null;
     private static AcqManager acqMan_ = null;
+    private static PWSPluginSettings.HWConfiguration config;
+    private static MMConfigAdapter mmAdapter;
     
     public static void init(Studio studio) {
         studio_ = studio;
-        acqMan_ = new AcqManager(new PWSPluginSettings.HWConfiguration()); //Very important that this is instantiated after studio. this is probably bad design actually.
+        mmAdapter = new MMConfigAdapter();
+        setHardwareConfiguration(new PWSPluginSettings.HWConfiguration()); //Very important that this is instantiated after studio. this is probably bad design actually.
     }
             
     public static Studio mm() {
@@ -34,8 +41,44 @@ public class Globals {
         return acqMan_;
     }
     
-    public static void setHardwareConfiguration(PWSPluginSettings.HWConfiguration config) {
-        acqMan_ = new AcqManager(config);
+    public static void setHardwareConfiguration(PWSPluginSettings.HWConfiguration configg) {
+        config = configg;
+        acqMan_ = new AcqManager(configg);
     }
     
+    public static PWSPluginSettings.HWConfiguration getHardwareConfiguration() {
+        return config;
+    }
+    
+    public static MMConfigAdapter getMMConfigAdapter() {
+        return mmAdapter;
+    }
+
+    public static class MMConfigAdapter {
+        List<String> filters;
+        List<String> connectedCameras;
+        public boolean autoFilterSwitching;
+
+        public MMConfigAdapter() {
+            //Scan the hardware configuration
+            //Fluorescence filters
+            this.filters = Arrays.asList(Globals.core().getAvailableConfigs("Filter").toArray());
+            if (this.filters.isEmpty()) {
+                this.autoFilterSwitching = false;
+                ReportingUtils.showMessage("Micromanager is missing a `Filter` config group which is needed for automated fluorescence. The first setting of the group should be the filter block used for PWS");
+            } else {
+                this.autoFilterSwitching = true;
+            }
+            //Cameras
+            this.connectedCameras = Arrays.asList(Globals.core().getLoadedDevicesOfType(DeviceType.CameraDevice).toArray());                      
+        }
+
+        public List<String> getFilters(){
+            return this.filters;
+        }
+
+        public List<String> getConnectedCameras() {
+            return this.connectedCameras;
+        }
+    }
 }

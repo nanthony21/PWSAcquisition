@@ -23,12 +23,10 @@ import org.micromanager.internal.utils.ReportingUtils;
 public class AltCamFluorAcqManager extends FluorAcqManager{
     double exposure_; //The camera exposure in milliseconds.
     String flFilterBlock_; // The name of the fluorescence filter block config setting.
-    boolean autoFilter_; //Whether or not the device can automatically switch filter blocks or needs user input.
     PWSPluginSettings.HWConfiguration.CamSettings camera;
     
     public AltCamFluorAcqManager(PWSPluginSettings.HWConfiguration config) {
         this.camera = config.cameras.get(0);//TODO add a way to choose whic caamera to use.
-        this.autoFilter_ = config.autoFilterSwitching;
     }
     
     public void setFluorescenceSettings(PWSPluginSettings.FluorSettings settings) {
@@ -48,7 +46,7 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
             return;
         }
         try{
-            if (autoFilter_) {
+            if (Globals.getMMConfigAdapter().autoFilterSwitching) {
                 initialFilter = Globals.core().getCurrentConfig("Filter");
                 Globals.core().setConfig("Filter", flFilterBlock_);
                 Globals.core().waitForConfig("Filter", flFilterBlock_); // Wait for the device to be ready.
@@ -85,7 +83,7 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
         } catch (Exception e) {
             ReportingUtils.showError(e);
         } finally {
-            if (autoFilter_) {
+            if (Globals.getMMConfigAdapter().autoFilterSwitching) {
                 try {
                     Globals.core().setConfig("Filter", initialFilter);
                     Globals.core().waitForConfig("Filter", initialFilter); // Wait for the device to be ready.

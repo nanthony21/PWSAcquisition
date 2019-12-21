@@ -1,10 +1,17 @@
 
 package edu.bpl.pwsplugin.settings;
 
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import edu.bpl.pwsplugin.utils.UIBuildable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+import mmcorej.DeviceType;
+import mmcorej.StrVector;
+import org.micromanager.internal.utils.ReportingUtils;
 
 /**
  *
@@ -60,14 +67,12 @@ public class PWSPluginSettings extends JsonableParam {
     }
     
     public static class HWConfiguration extends JsonableParam implements UIBuildable {
-     //TODO
         public String systemName;
         public List<CamSettings> cameras;
-        public boolean autoFilterSwitching;
         
         public static class CamSettings extends JsonableParam implements UIBuildable {
             public String name;
-            public String linearityPolynomial; //TODO  do we want to use a string for this?
+            public List<Double> linearityPolynomial;
             public int darkCounts;
             public boolean hasTunableFilter;
             public String tunableFilterName;

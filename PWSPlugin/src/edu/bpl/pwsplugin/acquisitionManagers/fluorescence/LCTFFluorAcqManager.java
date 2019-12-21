@@ -24,11 +24,9 @@ public class LCTFFluorAcqManager extends FluorAcqManager{
     String filtLabel_; //The name of the spectral filter device
     int wavelength_; //The wavelength to acquire images at
     String flFilterBlock_; // The name of the fluorescence filter block config setting.
-    boolean autoFilter_;
     PWSPluginSettings.HWConfiguration.CamSettings camera;
     
     public LCTFFluorAcqManager(PWSPluginSettings.HWConfiguration config) {
-        this.autoFilter_ = config.autoFilterSwitching;
         this.camera = config.cameras.get(0); //TODO add a way to choose whic caamera to use.
         filtLabel_ = camera.tunableFilterName;
     }
@@ -53,7 +51,7 @@ public class LCTFFluorAcqManager extends FluorAcqManager{
             return;
         }
         try{
-            if (autoFilter_) {
+            if (Globals.getMMConfigAdapter().autoFilterSwitching) {
                 initialFilter = Globals.core().getCurrentConfig("Filter");
                 Globals.core().setConfig("Filter", flFilterBlock_);
                 Globals.core().waitForConfig("Filter", flFilterBlock_); // Wait for the device to be ready.
@@ -85,7 +83,7 @@ public class LCTFFluorAcqManager extends FluorAcqManager{
         } catch (Exception e) {
             ReportingUtils.showError(e);
         } finally {
-            if (autoFilter_) {
+            if (Globals.getMMConfigAdapter().autoFilterSwitching) {
                 try {
                     Globals.core().setConfig("Filter", initialFilter);
                     Globals.core().waitForConfig("Filter", initialFilter); // Wait for the device to be ready.

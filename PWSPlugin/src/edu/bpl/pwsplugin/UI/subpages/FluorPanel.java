@@ -62,37 +62,11 @@ public class FluorPanel extends SingleBuilderJPanel<PWSPluginSettings.FluorSetti
     
     
     private DefaultComboBoxModel<String> getFilterComboModel() {    
-        Iterator<String> filterSettings = Globals.core().getAvailableConfigs("Filter").iterator();//TODO Centralize all config scanning somewhere else and refer to that instead.
-        StrVector settings = new StrVector();
-        while (filterSettings.hasNext()) {
-            settings.add(filterSettings.next());
-        }
-        if (settings.size() == 0) {
-            Globals.acqManager().automaticFlFilterEnabled = false;
-            ReportingUtils.showMessage("Micromanager is missing a `Filter` config group which is needed for automated fluorescence. The first setting of the group should be the filter block used for PWS");
-            return new DefaultComboBoxModel();
-        } else {
-            Globals.acqManager().automaticFlFilterEnabled = true;
-            DefaultComboBoxModel model = new DefaultComboBoxModel(settings.toArray());
-            return model;
-        }
+        return new DefaultComboBoxModel<>((String[]) Globals.getMMConfigAdapter().getFilters().toArray());
     }
     
     private DefaultComboBoxModel<String> getCameraComboModel() {
-        Iterator<String> cameras = Globals.core().getAvailableConfigs("Camera").iterator();
-        StrVector camSettings = new StrVector();
-        while (cameras.hasNext()) {
-            camSettings.add(cameras.next());
-        }
-        if (camSettings.size()==0) {
-            useAltCamCheckbox.setSelected(false);
-            useAltCamCheckbox.setEnabled(false);
-            ReportingUtils.showMessage("Could not find a `Camera` config group. This group should be set to allow switching between multiple cameras for different imaging modalities.");
-            return new DefaultComboBoxModel();
-        } else {
-            DefaultComboBoxModel model = new DefaultComboBoxModel(camSettings.toArray());
-            return model;
-        }
+        return new DefaultComboBoxModel<>((String[]) Globals.getMMConfigAdapter().getConnectedCameras().toArray());
     }
     
     @Override
