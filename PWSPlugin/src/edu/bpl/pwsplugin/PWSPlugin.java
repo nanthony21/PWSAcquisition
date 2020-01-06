@@ -76,7 +76,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
             Globals.init(studio_);
             manager_ = new AcqManager();
             frame_ = new PWSFrame(manager_);
-            initialized_ = false;
+            initialized_ = true;
         }
         frame_.setVisible(true);
     }

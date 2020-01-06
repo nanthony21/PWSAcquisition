@@ -16,7 +16,7 @@ public class Globals {
     private static Studio studio_ = null;
     
     public static void init(Studio studio) {
-        studio = studio;
+        studio_ = studio;
     }
             
     public static Studio mm() {
