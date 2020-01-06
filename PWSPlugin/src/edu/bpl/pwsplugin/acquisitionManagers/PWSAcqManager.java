@@ -128,7 +128,6 @@ public class PWSAcqManager implements AcquisitionManager{
                     origCameraTrigger = Globals.core().getProperty(cam, "TRIGGER SOURCE");
                 }
                 try {
-                    Globals.core().startPropertySequence(filtLabel, filtProp);
                     double delayMs = Globals.core().getDeviceDelayMs(filtLabel); //Use the delay defined by the tunable filter's device adapter.
                     if (useExternalTrigger) {
                         if (Globals.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { 
@@ -136,13 +135,15 @@ public class PWSAcqManager implements AcquisitionManager{
                             Globals.core().setProperty(cam, "TRIGGER DELAY", delayMs/1000); //This is in units of seconds.
                             Globals.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an eror if the interval is not 0.
                             int currWv = Integer.parseInt(Globals.core().getProperty(filtLabel, filtProp));
-                            Globals.core().setProperty(filtLabel, filtProp, currWv+1); //Trigger a pulse which sets the whole thing off.
+                            //Globals.core().setProperty(filtLabel, filtProp, currWv+1); //Trigger a pulse which sets the whole thing off.
+                            Globals.core().startPropertySequence(filtLabel, filtProp); //This should trigger a pulse which sets the whole thing off.
                         }   
                     }
                     else { //Since we're not using an external trigger we need to have the camera control the timing.
                         double exposurems = Globals.core().getExposure();
                         double readoutms = 10; //This is based on the frame rate calculation portion of the 13440-20CU camera. 9.7 us per line, reading two lines at once, 2048 lines -> 0.097*2048/2 ~= 10 ms
                         double intervalMs = (exposurems+readoutms+delayMs);
+                        Globals.core().startPropertySequence(filtLabel, filtProp);
                         if (Globals.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { //This device adapter doesn't seem to support delays in the sequence acquisition. We instead set the master pulse interval.
                             Globals.core().setProperty(cam, "TRIGGER SOURCE", "MASTER PULSE"); //Make sure that Master Pulse is triggering the camera.
                             Globals.core().setProperty(cam, "MASTER PULSE INTERVAL", intervalMs/1000.0); //In units of seconds
