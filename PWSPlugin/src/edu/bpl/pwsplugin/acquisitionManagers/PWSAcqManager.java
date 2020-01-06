@@ -136,7 +136,7 @@ public class PWSAcqManager implements AcquisitionManager{
                             Globals.core().setProperty(cam, "TRIGGER DELAY", delayMs/1000); //This is in units of seconds.
                             Globals.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an eror if the interval is not 0.
                             int currWv = Integer.parseInt(Globals.core().getProperty(filtLabel, filtProp));
-                            Globals.core().setProperty(filtLabel, filtProp, currWv+1); //Trigger a pulse which sets the whole thing off.
+                            Globals.core().setProperty(filtLabel, filtProp, this.wv[0]); //Trigger a pulse which sets the whole thing off.
                         }   
                     }
                     else { //Since we're not using an external trigger we need to have the camera control the timing.
