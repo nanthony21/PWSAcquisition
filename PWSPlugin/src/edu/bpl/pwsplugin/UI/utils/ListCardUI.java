@@ -17,7 +17,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
-import edu.bpl.pwsplugin.UI.utils.UIFactory;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import edu.bpl.pwsplugin.utils.UIBuildable;
 import org.micromanager.internal.utils.ReportingUtils;

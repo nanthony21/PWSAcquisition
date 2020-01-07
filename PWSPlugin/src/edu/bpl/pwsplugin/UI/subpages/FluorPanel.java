@@ -10,7 +10,6 @@ import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
@@ -20,9 +19,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import mmcorej.StrVector;
 import net.miginfocom.swing.MigLayout;
-import org.micromanager.internal.utils.ReportingUtils;
 
 /**
  *
@@ -56,7 +53,7 @@ public class FluorPanel extends SingleBuilderJPanel<PWSPluginSettings.FluorSetti
         super.add(exposureSpinner);
         super.add(filterCombo, "wrap");
         super.add(useAltCamCheckbox);
-        super.add(new JLabel("Camera Name"));
+        super.add(new JLabel("Camera Name:"));
         super.add(altCamNameCombo);
     }
     
