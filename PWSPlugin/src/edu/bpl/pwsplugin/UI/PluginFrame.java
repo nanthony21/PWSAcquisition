@@ -28,7 +28,6 @@ import edu.bpl.pwsplugin.UI.subpages.HWConfPanel;
 import edu.bpl.pwsplugin.UI.subpages.PWSPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
-import java.awt.Dimension;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -85,6 +84,7 @@ public class PluginFrame extends MMFrame{
         tabs.addTab("PWS", this.pwsPanel);
         tabs.addTab("Fluorescence", this.flPanel);
         tabs.addTab("Dynamics", this.dynPanel);
+        tabs.addTab("Config", this.hwPanel);
         
         JPanel bottomPanel = new JPanel(new MigLayout());
         bottomPanel.add(dirSelect);

@@ -61,10 +61,18 @@ public class JsonableParam {
     
     @Override
     public boolean equals(Object o) {
-        if (this.getClass()!=o.getClass()) {
+        if (o == null) {
+            return false;
+        } else if (this.getClass()!=o.getClass()) {
             return false;
         } else {
             return this.toJsonString().equals(((JsonableParam) o).toJsonString());
         }
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = this.toJsonString().hashCode();
+        return hash;
     }
 }
