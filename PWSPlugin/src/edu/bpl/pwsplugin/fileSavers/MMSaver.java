@@ -80,7 +80,7 @@ public class MMSaver extends SaverThread {
             ds.freeze(); //This must be called prior to closing or the file will be corrupted.
             ds.close();
 
-            File oldFile = new File(savePath_).listFiles((dir, name) -> name.endsWith(".ome.tif") && name.startsWith("MMStack"))[0];
+            File oldFile = new File(savePath_).listFiles((dir, name) -> name.endsWith(".ome.tif") && name.contains("MMStack"))[0];
             File newFile = new File(Paths.get(savePath_).resolve(filePrefix_ + ".tif").toString());
             oldFile.renameTo(newFile);
             
