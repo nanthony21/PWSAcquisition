@@ -31,7 +31,7 @@ public class DynPanel extends SingleBuilderJPanel<PWSPluginSettings.DynSettings>
         exposureSpinner.setModel(new SpinnerNumberModel(50, 1, 500, 5));
         
         
-        super.add(new JLabel("Wavelength (nm"));
+        super.add(new JLabel("Wavelength (nm)"));
         super.add(wvSpinner, "wrap");
         super.add(new JLabel("Exposure (ms)"));
         super.add(exposureSpinner, "wrap, growx");
