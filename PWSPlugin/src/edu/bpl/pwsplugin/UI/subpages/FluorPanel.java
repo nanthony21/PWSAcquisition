@@ -52,7 +52,7 @@ public class FluorPanel extends SingleBuilderJPanel<PWSPluginSettings.FluorSetti
         super.add(wvSpinner);
         super.add(exposureSpinner);
         super.add(filterCombo, "wrap");
-        super.add(useAltCamCheckbox);
+        super.add(useAltCamCheckbox, "wrap, span");
         super.add(new JLabel("Camera Name:"));
         super.add(altCamNameCombo);
     }
