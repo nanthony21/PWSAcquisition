@@ -72,6 +72,7 @@ public class PluginFrame extends MMFrame{
         
         dirSelect = new DirectorySelector(DirectorySelector.DefaultMMFunctions.MMDataSetDirectory);
         cellNumSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
+        ((JSpinner.DefaultEditor)cellNumSpinner.getEditor()).getTextField().setColumns(4);
         
         this.settings_ = Globals.mm().profile().getSettings(PluginFrame.class);
         this.loadSettings();
@@ -87,7 +88,7 @@ public class PluginFrame extends MMFrame{
         tabs.addTab("Config", this.hwPanel);
         
         JPanel bottomPanel = new JPanel(new MigLayout());
-        bottomPanel.add(dirSelect);
+        bottomPanel.add(dirSelect, "grow, pushx");
         bottomPanel.add(new JLabel("Cell#:"), "shrink");
         bottomPanel.add(cellNumSpinner, "wrap");
         JPanel buttons = new JPanel(new MigLayout());

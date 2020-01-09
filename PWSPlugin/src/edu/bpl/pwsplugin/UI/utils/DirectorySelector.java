@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import net.miginfocom.swing.MigLayout;
 import org.micromanager.internal.utils.FileDialogs;
 
 /**
@@ -20,7 +21,7 @@ import org.micromanager.internal.utils.FileDialogs;
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class DirectorySelector extends JPanel {
-    private JTextField textField = new JTextField(20);
+    private JTextField textField = new JTextField();
     private JButton browseButton = new JButton("...");
     private DirectorySelector This = this;
     
@@ -57,8 +58,8 @@ public class DirectorySelector extends JPanel {
     }
     
     private DirectorySelector() {
-        super();
-        super.add(textField);
+        super(new MigLayout("insets 0 0 0 0"));
+        super.add(textField, "grow, pushx");
         super.add(browseButton);
     }
     
