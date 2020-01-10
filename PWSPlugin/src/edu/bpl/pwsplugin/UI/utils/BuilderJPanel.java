@@ -1,16 +1,17 @@
 
-package edu.bpl.pwsplugin.UI.utils;
+package com.appliedmaterials.SGIPlugin.UI.util;
 
-import edu.bpl.pwsplugin.utils.UIBuildable;
 import java.awt.LayoutManager;
-import java.util.List;
 import javax.swing.JPanel;
+import com.appliedmaterials.SGIPlugin.util.UIBuildable;
 
 /**
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public abstract class BuilderJPanel<T> extends JPanel{
+public abstract class BuilderJPanel<T extends UIBuildable> extends JPanel{
+    //Base class for UI componenets that can `build` and be populated from an instance
+    //of an UIbuildable class.
     protected Class<T> typeParamClass;
 
     public BuilderJPanel(LayoutManager layout, Class<T> clazz) {
@@ -19,5 +20,5 @@ public abstract class BuilderJPanel<T> extends JPanel{
     }
     
     public abstract T build();
-    public abstract void populateFields(T t);
+    public abstract void populateFields(T t) throws Exception;
 }

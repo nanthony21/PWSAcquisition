@@ -1,9 +1,6 @@
 
-package edu.bpl.pwsplugin.UI.utils;
+package com.appliedmaterials.SGIPlugin.UI.util;
 
-
-import java.awt.Container;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -13,7 +10,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import net.miginfocom.swing.MigLayout;
 import org.micromanager.internal.utils.FileDialogs;
 
 /**
@@ -21,7 +17,13 @@ import org.micromanager.internal.utils.FileDialogs;
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class DirectorySelector extends JPanel {
-    private JTextField textField = new JTextField();
+    //This is just a convenience class that combines a textField with a button
+    //Used for selected directories. the DefaultMMFunctionFactory provides useful functions
+    //for selecting MicroManager related files. Otherwise you need to provide a function to
+    //the constructor. this function will be run when the button is clicked and will
+    //return a String which will be filled in to the textField.
+    
+    private JTextField textField = new JTextField(20);
     private JButton browseButton = new JButton("...");
     private DirectorySelector This = this;
     
@@ -58,8 +60,8 @@ public class DirectorySelector extends JPanel {
     }
     
     private DirectorySelector() {
-        super(new MigLayout("insets 0 0 0 0"));
-        super.add(textField, "grow, pushx");
+        super();
+        super.add(textField);
         super.add(browseButton);
     }
     
