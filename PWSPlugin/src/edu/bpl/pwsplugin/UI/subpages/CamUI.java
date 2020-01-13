@@ -5,13 +5,15 @@
  */
 package edu.bpl.pwsplugin.UI.subpages;
 
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -58,6 +60,12 @@ public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration
         super.add(linEdit, "wrap");
         super.add(hasTFCheckbox);
         super.add(tunableFilterCombo);
+        
+        this.updateComboBoxes();
+    }
+    
+    private void updateComboBoxes() {
+        this.camCombo.setModel(new DefaultComboBoxModel<String>(new Vector<String>(Globals.getMMConfigAdapter().getConnectedCameras())));
     }
     
     @Override
