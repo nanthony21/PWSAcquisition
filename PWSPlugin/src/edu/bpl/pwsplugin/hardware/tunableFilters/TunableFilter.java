@@ -16,7 +16,7 @@ public abstract class TunableFilter {
     public abstract void setWavelength(int wavelength) throws Exception;
     public abstract int getWavelength() throws Exception;
     public abstract boolean supportsSequencing();
-    public abstract List<String> validate();
+    public abstract List<String> validate(); //Return a list of errors found with the device.
     
     public static TunableFilter getInstance(Types type) {
         if (type == Types.VARISPECLCTF) {

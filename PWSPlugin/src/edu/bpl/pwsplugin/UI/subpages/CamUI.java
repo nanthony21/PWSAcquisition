@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.UI.subpages;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
+import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration
         this.hasTFCheckbox.addActionListener((evt) -> {
             this.tunableFilterCombo.setEnabled(this.hasTFCheckbox.isSelected());
         });
-        this.hasTFCheckbox.setSelected(true); //This triggers the action listener.
+        this.hasTFCheckbox.setSelected(true); //This triggers the action listener. TODO this doesn't work.
         
         super.add(new JLabel("Camera:"), "gapleft push");
         super.add(camCombo, "wrap");
@@ -66,6 +67,7 @@ public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration
     
     private void updateComboBoxes() {
         this.camCombo.setModel(new DefaultComboBoxModel<String>(new Vector<String>(Globals.getMMConfigAdapter().getConnectedCameras())));
+        this.tunableFilterCombo.setModel(new DefaultComboBoxModel(TunableFilter.Types.values()));
     }
     
     @Override
