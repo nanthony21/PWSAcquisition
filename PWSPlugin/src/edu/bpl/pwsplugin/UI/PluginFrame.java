@@ -38,6 +38,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingWorker;
 import net.miginfocom.swing.MigLayout;
 import org.micromanager.internal.utils.MMFrame;
+import org.micromanager.internal.utils.ReportingUtils;
 import org.micromanager.propertymap.MutablePropertyMapView;
 
 /**
@@ -121,10 +122,10 @@ public class PluginFrame extends MMFrame{
         if (set==null) {
             Globals.mm().logs().logMessage("PWS Plugin: no settings found in user profile.");
         } else {
-            this.pwsPanel.populateFields(set.pwsSettings);
-            this.dynPanel.populateFields(set.dynSettings);
-            this.flPanel.populateFields(set.flSettings);
-            this.hwPanel.populateFields(set.hwConfiguration);
+            try{ this.pwsPanel.populateFields(set.pwsSettings); } catch(Exception e) {ReportingUtils.logError(e); }
+            try{ this.dynPanel.populateFields(set.dynSettings); } catch(Exception e) {ReportingUtils.logError(e); }
+            try{ this.flPanel.populateFields(set.flSettings); } catch(Exception e) {ReportingUtils.logError(e); }
+            try{ this.hwPanel.populateFields(set.hwConfiguration); } catch(Exception e) {ReportingUtils.logError(e); }
             Globals.setHardwareConfiguration(set.hwConfiguration);
             this.dirSelect.setText(set.saveDir);
             this.cellNumSpinner.setValue(set.cellNum);
