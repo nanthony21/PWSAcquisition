@@ -15,6 +15,8 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -23,7 +25,7 @@ import net.miginfocom.swing.MigLayout;
  */
 public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration.CamSettings>{
     private JComboBox camCombo = new JComboBox();
-    private JSpinner darkCountsSpinner = new JSpinner();
+    private JSpinner darkCountsSpinner;
     private JTextField linEdit = new JTextField();
     private JCheckBox hasTFCheckbox = new JCheckBox("Uses Tunable Filter:");
     private JComboBox tunableFilterCombo = new JComboBox();
@@ -31,15 +33,28 @@ public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration
     public CamUI() {
         super(new MigLayout(), PWSPluginSettings.HWConfiguration.CamSettings.class);
         
+
+        SpinnerNumberModel model = new SpinnerNumberModel(0, 0, 100000, 1);
+        this.darkCountsSpinner = new JSpinner(model);
+        ((JSpinner.DefaultEditor)this.darkCountsSpinner.getEditor()).getTextField().setColumns(4);
+        
         darkCountsSpinner.setToolTipText("# of counts per pixel when the camera is not exposed to any light. E.g if measuring dark counts with 2x2 binning the number here should be 1/4 of your measurement 2x2 binning pools 4 pixels.");
         linEdit.setToolTipText("Comma separated values representing the polynomial to linearize the counts from the camera. In the form \"A,B,C\" = Ax + Bx^2 + Cx^3. Type \"None\" or \"null\" if correction is not needed.");
 
         
-        super.add(new JLabel("Camera:"));
+        this.hasTFCheckbox.setHorizontalTextPosition(SwingConstants.LEFT); //move labelto the left of the button.
+        this.linEdit.setColumns(10);
+        
+        this.hasTFCheckbox.addActionListener((evt) -> {
+            this.tunableFilterCombo.setEnabled(this.hasTFCheckbox.isSelected());
+        });
+        this.hasTFCheckbox.setSelected(true); //This triggers the action listener.
+        
+        super.add(new JLabel("Camera:"), "gapleft push");
         super.add(camCombo, "wrap");
-        super.add(new JLabel("Dark Counts:"));
+        super.add(new JLabel("Dark Counts:"), "gapleft push");
         super.add(darkCountsSpinner, "wrap");
-        super.add(new JLabel("Linearity Polynomial:"));
+        super.add(new JLabel("Linearity Polynomial:"), "gapleft push");
         super.add(linEdit, "wrap");
         super.add(hasTFCheckbox);
         super.add(tunableFilterCombo);

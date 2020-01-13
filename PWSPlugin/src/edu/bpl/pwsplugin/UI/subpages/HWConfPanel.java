@@ -22,7 +22,7 @@ import net.miginfocom.swing.MigLayout;
  */
 public class HWConfPanel extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration>{
     private JTextField sysNameEdit = new JTextField(20);
-    private ListCardUI<List<PWSPluginSettings.HWConfiguration.CamSettings>, PWSPluginSettings.HWConfiguration.CamSettings> cameras = new ListCardUI<>((Class<List<PWSPluginSettings.HWConfiguration.CamSettings>>)(Object) ArrayList.class, "Camera:");
+    private ListCardUI<List<PWSPluginSettings.HWConfiguration.CamSettings>, PWSPluginSettings.HWConfiguration.CamSettings> cameras = new ListCardUI<>((Class<List<PWSPluginSettings.HWConfiguration.CamSettings>>)(Object) ArrayList.class, "Camera:", new PWSPluginSettings.HWConfiguration.CamSettings());
     
     public HWConfPanel() {
         super(new MigLayout(), PWSPluginSettings.HWConfiguration.class);

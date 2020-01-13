@@ -1,16 +1,9 @@
 
 package edu.bpl.pwsplugin.settings;
 
-import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.utils.JsonableParam;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import javax.swing.DefaultComboBoxModel;
-import mmcorej.DeviceType;
-import mmcorej.StrVector;
-import org.micromanager.internal.utils.ReportingUtils;
+
 
 /**
  *
