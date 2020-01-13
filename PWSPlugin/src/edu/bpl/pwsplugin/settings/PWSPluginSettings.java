@@ -3,7 +3,6 @@ package edu.bpl.pwsplugin.settings;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.utils.JsonableParam;
-import edu.bpl.pwsplugin.utils.UIBuildable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -32,7 +31,7 @@ public class PWSPluginSettings extends JsonableParam {
     }
     
     //Make sure that everything here that extends jsonableparam gets registered on startup in the plugin class.
-    public static class PWSSettings extends JsonableParam implements UIBuildable{
+    public static class PWSSettings extends JsonableParam{
         public int wvStart;
         public int wvStop;
         public int wvStep;
@@ -52,13 +51,13 @@ public class PWSPluginSettings extends JsonableParam {
         }
     }
     
-    public static class DynSettings extends JsonableParam implements UIBuildable {
+    public static class DynSettings extends JsonableParam {
         public double exposure;
         public int wavelength;
         public int numFrames;
     }
     
-    public static class FluorSettings extends JsonableParam implements UIBuildable {
+    public static class FluorSettings extends JsonableParam {
         public double exposure;
         public String filterConfigName;
         public boolean useAltCamera;
@@ -66,11 +65,11 @@ public class PWSPluginSettings extends JsonableParam {
         public int tfWavelength;
     }
     
-    public static class HWConfiguration extends JsonableParam implements UIBuildable {
+    public static class HWConfiguration extends JsonableParam {
         public String systemName;
         public List<CamSettings> cameras;
         
-        public static class CamSettings extends JsonableParam implements UIBuildable {
+        public static class CamSettings extends JsonableParam {
             public String name;
             public List<Double> linearityPolynomial;
             public int darkCounts;

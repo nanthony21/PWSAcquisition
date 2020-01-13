@@ -67,8 +67,8 @@ public class FluorPanel extends SingleBuilderJPanel<PWSPluginSettings.FluorSetti
     }
     
     @Override
-    public Map<String, JComponent> getPropertyFieldMap() {
-        Map<String, JComponent> map = new HashMap<String, JComponent>();
+    public Map<String, Object> getPropertyFieldMap() {
+        Map<String, Object> map = new HashMap<>();
         map.put("exposure", exposureSpinner);
         map.put("filterConfigName", filterCombo);
         map.put("useAltCamera", useAltCamCheckbox);

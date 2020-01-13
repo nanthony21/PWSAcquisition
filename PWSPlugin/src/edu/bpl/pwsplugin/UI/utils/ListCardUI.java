@@ -6,7 +6,6 @@
 package edu.bpl.pwsplugin.UI.utils;
 
 import edu.bpl.pwsplugin.utils.JsonableParam;
-import edu.bpl.pwsplugin.utils.UIBuildable;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -31,7 +30,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class ListCardUI<T extends List<S> & UIBuildable, S extends JsonableParam & UIBuildable> extends ListBuilderJPanel<T> implements ItemListener {
+public class ListCardUI<T extends List<S>, S extends JsonableParam> extends ListBuilderJPanel<T> implements ItemListener {
     //A UI component that allows the user to flip through multiple UI componenent representing UIBuildable classes.
     private JComboBox<String> combo = new JComboBox<String>();
     private JPanel cardPanel = new JPanel(new CardLayout());
@@ -130,7 +129,7 @@ public class ListCardUI<T extends List<S> & UIBuildable, S extends JsonableParam
         components = new ArrayList<BuilderJPanel<S>>();
         Integer i = 1;
         for (S s : t) {
-            BuilderJPanel<S> p = UIFactory.getUI((Class<? extends UIBuildable>) s.getClass());
+            BuilderJPanel<S> p = UIFactory.getUI((Class<?>) s.getClass());
             cardPanel.add(p, i.toString()); //Must add to layout before populating or we get a null pointer error.
             p.populateFields(s);
             components.add(p);

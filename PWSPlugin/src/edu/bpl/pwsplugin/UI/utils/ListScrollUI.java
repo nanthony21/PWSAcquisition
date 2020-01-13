@@ -3,7 +3,6 @@ package edu.bpl.pwsplugin.UI.utils;
 
 
 import edu.bpl.pwsplugin.utils.JsonableParam;
-import edu.bpl.pwsplugin.utils.UIBuildable;
 import java.awt.Color;
 import java.awt.Font;;
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class ListScrollUI<T extends List<S> & UIBuildable, S extends JsonableParam & UIBuildable> extends ListBuilderJPanel<T> implements MouseListener {
+public class ListScrollUI<T extends List<S>, S extends JsonableParam> extends ListBuilderJPanel<T> implements MouseListener {
     //A UI component that allows the user to flip through multiple UI componenent representing UIBuildable classes.
     JPanel scrollContents = new JPanel(new MigLayout("insets 0 0 0 0"));
     JPopupMenu popupMenu = new JPopupMenu("Popup Menu");
@@ -46,7 +45,7 @@ public class ListScrollUI<T extends List<S> & UIBuildable, S extends JsonablePar
         double maxWidth = 0;
         double maxHeight = 0;
         for (S step : defaultStepTypes) {
-            BuilderJPanel<S> panel = UIFactory.getUI((Class<? extends UIBuildable>) step.getClass());
+            BuilderJPanel<S> panel = UIFactory.getUI((Class<?>) step.getClass());
             Dimension dim = panel.getPreferredSize();
             if (dim.getHeight() > maxHeight) {
                 maxHeight = dim.getHeight();
@@ -92,7 +91,7 @@ public class ListScrollUI<T extends List<S> & UIBuildable, S extends JsonablePar
         components = new ArrayList<BuilderJPanel<S>>();
         Integer i = 0;
         for (S s : t) {
-            BuilderJPanel<S> p = UIFactory.getUI((Class<? extends UIBuildable>) s.getClass());
+            BuilderJPanel<S> p = UIFactory.getUI((Class<?>) s.getClass());
             p.populateFields(s);
             ListScrollItem item = new ListScrollItem(p, i, this);
             this.scrollContents.add(item, "wrap"); //Must add to layout before populating or we get a null pointer error.
@@ -194,7 +193,7 @@ public class ListScrollUI<T extends List<S> & UIBuildable, S extends JsonablePar
     public void mouseReleased(MouseEvent evt) {}
 }
 
-class ListScrollItem<S extends JsonableParam & UIBuildable> extends JPanel implements MouseListener{
+class ListScrollItem<S extends JsonableParam> extends JPanel implements MouseListener{
     BuilderJPanel<S> panel;
     ListScrollUI<?, S> parent;
     int position;

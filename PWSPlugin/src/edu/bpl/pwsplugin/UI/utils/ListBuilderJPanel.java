@@ -5,14 +5,13 @@
  */
 package edu.bpl.pwsplugin.UI.utils;
 
-import edu.bpl.pwsplugin.utils.UIBuildable;
 import java.awt.LayoutManager;
 
 /**
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public abstract class ListBuilderJPanel<T extends Iterable & UIBuildable> extends BuilderJPanel<T>{
+public abstract class ListBuilderJPanel<T extends Iterable> extends BuilderJPanel<T>{
     //A base class for a UI component representing a list of UIbuildable objects. Right now
     //this is only implemented by ListCardUI. other implementations are possible.
     public ListBuilderJPanel(LayoutManager layout, Class<T> clazz) {

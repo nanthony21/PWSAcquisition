@@ -40,8 +40,8 @@ public class DynPanel extends SingleBuilderJPanel<PWSPluginSettings.DynSettings>
     }
     
     @Override
-    public Map<String, JComponent> getPropertyFieldMap() {
-        Map<String, JComponent> map = new HashMap<String, JComponent>();
+    public Map<String, Object> getPropertyFieldMap() {
+        Map<String, Object> map = new HashMap<>();
         map.put("exposure", exposureSpinner);
         map.put("wavelength", wvSpinner);
         map.put("numFrames", framesSpinner);

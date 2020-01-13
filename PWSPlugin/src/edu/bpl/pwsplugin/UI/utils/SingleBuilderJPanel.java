@@ -1,7 +1,6 @@
 
 package edu.bpl.pwsplugin.UI.utils;
 
-import edu.bpl.pwsplugin.utils.UIBuildable;
 import java.awt.LayoutManager;
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -15,7 +14,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public abstract class SingleBuilderJPanel<T extends UIBuildable> extends BuilderJPanel<T>{
+public abstract class SingleBuilderJPanel<T> extends BuilderJPanel<T>{
     //This base class provides a convenient way to implement a UI that can be filled-in by,
     //and can construct a new instance of, T which is any UI buildable class.
     //Classes that extend this class simply need to implement a `getPropertyFieldMap` 
@@ -92,7 +91,7 @@ public abstract class SingleBuilderJPanel<T extends UIBuildable> extends Builder
             } else if (field instanceof JCheckBox) {
                 ((JCheckBox) field).setSelected((boolean) prop.get(t));
             } else if (field instanceof BuilderJPanel) {
-                ((BuilderJPanel) field).populateFields((UIBuildable) prop.get(t));
+                ((BuilderJPanel) field).populateFields(prop.get(t));
             } else if (field instanceof DirectorySelector) {
                 ((DirectorySelector) field).setText((String) prop.get(t));
             } else if (field instanceof JCheckBox[]) { //from int to jcheckbox[]

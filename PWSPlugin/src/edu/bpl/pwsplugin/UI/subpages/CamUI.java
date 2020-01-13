@@ -46,8 +46,8 @@ public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration
     }
     
     @Override
-    public Map<String, JComponent> getPropertyFieldMap() {
-        Map<String, JComponent> map = new HashMap<String, JComponent>();
+    public Map<String, Object> getPropertyFieldMap() {
+        Map<String, Object> map = new HashMap<>();
         map.put("name", camCombo);
         map.put("linearityPolynomial", linEdit);
         map.put("darkCounts", darkCountsSpinner);

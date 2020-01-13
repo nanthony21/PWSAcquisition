@@ -8,7 +8,6 @@ import edu.bpl.pwsplugin.UI.subpages.HWConfPanel;
 import edu.bpl.pwsplugin.UI.subpages.PWSPanel;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
-import edu.bpl.pwsplugin.utils.UIBuildable;
 import org.micromanager.internal.utils.ReportingUtils;
 
 /**
@@ -16,7 +15,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class UIFactory {
-    public static BuilderJPanel getUI(Class<? extends UIBuildable> clazz) {
+    public static BuilderJPanel getUI(Class<?> clazz) {
         if (clazz.equals(PWSPluginSettings.PWSSettings.class)) {
             return new PWSPanel();
         } else if (clazz.equals(PWSPluginSettings.DynSettings.class)) {
