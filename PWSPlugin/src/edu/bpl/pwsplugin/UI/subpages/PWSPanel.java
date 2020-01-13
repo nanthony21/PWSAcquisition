@@ -68,8 +68,8 @@ public class PWSPanel extends SingleBuilderJPanel<PWSPluginSettings.PWSSettings>
     }
 
     @Override
-    public Map<String, JComponent> getPropertyFieldMap() {
-        Map<String, JComponent> map = new HashMap<String, JComponent>();
+    public Map<String, Object> getPropertyFieldMap() {
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put("wvStart", wvStartSpinner);
         map.put("wvStop", wvStopSpinner);
         map.put("wvStep", wvStepSpinner);

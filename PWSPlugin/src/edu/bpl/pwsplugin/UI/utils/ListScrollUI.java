@@ -1,7 +1,9 @@
 
-package com.appliedmaterials.SGIPlugin.UI.util;
+package edu.bpl.pwsplugin.UI.utils;
 
 
+import edu.bpl.pwsplugin.utils.JsonableParam;
+import edu.bpl.pwsplugin.utils.UIBuildable;
 import java.awt.Color;
 import java.awt.Font;;
 import java.util.ArrayList;
@@ -12,10 +14,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import net.miginfocom.swing.MigLayout;
-import com.appliedmaterials.SGIPlugin.UI.UIFactories;
-import com.appliedmaterials.SGIPlugin.util.JsonableList;
-import com.appliedmaterials.SGIPlugin.util.JsonableParam;
-import com.appliedmaterials.SGIPlugin.util.UIBuildable;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.MouseInfo;
@@ -29,7 +27,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class ListScrollUI<T extends JsonableList<S> & UIBuildable, S extends JsonableParam & UIBuildable> extends ListBuilderJPanel<T> implements MouseListener {
+public class ListScrollUI<T extends List<S> & UIBuildable, S extends JsonableParam & UIBuildable> extends ListBuilderJPanel<T> implements MouseListener {
     //A UI component that allows the user to flip through multiple UI componenent representing UIBuildable classes.
     JPanel scrollContents = new JPanel(new MigLayout("insets 0 0 0 0"));
     JPopupMenu popupMenu = new JPopupMenu("Popup Menu");
@@ -48,7 +46,7 @@ public class ListScrollUI<T extends JsonableList<S> & UIBuildable, S extends Jso
         double maxWidth = 0;
         double maxHeight = 0;
         for (S step : defaultStepTypes) {
-            BuilderJPanel<S> panel = UIFactories.BuilderPanelFactory.getUIPanel((Class<? extends UIBuildable>) step.getClass());
+            BuilderJPanel<S> panel = UIFactory.getUI((Class<? extends UIBuildable>) step.getClass());
             Dimension dim = panel.getPreferredSize();
             if (dim.getHeight() > maxHeight) {
                 maxHeight = dim.getHeight();
@@ -94,7 +92,7 @@ public class ListScrollUI<T extends JsonableList<S> & UIBuildable, S extends Jso
         components = new ArrayList<BuilderJPanel<S>>();
         Integer i = 0;
         for (S s : t) {
-            BuilderJPanel<S> p = UIFactories.BuilderPanelFactory.getUIPanel((Class<? extends UIBuildable>) s.getClass());
+            BuilderJPanel<S> p = UIFactory.getUI((Class<? extends UIBuildable>) s.getClass());
             p.populateFields(s);
             ListScrollItem item = new ListScrollItem(p, i, this);
             this.scrollContents.add(item, "wrap"); //Must add to layout before populating or we get a null pointer error.

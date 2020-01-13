@@ -1,9 +1,9 @@
 
-package com.appliedmaterials.SGIPlugin.UI.util;
+package edu.bpl.pwsplugin.UI.utils;
 
+import edu.bpl.pwsplugin.utils.UIBuildable;
 import java.awt.LayoutManager;
 import javax.swing.JPanel;
-import com.appliedmaterials.SGIPlugin.util.UIBuildable;
 
 /**
  *

@@ -1,6 +1,7 @@
 
-package com.appliedmaterials.SGIPlugin.UI.util;
+package edu.bpl.pwsplugin.UI.utils;
 
+import edu.bpl.pwsplugin.utils.UIBuildable;
 import java.awt.LayoutManager;
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -8,7 +9,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import com.appliedmaterials.SGIPlugin.util.UIBuildable;
 import org.micromanager.internal.utils.ReportingUtils;
 
 /**
@@ -48,8 +48,6 @@ public abstract class SingleBuilderJPanel<T extends UIBuildable> extends Builder
                     prop.set(t, ((T)((BuilderJPanel<T>) field).build()));
                 } else if (field instanceof DirectorySelector) {
                     prop.set(t, ((DirectorySelector) field).getText());
-                } else if (field instanceof PopulableJPanel) {
-                    prop.set(t, ((PopulableJPanel) field).getStoredInstance());
                 } else if (field instanceof JCheckBox[]) { //from checkbox array to int.
                     boolean[] boolarr = new boolean[((JCheckBox[])field).length];
                     for (int i=0; i<boolarr.length; i++) {
@@ -97,8 +95,6 @@ public abstract class SingleBuilderJPanel<T extends UIBuildable> extends Builder
                 ((BuilderJPanel) field).populateFields((UIBuildable) prop.get(t));
             } else if (field instanceof DirectorySelector) {
                 ((DirectorySelector) field).setText((String) prop.get(t));
-            } else if (field instanceof PopulableJPanel) {
-                ((PopulableJPanel) field).storeInstance(prop.get(t));
             } else if (field instanceof JCheckBox[]) { //from int to jcheckbox[]
                 int num = (int) prop.get(t);
                 int l = ((JCheckBox[]) field).length;

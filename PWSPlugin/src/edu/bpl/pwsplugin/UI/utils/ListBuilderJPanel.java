@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.appliedmaterials.SGIPlugin.UI.util;
+package edu.bpl.pwsplugin.UI.utils;
 
+import edu.bpl.pwsplugin.utils.UIBuildable;
 import java.awt.LayoutManager;
-import com.appliedmaterials.SGIPlugin.util.UIBuildable;
 
 /**
  *

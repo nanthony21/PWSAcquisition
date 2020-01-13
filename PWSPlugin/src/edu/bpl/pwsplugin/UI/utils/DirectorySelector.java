@@ -1,5 +1,5 @@
 
-package com.appliedmaterials.SGIPlugin.UI.util;
+package edu.bpl.pwsplugin.UI.utils;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
