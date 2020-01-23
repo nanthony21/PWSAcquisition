@@ -6,10 +6,16 @@
 package edu.bpl.pwsplugin.UI.subpages;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
+import edu.bpl.pwsplugin.UI.utils.ListBuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
@@ -82,5 +88,24 @@ public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration
         map.put("hasTunableFilter", hasTFCheckbox);
         map.put("tunableFilterName", tunableFilterCombo);
         return map;
+    }
+}
+
+class DoubleListTextField extends BuilderJPanel<List<Double>> {
+    JTextField textField = new JTextField();
+    
+    public DoubleListTextField() {
+        super(new MigLayout("insets 0 0 0 0"), (Class<List<Double>>)(Object) ArrayList.class);
+        this.add(this.textField);
+    }
+    
+    @Override
+    public void populateFields(List<Double> list) {
+        
+    }
+    
+    @Override
+    public List<Double> build() {
+        
     }
 }
