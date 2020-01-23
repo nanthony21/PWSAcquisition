@@ -51,7 +51,10 @@ public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration
         this.hasTFCheckbox.addActionListener((evt) -> {
             this.tunableFilterCombo.setEnabled(this.hasTFCheckbox.isSelected());
         });
-        this.hasTFCheckbox.setSelected(true); //This triggers the action listener. TODO this doesn't work.
+        for(ActionListener a : this.hasTFCheckbox.getActionListeners()) { //This triggers the action listener to initialize the components.
+            a.actionPerformed(new ActionEvent(this, 0, "Blank Command"));
+        }
+
         
         super.add(new JLabel("Camera:"), "gapleft push");
         super.add(camCombo, "wrap");
