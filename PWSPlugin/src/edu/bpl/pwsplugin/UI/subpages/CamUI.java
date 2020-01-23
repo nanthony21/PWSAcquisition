@@ -14,19 +14,25 @@ import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.stream.Collectors;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.InputVerifier;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import net.miginfocom.swing.MigLayout;
+import org.apache.commons.lang.StringUtils;
+import org.jfree.chart.util.ArrayUtils;
 
 /**
  *
@@ -35,7 +41,7 @@ import net.miginfocom.swing.MigLayout;
 public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration.CamSettings>{
     private JComboBox camCombo = new JComboBox();
     private JSpinner darkCountsSpinner;
-    private JTextField linEdit = new JTextField();
+    private DoubleListTextField linEdit = new DoubleListTextField();
     private JCheckBox hasTFCheckbox = new JCheckBox("Uses Tunable Filter:");
     private JComboBox tunableFilterCombo = new JComboBox();
     
@@ -52,7 +58,7 @@ public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration
 
         
         this.hasTFCheckbox.setHorizontalTextPosition(SwingConstants.LEFT); //move labelto the left of the button.
-        this.linEdit.setColumns(10);
+        this.linEdit.textField.setColumns(10);
         
         this.hasTFCheckbox.addActionListener((evt) -> {
             this.tunableFilterCombo.setEnabled(this.hasTFCheckbox.isSelected());
@@ -92,20 +98,56 @@ public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration
 }
 
 class DoubleListTextField extends BuilderJPanel<List<Double>> {
-    JTextField textField = new JTextField();
+    public JTextField textField = new JTextField();
     
     public DoubleListTextField() {
         super(new MigLayout("insets 0 0 0 0"), (Class<List<Double>>)(Object) ArrayList.class);
+        this.textField.setInputVerifier(new MyInputVerifier());
         this.add(this.textField);
     }
     
     @Override
-    public void populateFields(List<Double> list) {
-        
+    public void populateFields(List<Double> linList) {
+        if (linList==null) {
+            this.textField.setText("null");
+            return;
+        }
+        if (linList.size() > 0) {
+             this.textField.setText(StringUtils.join(linList.toArray(), ","));
+         } else {
+             this.textField.setText("null");
+         }
     }
     
     @Override
     public List<Double> build() {
-        
+        String text = this.textField.getText().trim();
+        List<Double> linearityPolynomial;
+        if ((text.equals("None")) || (text.equals("null")) || text.equals("")) {
+            linearityPolynomial = null;
+        } else {
+            linearityPolynomial = Arrays.asList(text.split(","))
+                .stream()
+                .map(String::trim)
+                .mapToDouble(Double::parseDouble).boxed()
+                .collect(Collectors.toList());
+        }                           
+        return linearityPolynomial;
     }
+    
+    class MyInputVerifier extends InputVerifier {
+    @Override
+    public boolean verify(JComponent input) {
+        String text = ((JTextField) input).getText().trim();
+        try {
+            Arrays.asList(text.split(","))
+                                .stream()
+                                .map(String::trim)
+                                .mapToDouble(Double::parseDouble); 
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+}
 }
