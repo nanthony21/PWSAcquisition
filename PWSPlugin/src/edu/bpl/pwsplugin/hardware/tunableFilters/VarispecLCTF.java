@@ -14,25 +14,12 @@ import java.util.List;
  *
  * @author N2-LiveCell
  */
-public class VarispecLCTF extends TunableFilter {
+public class VarispecLCTF extends DefaultTunableFilter {
     String devName = "VarispecLCTF";
     
     public VarispecLCTF() {
+        super("VarispecLCTF", "Wavelength");
     }
-    
-    @Override
-    public void setWavelength(int wavelength) throws Exception {
-        Globals.core().setProperty(devName, "Wavelength", String.valueOf(wavelength));
-    }
-    
-    @Override
-    public int getWavelength() throws Exception{ 
-        int wv = Integer.valueOf(Globals.core().getProperty(devName, "Wavelength"));
-        return wv;
-    }
-    
-    @Override
-    public boolean supportsSequencing() { return true; }
     
     @Override
     public List<String> validate() {

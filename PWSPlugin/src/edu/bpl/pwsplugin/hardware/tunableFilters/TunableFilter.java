@@ -16,6 +16,12 @@ public abstract class TunableFilter {
     public abstract void setWavelength(int wavelength) throws Exception;
     public abstract int getWavelength() throws Exception;
     public abstract boolean supportsSequencing();
+    public abstract int getMaxSequenceLength() throws Exception;
+    public abstract void loadSequence(int[] wavelengthSequence) throws Exception;
+    public abstract void startSequence() throws Exception;
+    public abstract void stopSequence() throws Exception;
+    public abstract boolean isBusy() throws Exception;
+    public abstract double getDelayMs() throws Exception;
     public abstract List<String> validate(); //Return a list of errors found with the device.
     
     public static TunableFilter getInstance(Types type) {

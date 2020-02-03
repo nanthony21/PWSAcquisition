@@ -74,7 +74,7 @@ public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration
     
     private void updateComboBoxes() {
         this.camCombo.setModel(new DefaultComboBoxModel<String>(new Vector<String>(Globals.getMMConfigAdapter().getConnectedCameras())));
-        this.tunableFilterCombo.setModel(new DefaultComboBoxModel(TunableFilter.Types.values()));
+        this.tunableFilterCombo.setModel(new DefaultComboBoxModel(TunableFilter.Types.values())); //TODO This needs to point to an instance rather than an enum value of the type.
     }
     
     @Override
@@ -84,7 +84,7 @@ public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration
         map.put("linearityPolynomial", linEdit);
         map.put("darkCounts", darkCountsSpinner);
         map.put("hasTunableFilter", hasTFCheckbox);
-        map.put("tunableFilterName", tunableFilterCombo);
+        map.put("tunableFilter", tunableFilterCombo);
         return map;
     }
 }

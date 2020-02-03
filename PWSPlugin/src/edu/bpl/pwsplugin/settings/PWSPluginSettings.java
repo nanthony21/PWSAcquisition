@@ -1,6 +1,7 @@
 
 package edu.bpl.pwsplugin.settings;
 
+import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class PWSPluginSettings extends JsonableParam {
             public List<Double> linearityPolynomial;
             public int darkCounts;
             public boolean hasTunableFilter;
-            public String tunableFilterName;
+            public TunableFilter tunableFilter;
             public double[] affineTransform; //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera. For simplicity we store this array as a 1d array of length 6
         }
     }
