@@ -68,7 +68,7 @@ public class PWSPluginSettings extends JsonableParam {
             public List<Double> linearityPolynomial;
             public int darkCounts;
             public boolean hasTunableFilter;
-            public TunableFilter tunableFilter;
+            public TunableFilter tunableFilter; //TODO this should just be settings, not an instance.
             public double[] affineTransform; //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera. For simplicity we store this array as a 1d array of length 6
         }
     }
