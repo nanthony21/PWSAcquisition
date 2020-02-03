@@ -21,7 +21,6 @@
 package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.fileSavers.ImSaverRaw;
 import edu.bpl.pwsplugin.PWSAlbum;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
@@ -63,7 +62,7 @@ public class DynAcqManager implements AcquisitionManager{
         PWSPluginSettings.HWConfiguration.CamSettings camera = this.config.cameras.get(0);
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         try {
-            Globals.core().setProperty(camera.tunableFilterName, "Wavelength", wavelength_);
+            camera.tunableFilter.setWavelength(wavelength_);
             Globals.core().setExposure(exposure_);
             Globals.core().setCircularBufferMemoryFootprint(1000); //increase the circular buffer to 1Gb to avoid weird issues with lost images
             Globals.core().clearCircularBuffer();

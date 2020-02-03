@@ -1,8 +1,4 @@
- /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package edu.bpl.pwsplugin.acquisitionManagers.fluorescence;
 
 import edu.bpl.pwsplugin.Globals;
@@ -21,14 +17,12 @@ import org.micromanager.internal.utils.ReportingUtils;
  */
 public class LCTFFluorAcqManager extends FluorAcqManager{
     double exposure_; //The camera exposure in milliseconds.
-    String filtLabel_; //The name of the spectral filter device
     int wavelength_; //The wavelength to acquire images at
     String flFilterBlock_; // The name of the fluorescence filter block config setting.
     PWSPluginSettings.HWConfiguration.CamSettings camera;
     
     public LCTFFluorAcqManager(PWSPluginSettings.HWConfiguration config) {
         this.camera = config.cameras.get(0); //TODO add a way to choose whic caamera to use.
-        filtLabel_ = camera.tunableFilterName;
     }
     
     @Override
@@ -63,7 +57,7 @@ public class LCTFFluorAcqManager extends FluorAcqManager{
             return;
         }
         try {
-            Globals.core().setProperty(filtLabel_, "Wavelength", wavelength_);
+            camera.tunableFilter.setWavelength(wavelength_);
             Globals.core().setExposure(exposure_);
             Globals.core().clearCircularBuffer();
             Globals.core().snapImage();
