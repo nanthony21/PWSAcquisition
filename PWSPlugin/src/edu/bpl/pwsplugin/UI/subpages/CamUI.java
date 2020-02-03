@@ -1,24 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package edu.bpl.pwsplugin.UI.subpages;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.UI.utils.ListBuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.Vector;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.stream.Collectors;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.InputVerifier;
@@ -32,7 +25,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
-import org.jfree.chart.util.ArrayUtils;
 
 /**
  *
@@ -60,12 +52,12 @@ public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration
         this.hasTFCheckbox.setHorizontalTextPosition(SwingConstants.LEFT); //move labelto the left of the button.
         this.linEdit.textField.setColumns(10);
         
-        this.hasTFCheckbox.addActionListener((evt) -> {
+        this.hasTFCheckbox.addItemListener((evt) -> {
             this.tunableFilterCombo.setEnabled(this.hasTFCheckbox.isSelected());
         });
-        for(ActionListener a : this.hasTFCheckbox.getActionListeners()) { //This triggers the action listener to initialize the components.
-            a.actionPerformed(new ActionEvent(this, 0, "Blank Command"));
-        }
+        //for(ActionListener a : this.hasTFCheckbox.getActionListeners()) { //This triggers the action listener to initialize the components.
+        //    a.actionPerformed(new ActionEvent(this, 0, "Blank Command"));
+        //}
 
         
         super.add(new JLabel("Camera:"), "gapleft push");
@@ -102,8 +94,14 @@ class DoubleListTextField extends BuilderJPanel<List<Double>> {
     
     public DoubleListTextField() {
         super(new MigLayout("insets 0 0 0 0"), (Class<List<Double>>)(Object) ArrayList.class);
-        this.textField.setInputVerifier(new MyInputVerifier());
+        this.textField.setInputVerifier(new CSVInputVerifier());
         this.add(this.textField);
+    }
+    
+    @Override
+    public void setToolTipText(String text) {
+        super.setToolTipText(text);
+        this.textField.setToolTipText(text);
     }
     
     @Override
@@ -135,7 +133,7 @@ class DoubleListTextField extends BuilderJPanel<List<Double>> {
         return linearityPolynomial;
     }
     
-    class MyInputVerifier extends InputVerifier {
+    class CSVInputVerifier extends InputVerifier {
     @Override
     public boolean verify(JComponent input) {
         String text = ((JTextField) input).getText().trim();

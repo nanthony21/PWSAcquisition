@@ -21,7 +21,6 @@
 
 package edu.bpl.pwsplugin.acquisitionManagers;
 
-import com.drew.metadata.exif.CanonMakernoteDirectory;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.fileSavers.ImSaverRaw;
 import edu.bpl.pwsplugin.PWSAlbum;
