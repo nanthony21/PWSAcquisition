@@ -65,7 +65,7 @@ public class PWSPluginSettings extends JsonableParam {
         public String systemName;
         public List<CamSettings> cameras;
         public List<TunableFilterSettings> tunableFilters;
-        public ImagingConfiguration imagingConfig;
+        public ImagingConfigurationSettings imagingConfig;
         
         public static class CamSettings extends JsonableParam {
             public String name;

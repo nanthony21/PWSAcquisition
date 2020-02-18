@@ -19,37 +19,18 @@ public abstract class ImagingConfiguration {
     public abstract TunableFilter tunableFilter();
     
     public static ImagingConfiguration getInstance(PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings settings) {
-        if (settings.type == Types.LCTFWithHam) {
+        if (settings.type == Types.SpectralCamera) {
             return new SpectralCamera(settings.camSettings, settings.filtSettings);
+        } else if (settings.type == Types.StandardCamera) {
+            return new StandardCamera(settings.camSettings);
         } else {
             return null; //This shouldn't ever happen.
         }
     }
     
     public enum Types {
-        LCTFWithHam;
+        SpectralCamera,
+        StandardCamera;
     }
 }
 
-class SpectralCamera extends ImagingConfiguration {
-    Camera _cam;
-    TunableFilter _filt;
-    
-    public SpectralCamera(PWSPluginSettings.HWConfiguration.CamSettings camSettings, PWSPluginSettings.HWConfiguration.TunableFilterSettings filtSettings) {
-        _cam = Camera.getInstance(camSettings);
-        _filt = TunableFilter.getInstance(filtSettings);
-    }
-    
-    @Override
-    public boolean hasTunableFilter() { return true; }
-    
-    @Override
-    public Camera camera() {
-        return _cam;
-    }
-    
-    @Override
-    public TunableFilter tunableFilter() {
-        return _filt;
-    }
-}

@@ -5,10 +5,10 @@
  */
 package edu.bpl.pwsplugin.acquisitionManagers.fluorescence;
 
-import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.FluorAcqManager;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
+import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.json.JSONObject;
@@ -25,7 +25,8 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
     Camera camera;
     
     public AltCamFluorAcqManager(PWSPluginSettings.HWConfiguration config) {
-        this.camera = config.imagingConfig.camera();
+        ImagingConfiguration conf = ImagingConfiguration.getInstance(config.imagingConfig); 
+        this.camera = conf.camera();
     }
     
     @Override

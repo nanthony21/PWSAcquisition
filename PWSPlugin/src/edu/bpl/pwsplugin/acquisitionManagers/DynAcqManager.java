@@ -24,6 +24,7 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.PWSAlbum;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
+import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.io.IOException;
@@ -61,8 +62,9 @@ public class DynAcqManager implements AcquisitionManager{
     
     @Override
     public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata) {
-        Camera camera = this.config.imagingConfig.camera();
-        TunableFilter tunableFilter = this.config.imagingConfig.tunableFilter();
+        ImagingConfiguration conf = ImagingConfiguration.getInstance(this.config.imagingConfig); 
+        Camera camera = conf.camera();
+        TunableFilter tunableFilter = conf.tunableFilter();
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         try {
             tunableFilter.setWavelength(wavelength_);

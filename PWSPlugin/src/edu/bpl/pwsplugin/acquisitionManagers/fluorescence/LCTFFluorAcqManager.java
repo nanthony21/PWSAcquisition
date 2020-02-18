@@ -4,6 +4,7 @@ package edu.bpl.pwsplugin.acquisitionManagers.fluorescence;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
+import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -22,8 +23,9 @@ public class LCTFFluorAcqManager extends FluorAcqManager{
     TunableFilter tunableFilter;
     
     public LCTFFluorAcqManager(PWSPluginSettings.HWConfiguration config) {
-        this.camera = config.imagingConfig.camera();
-        this.tunableFilter = config.imagingConfig.tunableFilter();
+        ImagingConfiguration conf = ImagingConfiguration.getInstance(config.imagingConfig); 
+        this.camera = conf.camera();
+        this.tunableFilter = conf.tunableFilter();
     }
     
     @Override
