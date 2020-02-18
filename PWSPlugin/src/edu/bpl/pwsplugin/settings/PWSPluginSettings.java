@@ -1,6 +1,8 @@
 
 package edu.bpl.pwsplugin.settings;
 
+import edu.bpl.pwsplugin.hardware.cameras.Camera;
+import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.List;
@@ -62,14 +64,22 @@ public class PWSPluginSettings extends JsonableParam {
     public static class HWConfiguration extends JsonableParam {
         public String systemName;
         public List<CamSettings> cameras;
+        public List<TunableFilterSettings> tunableFilters;
+        public ImagingConfiguration imagingConfig;
         
         public static class CamSettings extends JsonableParam {
             public String name;
+            public Camera.Types type;
             public List<Double> linearityPolynomial;
             public int darkCounts;
-            public boolean hasTunableFilter;
-            public TunableFilter tunableFilter; //TODO this should just be settings, not an instance.
             public double[] affineTransform; //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera. For simplicity we store this array as a 1d array of length 6
+        }
+        
+        public static class TunableFilterSettings extends JsonableParam {
+            public String name;
+            public TunableFilter.Types type;
+            
+           
         }
     }
 }

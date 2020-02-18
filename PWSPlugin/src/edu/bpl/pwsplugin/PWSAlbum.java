@@ -32,7 +32,7 @@ import org.micromanager.internal.utils.ReportingUtils;
 import javax.swing.SwingUtilities;
 import org.micromanager.data.RewritableDatastore;
 
-public class PWSAlbum {
+public class PWSAlbum { //TODO default to a smaller size
    private RewritableDatastore store_;
    private int idx = 0;
    String displayName_;

@@ -2,6 +2,7 @@
 package edu.bpl.pwsplugin.hardware.tunableFilters;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import mmcorej.StrVector;
 
 /**
@@ -11,11 +12,13 @@ import mmcorej.StrVector;
 public abstract class DefaultTunableFilter extends TunableFilter{
     //Provides a default implementation for the abstract methods of `TunableFilter` class.
     //Based on a device name and wavelength property name this class implements methods by calling the corresponding MMCore functions.
-    private String devName;
+    protected String devName;
+    private PWSPluginSettings.HWConfiguration.TunableFilterSettings _settings;
     private String wvProp;
     
-    public DefaultTunableFilter(String deviceLabel, String wvPropertyLabel) {
-        this.devName = deviceLabel;
+    public DefaultTunableFilter(PWSPluginSettings.HWConfiguration.TunableFilterSettings settings, String wvPropertyLabel) {
+        _settings = settings;
+        this.devName = settings.name;
         this.wvProp = wvPropertyLabel;
     }
     
@@ -66,5 +69,10 @@ public abstract class DefaultTunableFilter extends TunableFilter{
     @Override
     public double getDelayMs() throws Exception {
         return Globals.core().getDeviceDelayMs(devName);
+    }
+    
+    @Override
+    public PWSPluginSettings.HWConfiguration.TunableFilterSettings getSettings() {
+        return _settings;
     }
 }

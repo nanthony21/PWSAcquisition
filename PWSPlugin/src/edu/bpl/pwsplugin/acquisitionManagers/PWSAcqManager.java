@@ -55,9 +55,6 @@ public class PWSAcqManager implements AcquisitionManager{
     }
     
     public void setSequenceSettings(PWSPluginSettings.PWSSettings settings) throws Exception {
-            
-            //double exposure, boolean externalTrigger, 
-            //boolean hardwareTrigger, int[] Wv, String filterLabel) throws Exception {
         PWSPluginSettings.HWConfiguration.CamSettings camera = this.config.cameras.get(0);
         exposure_ = settings.exposure;
         useExternalTrigger = settings.externalCamTriggering;
