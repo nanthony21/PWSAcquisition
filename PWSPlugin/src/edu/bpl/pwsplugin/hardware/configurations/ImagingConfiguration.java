@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.hardware.configurations;
 
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
+import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 
 /**
  *
@@ -17,9 +18,9 @@ public abstract class ImagingConfiguration {
     public abstract Camera camera();
     public abstract TunableFilter tunableFilter();
     
-    public static ImagingConfiguration getInstance(Types type) {
-        if (type == Types.LCTFWithHam) {
-            return new LCTFWithHam();
+    public static ImagingConfiguration getInstance(PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings settings) {
+        if (settings.type == Types.LCTFWithHam) {
+            return new SpectralCamera(settings.camSettings, settings.filtSettings);
         } else {
             return null; //This shouldn't ever happen.
         }
@@ -30,13 +31,13 @@ public abstract class ImagingConfiguration {
     }
 }
 
-class LCTFWithHam extends ImagingConfiguration {
+class SpectralCamera extends ImagingConfiguration {
     Camera _cam;
     TunableFilter _filt;
     
-    public LCTFWithHam() {
-        _cam = Camera.getInstance(Camera.Types.HAMAMATSUORCA4V3);
-        _filt = TunableFilter.getInstance(TunableFilter.Types.VARISPECLCTF);
+    public SpectralCamera(PWSPluginSettings.HWConfiguration.CamSettings camSettings, PWSPluginSettings.HWConfiguration.TunableFilterSettings filtSettings) {
+        _cam = Camera.getInstance(camSettings);
+        _filt = TunableFilter.getInstance(filtSettings);
     }
     
     @Override

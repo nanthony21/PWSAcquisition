@@ -78,8 +78,12 @@ public class PWSPluginSettings extends JsonableParam {
         public static class TunableFilterSettings extends JsonableParam {
             public String name;
             public TunableFilter.Types type;
-            
-           
+        }
+        
+        public static class ImagingConfigurationSettings extends JsonableParam {
+            public ImagingConfiguration.Types type;
+            public CamSettings camSettings;
+            public TunableFilterSettings filtSettings;
         }
     }
 }
