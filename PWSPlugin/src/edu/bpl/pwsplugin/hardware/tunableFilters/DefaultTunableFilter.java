@@ -48,8 +48,6 @@ public abstract class DefaultTunableFilter extends TunableFilter{
         Globals.mm().core().loadPropertySequence(devName, wvProp, strv);
     }
     
-
-    
     @Override
     public void startSequence() throws Exception {
         Globals.core().startPropertySequence(devName, wvProp);
