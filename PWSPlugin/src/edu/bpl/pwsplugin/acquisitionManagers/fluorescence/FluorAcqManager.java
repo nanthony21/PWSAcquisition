@@ -19,7 +19,7 @@ import org.json.JSONObject;
  * @author LCPWS3
  */
 public abstract class FluorAcqManager implements AcquisitionManager{
-    PWSPluginSettings.FluorSettings settings;
+    protected PWSPluginSettings.FluorSettings settings;
     
     @Override
     public String getFilePrefix() {

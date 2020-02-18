@@ -8,6 +8,7 @@ package edu.bpl.pwsplugin.acquisitionManagers.fluorescence;
 import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.FluorAcqManager;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
+import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.json.JSONObject;
@@ -21,18 +22,10 @@ import org.micromanager.internal.utils.ReportingUtils;
  * @author LCPWS3
  */
 public class AltCamFluorAcqManager extends FluorAcqManager{
-    double exposure_; //The camera exposure in milliseconds.
-    String flFilterBlock_; // The name of the fluorescence filter block config setting.
-    PWSPluginSettings.HWConfiguration.CamSettings camera;
+    Camera camera;
     
     public AltCamFluorAcqManager(PWSPluginSettings.HWConfiguration config) {
-        this.camera = config.cameras.get(0);//TODO add a way to choose whic caamera to use.
-    }
-    
-    public void setFluorescenceSettings(PWSPluginSettings.FluorSettings settings) {
-        super.setFluorescenceSettings(settings);
-        flFilterBlock_ = settings.filterConfigName;
-        exposure_ = settings.exposure;
+        this.camera = config.imagingConfig.camera();
     }
     
     @Override
@@ -48,8 +41,8 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
         try{
             if (Globals.getMMConfigAdapter().autoFilterSwitching) {
                 initialFilter = Globals.core().getCurrentConfig("Filter");
-                Globals.core().setConfig("Filter", flFilterBlock_);
-                Globals.core().waitForConfig("Filter", flFilterBlock_); // Wait for the device to be ready.
+                Globals.core().setConfig("Filter", settings.filterConfigName);
+                Globals.core().waitForConfig("Filter", settings.filterConfigName); // Wait for the device to be ready.
             } else {
                 ReportingUtils.showMessage("Set the correct fluorescence filter and click `OK`.");
             }
@@ -59,16 +52,13 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
         }
         try {
             String origCam = Globals.core().getCurrentConfig("Camera");
-            Globals.core().setConfig("Camera", camera.name);
-            Globals.core().waitForConfig("Camera", camera.name);
-            Globals.core().setExposure(exposure_);
+            camera.setExposure(settings.exposure);
             Globals.core().clearCircularBuffer();
-            Globals.core().snapImage();
-            metadata.put("exposure", Globals.core().getExposure()); //This must happen after we have set our exposure.
-            metadata.put("filterBlock", flFilterBlock_);
-            metadata.put("altCameraTransform", camera.affineTransform); //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera.
+            Image img = camera.snapImage();
+            metadata.put("exposure", camera.getExposure()); //This must happen after we have set our exposure.
+            metadata.put("filterBlock", settings.filterConfigName);
+            metadata.put("altCameraTransform", camera.getSettings().affineTransform); //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera.
             Globals.core().setConfig("Camera", origCam);
-            Image img = Globals.mm().data().convertTaggedImage(Globals.core().getTaggedImage());
             Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
             Coords coords = img.getCoords();
             pipeline.insertImage(img); //Add image to the data pipeline for processing
@@ -79,7 +69,6 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
             imSaver.setMetadata(metadata);
             imSaver.queue.put(img);
             imSaver.join();
-            Globals.core().waitForConfig("Camera", origCam);
         } catch (Exception e) {
             ReportingUtils.showError(e);
         } finally {

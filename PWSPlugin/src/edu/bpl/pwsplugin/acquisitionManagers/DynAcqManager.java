@@ -23,6 +23,8 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.PWSAlbum;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
+import edu.bpl.pwsplugin.hardware.cameras.Camera;
+import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -59,14 +61,15 @@ public class DynAcqManager implements AcquisitionManager{
     
     @Override
     public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata) {
-        PWSPluginSettings.HWConfiguration.CamSettings camera = this.config.cameras.get(0);
+        Camera camera = this.config.imagingConfig.camera();
+        TunableFilter tunableFilter = this.config.imagingConfig.tunableFilter();
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         try {
-            camera.tunableFilter.setWavelength(wavelength_);
-            Globals.core().setExposure(exposure_);
+            tunableFilter.setWavelength(wavelength_);
+            camera.setExposure(exposure_);
             Globals.core().setCircularBufferMemoryFootprint(1000); //increase the circular buffer to 1Gb to avoid weird issues with lost images
             Globals.core().clearCircularBuffer();
-            Globals.core().startSequenceAcquisition(numFrames_, 0, false);
+            camera.startSequence(numFrames_, 0, false);
         } catch (Exception e) {
             ReportingUtils.showError(e);
         }
@@ -75,7 +78,7 @@ public class DynAcqManager implements AcquisitionManager{
             MMSaver imSaver = new MMSaver(this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), this.getFilePrefix());
             imSaver.start();
             metadata.put("wavelength", wavelength_);
-            metadata.put("exposure", Globals.core().getExposure()); //This must happen after we have set our exposure.
+            metadata.put("exposure", camera.getExposure()); //This must happen after we have set our exposure.
             JSONArray times = new JSONArray();
             for (int i=0; i<numFrames_; i++) {
                 while (Globals.core().getRemainingImageCount() < 1) { //Wait for an image to be ready
