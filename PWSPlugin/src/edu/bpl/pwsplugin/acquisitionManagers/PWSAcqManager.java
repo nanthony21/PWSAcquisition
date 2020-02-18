@@ -22,7 +22,6 @@
 package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.fileSavers.ImSaverRaw;
 import edu.bpl.pwsplugin.PWSAlbum;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
@@ -30,8 +29,6 @@ import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import org.micromanager.internal.utils.ReportingUtils;
 import java.util.concurrent.LinkedBlockingQueue;
-import mmcorej.StrVector;
-import org.micromanager.Studio;
 import org.micromanager.data.Image;
 import java.nio.file.Files;
 import java.nio.file.Path;
