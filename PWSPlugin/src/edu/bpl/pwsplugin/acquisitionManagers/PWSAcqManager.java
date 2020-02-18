@@ -102,10 +102,8 @@ public class PWSAcqManager implements AcquisitionManager{
         TunableFilter filter = this.config.imagingConfig.tunableFilter();
         try {    
             initialWv = filter.getWavelength(); //Get initial wavelength
-            String cam = Globals.core().getCameraDevice();
-            Globals.core().waitForDevice(cam);
             Globals.core().clearCircularBuffer();     
-            Globals.core().setExposure(cam, exposure_);
+            camera.setExposure(exposure_);
             Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true);
             
             //Prepare metadata and start imsaver
@@ -114,7 +112,7 @@ public class PWSAcqManager implements AcquisitionManager{
                 WV.put(wv[i]);
             }        
             metadata.put("wavelengths", WV);
-            metadata.put("exposure", Globals.core().getExposure()); //This must happen after we have set the camera to our desired exposure.
+            metadata.put("exposure", camera.getExposure()); //This must happen after we have set the camera to our desired exposure.
             MMSaver imSaver_ = new MMSaver(this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), this.getFilePrefix());
             imSaver_.setMetadata(metadata);
             imSaver_.start();
@@ -123,42 +121,25 @@ public class PWSAcqManager implements AcquisitionManager{
             long collectionEndTime=0;
             long seqStartTime=0;
             if (hardwareSequence) {
-                String origCameraTrigger="";  
-                if (Globals.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")){
-                    origCameraTrigger = Globals.core().getProperty(cam, "TRIGGER SOURCE");
-                }
                 try {
                     double delayMs = filter.getDelayMs(); //Use the delay defined by the tunable filter's device adapter.
                     if (useExternalTrigger) {
-                        if (Globals.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { 
-                            Globals.core().setProperty(cam, "TRIGGER SOURCE", "EXTERNAL");
-                            Globals.core().setProperty(cam, "TRIGGER DELAY", delayMs/1000); //This is in units of seconds.
-                            Globals.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an eror if the interval is not 0.
-                            filter.startSequence(); //This should trigger a pulse which sets the whole thing off.
-                        }   
+                        camera.startSequence(this.wv.length, delayMs, true);
+                        filter.startSequence(); //This should trigger a pulse which sets the whole thing off. 
                     }
                     else { //Since we're not using an external trigger we need to have the camera control the timing.
-                        double exposurems = Globals.core().getExposure();
-                        double readoutms = 12; //This is based on the frame rate calculation portion of the 13440-20CU camera. 9.7 us per line, reading two lines at once, 2048 lines -> 0.097*2048/2 ~= 10 ms. However testing has shown if we set this exactly then we end up missing every other frame and getting half our frame rate add a buffer of 2ms to be safe.
-                        double intervalMs = (exposurems+readoutms+delayMs);
                         filter.startSequence();
-                        if (Globals.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")) { //This device adapter doesn't seem to support delays in the sequence acquisition. We instead set the master pulse interval.
-                            Globals.core().setProperty(cam, "TRIGGER SOURCE", "MASTER PULSE"); //Make sure that Master Pulse is triggering the camera.
-                            Globals.core().setProperty(cam, "MASTER PULSE INTERVAL", intervalMs/1000.0); //In units of seconds
-                            Globals.core().startSequenceAcquisition(wv.length, 0, false); //The hamamatsu adapter throws an error if the interval is not 0.
-                            seqStartTime = System.currentTimeMillis();
-                        } else{
-                            Globals.core().startSequenceAcquisition(wv.length, intervalMs, false); //Supposedly having a non-zero interval acqually only works for Andor cameras.
-                            seqStartTime = System.currentTimeMillis();
-                        }
+                        camera.startSequence(this.wv.length, delayMs, false);
                     }
+                    seqStartTime = System.currentTimeMillis();
+                    
                     boolean canExit = false;
                     int i = 0;
                     int oldi = -1;
                     long lastImTime = System.currentTimeMillis();
                     while (true) {
                         boolean remaining = (Globals.core().getRemainingImageCount() > 0);
-                        boolean running = (Globals.core().isSequenceRunning(cam));
+                        boolean running = (Globals.core().isSequenceRunning(camera.getName()));
                         if ((!remaining) && (canExit)) {
                             break;  //Everything is taken care of.
                         }
@@ -181,11 +162,8 @@ public class PWSAcqManager implements AcquisitionManager{
                     }
                 }
                 finally {
-                    Globals.core().stopSequenceAcquisition();
-                    if (Globals.core().getDeviceName(cam).equals("HamamatsuHam_DCAM")){
-                        Globals.core().setProperty(cam, "TRIGGER SOURCE", origCameraTrigger); //Set the trigger source back ot what it was originally
-                    }
                     try {
+                        camera.stopSequence();
                         filter.stopSequence();//Got to make sure to stop the sequencing behaviour.
                     } catch (Exception ex) {
                         ex.printStackTrace();
@@ -199,8 +177,7 @@ public class PWSAcqManager implements AcquisitionManager{
                 for (int i=0; i<wv.length; i++) {
                     filter.setWavelength(wv[i]);
                     while (filter.isBusy()) {Thread.sleep(1);} //Wait until the device says it is tuned.
-                    Globals.core().snapImage();
-                    Image im = Globals.mm().data().convertTaggedImage(Globals.core().getTaggedImage());
+                    Image im = camera.snapImage(); //TODO what if the camera is not the core image.
                     addImage(im, i, album_, pipeline, imSaver_.queue);
                 }
             }

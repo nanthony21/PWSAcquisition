@@ -9,6 +9,7 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.ArrayList;
 import java.util.List;
+import org.micromanager.data.Image;
 
 /**
  *
@@ -36,17 +37,6 @@ public class HamamatsuOrcaFlash4v3 extends Camera{
     public boolean supportsExternalTriggering() { return true; }
     
     @Override
-    public void configureExternalTriggering(boolean enable, double delayMs) throws Exception { //Turn external triggering on or off.
-        if (enable) {
-            Globals.core().setProperty(this._devName, "TRIGGER SOURCE", "EXTERNAL");
-            Globals.core().setProperty(this._devName, "TRIGGER DELAY", delayMs/1000); //This is in units of seconds.
-        } else {
-            Globals.core().setProperty(this._devName, "TRIGGER SOURCE", "MASTER PULSE");
-            Globals.core().setProperty(this._devName, "TRIGGER DELAY", delayMs/1000); //This is in units of seconds.
-        }
-    }
-    
-    @Override
     public boolean supportsTriggerOutput() { return true; }
     
     @Override
@@ -67,14 +57,46 @@ public class HamamatsuOrcaFlash4v3 extends Camera{
     }
     
     @Override
-    public void startAcquisition(int numImages, double intervalMs) throws Exception{
-        Globals.core().setProperty(this._devName, "TRIGGER SOURCE", "MASTER PULSE"); //Make sure that Master Pulse is triggering the camera.
-        Globals.core().setProperty(this._devName, "MASTER PULSE INTERVAL", intervalMs/1000.0); //In units of seconds
-        Globals.core().startSequenceAcquisition(numImages, 0, false); //The hamamatsu adapter throws an error if the interval is not 0.
+    public void startSequence(int numImages, double delayMs, boolean externalTriggering) throws Exception{
+        if (externalTriggering) {
+            Globals.core().setProperty(this._devName, "TRIGGER SOURCE", "EXTERNAL");
+            Globals.core().setProperty(this._devName, "TRIGGER DELAY", delayMs/1000); //This is in units of seconds.
+        } else {
+            double exposurems = this.getExposure();
+            double readoutms = 12; //This is based on the frame rate calculation portion of the 13440-20CU camera. 9.7 us per line, reading two lines at once, 2048 lines -> 0.097*2048/2 ~= 10 ms. However testing has shown if we set this exactly then we end up missing every other frame and getting half our frame rate add a buffer of 2ms to be safe.
+            double intervalMs = (exposurems+readoutms+delayMs);
+            Globals.core().setProperty(this._devName, "TRIGGER SOURCE", "MASTER PULSE"); //Make sure that Master Pulse is triggering the camera.
+            Globals.core().setProperty(this._devName, "MASTER PULSE INTERVAL", intervalMs/1000.0); //In units of seconds
+        }
+        Globals.core().startSequenceAcquisition(this._devName, numImages, 0, false); //The hamamatsu adapter throws an error if the interval is not 0.
     }
     
+    @Override
+    public void stopSequence() throws Exception {
+        Globals.core().stopSequenceAcquisition(this._devName);
+        Globals.core().setProperty(this._devName, "TRIGGER SOURCE", "MASTER PULSE"); //Set the trigger source back ot what it was originally
+    }
+    
+    @Override
     public PWSPluginSettings.HWConfiguration.CamSettings getSettings() {
         return _settings;
+    }
+    
+    @Override
+    public void setExposure(double exposureMs) throws Exception {
+        Globals.core().setExposure(_devName, exposureMs);
+    }
+    
+    @Override
+    public double getExposure() throws Exception {
+        return Globals.core().getExposure(_devName);
+    }
+    
+    @Override
+    public Image snapImage() throws Exception {
+        //TODO what if we are not set as the core camera at this point.
+        Globals.core().snapImage();
+        return Globals.mm().data().convertTaggedImage(Globals.core().getTaggedImage());
     }
     
     @Override
