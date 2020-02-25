@@ -11,6 +11,7 @@ import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -32,10 +33,15 @@ public class ImagingConfigUI extends SingleBuilderJPanel<PWSPluginSettings.HWCon
         
         typeCombo.setModel(new DefaultComboBoxModel<>(ImagingConfiguration.Types.values()));
         
+        this.camSettings.setBorder(BorderFactory.createLoweredBevelBorder());
+        this.filtSettings.setBorder(BorderFactory.createLoweredBevelBorder());
+        
         this.add(new JLabel("Type:"), "gapleft push");
         this.add(this.typeCombo, "wrap");
-        this.add(this.camSettings, "wrap");
-        this.add(this.filtSettings);
+        this.add(new JLabel("Camera:"), "wrap");
+        this.add(this.camSettings, "wrap, span");
+        this.add(new JLabel("Tunable Filter:"), "wrap");
+        this.add(this.filtSettings, "span");
     }
     
     @Override

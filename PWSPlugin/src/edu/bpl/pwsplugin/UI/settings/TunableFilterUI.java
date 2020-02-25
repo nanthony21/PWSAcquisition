@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 
@@ -20,7 +21,7 @@ import net.miginfocom.swing.MigLayout;
  * @author N2-LiveCell
  */
 public class TunableFilterUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration.TunableFilterSettings>{
-    private JTextField name = new JTextField();
+    private JTextField name = new JTextField(20);
     private JComboBox<TunableFilter.Types> filterType = new JComboBox<>();
     
     public TunableFilterUI() {
@@ -28,7 +29,9 @@ public class TunableFilterUI extends SingleBuilderJPanel<PWSPluginSettings.HWCon
         
         this.filterType.setModel(new DefaultComboBoxModel<>(TunableFilter.Types.values()));
         
+        this.add(new JLabel("Name:"), "gapleft push");
         this.add(name, "wrap");
+        this.add(new JLabel("Type:"), "gapleft push");
         this.add(filterType, "wrap");
     }
     
