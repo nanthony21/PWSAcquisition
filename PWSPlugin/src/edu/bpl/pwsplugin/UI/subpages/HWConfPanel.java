@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.UI.subpages;
 
 import edu.bpl.pwsplugin.UI.utils.ListCardUI;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
+import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,10 +23,18 @@ import net.miginfocom.swing.MigLayout;
  */
 public class HWConfPanel extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration>{
     private JTextField sysNameEdit = new JTextField(20);
-    private ListCardUI<List<PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings>, PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings> configs = new ListCardUI<>((Class<List<PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings>>)(Object) ArrayList.class, "Imaging Config:", new PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings());
+    
+    private ListCardUI<List<PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings>, PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings> configs;
     
     public HWConfPanel() {
         super(new MigLayout(), PWSPluginSettings.HWConfiguration.class);
+        
+        PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings defaultConfig = new PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings();
+        defaultConfig.configType = ImagingConfiguration.Types.StandardCamera;
+        defaultConfig.camSettings = new PWSPluginSettings.HWConfiguration.CamSettings();
+        defaultConfig.filtSettings = new PWSPluginSettings.HWConfiguration.TunableFilterSettings();
+        this.configs = new ListCardUI<>((Class<List<PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings>>)(Object) ArrayList.class, "Imaging Config:", defaultConfig);
+        
         this.add(new JLabel("System Name:"), "gapleft push");
         this.add(this.sysNameEdit, "wrap");
         this.add(this.configs, "span");
