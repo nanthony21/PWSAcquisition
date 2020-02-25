@@ -69,7 +69,7 @@ public class PluginFrame extends MMFrame{
         super.setLayout(new MigLayout());
         super.setTitle(String.format("%s %s", PWSPlugin.menuName, PWSPlugin.versionNumber));
         super.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        super.setResizable(false);
+        super.setResizable(true);
         
         dirSelect = new DirectorySelector(DirectorySelector.DefaultMMFunctions.MMDataSetDirectory);
         cellNumSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
@@ -100,6 +100,7 @@ public class PluginFrame extends MMFrame{
         super.add(bottomPanel, "dock south");
         
         super.pack();
+        this.setMinimumSize(this.getSize());
     }
     
     public PWSPluginSettings getSettings() {

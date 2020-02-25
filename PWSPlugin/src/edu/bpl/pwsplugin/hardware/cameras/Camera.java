@@ -29,7 +29,7 @@ public abstract class Camera {
     public abstract List<String> validate(); //Return a list of strings for every error detected in the configuration. return empty list if no errors found.
     
     public static Camera getInstance(PWSPluginSettings.HWConfiguration.CamSettings settings) {
-        if (settings.type == Types.HAMAMATSUORCA4V3) {
+        if (settings.camType == Types.HAMAMATSUORCA4V3) {
             return new HamamatsuOrcaFlash4v3(settings);
         } else {
             return null; //This shouldn't ever happen.

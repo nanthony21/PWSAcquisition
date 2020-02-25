@@ -19,9 +19,9 @@ public abstract class ImagingConfiguration {
     public abstract TunableFilter tunableFilter();
     
     public static ImagingConfiguration getInstance(PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings settings) {
-        if (settings.type == Types.SpectralCamera) {
+        if (settings.configType == Types.SpectralCamera) {
             return new SpectralCamera(settings.camSettings, settings.filtSettings);
-        } else if (settings.type == Types.StandardCamera) {
+        } else if (settings.configType == Types.StandardCamera) {
             return new StandardCamera(settings.camSettings);
         } else {
             return null; //This shouldn't ever happen.

@@ -27,9 +27,9 @@ public abstract class TunableFilter {
     public abstract List<String> validate(); //Return a list of errors found with the device.
     
     public static TunableFilter getInstance(PWSPluginSettings.HWConfiguration.TunableFilterSettings settings) {
-        if (settings.type == Types.VARISPECLCTF) {
+        if (settings.filterType == Types.VARISPECLCTF) {
             return new VarispecLCTF(settings);
-        } else if (settings.type == Types.KURIOSLCTF) {
+        } else if (settings.filterType == Types.KURIOSLCTF) {
             return new KuriosLCTF(settings);
         } else {
             return null; //This shouldn't ever happen.

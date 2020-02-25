@@ -1,9 +1,10 @@
 
-package edu.bpl.pwsplugin.UI.subpages;
+package edu.bpl.pwsplugin.UI.settings;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
+import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.Vector;
@@ -31,11 +32,10 @@ import org.apache.commons.lang.StringUtils;
  * @author nick
  */
 public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration.CamSettings>{
-    private JComboBox camCombo = new JComboBox();
+    private JComboBox<String> camCombo = new JComboBox<>();
     private JSpinner darkCountsSpinner;
     private DoubleListTextField linEdit = new DoubleListTextField();
-    private JCheckBox hasTFCheckbox = new JCheckBox("Uses Tunable Filter:");
-    private JComboBox tunableFilterCombo = new JComboBox();
+    private JComboBox<Camera.Types> camType = new JComboBox<>();
     
     public CamUI() {
         super(new MigLayout(), PWSPluginSettings.HWConfiguration.CamSettings.class);
@@ -49,42 +49,33 @@ public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration
         linEdit.setToolTipText("Comma separated values representing the polynomial to linearize the counts from the camera. In the form \"A,B,C\" = Ax + Bx^2 + Cx^3. Type \"None\" or \"null\" if correction is not needed.");
 
         
-        this.hasTFCheckbox.setHorizontalTextPosition(SwingConstants.LEFT); //move labelto the left of the button.
         this.linEdit.textField.setColumns(10);
         
-        this.hasTFCheckbox.addItemListener((evt) -> {
-            this.tunableFilterCombo.setEnabled(this.hasTFCheckbox.isSelected());
-        });
-        //for(ActionListener a : this.hasTFCheckbox.getActionListeners()) { //This triggers the action listener to initialize the components.
-        //    a.actionPerformed(new ActionEvent(this, 0, "Blank Command"));
-        //}
+        this.camType.setModel(new DefaultComboBoxModel<>(Camera.Types.values()));
 
-        
         super.add(new JLabel("Camera:"), "gapleft push");
         super.add(camCombo, "wrap");
+        super.add(new JLabel("Type:"), "gapleft push");
+        super.add(camType, "wrap");
         super.add(new JLabel("Dark Counts:"), "gapleft push");
         super.add(darkCountsSpinner, "wrap");
         super.add(new JLabel("Linearity Polynomial:"), "gapleft push");
         super.add(linEdit, "wrap");
-        super.add(hasTFCheckbox);
-        super.add(tunableFilterCombo);
-        
+
         this.updateComboBoxes();
     }
     
     private void updateComboBoxes() {
         this.camCombo.setModel(new DefaultComboBoxModel<String>(new Vector<String>(Globals.getMMConfigAdapter().getConnectedCameras())));
-        this.tunableFilterCombo.setModel(new DefaultComboBoxModel(TunableFilter.Types.values())); //TODO This needs to point to an instance rather than an enum value of the type.
     }
     
     @Override
     public Map<String, Object> getPropertyFieldMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("name", camCombo);
+        map.put("camType", camType);
         map.put("linearityPolynomial", linEdit);
         map.put("darkCounts", darkCountsSpinner);
-        map.put("hasTunableFilter", hasTFCheckbox);
-        map.put("tunableFilter", tunableFilterCombo);
         return map;
     }
 }

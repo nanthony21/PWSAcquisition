@@ -63,13 +63,13 @@ public class PWSPluginSettings extends JsonableParam {
     
     public static class HWConfiguration extends JsonableParam {
         public String systemName;
-        public List<CamSettings> cameras;
-        public List<TunableFilterSettings> tunableFilters;
+        public List<ImagingConfigurationSettings> configs;
+        //public List<TunableFilterSettings> tunableFilters;
         public ImagingConfigurationSettings imagingConfig;
         
         public static class CamSettings extends JsonableParam {
             public String name;
-            public Camera.Types type;
+            public Camera.Types camType;
             public List<Double> linearityPolynomial;
             public int darkCounts;
             public double[] affineTransform; //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera. For simplicity we store this array as a 1d array of length 6
@@ -77,11 +77,11 @@ public class PWSPluginSettings extends JsonableParam {
         
         public static class TunableFilterSettings extends JsonableParam {
             public String name;
-            public TunableFilter.Types type;
+            public TunableFilter.Types filterType;
         }
         
         public static class ImagingConfigurationSettings extends JsonableParam {
-            public ImagingConfiguration.Types type;
+            public ImagingConfiguration.Types configType;
             public CamSettings camSettings;
             public TunableFilterSettings filtSettings;
         }

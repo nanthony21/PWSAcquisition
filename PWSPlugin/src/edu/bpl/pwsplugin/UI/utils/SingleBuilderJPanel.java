@@ -47,22 +47,6 @@ public abstract class SingleBuilderJPanel<T> extends BuilderJPanel<T>{
                     prop.set(t, ((T)((BuilderJPanel<T>) field).build()));
                 } else if (field instanceof DirectorySelector) {
                     prop.set(t, ((DirectorySelector) field).getText());
-                } else if (field instanceof JCheckBox[]) { //from checkbox array to int.
-                    boolean[] boolarr = new boolean[((JCheckBox[])field).length];
-                    for (int i=0; i<boolarr.length; i++) {
-                        boolarr[i] = ((JCheckBox[])field)[i].isSelected();
-                    }
-                    int n = 0, l = boolarr.length;
-                    for (int i = 0; i < l; ++i) {
-                        n = (n << 1) + (boolarr[i] ? 1 : 0);
-                    }
-                    prop.set(t, n);
-                } else if (field instanceof JSpinner[]) {
-                    int[] arr = new int[((JSpinner[])field).length];
-                    for (int i=0; i<arr.length; i++) {
-                        arr[i] = (int) ((JSpinner[]) field)[i].getValue();
-                    }
-                    prop.set(t, arr);
                 } else if (field instanceof JComboBox) {
                     prop.set(t, ((JComboBox) field).getSelectedItem());
                 }else {
@@ -94,17 +78,6 @@ public abstract class SingleBuilderJPanel<T> extends BuilderJPanel<T>{
                 ((BuilderJPanel) field).populateFields(prop.get(t));
             } else if (field instanceof DirectorySelector) {
                 ((DirectorySelector) field).setText((String) prop.get(t));
-            } else if (field instanceof JCheckBox[]) { //from int to jcheckbox[]
-                int num = (int) prop.get(t);
-                int l = ((JCheckBox[]) field).length;
-                for (int i = 0; i < l; ++i) {
-                    ((JCheckBox[]) field)[l-1-i].setSelected((num & (1 << i)) != 0);
-                }
-            } else if (field instanceof JSpinner[]) {
-                int[] arr = (int[]) prop.get(t);
-                for (int i=0; i<arr.length; i++) {
-                    ((JSpinner[]) field)[i].setValue(arr[i]);
-                }
             } else if (field instanceof JComboBox) {
                 Object val = prop.get(t);
                 ((JComboBox) field).setSelectedItem(val);

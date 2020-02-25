@@ -1,7 +1,9 @@
 
 package edu.bpl.pwsplugin.UI.utils;
 
-import edu.bpl.pwsplugin.UI.subpages.CamUI;
+import edu.bpl.pwsplugin.UI.settings.CamUI;
+import edu.bpl.pwsplugin.UI.settings.ImagingConfigUI;
+import edu.bpl.pwsplugin.UI.settings.TunableFilterUI;
 import edu.bpl.pwsplugin.UI.subpages.DynPanel;
 import edu.bpl.pwsplugin.UI.subpages.FluorPanel;
 import edu.bpl.pwsplugin.UI.subpages.HWConfPanel;
@@ -24,6 +26,10 @@ public class UIFactory {
             return new HWConfPanel();
         } else if (clazz.equals(PWSPluginSettings.HWConfiguration.CamSettings.class)) {
             return new CamUI();
+        } else if (clazz.equals(PWSPluginSettings.HWConfiguration.TunableFilterSettings.class)) {
+            return new TunableFilterUI();
+        } else if (clazz.equals(PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings.class)) {
+            return new ImagingConfigUI();
         } else if (clazz.equals(PWSPluginSettings.FluorSettings.class)) {
             return new FluorPanel();
         } else {
