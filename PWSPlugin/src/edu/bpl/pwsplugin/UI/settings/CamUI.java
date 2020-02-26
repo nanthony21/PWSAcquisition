@@ -103,9 +103,9 @@ class DoubleListTextField extends BuilderJPanel<List<Double>> {
         }
         if (linList.size() > 0) {
              this.textField.setText(StringUtils.join(linList.toArray(), ","));
-         } else {
+        } else {
              this.textField.setText("null");
-         }
+        }
     }
     
     @Override
@@ -113,7 +113,7 @@ class DoubleListTextField extends BuilderJPanel<List<Double>> {
         String text = this.textField.getText().trim();
         List<Double> linearityPolynomial;
         if ((text.equals("None")) || (text.equals("null")) || text.equals("")) {
-            linearityPolynomial = null;
+            linearityPolynomial = new ArrayList<>();
         } else {
             linearityPolynomial = Arrays.asList(text.split(","))
                 .stream()

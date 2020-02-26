@@ -16,6 +16,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import net.miginfocom.swing.MigLayout;
 
@@ -27,6 +28,7 @@ public class ImagingConfigUI extends SingleBuilderJPanel<PWSPluginSettings.HWCon
     private CamUI camSettings = new CamUI();
     private TunableFilterUI filtSettings = new TunableFilterUI();
     private JComboBox<ImagingConfiguration.Types> typeCombo = new JComboBox<>();
+    private JTextField name = new JTextField(10);
     
     public ImagingConfigUI() {
         super(new MigLayout(), PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings.class);
@@ -36,6 +38,8 @@ public class ImagingConfigUI extends SingleBuilderJPanel<PWSPluginSettings.HWCon
         this.camSettings.setBorder(BorderFactory.createLoweredBevelBorder());
         this.filtSettings.setBorder(BorderFactory.createLoweredBevelBorder());
         
+        this.add(new JLabel("Name:"), "gapleft push");
+        this.add(this.name, "wrap");
         this.add(new JLabel("Type:"), "gapleft push");
         this.add(this.typeCombo, "wrap");
         this.add(new JLabel("Camera:"), "wrap");
@@ -47,6 +51,7 @@ public class ImagingConfigUI extends SingleBuilderJPanel<PWSPluginSettings.HWCon
     @Override
     public Map<String, Object> getPropertyFieldMap() {
         Map<String, Object> map = new HashMap<>();
+        map.put("name", name);
         map.put("configType", typeCombo);
         map.put("camSettings", camSettings);
         map.put("filtSettings", filtSettings);
