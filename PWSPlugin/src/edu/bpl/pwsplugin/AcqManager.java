@@ -48,12 +48,6 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     PWSAlbum dynAlbum;
     PWSPluginSettings.HWConfiguration config;
     
-    int darkCounts_;
-    double[] linearityPolynomial_;
-    String sysName_;
-    boolean automaticFlFilterEnabled;
-
-    
     public AcqManager() {
         album = new PWSAlbum("PWS");
         dynAlbum = new PWSAlbum("Dynamics");
@@ -74,6 +68,8 @@ public class AcqManager { // A parent acquisition manager that can direct comman
             acquisitionRunning_ = true;
             run(pwsManager_);
             acquisitionRunning_ = false;
+        } else {
+            ReportingUtils.logError("Attempting to start PWS acquisition when acquisition is already running.");
         }
     }
     
@@ -82,6 +78,8 @@ public class AcqManager { // A parent acquisition manager that can direct comman
             acquisitionRunning_ = true;
             run(dynManager_);
             acquisitionRunning_ = false;
+        } else {
+            ReportingUtils.logError("Attempting to start Dyn acquisition when acquisition is already running.");
         }
     }
     
@@ -90,6 +88,8 @@ public class AcqManager { // A parent acquisition manager that can direct comman
             acquisitionRunning_ = true;
             run(flManager_);
             acquisitionRunning_ = false;
+        } else {
+            ReportingUtils.logError("Attempting to start Fluorescence acquisition when acquisition is already running.");
         }
     }
     
@@ -103,12 +103,6 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     
     public void setSavePath(String savePath) {
         savePath_ = savePath;
-    }
-    
-    public void setSystemSettings(int darkcounts, double[] linearPoly, String sysName) {
-        darkCounts_ = darkcounts;
-        linearityPolynomial_ = linearPoly;
-        sysName_ = sysName;
     }
     
     public void setPWSSettings(PWSPluginSettings.PWSSettings settings) throws Exception {
@@ -133,17 +127,18 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     private JSONObject generateMetadata() throws JSONException {
         JSONObject metadata = new JSONObject();
         JSONArray linPoly;
-        if (linearityPolynomial_.length > 0) {
+        PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings imConf = this.config.configs.get(0); //TODO add a way to select the imaging configuration
+        if (imConf.camSettings.linearityPolynomial.size() > 0) {
             linPoly = new JSONArray();
-            for (int i=0; i<linearityPolynomial_.length; i++) {
-                linPoly.put(linearityPolynomial_[i]);
+            for (int i=0; i<imConf.camSettings.linearityPolynomial.size(); i++) {
+                linPoly.put(imConf.camSettings.linearityPolynomial.get(i));
             }
             metadata.put("linearityPoly", linPoly);
         } else{
             metadata.put("linearityPoly", JSONObject.NULL);
         }
-        metadata.put("system", sysName_);
-        metadata.put("darkCounts", darkCounts_);
+        metadata.put("system", this.config.systemName);
+        metadata.put("darkCounts", imConf.camSettings.darkCounts);
         metadata.put("time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
         return metadata;
     }
