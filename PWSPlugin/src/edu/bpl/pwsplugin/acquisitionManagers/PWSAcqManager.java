@@ -52,8 +52,11 @@ public class PWSAcqManager implements AcquisitionManager{
     PWSAlbum album_;
     PWSPluginSettings.HWConfiguration config;
     
-    public PWSAcqManager(PWSAlbum album, PWSPluginSettings.HWConfiguration config) {
+    public PWSAcqManager(PWSAlbum album) {
         album_ = album;
+    }
+    
+    public void setHWConfiguration(PWSPluginSettings.HWConfiguration config) {
         this.config = config;
     }
     

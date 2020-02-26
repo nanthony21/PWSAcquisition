@@ -166,7 +166,7 @@ public class PluginFrame extends MMFrame{
         PWSPluginSettings.HWConfiguration config = this.hwPanel.build();
         if (!config.equals(this.lastHWConfig)) {
             this.lastHWConfig = config;
-            Globals.setHardwareConfiguration(config); //TODO this will reconstruct all the acq managers meaning that the settings need to be re-set. bad design?
+            Globals.setHardwareConfiguration(config);
         }
         PWSPluginSettings.PWSSettings pwsSettings = this.pwsPanel.build();
         if (!pwsSettings.equals(this.lastPWSSettings)) {

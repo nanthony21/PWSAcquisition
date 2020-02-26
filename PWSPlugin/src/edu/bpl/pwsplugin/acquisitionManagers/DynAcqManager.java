@@ -49,8 +49,11 @@ public class DynAcqManager implements AcquisitionManager{
     PWSAlbum album_;
     PWSPluginSettings.HWConfiguration config;
     
-    public DynAcqManager(PWSAlbum album, PWSPluginSettings.HWConfiguration config){
+    public DynAcqManager(PWSAlbum album){
         album_ = album;
+    }
+    
+    public void setHWConfiguration(PWSPluginSettings.HWConfiguration config) {
         this.config = config;
     }
     

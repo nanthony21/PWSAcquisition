@@ -19,13 +19,14 @@ import org.micromanager.internal.utils.ReportingUtils;
  */
 public class Globals {
     private static Studio studio_ = null;
-    private static AcqManager acqMan_ = null;
+    private static AcqManager acqMan_;
     private static PWSPluginSettings.HWConfiguration config;
     private static MMConfigAdapter mmAdapter;
     
     public static void init(Studio studio) {
         studio_ = studio;
         mmAdapter = new MMConfigAdapter();
+        acqMan_ = new AcqManager();
         setHardwareConfiguration(new PWSPluginSettings.HWConfiguration()); //Very important that this is instantiated after studio. this is probably bad design actually.
     }
             
@@ -43,7 +44,7 @@ public class Globals {
     
     public static void setHardwareConfiguration(PWSPluginSettings.HWConfiguration configg) {
         config = configg;
-        acqMan_ = new AcqManager(configg);
+        acqMan_.setHWConfiguration(configg);    
     }
     
     public static PWSPluginSettings.HWConfiguration getHardwareConfiguration() {
