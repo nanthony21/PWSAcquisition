@@ -65,7 +65,7 @@ public class DynAcqManager implements AcquisitionManager{
     
     @Override
     public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata) {
-        ImagingConfiguration conf = ImagingConfiguration.getInstance(this.config.imagingConfig); 
+        ImagingConfiguration conf = ImagingConfiguration.getInstance(this.config.configs.get(0)); //TODO add UI selection of imaging config
         Camera camera = conf.camera();
         TunableFilter tunableFilter = conf.tunableFilter();
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}

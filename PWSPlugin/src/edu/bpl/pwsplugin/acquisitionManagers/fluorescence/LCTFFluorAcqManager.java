@@ -23,7 +23,7 @@ public class LCTFFluorAcqManager extends FluorAcqManager{
     TunableFilter tunableFilter;
     
     public LCTFFluorAcqManager(PWSPluginSettings.HWConfiguration config) {
-        ImagingConfiguration conf = ImagingConfiguration.getInstance(config.imagingConfig); 
+        ImagingConfiguration conf = ImagingConfiguration.getInstance(config.configs.get(0)); //TODO add UI selection of imagin config
         this.camera = conf.camera();
         this.tunableFilter = conf.tunableFilter();
     }

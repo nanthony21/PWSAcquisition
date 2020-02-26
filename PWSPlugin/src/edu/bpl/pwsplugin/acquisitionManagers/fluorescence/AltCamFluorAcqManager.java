@@ -25,7 +25,7 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
     Camera camera;
     
     public AltCamFluorAcqManager(PWSPluginSettings.HWConfiguration config) {
-        ImagingConfiguration conf = ImagingConfiguration.getInstance(config.imagingConfig); 
+        ImagingConfiguration conf = ImagingConfiguration.getInstance(config.configs.get(0)); //TODO add UI selection of imagin config
         this.camera = conf.camera();
     }
     
