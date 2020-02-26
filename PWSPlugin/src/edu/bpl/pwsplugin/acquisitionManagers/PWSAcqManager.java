@@ -166,8 +166,10 @@ public class PWSAcqManager implements AcquisitionManager{
                             canExit = true;
                         }
                     }
-                }
-                finally {
+                } catch (Exception e) {
+                    ReportingUtils.logError(e);
+                    ReportingUtils.showError(e);
+                } finally {
                     try {
                         camera.stopSequence();
                         filter.stopSequence();//Got to make sure to stop the sequencing behaviour.
@@ -183,7 +185,7 @@ public class PWSAcqManager implements AcquisitionManager{
                 for (int i=0; i<wv.length; i++) {
                     filter.setWavelength(wv[i]);
                     while (filter.isBusy()) {Thread.sleep(1);} //Wait until the device says it is tuned.
-                    Image im = camera.snapImage(); //TODO what if the camera is not the core image.
+                    Image im = camera.snapImage(); //TODO what if the camera is not the core image. This is so slow.
                     addImage(im, i, album_, pipeline, imSaver_.queue);
                 }
             }
