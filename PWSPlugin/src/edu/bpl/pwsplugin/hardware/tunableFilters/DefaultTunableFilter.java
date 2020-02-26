@@ -30,7 +30,7 @@ public abstract class DefaultTunableFilter extends TunableFilter{
     
     @Override
     public int getWavelength() throws Exception{ 
-        int wv = Integer.valueOf(Globals.core().getProperty(devName, wvProp));
+        int wv = (int) Math.round(Double.valueOf(Globals.core().getProperty(devName, wvProp)));
         return wv;
     }
     
