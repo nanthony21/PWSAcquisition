@@ -204,7 +204,6 @@ public class PWSAcqManager implements AcquisitionManager{
         }
     }
     
-    
     private void addImage(Image im, int idx, PWSAlbum album, Pipeline pipeline, LinkedBlockingQueue imageQueue) throws IOException, PipelineErrorException{
         Coords newCoords = im.getCoords().copyBuilder().t(idx).build();
         im = im.copyAtCoords(newCoords);

@@ -53,9 +53,9 @@ public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration
         
         this.camType.setModel(new DefaultComboBoxModel<>(Camera.Types.values()));
 
-        super.add(new JLabel("Camera:"), "gapleft push");
+        super.add(new JLabel("Device Name:"), "gapleft push");
         super.add(camCombo, "wrap");
-        super.add(new JLabel("Type:"), "gapleft push");
+        super.add(new JLabel("Camera Type:"), "gapleft push");
         super.add(camType, "wrap");
         super.add(new JLabel("Dark Counts:"), "gapleft push");
         super.add(darkCountsSpinner, "wrap");

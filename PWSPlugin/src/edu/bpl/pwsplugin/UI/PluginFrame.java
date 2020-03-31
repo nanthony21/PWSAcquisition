@@ -65,11 +65,11 @@ public class PluginFrame extends MMFrame{
 
     public PluginFrame() {
         super("PWS Plugin");
-        super.loadAndRestorePosition(100, 100);
-        super.setLayout(new MigLayout());
-        super.setTitle(String.format("%s %s", PWSPlugin.menuName, PWSPlugin.versionNumber));
-        super.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        super.setResizable(true);
+        this.loadAndRestorePosition(100, 100);
+        this.setLayout(new MigLayout());
+        this.setTitle(String.format("%s %s", PWSPlugin.menuName, PWSPlugin.versionNumber));
+        this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        this.setResizable(true);
         
         dirSelect = new DirectorySelector(DirectorySelector.DefaultMMFunctions.MMDataSetDirectory);
         cellNumSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
@@ -82,7 +82,7 @@ public class PluginFrame extends MMFrame{
         acqFlButton.addActionListener((e)->{ this.acquireFluorescence(); });
         acqPwsButton.addActionListener((e)->{ this.acquirePws(); });
 
-        super.add(tabs, "wrap, span, grow");
+        this.add(tabs, "wrap, span, grow");
         tabs.addTab("PWS", this.pwsPanel);
         tabs.addTab("Fluorescence", this.flPanel);
         tabs.addTab("Dynamics", this.dynPanel);
@@ -97,9 +97,9 @@ public class PluginFrame extends MMFrame{
         buttons.add(acqFlButton);
         buttons.add(acqDynButton);
         bottomPanel.add(buttons, "span, align center");
-        super.add(bottomPanel, "dock south");
+        this.add(bottomPanel, "dock south");
         
-        super.pack();
+        this.pack();
         this.setMinimumSize(this.getSize());
     }
     
