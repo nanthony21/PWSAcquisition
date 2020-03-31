@@ -55,7 +55,9 @@ public class PWSAlbum { //TODO default to a smaller size
    public void addImage(Image image){   
         if ((display==null) || (display.isClosed())) {
             display = Globals.mm().displays().createDisplay(store_);
-            //display.setZoom(0.25); Should be implemented im micromanager soon.
+            try { 
+                display.setZoom(0.25); // Old versions of micromanager don't have this implemented.
+            } catch (UnsupportedOperationException uoe) {} //Do nothing.
             display.setCustomTitle(displayName_);
         }
         Coords newCoords = image.getCoords().copyBuilder().t(idx).build();
