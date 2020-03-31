@@ -8,12 +8,13 @@ package edu.bpl.pwsplugin.hardware.configurations;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
+import org.micromanager.data.Image;
 
 /**
  *
  * @author N2-LiveCell
  */
-class SpectralCamera extends ImagingConfiguration {
+public class SpectralCamera extends ImagingConfiguration {
     Camera _cam;
     TunableFilter _filt;
     
@@ -33,5 +34,37 @@ class SpectralCamera extends ImagingConfiguration {
     @Override
     public TunableFilter tunableFilter() {
         return _filt;
+    }
+    
+    public boolean supportsTTLSequencing() {
+        return (_cam.supportsTriggerOutput() && _filt.supportsSequencing());
+    }
+    
+    public void startTTLSequence(int numImages, double delayMs, boolean externalTriggering) throws Exception {
+        if (!supportsTTLSequencing()) {
+            throw new UnsupportedOperationException("This imaging configuration does not support TTL sequencing.");
+        }
+        if (externalTriggering) {
+            _cam.startSequence(numImages, delayMs, true);
+            _filt.startSequence(); //This should trigger a pulse which sets the whole thing off. 
+        }
+        else { //Since we're not using an external trigger we need to have the camera control the timing.
+            _filt.startSequence();
+            _cam.startSequence(numImages, delayMs, false);
+        }
+    }
+    
+    public Image snapImage(int wavelength) throws Exception {
+        if (_filt.getWavelength() != wavelength) {
+            _filt.setWavelength(wavelength);
+            while (_filt.isBusy()) {Thread.sleep(1);} //Wait until the device says it is tuned  
+        }
+        Image im = _cam.snapImage(); //This is so slow.
+        return im;
+    }
+    
+    public void stopTTLSequence() throws Exception {
+        _cam.stopSequence();
+        _filt.stopSequence();
     }
 }

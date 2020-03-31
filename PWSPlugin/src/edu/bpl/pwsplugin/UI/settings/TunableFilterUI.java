@@ -29,7 +29,7 @@ public class TunableFilterUI extends SingleBuilderJPanel<PWSPluginSettings.HWCon
         
         this.filterType.setModel(new DefaultComboBoxModel<>(TunableFilter.Types.values()));
         
-        this.add(new JLabel("Name:"), "gapleft push");
+        this.add(new JLabel("Device Name:"), "gapleft push");
         this.add(name, "wrap");
         this.add(new JLabel("Type:"), "gapleft push");
         this.add(filterType, "wrap");

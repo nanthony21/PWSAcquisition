@@ -24,8 +24,8 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.PWSAlbum;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
-import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
+import edu.bpl.pwsplugin.hardware.configurations.SpectralCamera;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.io.IOException;
@@ -103,13 +103,11 @@ public class PWSAcqManager implements AcquisitionManager{
         long configStartTime = System.currentTimeMillis();
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         int initialWv = 550;
-        ImagingConfiguration conf = ImagingConfiguration.getInstance(this.config.configs.get(0)); //TODO add UI selection of imagin config
-        Camera camera = conf.camera();
-        TunableFilter filter = conf.tunableFilter();
+        SpectralCamera conf = (SpectralCamera) ImagingConfiguration.getInstance(this.config.configs.get(0)); //TODO add UI selection of imaging config
         try {    
-            initialWv = filter.getWavelength(); //Get initial wavelength
+            initialWv = conf.tunableFilter().getWavelength(); //Get initial wavelength
             Globals.core().clearCircularBuffer();     
-            camera.setExposure(exposure_);
+            conf.camera().setExposure(exposure_);
             Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true);
             
             //Prepare metadata and start imsaver
@@ -118,7 +116,7 @@ public class PWSAcqManager implements AcquisitionManager{
                 WV.put(wv[i]);
             }        
             metadata.put("wavelengths", WV);
-            metadata.put("exposure", camera.getExposure()); //This must happen after we have set the camera to our desired exposure.
+            metadata.put("exposure", conf.camera().getExposure()); //This must happen after we have set the camera to our desired exposure.
             MMSaver imSaver_ = new MMSaver(this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), this.getFilePrefix());
             imSaver_.setMetadata(metadata);
             imSaver_.start();
@@ -128,15 +126,8 @@ public class PWSAcqManager implements AcquisitionManager{
             long seqStartTime=0;
             if (hardwareSequence) {
                 try {
-                    double delayMs = filter.getDelayMs(); //Use the delay defined by the tunable filter's device adapter.
-                    if (useExternalTrigger) {
-                        camera.startSequence(this.wv.length, delayMs, true);
-                        filter.startSequence(); //This should trigger a pulse which sets the whole thing off. 
-                    }
-                    else { //Since we're not using an external trigger we need to have the camera control the timing.
-                        filter.startSequence();
-                        camera.startSequence(this.wv.length, delayMs, false);
-                    }
+                    double delayMs = conf.tunableFilter().getDelayMs(); //Use the delay defined by the tunable filter's device adapter.
+                    conf.startTTLSequence(this.wv.length, delayMs, useExternalTrigger);
                     seqStartTime = System.currentTimeMillis();
                     
                     boolean canExit = false;
@@ -145,7 +136,7 @@ public class PWSAcqManager implements AcquisitionManager{
                     long lastImTime = System.currentTimeMillis();
                     while (true) {
                         boolean remaining = (Globals.core().getRemainingImageCount() > 0);
-                        boolean running = (Globals.core().isSequenceRunning(camera.getName()));
+                        boolean running = (Globals.core().isSequenceRunning(conf.camera().getName()));
                         if ((!remaining) && (canExit)) {
                             break;  //Everything is taken care of.
                         }
@@ -171,8 +162,7 @@ public class PWSAcqManager implements AcquisitionManager{
                     ReportingUtils.showError(e);
                 } finally {
                     try {
-                        camera.stopSequence();
-                        filter.stopSequence();//Got to make sure to stop the sequencing behaviour.
+                        conf.stopTTLSequence(); //Got to make sure to stop the sequencing behaviour.
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         ReportingUtils.logMessage("ERROR: PWSPlugin: Stopping property sequence: " + ex.getMessage());
@@ -183,9 +173,7 @@ public class PWSAcqManager implements AcquisitionManager{
             }
             else {  //Software sequenced acquisition
                 for (int i=0; i<wv.length; i++) {
-                    filter.setWavelength(wv[i]);
-                    while (filter.isBusy()) {Thread.sleep(1);} //Wait until the device says it is tuned.
-                    Image im = camera.snapImage(); //TODO what if the camera is not the core image. This is so slow.
+                    Image im = conf.snapImage(wv[i]);
                     addImage(im, i, album_, pipeline, imSaver_.queue);
                 }
             }
@@ -195,7 +183,7 @@ public class PWSAcqManager implements AcquisitionManager{
             ReportingUtils.logMessage("ERROR: PWSPlugin: " + ex.getMessage());
         } finally {
             try{
-                filter.setWavelength(initialWv); //Set back to initial wavelength
+                conf.tunableFilter().setWavelength(initialWv); //Set back to initial wavelength
             } catch (Exception ex) {
                 ReportingUtils.showError(ex);
                 ex.printStackTrace();

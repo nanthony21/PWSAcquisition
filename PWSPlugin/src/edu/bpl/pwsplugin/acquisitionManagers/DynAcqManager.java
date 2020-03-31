@@ -45,7 +45,7 @@ import java.nio.file.Path;
 public class DynAcqManager implements AcquisitionManager{
     double exposure_; //The camera exposure in milliseconds.
     int wavelength_; //The wavelength to acquire images at
-    int numFrames_; // The number of images to acquire.
+    int numFrames_; //The number of images to acquire.
     PWSAlbum album_;
     PWSPluginSettings.HWConfiguration config;
     
@@ -58,9 +58,9 @@ public class DynAcqManager implements AcquisitionManager{
     }
     
     public void setSequenceSettings(PWSPluginSettings.DynSettings settings) {
-            this.exposure_ = settings.exposure;
-            this.wavelength_ = settings.wavelength;
-            this.numFrames_ = settings.numFrames;
+        this.exposure_ = settings.exposure;
+        this.wavelength_ = settings.wavelength;
+        this.numFrames_ = settings.numFrames;
     }
     
     @Override
