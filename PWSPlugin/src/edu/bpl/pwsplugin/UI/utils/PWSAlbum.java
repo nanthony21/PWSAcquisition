@@ -19,8 +19,9 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin;
+package edu.bpl.pwsplugin.UI.utils;
 
+import edu.bpl.pwsplugin.Globals;
 import java.io.IOException;
 import org.micromanager.data.Coords;
 import org.micromanager.data.Datastore;
@@ -32,13 +33,13 @@ import org.micromanager.internal.utils.ReportingUtils;
 import javax.swing.SwingUtilities;
 import org.micromanager.data.RewritableDatastore;
 
-public class PWSAlbum { //TODO default to a smaller size
+public class PWSAlbum {
    private RewritableDatastore store_;
    private int idx = 0;
    String displayName_;
    private DisplayWindow display = null;
    
-   PWSAlbum(String displayName) {
+   public PWSAlbum(String displayName) {
        store_ = Globals.mm().data().createRewritableRAMDatastore();
        displayName_ = displayName;
    }

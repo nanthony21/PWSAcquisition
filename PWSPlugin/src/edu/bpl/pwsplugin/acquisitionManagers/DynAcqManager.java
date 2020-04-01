@@ -21,7 +21,7 @@
 package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.PWSAlbum;
+import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;

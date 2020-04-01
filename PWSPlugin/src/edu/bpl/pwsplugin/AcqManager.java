@@ -20,6 +20,7 @@
 //
 package edu.bpl.pwsplugin;
 
+import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionManagers.PWSAcqManager;
 import edu.bpl.pwsplugin.acquisitionManagers.DynAcqManager;
@@ -34,7 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.micromanager.internal.utils.ReportingUtils;
-
+import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 
 public class AcqManager { // A parent acquisition manager that can direct commands down to more specific acquisition managers.
     private final PWSAcqManager pwsManager_;
