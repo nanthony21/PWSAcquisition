@@ -10,10 +10,12 @@ import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 import org.micromanager.PropertyMap;
@@ -27,6 +29,7 @@ public class PWSPanel extends SingleBuilderJPanel<PWSPluginSettings.PWSSettings>
     private JSpinner wvStartSpinner;
     private JSpinner wvStopSpinner;
     private JSpinner wvStepSpinner;
+    private JTextField imConfName = new JTextField(20);
     private JCheckBox ttlTriggerCheckbox = new JCheckBox("Use TTL Sequencing");
     private JCheckBox externalTriggerCheckBox = new JCheckBox("Use External TTL Trigger");
     
@@ -54,6 +57,7 @@ public class PWSPanel extends SingleBuilderJPanel<PWSPluginSettings.PWSSettings>
         
         externalTriggerCheckBox.setToolTipText("Whether the filter should trigger a new camera acquisition over TTL. This is not possible for LCTF but can be done with the VF-5 Filter.");
         externalTriggerCheckBox.setEnabled(false);
+        
                 
         super.add(new JLabel("Start (nm)"));
         super.add(new JLabel("Stop (nm)"));
@@ -65,7 +69,11 @@ public class PWSPanel extends SingleBuilderJPanel<PWSPluginSettings.PWSSettings>
         super.add(exposureSpinner, "wrap");
         super.add(ttlTriggerCheckbox, "wrap, span");
         super.add(externalTriggerCheckBox, "wrap, span");
+        super.add(new JLabel("Imaging Configuration"), "span");
+        super.add(imConfName, "span");
     }
+    
+    
 
     @Override
     public Map<String, Object> getPropertyFieldMap() {
@@ -76,6 +84,7 @@ public class PWSPanel extends SingleBuilderJPanel<PWSPluginSettings.PWSSettings>
         map.put("exposure", exposureSpinner);
         map.put("ttlTriggering", ttlTriggerCheckbox);
         map.put("externalCamTriggering", externalTriggerCheckBox);
+        map.put("imConfigName", imConfName);
         return map;
     }
     

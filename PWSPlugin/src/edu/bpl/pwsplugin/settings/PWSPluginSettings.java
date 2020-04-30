@@ -59,8 +59,6 @@ public class PWSPluginSettings extends JsonableParam {
         public String imConfigName;
         public double exposure;
         public String filterConfigName;
-        public boolean useAltCamera;
-        public String altCamName;
         public int tfWavelength;
     }
     

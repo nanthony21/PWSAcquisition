@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
@@ -23,6 +24,8 @@ public class DynPanel extends SingleBuilderJPanel<PWSPluginSettings.DynSettings>
     private JSpinner wvSpinner = new JSpinner();
     private JSpinner framesSpinner = new JSpinner();
     private JSpinner exposureSpinner = new JSpinner();
+    private JTextField imConfName = new JTextField(20);
+
     
     public DynPanel() {
         super(new MigLayout(), PWSPluginSettings.DynSettings.class);
@@ -37,6 +40,8 @@ public class DynPanel extends SingleBuilderJPanel<PWSPluginSettings.DynSettings>
         super.add(exposureSpinner, "wrap, growx");
         super.add(new JLabel("# of Frames"));
         super.add(framesSpinner, "wrap");
+        super.add(new JLabel("Imaging Configuration"), "span");
+        super.add(imConfName, "span");
     }
     
     @Override
@@ -45,6 +50,7 @@ public class DynPanel extends SingleBuilderJPanel<PWSPluginSettings.DynSettings>
         map.put("exposure", exposureSpinner);
         map.put("wavelength", wvSpinner);
         map.put("numFrames", framesSpinner);
+        map.put("imConfigName", imConfName);
         return map;
     }
     

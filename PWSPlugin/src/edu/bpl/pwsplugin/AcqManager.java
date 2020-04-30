@@ -35,6 +35,7 @@ import mmcorej.org.json.JSONException;
 import mmcorej.org.json.JSONObject;
 import org.micromanager.internal.utils.ReportingUtils;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
+import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 
 public class AcqManager { // A parent acquisition manager that can direct commands down to more specific acquisition managers.
     private final PWSAcqManager pwsManager_;
@@ -114,7 +115,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     }
     
     public void setFluorescenceSettings(PWSPluginSettings.FluorSettings settings) {
-        if (settings.useAltCamera) {
+        if (Globals.getHardwareConfiguration().getConfigurationByName(settings.imConfigName).configType == ImagingConfiguration.Types.StandardCamera) {
             //Acquire fluorescence with another camera so you don't have to go through the LCTF.
             flManager_ = new AltCamFluorAcqManager();
         } else {

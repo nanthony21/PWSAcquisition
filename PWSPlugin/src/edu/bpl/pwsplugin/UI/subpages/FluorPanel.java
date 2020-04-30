@@ -18,6 +18,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
@@ -29,8 +30,8 @@ public class FluorPanel extends SingleBuilderJPanel<PWSPluginSettings.FluorSetti
     private JSpinner wvSpinner;
     private JSpinner exposureSpinner;
     private JComboBox<String> filterCombo = new JComboBox<>();
-    private JComboBox<String> altCamNameCombo = new JComboBox<>();
-    private JCheckBox useAltCamCheckbox = new JCheckBox("Use Alternate Camera");
+    private JTextField imConfName = new JTextField(20);
+
     
     public FluorPanel() {
         super(new MigLayout(), PWSPluginSettings.FluorSettings.class);
@@ -38,13 +39,6 @@ public class FluorPanel extends SingleBuilderJPanel<PWSPluginSettings.FluorSetti
         wvSpinner = new JSpinner(new SpinnerNumberModel(550, 400, 1000, 5));
         exposureSpinner = new JSpinner(new SpinnerNumberModel(1000, 1, 5000, 100));
         filterCombo.setModel(this.getFilterComboModel());
-        altCamNameCombo.setModel(this.getCameraComboModel());
-        
-        useAltCamCheckbox.addActionListener((evt)->{
-            boolean s = useAltCamCheckbox.isSelected();
-            wvSpinner.setEnabled(!s);
-            altCamNameCombo.setEnabled(s);
-        });
                 
         super.add(new JLabel("Wavelength (nm)"));
         super.add(new JLabel("Exposure (ms)"));
@@ -52,9 +46,8 @@ public class FluorPanel extends SingleBuilderJPanel<PWSPluginSettings.FluorSetti
         super.add(wvSpinner);
         super.add(exposureSpinner);
         super.add(filterCombo, "wrap");
-        super.add(useAltCamCheckbox, "wrap, span");
-        super.add(new JLabel("Camera Name:"));
-        super.add(altCamNameCombo);
+        super.add(new JLabel("Imaging Configuration"), "span");
+        super.add(imConfName, "span");
     }
     
     
@@ -71,9 +64,8 @@ public class FluorPanel extends SingleBuilderJPanel<PWSPluginSettings.FluorSetti
         Map<String, Object> map = new HashMap<>();
         map.put("exposure", exposureSpinner);
         map.put("filterConfigName", filterCombo);
-        map.put("useAltCamera", useAltCamCheckbox);
-        map.put("altCamName", altCamNameCombo);
         map.put("tfWavelength", wvSpinner);
+        map.put("imConfigName", imConfName);
         return map;
     }  
     
