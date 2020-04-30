@@ -28,7 +28,7 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
     @Override
     public void setFluorescenceSettings(FluorSettings settings) {
         super.setFluorescenceSettings(settings);
-        ImagingConfiguration imConf = ImagingConfiguration.getInstance(Globals.getHardwareConfiguration().getConfigurationByName(this.settings.imConfigName));
+        ImagingConfiguration imConf = Globals.getHardwareConfiguration().getConfigurationByName(this.settings.imConfigName);
         this.camera = imConf.camera();
     }
     

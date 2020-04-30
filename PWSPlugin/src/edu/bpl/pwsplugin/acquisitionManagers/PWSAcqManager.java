@@ -24,11 +24,8 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
-import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.configurations.SpectralCamera;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
-import edu.bpl.pwsplugin.settings.HWConfiguration;
-import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -52,18 +49,14 @@ public class PWSAcqManager implements AcquisitionManager{
     Boolean useExternalTrigger; // Whether or not to let the spectral filter TTL trigger a new camera frame when it is done tuning.
     double exposure_; // The camera exposure.
     PWSAlbum album_;
-    HWConfiguration config;
+    SpectralCamera conf;
     
     public PWSAcqManager(PWSAlbum album) {
         album_ = album;
     }
     
-    public void setHWConfiguration(HWConfiguration config) {
-        this.config = config;
-    }
-    
     public void setSequenceSettings(PWSSettings settings) throws Exception {
-        ImagingConfiguration conf = ImagingConfiguration.getInstance(this.config.getConfigurationByName(settings.imConfigName)); //TODO add UI selection of imaging config
+        conf = (SpectralCamera) Globals.getHardwareConfiguration().getConfigurationByName(settings.imConfigName);
         TunableFilter filter = conf.tunableFilter();
         exposure_ = settings.exposure;
         useExternalTrigger = settings.externalCamTriggering;
@@ -105,7 +98,7 @@ public class PWSAcqManager implements AcquisitionManager{
         long configStartTime = System.currentTimeMillis();
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         int initialWv = 550;
-        SpectralCamera conf = (SpectralCamera) ImagingConfiguration.getInstance(this.config.configs.get(0));
+
         try {    
             initialWv = conf.tunableFilter().getWavelength(); //Get initial wavelength
             Globals.core().clearCircularBuffer();     

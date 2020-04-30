@@ -27,8 +27,7 @@ import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.settings.DynSettings;
-import edu.bpl.pwsplugin.settings.HWConfiguration;
-import edu.bpl.pwsplugin.settings.PWSPluginSettings;
+import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -49,15 +48,10 @@ public class DynAcqManager implements AcquisitionManager{
     int wavelength_; //The wavelength to acquire images at
     int numFrames_; //The number of images to acquire.
     PWSAlbum album_;
-    HWConfiguration config;
     DynSettings settings;
     
     public DynAcqManager(PWSAlbum album){
         album_ = album;
-    }
-    
-    public void setHWConfiguration(HWConfiguration config) {
-        this.config = config;
     }
     
     public void setSequenceSettings(DynSettings settings) {
@@ -69,7 +63,7 @@ public class DynAcqManager implements AcquisitionManager{
     
     @Override
     public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata) {
-        ImagingConfiguration conf = ImagingConfiguration.getInstance(this.config.getConfigurationByName(this.settings.imConfigName));
+        ImagingConfiguration conf = Globals.getHardwareConfiguration().getConfigurationByName(this.settings.imConfigName);
         Camera camera = conf.camera();
         TunableFilter tunableFilter = conf.tunableFilter();
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}

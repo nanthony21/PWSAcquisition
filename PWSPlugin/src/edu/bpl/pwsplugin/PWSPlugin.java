@@ -25,7 +25,7 @@ import edu.bpl.pwsplugin.UI.PluginFrame;
 import edu.bpl.pwsplugin.settings.CamSettings;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
-import edu.bpl.pwsplugin.settings.HWConfiguration;
+import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
@@ -44,7 +44,6 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     public static String versionNumber = "0.4";
         
     private Studio studio_;  
-    private PluginFrame frame_;
     private boolean initialized_ = false;
     
     @Override
@@ -61,16 +60,15 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
             JsonableParam.registerClass(FluorSettings.class);
             JsonableParam.registerClass(PWSSettings.class);
             JsonableParam.registerClass(DynSettings.class);
-            JsonableParam.registerClass(HWConfiguration.class);
+            JsonableParam.registerClass(HWConfigurationSettings.class);
             JsonableParam.registerClass(CamSettings.class);
             JsonableParam.registerClass(PWSPluginSettings.class);
             
             Globals.init(studio_);
-            frame_ = new PluginFrame();
             
             initialized_ = true;
         }
-        frame_.setVisible(true);
+        Globals.frame().setVisible(true);
     }
     
     @Override
@@ -100,9 +98,9 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     
     @Subscribe
     public void closeRequested( ShutdownCommencingEvent sce){
-      if (frame_ != null) {
+      if (Globals.frame() != null) {
          if (!sce.getIsCancelled()) {
-            frame_.dispose();
+            Globals.frame().dispose();
          }
       }
    }
@@ -111,43 +109,43 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     
     //API
     public void setSavePath(String savepath) {
-        frame_.setSavePath(savepath);
+        Globals.frame().setSavePath(savepath);
     }
     
     public void setCellNumber(int cellNum) {
-        frame_.setCellNumber(cellNum);
+        Globals.frame().setCellNumber(cellNum);
     }
     
     public void setPWSExposure(double exposureMs) {
-        frame_.setPWSExposure(exposureMs);
+        Globals.frame().setPWSExposure(exposureMs);
     }
 
     public void acquirePWS() {
-        frame_.acquirePws();
+        Globals.frame().acquirePws();
     }
     
     public void acquireDynamics() {
-        frame_.acquireDynamics();
+        Globals.frame().acquireDynamics();
     }
     
     public void acquireFluorescence() {
-        frame_.acquireFluorescence();
+        Globals.frame().acquireFluorescence();
     }
     
     public void setDynamicsExposure(double exposureMs) {
-        frame_.setDynamicsExposure(exposureMs);
+        Globals.frame().setDynamicsExposure(exposureMs);
     }
     
     public void setFluorescenceExposure(double exposureMs) {
-        frame_.setFluorescenceExposure(exposureMs);
+        Globals.frame().setFluorescenceExposure(exposureMs);
     }
     
     public void setFluorescenceFilter(String filterBlockName) {
-        frame_.setFluorescenceFilter(filterBlockName);
+        Globals.frame().setFluorescenceFilter(filterBlockName);
     }
     
     public List<String> getFluorescenceFilterNames() {
-        return frame_.getFluorescenceFilterNames();
+        return Globals.frame().getFluorescenceFilterNames();
     }
     
     public boolean isAcquisitionRunning() {
@@ -155,14 +153,14 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     }
     
     public String getFilterName() {
-        return frame_.getFilterName();
+        return Globals.frame().getFilterName();
     }
     
     public void setFluorescenceEmissionWavelength(int wv) {
-        frame_.setFluorescenceEmissionWavelength(wv);
+        Globals.frame().setFluorescenceEmissionWavelength(wv);
     }
     
     public void dispose() { //Close the frame.
-        frame_.dispose();
+        Globals.frame().dispose();
     }
 }

@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class HWConfiguration extends JsonableParam {
+public class HWConfigurationSettings extends JsonableParam {
     
     public String systemName;
     public List<ImagingConfigurationSettings> configs;

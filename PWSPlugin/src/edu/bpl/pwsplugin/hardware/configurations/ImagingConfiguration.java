@@ -15,15 +15,25 @@ import edu.bpl.pwsplugin.settings.PWSPluginSettings;
  * @author N2-LiveCell
  */
 public abstract class ImagingConfiguration {
+    ImagingConfigurationSettings settings;
+    
+    public ImagingConfiguration(ImagingConfigurationSettings settings) {
+        this.settings = settings;
+    }
+    
+    public ImagingConfigurationSettings settings() {
+        return settings;
+    }
+    
     public abstract boolean hasTunableFilter();
     public abstract Camera camera();
     public abstract TunableFilter tunableFilter();
     
     public static ImagingConfiguration getInstance(ImagingConfigurationSettings settings) {
         if (settings.configType == Types.SpectralCamera) {
-            return new SpectralCamera(settings.camSettings, settings.filtSettings);
+            return new SpectralCamera(settings);
         } else if (settings.configType == Types.StandardCamera) {
-            return new StandardCamera(settings.camSettings);
+            return new StandardCamera(settings);
         } else {
             return null; //This shouldn't ever happen.
         }

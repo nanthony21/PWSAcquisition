@@ -29,7 +29,7 @@ import edu.bpl.pwsplugin.UI.subpages.PWSPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
-import edu.bpl.pwsplugin.settings.HWConfiguration;
+import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.util.List;
@@ -62,7 +62,7 @@ public class PluginFrame extends MMFrame{
     private final HWConfPanel hwPanel = new HWConfPanel();
     private final MutablePropertyMapView settings_;
     
-    private HWConfiguration lastHWConfig;
+    private HWConfigurationSettings lastHWConfig;
     private PWSSettings lastPWSSettings;
     private DynSettings lastDynSettings;
     private FluorSettings lastFluorSettings;
@@ -131,7 +131,7 @@ public class PluginFrame extends MMFrame{
             try{ this.dynPanel.populateFields(set.dynSettings); } catch(Exception e) {ReportingUtils.logError(e); }
             try{ this.flPanel.populateFields(set.flSettings); } catch(Exception e) {ReportingUtils.logError(e); }
             try{ this.hwPanel.populateFields(set.hwConfiguration); } catch(Exception e) {ReportingUtils.logError(e); }
-            Globals.setHardwareConfiguration(set.hwConfiguration);
+            Globals.setHardwareConfigurationSettings(set.hwConfiguration);
             this.dirSelect.setText(set.saveDir);
             this.cellNumSpinner.setValue(set.cellNum);
         }
@@ -167,10 +167,10 @@ public class PluginFrame extends MMFrame{
     }
     
     private void configureManager() throws Exception {
-        HWConfiguration config = this.hwPanel.build();
+        HWConfigurationSettings config = this.hwPanel.build();
         if (!config.equals(this.lastHWConfig)) {
             this.lastHWConfig = config;
-            Globals.setHardwareConfiguration(config);
+            Globals.setHardwareConfigurationSettings(config);
         }
         PWSSettings pwsSettings = this.pwsPanel.build();
         if (!pwsSettings.equals(this.lastPWSSettings)) {

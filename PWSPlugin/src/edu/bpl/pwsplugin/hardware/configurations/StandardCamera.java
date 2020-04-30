@@ -8,6 +8,7 @@ package edu.bpl.pwsplugin.hardware.configurations;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.settings.CamSettings;
+import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 
 /**
@@ -17,8 +18,9 @@ import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 public class StandardCamera extends ImagingConfiguration {
     Camera _cam;
     
-    public StandardCamera(CamSettings camSettings) {
-        _cam = Camera.getInstance(camSettings);
+    public StandardCamera(ImagingConfigurationSettings settings) {
+        super(settings);
+        _cam = Camera.getInstance(settings.camSettings);
     }
     
     @Override

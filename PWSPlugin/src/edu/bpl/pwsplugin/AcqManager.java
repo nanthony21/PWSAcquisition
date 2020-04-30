@@ -38,7 +38,7 @@ import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
-import edu.bpl.pwsplugin.settings.HWConfiguration;
+import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 
@@ -52,7 +52,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     private String savePath_;
     PWSAlbum album;
     PWSAlbum dynAlbum;
-    HWConfiguration config;
+    HWConfigurationSettings config;
     
     public AcqManager() {
         album = new PWSAlbum("PWS");
@@ -61,12 +61,6 @@ public class AcqManager { // A parent acquisition manager that can direct comman
         dynManager_ = new DynAcqManager(dynAlbum);
         flManager_ = null;
         imageQueue = new LinkedBlockingQueue();
-    }
-    
-    public void setHWConfiguration(HWConfiguration config) {
-        this.config = config;
-        this.pwsManager_.setHWConfiguration(config);
-        this.dynManager_.setHWConfiguration(config);    
     }
     
     public void acquirePWS() {
@@ -120,7 +114,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     }
     
     public void setFluorescenceSettings(FluorSettings settings) {
-        if (Globals.getHardwareConfiguration().getConfigurationByName(settings.imConfigName).configType == ImagingConfiguration.Types.StandardCamera) {
+        if (Globals.getHardwareConfiguration().getConfigurationByName(settings.imConfigName).settings().configType == ImagingConfiguration.Types.StandardCamera) {
             //Acquire fluorescence with another camera so you don't have to go through the LCTF.
             flManager_ = new AltCamFluorAcqManager();
         } else {
@@ -133,7 +127,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     private JSONObject generateMetadata() throws JSONException {
         JSONObject metadata = new JSONObject();
         JSONArray linPoly;
-        ImagingConfigurationSettings imConf = this.config.configs.get(0); //TODO add a way to select the imaging configuration
+        ImagingConfigurationSettings imConf = Globals.getHardwareConfiguration().settings.configs.get(0); //TODO add a way to select the imaging configuration
         if (imConf.camSettings.linearityPolynomial.size() > 0) {
             linPoly = new JSONArray();
             for (int i=0; i<imConf.camSettings.linearityPolynomial.size(); i++) {
@@ -143,7 +137,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
         } else{
             metadata.put("linearityPoly", JSONObject.NULL);
         }
-        metadata.put("system", this.config.systemName);
+        metadata.put("system", Globals.getHardwareConfiguration().settings.systemName);
         metadata.put("darkCounts", imConf.camSettings.darkCounts);
         metadata.put("time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
         return metadata;

@@ -11,7 +11,7 @@ import edu.bpl.pwsplugin.UI.subpages.PWSPanel;
 import edu.bpl.pwsplugin.settings.CamSettings;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
-import edu.bpl.pwsplugin.settings.HWConfiguration;
+import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
@@ -29,7 +29,7 @@ public class UIFactory {
             return new PWSPanel();
         } else if (clazz.equals(DynSettings.class)) {
             return new DynPanel();
-        } else if (clazz.equals(HWConfiguration.class)) {
+        } else if (clazz.equals(HWConfigurationSettings.class)) {
             return new HWConfPanel();
         } else if (clazz.equals(CamSettings.class)) {
             return new CamUI();

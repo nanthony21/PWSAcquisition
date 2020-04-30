@@ -9,9 +9,8 @@ import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.ListScrollUI;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.CamSettings;
-import edu.bpl.pwsplugin.settings.HWConfiguration;
+import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
-import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.TunableFilterSettings;
 import java.awt.Window;
 import java.util.ArrayList;
@@ -30,13 +29,13 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author nick
  */
-public class HWConfPanel extends BuilderJPanel<HWConfiguration>{
+public class HWConfPanel extends BuilderJPanel<HWConfigurationSettings>{
     private JTextField sysNameEdit = new JTextField(20);
     private JButton editConfigsButton = new JButton("Edit Configurations");
     private List<ImagingConfigurationSettings> configs = new ArrayList<>();
     
     public HWConfPanel() {
-        super(new MigLayout(), HWConfiguration.class);
+        super(new MigLayout(), HWConfigurationSettings.class);
         
         ImagingConfigurationSettings defaultConfig = new ImagingConfigurationSettings();
         defaultConfig.configType = ImagingConfiguration.Types.StandardCamera;
@@ -58,15 +57,15 @@ public class HWConfPanel extends BuilderJPanel<HWConfiguration>{
     }
     
     @Override
-    public HWConfiguration build() {
-        HWConfiguration conf = new HWConfiguration();
+    public HWConfigurationSettings build() {
+        HWConfigurationSettings conf = new HWConfigurationSettings();
         conf.systemName = this.sysNameEdit.getText();
         conf.configs = this.configs;
         return conf;
     }
     
     @Override
-    public void populateFields(HWConfiguration config) {
+    public void populateFields(HWConfigurationSettings config) {
         this.sysNameEdit.setText(config.systemName);
         this.configs = config.configs;
     }
