@@ -90,7 +90,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
 
     @Override
     public String getCopyright() {
-        return "Backman Photonics Lab";
+        return "Backman Biophotonics Lab";
     }
     
     @Subscribe
