@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.UI.settings;
 
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
+import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +22,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author N2-LiveCell
  */
-public class ImagingConfigUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings>{
+public class ImagingConfigUI extends SingleBuilderJPanel<ImagingConfigurationSettings>{
     private CamUI camSettings = new CamUI();
     private TunableFilterUI filtSettings = new TunableFilterUI();
     private JComboBox<ImagingConfiguration.Types> typeCombo = new JComboBox<>();
@@ -29,7 +30,7 @@ public class ImagingConfigUI extends SingleBuilderJPanel<PWSPluginSettings.HWCon
     private JLabel filtSettingsLabel = new JLabel("Tunable Filter:");
     
     public ImagingConfigUI() {
-        super(new MigLayout(), PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings.class);
+        super(new MigLayout(), ImagingConfigurationSettings.class);
         
         typeCombo.setModel(new DefaultComboBoxModel<>(ImagingConfiguration.Types.values()));
         

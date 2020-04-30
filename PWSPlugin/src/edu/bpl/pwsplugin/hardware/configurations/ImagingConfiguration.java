@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.hardware.configurations;
 
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
+import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 
 /**
@@ -18,7 +19,7 @@ public abstract class ImagingConfiguration {
     public abstract Camera camera();
     public abstract TunableFilter tunableFilter();
     
-    public static ImagingConfiguration getInstance(PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings settings) {
+    public static ImagingConfiguration getInstance(ImagingConfigurationSettings settings) {
         if (settings.configType == Types.SpectralCamera) {
             return new SpectralCamera(settings.camSettings, settings.filtSettings);
         } else if (settings.configType == Types.StandardCamera) {

@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.hardware.tunableFilters;
 
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
+import edu.bpl.pwsplugin.settings.TunableFilterSettings;
 import java.util.List;
 
 
@@ -32,11 +33,11 @@ public abstract class TunableFilter {
     
     public abstract double getDelayMs() throws Exception;
     
-    public abstract PWSPluginSettings.HWConfiguration.TunableFilterSettings getSettings();
+    public abstract TunableFilterSettings getSettings();
     
     public abstract List<String> validate(); //Return a list of errors found with the device.
     
-    public static TunableFilter getInstance(PWSPluginSettings.HWConfiguration.TunableFilterSettings settings) {
+    public static TunableFilter getInstance(TunableFilterSettings settings) {
         if (settings.filterType == Types.VARISPECLCTF) {
             return new VarispecLCTF(settings);
         } else if (settings.filterType == Types.KURIOSLCTF) {

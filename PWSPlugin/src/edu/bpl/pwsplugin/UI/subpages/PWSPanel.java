@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.UI.subpages;
 
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
+import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JCheckBox;
@@ -24,7 +25,7 @@ import org.micromanager.PropertyMap;
  *
  * @author nick
  */
-public class PWSPanel extends SingleBuilderJPanel<PWSPluginSettings.PWSSettings>{
+public class PWSPanel extends SingleBuilderJPanel<PWSSettings>{
     private JSpinner exposureSpinner;
     private JSpinner wvStartSpinner;
     private JSpinner wvStopSpinner;
@@ -34,7 +35,7 @@ public class PWSPanel extends SingleBuilderJPanel<PWSPluginSettings.PWSSettings>
     private JCheckBox externalTriggerCheckBox = new JCheckBox("Use External TTL Trigger");
     
     public PWSPanel() {
-        super(new MigLayout(), PWSPluginSettings.PWSSettings.class);
+        super(new MigLayout(), PWSSettings.class);
         
         exposureSpinner = new JSpinner(new SpinnerNumberModel(100, 1, 1000, 5));
         wvStartSpinner = new JSpinner(new SpinnerNumberModel(500, 400, 1000, 5));

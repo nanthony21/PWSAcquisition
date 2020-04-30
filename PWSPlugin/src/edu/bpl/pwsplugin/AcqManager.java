@@ -36,6 +36,11 @@ import mmcorej.org.json.JSONObject;
 import org.micromanager.internal.utils.ReportingUtils;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
+import edu.bpl.pwsplugin.settings.DynSettings;
+import edu.bpl.pwsplugin.settings.FluorSettings;
+import edu.bpl.pwsplugin.settings.HWConfiguration;
+import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
+import edu.bpl.pwsplugin.settings.PWSSettings;
 
 public class AcqManager { // A parent acquisition manager that can direct commands down to more specific acquisition managers.
     private final PWSAcqManager pwsManager_;
@@ -47,7 +52,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     private String savePath_;
     PWSAlbum album;
     PWSAlbum dynAlbum;
-    PWSPluginSettings.HWConfiguration config;
+    HWConfiguration config;
     
     public AcqManager() {
         album = new PWSAlbum("PWS");
@@ -58,7 +63,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
         imageQueue = new LinkedBlockingQueue();
     }
     
-    public void setHWConfiguration(PWSPluginSettings.HWConfiguration config) {
+    public void setHWConfiguration(HWConfiguration config) {
         this.config = config;
         this.pwsManager_.setHWConfiguration(config);
         this.dynManager_.setHWConfiguration(config);    
@@ -106,15 +111,15 @@ public class AcqManager { // A parent acquisition manager that can direct comman
         savePath_ = savePath;
     }
     
-    public void setPWSSettings(PWSPluginSettings.PWSSettings settings) throws Exception {
+    public void setPWSSettings(PWSSettings settings) throws Exception {
         pwsManager_.setSequenceSettings(settings);
     }
     
-    public void setDynamicsSettings(PWSPluginSettings.DynSettings settings) {
+    public void setDynamicsSettings(DynSettings settings) {
         dynManager_.setSequenceSettings(settings);
     }
     
-    public void setFluorescenceSettings(PWSPluginSettings.FluorSettings settings) {
+    public void setFluorescenceSettings(FluorSettings settings) {
         if (Globals.getHardwareConfiguration().getConfigurationByName(settings.imConfigName).configType == ImagingConfiguration.Types.StandardCamera) {
             //Acquire fluorescence with another camera so you don't have to go through the LCTF.
             flManager_ = new AltCamFluorAcqManager();
@@ -128,7 +133,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     private JSONObject generateMetadata() throws JSONException {
         JSONObject metadata = new JSONObject();
         JSONArray linPoly;
-        PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings imConf = this.config.configs.get(0); //TODO add a way to select the imaging configuration
+        ImagingConfigurationSettings imConf = this.config.configs.get(0); //TODO add a way to select the imaging configuration
         if (imConf.camSettings.linearityPolynomial.size() > 0) {
             linPoly = new JSONArray();
             for (int i=0; i<imConf.camSettings.linearityPolynomial.size(); i++) {

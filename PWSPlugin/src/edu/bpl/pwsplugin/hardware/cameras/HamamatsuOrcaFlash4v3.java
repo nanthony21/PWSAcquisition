@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.hardware.cameras;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.settings.CamSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +18,9 @@ import org.micromanager.data.Image;
  */
 public class HamamatsuOrcaFlash4v3 extends Camera{
     String _devName;
-    PWSPluginSettings.HWConfiguration.CamSettings _settings;
+    CamSettings _settings;
     
-    public HamamatsuOrcaFlash4v3(PWSPluginSettings.HWConfiguration.CamSettings settings) {
+    public HamamatsuOrcaFlash4v3(CamSettings settings) {
         _settings = settings;
         _devName = settings.name;
     }
@@ -78,7 +79,7 @@ public class HamamatsuOrcaFlash4v3 extends Camera{
     }
     
     @Override
-    public PWSPluginSettings.HWConfiguration.CamSettings getSettings() {
+    public CamSettings getSettings() {
         return _settings;
     }
     

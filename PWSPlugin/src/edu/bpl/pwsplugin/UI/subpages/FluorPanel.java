@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.UI.subpages;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
+import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +27,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author nick
  */
-public class FluorPanel extends SingleBuilderJPanel<PWSPluginSettings.FluorSettings>{
+public class FluorPanel extends SingleBuilderJPanel<FluorSettings>{
     private JSpinner wvSpinner;
     private JSpinner exposureSpinner;
     private JComboBox<String> filterCombo = new JComboBox<>();
@@ -34,7 +35,7 @@ public class FluorPanel extends SingleBuilderJPanel<PWSPluginSettings.FluorSetti
 
     
     public FluorPanel() {
-        super(new MigLayout(), PWSPluginSettings.FluorSettings.class);
+        super(new MigLayout(), FluorSettings.class);
         
         wvSpinner = new JSpinner(new SpinnerNumberModel(550, 400, 1000, 5));
         exposureSpinner = new JSpinner(new SpinnerNumberModel(1000, 1, 5000, 100));

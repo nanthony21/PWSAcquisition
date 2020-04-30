@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin;
 
+import edu.bpl.pwsplugin.settings.HWConfiguration;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.Arrays;
 import java.util.List;
@@ -20,14 +21,14 @@ import org.micromanager.internal.utils.ReportingUtils;
 public class Globals {
     private static Studio studio_ = null;
     private static AcqManager acqMan_;
-    private static PWSPluginSettings.HWConfiguration config;
+    private static HWConfiguration config;
     private static MMConfigAdapter mmAdapter;
     
     public static void init(Studio studio) {
         studio_ = studio;
         mmAdapter = new MMConfigAdapter();
         acqMan_ = new AcqManager();
-        setHardwareConfiguration(new PWSPluginSettings.HWConfiguration()); //Very important that this is instantiated after studio. this is probably bad design actually.
+        setHardwareConfiguration(new HWConfiguration()); //Very important that this is instantiated after studio. this is probably bad design actually.
     }
             
     public static Studio mm() {
@@ -42,12 +43,12 @@ public class Globals {
         return acqMan_;
     }
     
-    public static void setHardwareConfiguration(PWSPluginSettings.HWConfiguration configg) {
+    public static void setHardwareConfiguration(HWConfiguration configg) {
         config = configg;
         acqMan_.setHWConfiguration(configg);    
     }
     
-    public static PWSPluginSettings.HWConfiguration getHardwareConfiguration() {
+    public static HWConfiguration getHardwareConfiguration() {
         return config;
     }
     

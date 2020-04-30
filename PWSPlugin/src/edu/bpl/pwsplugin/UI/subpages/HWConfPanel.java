@@ -8,7 +8,11 @@ package edu.bpl.pwsplugin.UI.subpages;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.ListScrollUI;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
+import edu.bpl.pwsplugin.settings.CamSettings;
+import edu.bpl.pwsplugin.settings.HWConfiguration;
+import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
+import edu.bpl.pwsplugin.settings.TunableFilterSettings;
 import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,22 +30,22 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author nick
  */
-public class HWConfPanel extends BuilderJPanel<PWSPluginSettings.HWConfiguration>{
+public class HWConfPanel extends BuilderJPanel<HWConfiguration>{
     private JTextField sysNameEdit = new JTextField(20);
     private JButton editConfigsButton = new JButton("Edit Configurations");
-    private List<PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings> configs = new ArrayList<>();
+    private List<ImagingConfigurationSettings> configs = new ArrayList<>();
     
     public HWConfPanel() {
-        super(new MigLayout(), PWSPluginSettings.HWConfiguration.class);
+        super(new MigLayout(), HWConfiguration.class);
         
-        PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings defaultConfig = new PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings();
+        ImagingConfigurationSettings defaultConfig = new ImagingConfigurationSettings();
         defaultConfig.configType = ImagingConfiguration.Types.StandardCamera;
-        defaultConfig.camSettings = new PWSPluginSettings.HWConfiguration.CamSettings();
-        defaultConfig.filtSettings = new PWSPluginSettings.HWConfiguration.TunableFilterSettings();
+        defaultConfig.camSettings = new CamSettings();
+        defaultConfig.filtSettings = new TunableFilterSettings();
         
         this.editConfigsButton.addActionListener((evt)->{
             ImagingConfigDlg dlg = new ImagingConfigDlg(SwingUtilities.getWindowAncestor(this), this.configs);
-            List<PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings> results = dlg.showDialog();
+            List<ImagingConfigurationSettings> results = dlg.showDialog();
             if (results != null) {
                 this.configs = results;
             }
@@ -54,38 +58,38 @@ public class HWConfPanel extends BuilderJPanel<PWSPluginSettings.HWConfiguration
     }
     
     @Override
-    public PWSPluginSettings.HWConfiguration build() {
-        PWSPluginSettings.HWConfiguration conf = new PWSPluginSettings.HWConfiguration();
+    public HWConfiguration build() {
+        HWConfiguration conf = new HWConfiguration();
         conf.systemName = this.sysNameEdit.getText();
         conf.configs = this.configs;
         return conf;
     }
     
     @Override
-    public void populateFields(PWSPluginSettings.HWConfiguration config) {
+    public void populateFields(HWConfiguration config) {
         this.sysNameEdit.setText(config.systemName);
         this.configs = config.configs;
     }
 }
 
 class ImagingConfigDlg extends JDialog {
-    private ListScrollUI<List<PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings>, PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings> configs;
+    private ListScrollUI<List<ImagingConfigurationSettings>, ImagingConfigurationSettings> configs;
     private JButton acceptButton = new JButton("Accept");
     private JButton cancelButton = new JButton("Cancel");
-    List<PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings> result = null;
+    List<ImagingConfigurationSettings> result = null;
     
-    public ImagingConfigDlg(Window owner, List<PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings> currentConfigs) {
+    public ImagingConfigDlg(Window owner, List<ImagingConfigurationSettings> currentConfigs) {
         super(owner, "Imaging Configurations");
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.setLocationRelativeTo(owner);
         this.setModal(true);
         this.setContentPane(new JPanel(new MigLayout()));
         
-        PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings defaultConfig = new PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings();
+        ImagingConfigurationSettings defaultConfig = new ImagingConfigurationSettings();
         defaultConfig.configType = ImagingConfiguration.Types.StandardCamera;
-        defaultConfig.camSettings = new PWSPluginSettings.HWConfiguration.CamSettings();
-        defaultConfig.filtSettings = new PWSPluginSettings.HWConfiguration.TunableFilterSettings();
-        this.configs = new ListScrollUI<>((Class<List<PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings>>)(Object) ArrayList.class, defaultConfig);
+        defaultConfig.camSettings = new CamSettings();
+        defaultConfig.filtSettings = new TunableFilterSettings();
+        this.configs = new ListScrollUI<>((Class<List<ImagingConfigurationSettings>>)(Object) ArrayList.class, defaultConfig);
         
         try {
             this.configs.populateFields(currentConfigs);
@@ -111,7 +115,7 @@ class ImagingConfigDlg extends JDialog {
         this.pack();
     }
     
-    public List<PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings> showDialog() {
+    public List<ImagingConfigurationSettings> showDialog() {
         this.setVisible(true);
         return this.result;
     }

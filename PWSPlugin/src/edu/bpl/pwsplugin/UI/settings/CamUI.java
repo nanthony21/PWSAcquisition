@@ -6,6 +6,7 @@ import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
+import edu.bpl.pwsplugin.settings.CamSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.Vector;
 import java.util.ArrayList;
@@ -31,14 +32,14 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author nick
  */
-public class CamUI extends SingleBuilderJPanel<PWSPluginSettings.HWConfiguration.CamSettings>{
+public class CamUI extends SingleBuilderJPanel<CamSettings>{
     private JComboBox<String> camCombo = new JComboBox<>();
     private JSpinner darkCountsSpinner;
     private DoubleListTextField linEdit = new DoubleListTextField();
     private JComboBox<Camera.Types> camType = new JComboBox<>();
     
     public CamUI() {
-        super(new MigLayout(), PWSPluginSettings.HWConfiguration.CamSettings.class);
+        super(new MigLayout(), CamSettings.class);
         
 
         SpinnerNumberModel model = new SpinnerNumberModel(0, 0, 100000, 1);

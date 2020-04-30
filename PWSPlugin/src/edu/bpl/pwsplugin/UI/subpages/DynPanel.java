@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.UI.subpages;
 
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
+import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +21,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author nick
  */
-public class DynPanel extends SingleBuilderJPanel<PWSPluginSettings.DynSettings>{
+public class DynPanel extends SingleBuilderJPanel<DynSettings>{
     private JSpinner wvSpinner = new JSpinner();
     private JSpinner framesSpinner = new JSpinner();
     private JSpinner exposureSpinner = new JSpinner();
@@ -28,7 +29,7 @@ public class DynPanel extends SingleBuilderJPanel<PWSPluginSettings.DynSettings>
 
     
     public DynPanel() {
-        super(new MigLayout(), PWSPluginSettings.DynSettings.class);
+        super(new MigLayout(), DynSettings.class);
         wvSpinner.setModel(new SpinnerNumberModel(550, 400,1000, 5));
         framesSpinner.setModel(new SpinnerNumberModel(200, 1, 1000, 1));
         exposureSpinner.setModel(new SpinnerNumberModel(50, 1, 500, 5));

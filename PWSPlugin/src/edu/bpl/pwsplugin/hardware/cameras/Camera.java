@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.hardware.cameras;
 
+import edu.bpl.pwsplugin.settings.CamSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.List;
 import org.micromanager.data.Image;
@@ -36,11 +37,11 @@ public abstract class Camera {
     
     public abstract Image snapImage() throws Exception;
     
-    public abstract PWSPluginSettings.HWConfiguration.CamSettings getSettings();
+    public abstract CamSettings getSettings();
     
     public abstract List<String> validate(); //Return a list of strings for every error detected in the configuration. return empty list if no errors found.
     
-    public static Camera getInstance(PWSPluginSettings.HWConfiguration.CamSettings settings) {
+    public static Camera getInstance(CamSettings settings) {
         if (settings.camType == Types.HamamatsuOrca4V3) {
             return new HamamatsuOrcaFlash4v3(settings);
         } else {

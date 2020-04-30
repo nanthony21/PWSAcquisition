@@ -27,7 +27,11 @@ import edu.bpl.pwsplugin.UI.subpages.FluorPanel;
 import edu.bpl.pwsplugin.UI.subpages.HWConfPanel;
 import edu.bpl.pwsplugin.UI.subpages.PWSPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
+import edu.bpl.pwsplugin.settings.DynSettings;
+import edu.bpl.pwsplugin.settings.FluorSettings;
+import edu.bpl.pwsplugin.settings.HWConfiguration;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
+import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -58,10 +62,10 @@ public class PluginFrame extends MMFrame{
     private final HWConfPanel hwPanel = new HWConfPanel();
     private final MutablePropertyMapView settings_;
     
-    private PWSPluginSettings.HWConfiguration lastHWConfig;
-    private PWSPluginSettings.PWSSettings lastPWSSettings;
-    private PWSPluginSettings.DynSettings lastDynSettings;
-    private PWSPluginSettings.FluorSettings lastFluorSettings;
+    private HWConfiguration lastHWConfig;
+    private PWSSettings lastPWSSettings;
+    private DynSettings lastDynSettings;
+    private FluorSettings lastFluorSettings;
 
     public PluginFrame() {
         super("PWS Plugin");
@@ -163,22 +167,22 @@ public class PluginFrame extends MMFrame{
     }
     
     private void configureManager() throws Exception {
-        PWSPluginSettings.HWConfiguration config = this.hwPanel.build();
+        HWConfiguration config = this.hwPanel.build();
         if (!config.equals(this.lastHWConfig)) {
             this.lastHWConfig = config;
             Globals.setHardwareConfiguration(config);
         }
-        PWSPluginSettings.PWSSettings pwsSettings = this.pwsPanel.build();
+        PWSSettings pwsSettings = this.pwsPanel.build();
         if (!pwsSettings.equals(this.lastPWSSettings)) {
             this.lastPWSSettings = pwsSettings;
             Globals.acqManager().setPWSSettings(pwsSettings);
         }
-        PWSPluginSettings.DynSettings dynSettings = this.dynPanel.build();
+        DynSettings dynSettings = this.dynPanel.build();
         if (!dynSettings.equals(this.lastDynSettings)) {
             this.lastDynSettings = dynSettings;
             Globals.acqManager().setDynamicsSettings(dynSettings);
         }
-        PWSPluginSettings.FluorSettings fluorSettings = flPanel.build();
+        FluorSettings fluorSettings = flPanel.build();
         if (!fluorSettings.equals(this.lastFluorSettings)) {
             this.lastFluorSettings = fluorSettings;
             Globals.acqManager().setFluorescenceSettings(fluorSettings);

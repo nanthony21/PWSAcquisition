@@ -8,7 +8,14 @@ import edu.bpl.pwsplugin.UI.subpages.DynPanel;
 import edu.bpl.pwsplugin.UI.subpages.FluorPanel;
 import edu.bpl.pwsplugin.UI.subpages.HWConfPanel;
 import edu.bpl.pwsplugin.UI.subpages.PWSPanel;
+import edu.bpl.pwsplugin.settings.CamSettings;
+import edu.bpl.pwsplugin.settings.DynSettings;
+import edu.bpl.pwsplugin.settings.FluorSettings;
+import edu.bpl.pwsplugin.settings.HWConfiguration;
+import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
+import edu.bpl.pwsplugin.settings.PWSSettings;
+import edu.bpl.pwsplugin.settings.TunableFilterSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import org.micromanager.internal.utils.ReportingUtils;
 
@@ -18,19 +25,19 @@ import org.micromanager.internal.utils.ReportingUtils;
  */
 public class UIFactory {
     public static BuilderJPanel getUI(Class<?> clazz) {
-        if (clazz.equals(PWSPluginSettings.PWSSettings.class)) {
+        if (clazz.equals(PWSSettings.class)) {
             return new PWSPanel();
-        } else if (clazz.equals(PWSPluginSettings.DynSettings.class)) {
+        } else if (clazz.equals(DynSettings.class)) {
             return new DynPanel();
-        } else if (clazz.equals(PWSPluginSettings.HWConfiguration.class)) {
+        } else if (clazz.equals(HWConfiguration.class)) {
             return new HWConfPanel();
-        } else if (clazz.equals(PWSPluginSettings.HWConfiguration.CamSettings.class)) {
+        } else if (clazz.equals(CamSettings.class)) {
             return new CamUI();
-        } else if (clazz.equals(PWSPluginSettings.HWConfiguration.TunableFilterSettings.class)) {
+        } else if (clazz.equals(TunableFilterSettings.class)) {
             return new TunableFilterUI();
-        } else if (clazz.equals(PWSPluginSettings.HWConfiguration.ImagingConfigurationSettings.class)) {
+        } else if (clazz.equals(ImagingConfigurationSettings.class)) {
             return new ImagingConfigUI();
-        } else if (clazz.equals(PWSPluginSettings.FluorSettings.class)) {
+        } else if (clazz.equals(FluorSettings.class)) {
             return new FluorPanel();
         } else {
             ReportingUtils.showError("Could not build UI for class: " + clazz);

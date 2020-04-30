@@ -7,7 +7,9 @@ package edu.bpl.pwsplugin.hardware.configurations;
 
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
+import edu.bpl.pwsplugin.settings.CamSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
+import edu.bpl.pwsplugin.settings.TunableFilterSettings;
 import org.micromanager.data.Image;
 
 /**
@@ -18,7 +20,7 @@ public class SpectralCamera extends ImagingConfiguration {
     Camera _cam;
     TunableFilter _filt;
     
-    public SpectralCamera(PWSPluginSettings.HWConfiguration.CamSettings camSettings, PWSPluginSettings.HWConfiguration.TunableFilterSettings filtSettings) {
+    public SpectralCamera(CamSettings camSettings, TunableFilterSettings filtSettings) {
         _cam = Camera.getInstance(camSettings);
         _filt = TunableFilter.getInstance(filtSettings);
     }

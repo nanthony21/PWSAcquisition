@@ -26,6 +26,8 @@ import edu.bpl.pwsplugin.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
+import edu.bpl.pwsplugin.settings.DynSettings;
+import edu.bpl.pwsplugin.settings.HWConfiguration;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -47,18 +49,18 @@ public class DynAcqManager implements AcquisitionManager{
     int wavelength_; //The wavelength to acquire images at
     int numFrames_; //The number of images to acquire.
     PWSAlbum album_;
-    PWSPluginSettings.HWConfiguration config;
-    PWSPluginSettings.DynSettings settings;
+    HWConfiguration config;
+    DynSettings settings;
     
     public DynAcqManager(PWSAlbum album){
         album_ = album;
     }
     
-    public void setHWConfiguration(PWSPluginSettings.HWConfiguration config) {
+    public void setHWConfiguration(HWConfiguration config) {
         this.config = config;
     }
     
-    public void setSequenceSettings(PWSPluginSettings.DynSettings settings) {
+    public void setSequenceSettings(DynSettings settings) {
         this.exposure_ = settings.exposure;
         this.wavelength_ = settings.wavelength;
         this.numFrames_ = settings.numFrames;

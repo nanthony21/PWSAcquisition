@@ -9,6 +9,7 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
+import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.concurrent.LinkedBlockingQueue;
 import mmcorej.org.json.JSONObject;
@@ -25,7 +26,7 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
     Camera camera;
     
     @Override
-    public void setFluorescenceSettings(PWSPluginSettings.FluorSettings settings) {
+    public void setFluorescenceSettings(FluorSettings settings) {
         super.setFluorescenceSettings(settings);
         ImagingConfiguration imConf = ImagingConfiguration.getInstance(Globals.getHardwareConfiguration().getConfigurationByName(this.settings.imConfigName));
         this.camera = imConf.camera();
