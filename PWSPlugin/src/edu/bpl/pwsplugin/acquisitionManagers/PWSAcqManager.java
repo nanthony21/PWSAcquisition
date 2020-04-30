@@ -61,7 +61,7 @@ public class PWSAcqManager implements AcquisitionManager{
     }
     
     public void setSequenceSettings(PWSPluginSettings.PWSSettings settings) throws Exception {
-        ImagingConfiguration conf = ImagingConfiguration.getInstance(this.config.configs.get(0)); //TODO add UI selection of imaging config
+        ImagingConfiguration conf = ImagingConfiguration.getInstance(this.config.getConfigurationByName(settings.imConfigName)); //TODO add UI selection of imaging config
         TunableFilter filter = conf.tunableFilter();
         exposure_ = settings.exposure;
         useExternalTrigger = settings.externalCamTriggering;
@@ -103,7 +103,7 @@ public class PWSAcqManager implements AcquisitionManager{
         long configStartTime = System.currentTimeMillis();
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         int initialWv = 550;
-        SpectralCamera conf = (SpectralCamera) ImagingConfiguration.getInstance(this.config.configs.get(0)); //TODO add UI selection of imaging config
+        SpectralCamera conf = (SpectralCamera) ImagingConfiguration.getInstance(this.config.configs.get(0));
         try {    
             initialWv = conf.tunableFilter().getWavelength(); //Get initial wavelength
             Globals.core().clearCircularBuffer();     

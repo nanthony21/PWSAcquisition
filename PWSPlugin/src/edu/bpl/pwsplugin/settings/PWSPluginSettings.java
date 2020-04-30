@@ -28,6 +28,7 @@ public class PWSPluginSettings extends JsonableParam {
     
     //Make sure that everything here that extends jsonableparam gets registered on startup in the plugin class.
     public static class PWSSettings extends JsonableParam{
+        public String imConfigName;
         public int wvStart;
         public int wvStop;
         public int wvStep;
@@ -48,12 +49,14 @@ public class PWSPluginSettings extends JsonableParam {
     }
     
     public static class DynSettings extends JsonableParam {
+        public String imConfigName;
         public double exposure;
         public int wavelength;
         public int numFrames;
     }
     
     public static class FluorSettings extends JsonableParam {
+        public String imConfigName;
         public double exposure;
         public String filterConfigName;
         public boolean useAltCamera;
@@ -83,6 +86,15 @@ public class PWSPluginSettings extends JsonableParam {
             public ImagingConfiguration.Types configType;
             public CamSettings camSettings;
             public TunableFilterSettings filtSettings;
+        }
+        
+        public ImagingConfigurationSettings getConfigurationByName(String name) {
+            for (int i=0; i < this.configs.size(); i++) {
+                if (this.configs.get(i).name.equals(name)) {
+                    return this.configs.get(i);
+                }
+            }
+            return null;
         }
     }
 }

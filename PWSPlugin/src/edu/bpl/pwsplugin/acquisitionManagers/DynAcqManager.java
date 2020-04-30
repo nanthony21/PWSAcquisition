@@ -48,6 +48,7 @@ public class DynAcqManager implements AcquisitionManager{
     int numFrames_; //The number of images to acquire.
     PWSAlbum album_;
     PWSPluginSettings.HWConfiguration config;
+    PWSPluginSettings.DynSettings settings;
     
     public DynAcqManager(PWSAlbum album){
         album_ = album;
@@ -61,11 +62,12 @@ public class DynAcqManager implements AcquisitionManager{
         this.exposure_ = settings.exposure;
         this.wavelength_ = settings.wavelength;
         this.numFrames_ = settings.numFrames;
+        this.settings = settings;
     }
     
     @Override
     public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata) {
-        ImagingConfiguration conf = ImagingConfiguration.getInstance(this.config.configs.get(0)); //TODO add UI selection of imaging config
+        ImagingConfiguration conf = ImagingConfiguration.getInstance(this.config.getConfigurationByName(this.settings.imConfigName));
         Camera camera = conf.camera();
         TunableFilter tunableFilter = conf.tunableFilter();
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}

@@ -116,10 +116,10 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     public void setFluorescenceSettings(PWSPluginSettings.FluorSettings settings) {
         if (settings.useAltCamera) {
             //Acquire fluorescence with another camera so you don't have to go through the LCTF.
-            flManager_ = new AltCamFluorAcqManager(this.config);
+            flManager_ = new AltCamFluorAcqManager();
         } else {
             //Acquire fluorescence through the LCTF filter using the same camera.
-            flManager_ = new LCTFFluorAcqManager(this.config);
+            flManager_ = new LCTFFluorAcqManager();
         }
         flManager_.setFluorescenceSettings(settings);
     }

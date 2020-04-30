@@ -22,10 +22,12 @@ public class LCTFFluorAcqManager extends FluorAcqManager{
     Camera camera;
     TunableFilter tunableFilter;
     
-    public LCTFFluorAcqManager(PWSPluginSettings.HWConfiguration config) {
-        ImagingConfiguration conf = ImagingConfiguration.getInstance(config.configs.get(0)); //TODO add UI selection of imagin config
-        this.camera = conf.camera();
-        this.tunableFilter = conf.tunableFilter();
+    @Override
+    public void setFluorescenceSettings(PWSPluginSettings.FluorSettings settings) {
+        super.setFluorescenceSettings(settings);
+        ImagingConfiguration imConf = ImagingConfiguration.getInstance(Globals.getHardwareConfiguration().getConfigurationByName(this.settings.imConfigName));
+        this.camera = imConf.camera();
+        this.tunableFilter = imConf.tunableFilter();
     }
     
     @Override
