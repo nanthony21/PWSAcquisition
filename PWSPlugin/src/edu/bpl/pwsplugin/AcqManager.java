@@ -26,7 +26,6 @@ import edu.bpl.pwsplugin.acquisitionManagers.DynAcqManager;
 import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.AltCamFluorAcqManager;
 import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.FluorAcqManager;
 import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.LCTFFluorAcqManager;
-import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -36,6 +35,7 @@ import mmcorej.org.json.JSONObject;
 import org.micromanager.internal.utils.ReportingUtils;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
+import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
@@ -43,25 +43,14 @@ import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 
 public class AcqManager { // A parent acquisition manager that can direct commands down to more specific acquisition managers.
-    private final PWSAcqManager pwsManager_;
-    private final DynAcqManager dynManager_;
-    private FluorAcqManager flManager_;
-    private final LinkedBlockingQueue imageQueue; //This queue is used to pass images from one of the acquisition managers to the ImSaver which saves the file concurrently.
+    private final PWSAcqManager pwsManager_ = new PWSAcqManager(new PWSAlbum("PWS"));
+    private final DynAcqManager dynManager_ = new DynAcqManager(new PWSAlbum("Dynamics"));
+    private FluorAcqManager flManager_ = null;
+    private final LinkedBlockingQueue imageQueue = new LinkedBlockingQueue();; //This queue is used to pass images from one of the acquisition managers to the ImSaver which saves the file concurrently.
     private volatile boolean acquisitionRunning_ = false;
     private int cellNum_;
     private String savePath_;
-    PWSAlbum album;
-    PWSAlbum dynAlbum;
     HWConfigurationSettings config;
-    
-    public AcqManager() {
-        album = new PWSAlbum("PWS");
-        dynAlbum = new PWSAlbum("Dynamics");
-        pwsManager_ = new PWSAcqManager(album);
-        dynManager_ = new DynAcqManager(dynAlbum);
-        flManager_ = null;
-        imageQueue = new LinkedBlockingQueue();
-    }
     
     public void acquirePWS() {
         if (!acquisitionRunning_) {
@@ -124,42 +113,14 @@ public class AcqManager { // A parent acquisition manager that can direct comman
         flManager_.setFluorescenceSettings(settings);
     }
     
-    private JSONObject generateMetadata() throws JSONException {
-        JSONObject metadata = new JSONObject();
-        JSONArray linPoly;
-        ImagingConfigurationSettings imConf = Globals.instance().getHardwareConfiguration().settings.configs.get(0); //TODO add a way to select the imaging configuration
-        if (imConf.camSettings.linearityPolynomial.size() > 0) {
-            linPoly = new JSONArray();
-            for (int i=0; i<imConf.camSettings.linearityPolynomial.size(); i++) {
-                linPoly.put(imConf.camSettings.linearityPolynomial.get(i));
-            }
-            metadata.put("linearityPoly", linPoly);
-        } else{
-            metadata.put("linearityPoly", JSONObject.NULL);
-        }
-        metadata.put("system", Globals.instance().getHardwareConfiguration().settings.systemName);
-        metadata.put("darkCounts", imConf.camSettings.darkCounts);
-        metadata.put("time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
-        return metadata;
-    }
-    
     private void run(AcquisitionManager manager) {
         if (Globals.instance().core().getPixelSizeUm() == 0.0) {
             ReportingUtils.showMessage("It is highly recommended that you provide MicroManager with a pixel size setting for the current setup. Having this information is useful for analysis.");
         }
-        JSONObject metadata;
-        try {
-            metadata = generateMetadata();
-            if (metadata.get("system").equals("")) {
-                ReportingUtils.showMessage("The `system` metadata field is blank. It should contain the name of the system.");
-            }
-            if (metadata.get("darkCounts").equals(0)) {
-                ReportingUtils.showMessage("The `darkCounts` field of the metadata is 0. This can't be right.");
-            }
-        } catch (JSONException e){
-            ReportingUtils.showError(e);
-            return;
-        }
+        ImagingConfigurationSettings imConf = Globals.instance().getHardwareConfiguration().settings.configs.get(0);
+        JSONObject metadata = new MetadataBase(imConf.camSettings.linearityPolynomial,
+            Globals.instance().getHardwareConfiguration().settings.systemName,
+            imConf.camSettings.darkCounts).toJson();
         
         try {
             if (Globals.instance().mm().live().getIsLiveModeOn()) {
