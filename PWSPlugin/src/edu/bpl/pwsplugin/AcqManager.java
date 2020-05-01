@@ -114,7 +114,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     }
     
     public void setFluorescenceSettings(FluorSettings settings) {
-        if (Globals.getHardwareConfiguration().getConfigurationByName(settings.imConfigName).settings().configType == ImagingConfiguration.Types.StandardCamera) {
+        if (Globals.instance().getHardwareConfiguration().getConfigurationByName(settings.imConfigName).settings().configType == ImagingConfiguration.Types.StandardCamera) {
             //Acquire fluorescence with another camera so you don't have to go through the LCTF.
             flManager_ = new AltCamFluorAcqManager();
         } else {
@@ -127,7 +127,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     private JSONObject generateMetadata() throws JSONException {
         JSONObject metadata = new JSONObject();
         JSONArray linPoly;
-        ImagingConfigurationSettings imConf = Globals.getHardwareConfiguration().settings.configs.get(0); //TODO add a way to select the imaging configuration
+        ImagingConfigurationSettings imConf = Globals.instance().getHardwareConfiguration().settings.configs.get(0); //TODO add a way to select the imaging configuration
         if (imConf.camSettings.linearityPolynomial.size() > 0) {
             linPoly = new JSONArray();
             for (int i=0; i<imConf.camSettings.linearityPolynomial.size(); i++) {
@@ -137,14 +137,14 @@ public class AcqManager { // A parent acquisition manager that can direct comman
         } else{
             metadata.put("linearityPoly", JSONObject.NULL);
         }
-        metadata.put("system", Globals.getHardwareConfiguration().settings.systemName);
+        metadata.put("system", Globals.instance().getHardwareConfiguration().settings.systemName);
         metadata.put("darkCounts", imConf.camSettings.darkCounts);
         metadata.put("time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
         return metadata;
     }
     
     private void run(AcquisitionManager manager) {
-        if (Globals.core().getPixelSizeUm() == 0.0) {
+        if (Globals.instance().core().getPixelSizeUm() == 0.0) {
             ReportingUtils.showMessage("It is highly recommended that you provide MicroManager with a pixel size setting for the current setup. Having this information is useful for analysis.");
         }
         JSONObject metadata;
@@ -162,8 +162,8 @@ public class AcqManager { // A parent acquisition manager that can direct comman
         }
         
         try {
-            if (Globals.mm().live().getIsLiveModeOn()) {
-                Globals.mm().live().setLiveMode(false);
+            if (Globals.instance().mm().live().getIsLiveModeOn()) {
+                Globals.instance().mm().live().setLiveMode(false);
             }
             if (imageQueue.size() > 0) {
                 ReportingUtils.showMessage(String.format("The image queue started a new acquisition with %d images already in it! Your image file is likely corrupted. This can mean that Java has not been allocated enough heap size.", imageQueue.size()));

@@ -64,11 +64,11 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
             JsonableParam.registerClass(CamSettings.class);
             JsonableParam.registerClass(PWSPluginSettings.class);
             
-            Globals.init(studio_);
+            Globals.instance().init(studio_);
             
             initialized_ = true;
         }
-        Globals.frame().setVisible(true);
+        Globals.instance().frame().setVisible(true);
     }
     
     @Override
@@ -98,9 +98,9 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     
     @Subscribe
     public void closeRequested( ShutdownCommencingEvent sce){
-      if (Globals.frame() != null) {
+      if (Globals.instance().frame() != null) {
          if (!sce.getIsCancelled()) {
-            Globals.frame().dispose();
+            Globals.instance().frame().dispose();
          }
       }
    }
@@ -109,58 +109,58 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     
     //API
     public void setSavePath(String savepath) {
-        Globals.frame().setSavePath(savepath);
+        Globals.instance().frame().setSavePath(savepath);
     }
     
     public void setCellNumber(int cellNum) {
-        Globals.frame().setCellNumber(cellNum);
+        Globals.instance().frame().setCellNumber(cellNum);
     }
     
     public void setPWSExposure(double exposureMs) {
-        Globals.frame().setPWSExposure(exposureMs);
+        Globals.instance().frame().setPWSExposure(exposureMs);
     }
 
     public void acquirePWS() {
-        Globals.frame().acquirePws();
+        Globals.instance().frame().acquirePws();
     }
     
     public void acquireDynamics() {
-        Globals.frame().acquireDynamics();
+        Globals.instance().frame().acquireDynamics();
     }
     
     public void acquireFluorescence() {
-        Globals.frame().acquireFluorescence();
+        Globals.instance().frame().acquireFluorescence();
     }
     
     public void setDynamicsExposure(double exposureMs) {
-        Globals.frame().setDynamicsExposure(exposureMs);
+        Globals.instance().frame().setDynamicsExposure(exposureMs);
     }
     
     public void setFluorescenceExposure(double exposureMs) {
-        Globals.frame().setFluorescenceExposure(exposureMs);
+        Globals.instance().frame().setFluorescenceExposure(exposureMs);
     }
     
     public void setFluorescenceFilter(String filterBlockName) {
-        Globals.frame().setFluorescenceFilter(filterBlockName);
+        Globals.instance().frame().setFluorescenceFilter(filterBlockName);
     }
     
     public List<String> getFluorescenceFilterNames() {
-        return Globals.frame().getFluorescenceFilterNames();
+        return Globals.instance().frame().getFluorescenceFilterNames();
     }
     
     public boolean isAcquisitionRunning() {
-        return Globals.acqManager().isAcquisitionRunning();
+        return Globals.instance().acqManager().isAcquisitionRunning();
     }
     
     public String getFilterName() {
-        return Globals.frame().getFilterName();
+        return Globals.instance().frame().getFilterName();
     }
     
     public void setFluorescenceEmissionWavelength(int wv) {
-        Globals.frame().setFluorescenceEmissionWavelength(wv);
+        Globals.instance().frame().setFluorescenceEmissionWavelength(wv);
     }
     
     public void dispose() { //Close the frame.
-        Globals.frame().dispose();
+        Globals.instance().frame().dispose();
     }
 }

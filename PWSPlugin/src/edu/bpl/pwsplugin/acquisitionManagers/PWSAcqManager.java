@@ -56,7 +56,7 @@ public class PWSAcqManager implements AcquisitionManager{
     }
     
     public void setSequenceSettings(PWSSettings settings) throws Exception {
-        conf = (SpectralCamera) Globals.getHardwareConfiguration().getConfigurationByName(settings.imConfigName);
+        conf = (SpectralCamera) Globals.instance().getHardwareConfiguration().getConfigurationByName(settings.imConfigName);
         TunableFilter filter = conf.tunableFilter();
         exposure_ = settings.exposure;
         useExternalTrigger = settings.externalCamTriggering;
@@ -101,9 +101,9 @@ public class PWSAcqManager implements AcquisitionManager{
 
         try {    
             initialWv = conf.tunableFilter().getWavelength(); //Get initial wavelength
-            Globals.core().clearCircularBuffer();     
+            Globals.instance().core().clearCircularBuffer();     
             conf.camera().setExposure(exposure_);
-            Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true);
+            Pipeline pipeline = Globals.instance().mm().data().copyApplicationPipeline(Globals.instance().mm().data().createRAMDatastore(), true);
             
             //Prepare metadata and start imsaver
             JSONArray WV = new JSONArray();
@@ -130,13 +130,13 @@ public class PWSAcqManager implements AcquisitionManager{
                     int oldi = -1;
                     long lastImTime = System.currentTimeMillis();
                     while (true) {
-                        boolean remaining = (Globals.core().getRemainingImageCount() > 0);
-                        boolean running = (Globals.core().isSequenceRunning(conf.camera().getName()));
+                        boolean remaining = (Globals.instance().core().getRemainingImageCount() > 0);
+                        boolean running = (Globals.instance().core().isSequenceRunning(conf.camera().getName()));
                         if ((!remaining) && (canExit)) {
                             break;  //Everything is taken care of.
                         }
                         if (remaining) {    //Process images
-                            Image im = Globals.mm().data().convertTaggedImage(Globals.core().popNextTaggedImage());
+                            Image im = Globals.instance().mm().data().convertTaggedImage(Globals.instance().core().popNextTaggedImage());
                             addImage(im, i, album_, pipeline, imSaver_.queue);
                             i++;
                             lastImTime = System.currentTimeMillis();

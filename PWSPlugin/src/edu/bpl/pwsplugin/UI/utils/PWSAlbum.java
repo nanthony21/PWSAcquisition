@@ -40,7 +40,7 @@ public class PWSAlbum {
    private DisplayWindow display = null;
    
    public PWSAlbum(String displayName) {
-       store_ = Globals.mm().data().createRewritableRAMDatastore();
+       store_ = Globals.instance().mm().data().createRewritableRAMDatastore();
        displayName_ = displayName;
    }
    
@@ -55,7 +55,7 @@ public class PWSAlbum {
 
    public void addImage(Image image){   
         if ((display==null) || (display.isClosed())) {
-            display = Globals.mm().displays().createDisplay(store_);
+            display = Globals.instance().mm().displays().createDisplay(store_);
             try { 
                 display.setZoom(0.25); // Old versions of micromanager don't have this implemented.
             } catch (UnsupportedOperationException uoe) {} //Do nothing.

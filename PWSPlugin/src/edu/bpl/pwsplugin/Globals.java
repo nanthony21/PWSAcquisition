@@ -8,6 +8,8 @@ package edu.bpl.pwsplugin;
 import edu.bpl.pwsplugin.UI.PluginFrame;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
 import java.util.List;
 import mmcorej.CMMCore;
@@ -20,45 +22,65 @@ import org.micromanager.internal.utils.ReportingUtils;
  * @author LCPWS3
  */
 public class Globals {
-    private static Studio studio_ = null;
-    private static AcqManager acqMan_;
-    private static HWConfiguration config;
-    private static MMConfigAdapter mmAdapter;
-    private static PluginFrame frame;
+    private static Globals instance = null;
+    private Studio studio_ = null;
+    private AcqManager acqMan_;
+    private HWConfiguration config;
+    private MMConfigAdapter mmAdapter;
+    private PluginFrame frame;
+    private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     
-    public static void init(Studio studio) {
+    private Globals() {}
+    
+    public static Globals instance() {
+        if (instance == null) {
+            instance = new Globals();
+        }
+        return instance;
+    }
+    
+    public void init(Studio studio) {
         studio_ = studio;
         mmAdapter = new MMConfigAdapter();
         acqMan_ = new AcqManager();
         //setHardwareConfigurationSettings(new HWConfirationSettings()); //Very important that this is instantiated after studio. this is probably bad design actually.
         frame = new PluginFrame();
     }
+    
+    public void addPropertyChangeListener(PropertyChangeListener l) {
+        this.pcs.addPropertyChangeListener(l);
+    }
+    
+    public void removePropertyChangeListener(PropertyChangeListener l) {
+        this.pcs.removePropertyChangeListener(l);
+    }
             
-    public static Studio mm() {
+    public Studio mm() {
         return studio_;
     }
     
-    public static CMMCore core() {
+    public CMMCore core() {
         return studio_.core();
     }
     
-    public static AcqManager acqManager() {
+    public AcqManager acqManager() {
         return acqMan_;
     }
     
-    public static PluginFrame frame() {
+    public PluginFrame frame() {
         return frame;
     }
     
-    public static void setHardwareConfigurationSettings(HWConfigurationSettings configg) {
+    public void setHardwareConfigurationSettings(HWConfigurationSettings configg) {
         config = new HWConfiguration(configg);
+        pcs.firePropertyChange("config", null, config);
     }
     
-    public static HWConfiguration getHardwareConfiguration() {
+    public HWConfiguration getHardwareConfiguration() {
         return config;
     }
     
-    public static MMConfigAdapter getMMConfigAdapter() {
+    public MMConfigAdapter getMMConfigAdapter() {
         return mmAdapter;
     }
 

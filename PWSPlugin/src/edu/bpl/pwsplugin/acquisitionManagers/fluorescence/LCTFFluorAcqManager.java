@@ -26,7 +26,7 @@ public class LCTFFluorAcqManager extends FluorAcqManager{
     @Override
     public void setFluorescenceSettings(FluorSettings settings) {
         super.setFluorescenceSettings(settings);
-        ImagingConfiguration imConf = Globals.getHardwareConfiguration().getConfigurationByName(this.settings.imConfigName);
+        ImagingConfiguration imConf = Globals.instance().getHardwareConfiguration().getConfigurationByName(this.settings.imConfigName);
         this.camera = imConf.camera();
         this.tunableFilter = imConf.tunableFilter();
     }
@@ -42,10 +42,10 @@ public class LCTFFluorAcqManager extends FluorAcqManager{
             return;
         }
         try{
-            if (Globals.getMMConfigAdapter().autoFilterSwitching) {
-                initialFilter = Globals.core().getCurrentConfig("Filter");
-                Globals.core().setConfig("Filter", this.settings.filterConfigName);
-                Globals.core().waitForConfig("Filter", this.settings.filterConfigName); // Wait for the device to be ready.
+            if (Globals.instance().getMMConfigAdapter().autoFilterSwitching) {
+                initialFilter = Globals.instance().core().getCurrentConfig("Filter");
+                Globals.instance().core().setConfig("Filter", this.settings.filterConfigName);
+                Globals.instance().core().waitForConfig("Filter", this.settings.filterConfigName); // Wait for the device to be ready.
             } else {
                 ReportingUtils.showMessage("Set the correct fluorescence filter and click `OK`.");
             }
@@ -56,9 +56,9 @@ public class LCTFFluorAcqManager extends FluorAcqManager{
         try {
             this.tunableFilter.setWavelength(settings.tfWavelength);
             this.camera.setExposure(settings.exposure);
-            Globals.core().clearCircularBuffer();
+            Globals.instance().core().clearCircularBuffer();
             Image img = this.camera.snapImage();
-            Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
+            Pipeline pipeline = Globals.instance().mm().data().copyApplicationPipeline(Globals.instance().mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
             Coords coords = img.getCoords();
             pipeline.insertImage(img); //Add image to the data pipeline for processing
             img = pipeline.getDatastore().getImage(coords); //Retrieve the processed image.                 
@@ -73,10 +73,10 @@ public class LCTFFluorAcqManager extends FluorAcqManager{
         } catch (Exception e) {
             ReportingUtils.showError(e);
         } finally {
-            if (Globals.getMMConfigAdapter().autoFilterSwitching) {
+            if (Globals.instance().getMMConfigAdapter().autoFilterSwitching) {
                 try {
-                    Globals.core().setConfig("Filter", initialFilter);
-                    Globals.core().waitForConfig("Filter", initialFilter); // Wait for the device to be ready.
+                    Globals.instance().core().setConfig("Filter", initialFilter);
+                    Globals.instance().core().waitForConfig("Filter", initialFilter); // Wait for the device to be ready.
                 } catch (Exception e){
                     ReportingUtils.showError(e);
                 }

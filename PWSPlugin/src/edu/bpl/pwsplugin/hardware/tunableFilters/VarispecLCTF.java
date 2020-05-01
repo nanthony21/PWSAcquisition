@@ -25,7 +25,7 @@ public class VarispecLCTF extends DefaultTunableFilter {
     @Override
     public List<String> validate() {
         List<String> errs = new ArrayList<>();
-        List<String> devs = Arrays.asList(Globals.core().getLoadedDevices().toArray());
+        List<String> devs = Arrays.asList(Globals.instance().core().getLoadedDevices().toArray());
         if (!devs.contains(this.devName)) {
             errs.add("VarispecLCTF: Could not find device named " + this.devName + ".");
         }

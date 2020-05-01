@@ -67,7 +67,7 @@ public class CamUI extends SingleBuilderJPanel<CamSettings>{
     }
     
     private void updateComboBoxes() {
-        this.camCombo.setModel(new DefaultComboBoxModel<String>(new Vector<String>(Globals.getMMConfigAdapter().getConnectedCameras())));
+        this.camCombo.setModel(new DefaultComboBoxModel<String>(new Vector<String>(Globals.instance().getMMConfigAdapter().getConnectedCameras())));
     }
     
     @Override

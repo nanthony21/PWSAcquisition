@@ -21,7 +21,7 @@ public class KuriosLCTF extends DefaultTunableFilter {
     @Override
     public List<String> validate() {
         List<String> errs = new ArrayList<>();
-        List<String> devs = Arrays.asList(Globals.core().getLoadedDevices().toArray());
+        List<String> devs = Arrays.asList(Globals.instance().core().getLoadedDevices().toArray());
         if (!devs.contains(this.devName)) {
             errs.add("KuriosLCTF: Could not find device named " + this.devName + ".");
         }

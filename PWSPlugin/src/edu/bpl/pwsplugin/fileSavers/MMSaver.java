@@ -54,7 +54,7 @@ public class MMSaver extends SaverThread {
     public void run(){
         try {
             long now = System.currentTimeMillis(); 
-            Datastore ds = Globals.mm().data().createMultipageTIFFDatastore(savePath_, false, true);
+            Datastore ds = Globals.instance().mm().data().createMultipageTIFFDatastore(savePath_, false, true);
             ds.setName("PWSPluginSaver");
             Image im;
             Coords.Builder coords;
@@ -119,7 +119,7 @@ public class MMSaver extends SaverThread {
     }
     
     private void saveImBd(Image im) throws IOException{
-        ImagePlus imPlus = new ImagePlus(filePrefix_, Globals.mm().data().ij().createProcessor(im));
+        ImagePlus imPlus = new ImagePlus(filePrefix_, Globals.instance().mm().data().ij().createProcessor(im));
         ContrastEnhancer contrast = new ContrastEnhancer();
         contrast.stretchHistogram(imPlus,0.01); //I think this will saturate 0.01% of the image. or maybe its 1% idk. 
         ImageConverter converter = new ImageConverter(imPlus);
