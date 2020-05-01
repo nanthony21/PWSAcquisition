@@ -9,7 +9,9 @@ import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
@@ -25,7 +27,7 @@ public class DynPanel extends SingleBuilderJPanel<DynSettings>{
     private JSpinner wvSpinner = new JSpinner();
     private JSpinner framesSpinner = new JSpinner();
     private JSpinner exposureSpinner = new JSpinner();
-    private JTextField imConfName = new JTextField(20);
+    private JComboBox<String> imConfName = new JComboBox<>();
 
     
     public DynPanel() {
@@ -58,5 +60,12 @@ public class DynPanel extends SingleBuilderJPanel<DynSettings>{
     //API
     public void setExposure(double exposureMs) {
         this.exposureSpinner.setValue(exposureMs);
+    }
+    
+    public void setAvailableConfigNames(List<String> names) {
+        this.imConfName.removeAllItems();
+        for (String name : names) {
+            this.imConfName.addItem(name);
+        }
     }
 }

@@ -31,7 +31,7 @@ public class FluorPanel extends SingleBuilderJPanel<FluorSettings>{
     private JSpinner wvSpinner;
     private JSpinner exposureSpinner;
     private JComboBox<String> filterCombo = new JComboBox<>();
-    private JTextField imConfName = new JTextField(20);
+    private JComboBox<String> imConfName = new JComboBox<>();
 
     
     public FluorPanel() {
@@ -98,5 +98,12 @@ public class FluorPanel extends SingleBuilderJPanel<FluorSettings>{
     
     public void setEmissionWavelength(int wavelength) {
         this.wvSpinner.setValue(wavelength);
+    }
+    
+    public void setAvailableConfigNames(List<String> names) {
+        this.imConfName.removeAllItems();
+        for (String name : names) {
+            this.imConfName.addItem(name);
+        }
     }
 }

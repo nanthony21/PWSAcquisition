@@ -43,7 +43,6 @@ public class Globals {
         studio_ = studio;
         mmAdapter = new MMConfigAdapter();
         acqMan_ = new AcqManager();
-        //setHardwareConfigurationSettings(new HWConfirationSettings()); //Very important that this is instantiated after studio. this is probably bad design actually.
         frame = new PluginFrame();
     }
     
