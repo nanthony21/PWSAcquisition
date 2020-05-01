@@ -101,9 +101,9 @@ public class AcqManager { // A parent acquisition manager that can direct comman
             ReportingUtils.showMessage("It is highly recommended that you provide MicroManager with a pixel size setting for the current setup. Having this information is useful for analysis.");
         }
         ImagingConfigurationSettings imConf = Globals.getHardwareConfiguration().settings.configs.get(0);
-        JSONObject metadata = new MetadataBase(imConf.camSettings.linearityPolynomial,
+        MetadataBase metadata = new MetadataBase(imConf.camSettings.linearityPolynomial,
             Globals.getHardwareConfiguration().settings.systemName,
-            imConf.camSettings.darkCounts).toJson();
+            imConf.camSettings.darkCounts);
         
         try {
             if (Globals.mm().live().getIsLiveModeOn()) {

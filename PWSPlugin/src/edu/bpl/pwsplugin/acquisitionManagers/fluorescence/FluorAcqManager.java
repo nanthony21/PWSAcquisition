@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionManagers.fluorescence;
 
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
+import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.nio.file.FileAlreadyExistsException;
@@ -42,7 +43,7 @@ public abstract class FluorAcqManager implements AcquisitionManager{
     }
     
     @Override
-    public abstract void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata);
+    public abstract void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata);
     
     public void setFluorescenceSettings(FluorSettings settings) {
         this.settings = settings;

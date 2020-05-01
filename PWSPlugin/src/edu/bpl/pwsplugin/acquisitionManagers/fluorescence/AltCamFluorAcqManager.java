@@ -9,6 +9,8 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
+import edu.bpl.pwsplugin.metadata.FluorescenceMetadata;
+import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import java.util.concurrent.LinkedBlockingQueue;
 import mmcorej.org.json.JSONObject;
@@ -32,7 +34,7 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
     }
     
     @Override
-    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata) {
+    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) {
         String fullSavePath;
         String initialFilter = "";
         try {
@@ -58,9 +60,9 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
             camera.setExposure(settings.exposure);
             Globals.core().clearCircularBuffer();
             Image img = camera.snapImage();
-            metadata.put("exposure", camera.getExposure()); //This must happen after we have set our exposure.
-            metadata.put("filterBlock", settings.filterConfigName);
-            metadata.put("altCameraTransform", camera.getSettings().affineTransform); //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera.
+            FluorescenceMetadata flmd = new FluorescenceMetadata(metadata, settings.filterConfigName, camera.getExposure()); //This must happen after we have set our exposure.
+            JSONObject md = flmd.toJson();
+            md.put("altCameraTransform", camera.getSettings().affineTransform); //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera.
             Globals.core().setConfig("Camera", origCam);
             Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
             Coords coords = img.getCoords();
@@ -69,7 +71,7 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
             MMSaver imSaver = new MMSaver(fullSavePath, imagequeue, this.getExpectedFrames(), this.getFilePrefix());
             imSaver.start();
 
-            imSaver.setMetadata(metadata);
+            imSaver.setMetadata(md);
             imSaver.queue.put(img);
             imSaver.join();
         } catch (Exception e) {

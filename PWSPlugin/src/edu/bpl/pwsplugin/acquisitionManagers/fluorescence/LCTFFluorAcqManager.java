@@ -6,6 +6,8 @@ import edu.bpl.pwsplugin.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
+import edu.bpl.pwsplugin.metadata.FluorescenceMetadata;
+import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -32,7 +34,7 @@ public class LCTFFluorAcqManager extends FluorAcqManager{
     }
     
     @Override
-    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata) {
+    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) {
         String fullSavePath;
         String initialFilter = "";
         try {
@@ -64,10 +66,10 @@ public class LCTFFluorAcqManager extends FluorAcqManager{
             img = pipeline.getDatastore().getImage(coords); //Retrieve the processed image.                 
             MMSaver imSaver = new MMSaver(fullSavePath, imagequeue, this.getExpectedFrames(), this.getFilePrefix());
             imSaver.start();
-            metadata.put("wavelength", settings.tfWavelength);
-            metadata.put("exposure", camera.getExposure()); //This must happen after we have set our exposure. We don't use the settings.exposure becuase the actual exposure may differ by a little bit.
-            metadata.put("filterBlock", settings.filterConfigName);
-            imSaver.setMetadata(metadata);
+            FluorescenceMetadata flmd = new FluorescenceMetadata(metadata, settings.filterConfigName, camera.getExposure()); //This must happen after we have set our exposure. We don't use the settings.exposure becuase the actual exposure may differ by a little bit.
+            JSONObject md = flmd.toJson();
+            md.put("wavelength", settings.tfWavelength);
+            imSaver.setMetadata(md);
             imSaver.queue.put(img);
             imSaver.join();
         } catch (Exception e) {
