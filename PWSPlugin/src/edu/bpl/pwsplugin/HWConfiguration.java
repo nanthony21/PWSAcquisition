@@ -30,6 +30,10 @@ public class HWConfiguration {
         }
     }
     
+    public HWConfigurationSettings getSettings() {
+        return this.settings;
+    }
+    
     public ImagingConfiguration getConfigurationByName(String name) {
         return this.imConfigs.get(name);
     }

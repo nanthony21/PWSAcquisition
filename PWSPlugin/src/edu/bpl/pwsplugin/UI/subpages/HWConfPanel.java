@@ -31,6 +31,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  */
 public class HWConfPanel extends BuilderJPanel<HWConfigurationSettings>{
     private JTextField sysNameEdit = new JTextField(20);
+    private JLabel configsFoundLabel = new JLabel();
     private JButton editConfigsButton = new JButton("Edit Configurations");
     private List<ImagingConfigurationSettings> configs = new ArrayList<>();
     
@@ -45,14 +46,16 @@ public class HWConfPanel extends BuilderJPanel<HWConfigurationSettings>{
         this.editConfigsButton.addActionListener((evt)->{
             ImagingConfigDlg dlg = new ImagingConfigDlg(SwingUtilities.getWindowAncestor(this), this.configs);
             List<ImagingConfigurationSettings> results = dlg.showDialog();
-            if (results != null) {
-                this.configs = results;
+            if (results != null) { // new settings were accepted in the dialog
+                HWConfigurationSettings config = this.build();
+                config.configs = results;
+                this.populateFields(config);
             }
         });
         
-        
         this.add(new JLabel("System Name:"), "gapleft push");
         this.add(this.sysNameEdit, "wrap");
+        this.add(configsFoundLabel);
         this.add(this.editConfigsButton, "span");
     }
     
@@ -68,7 +71,9 @@ public class HWConfPanel extends BuilderJPanel<HWConfigurationSettings>{
     public void populateFields(HWConfigurationSettings config) {
         this.sysNameEdit.setText(config.systemName);
         this.configs = config.configs;
+        this.configsFoundLabel.setText("Imaging Configurations: " + config.configs.size());
     }
+    
 }
 
 class ImagingConfigDlg extends JDialog {
