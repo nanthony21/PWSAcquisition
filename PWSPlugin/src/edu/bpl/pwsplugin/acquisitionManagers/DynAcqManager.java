@@ -26,6 +26,8 @@ import edu.bpl.pwsplugin.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
+import edu.bpl.pwsplugin.metadata.DynamicsMetadata;
+import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import java.io.IOException;
@@ -41,6 +43,8 @@ import org.micromanager.data.Image;
 import org.micromanager.data.Pipeline;
 import org.micromanager.internal.utils.ReportingUtils;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class DynAcqManager implements AcquisitionManager{
@@ -62,7 +66,7 @@ public class DynAcqManager implements AcquisitionManager{
     }
     
     @Override
-    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata) {
+    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) {
         ImagingConfiguration conf = Globals.getHardwareConfiguration().getConfigurationByName(this.settings.imConfigName);
         Camera camera = conf.camera();
         TunableFilter tunableFilter = conf.tunableFilter();
@@ -80,15 +84,13 @@ public class DynAcqManager implements AcquisitionManager{
         try {
             MMSaver imSaver = new MMSaver(this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), this.getFilePrefix());
             imSaver.start();
-            metadata.put("wavelength", wavelength_);
-            metadata.put("exposure", camera.getExposure()); //This must happen after we have set our exposure.
-            JSONArray times = new JSONArray();
+            List<Double> times = new ArrayList<>();
             for (int i=0; i<numFrames_; i++) {
                 while (Globals.core().getRemainingImageCount() < 1) { //Wait for an image to be ready
                     Thread.sleep(10);
                 }
                 TaggedImage taggedIm = Globals.core().popNextTaggedImage();
-                times.put(Double.parseDouble((String) taggedIm.tags.get("ElapsedTime-ms"))); //Convert to float and save to json array.
+                times.add(Double.parseDouble((String) taggedIm.tags.get("ElapsedTime-ms"))); //Convert to float and save to json array.
                 Image im = Globals.mm().data().convertTaggedImage(taggedIm);
                 Coords newCoords = im.getCoords().copyBuilder().t(i).build();
                 im = im.copyAtCoords(newCoords);
@@ -97,8 +99,9 @@ public class DynAcqManager implements AcquisitionManager{
                 imSaver.queue.put(im);
                 album_.addImage(im);
             }
-            metadata.put("times", times);
-            imSaver.setMetadata(metadata);
+            DynamicsMetadata dmd = new DynamicsMetadata(metadata, Double.valueOf(wavelength_), times, camera.getExposure());
+
+            imSaver.setMetadata(dmd.toJson());
             imSaver.join();
         } catch (Exception e) {
             ReportingUtils.showError(e);

@@ -38,6 +38,13 @@ public class MetadataBase {
         }
         
     }
+    
+    public MetadataBase(MetadataBase base) {
+        this.linearityPoly = base.linearityPoly;
+        this.system = base.system;
+        this.darkCounts = base.darkCounts;
+        this.time = base.time;
+    }
             
     public JSONObject toJson() {
         try {

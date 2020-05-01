@@ -26,6 +26,8 @@ import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.hardware.configurations.SpectralCamera;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
+import edu.bpl.pwsplugin.metadata.MetadataBase;
+import edu.bpl.pwsplugin.metadata.PWSMetadata;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -35,6 +37,9 @@ import org.micromanager.data.Image;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import mmcorej.org.json.JSONArray;
 import mmcorej.org.json.JSONObject;
 import org.micromanager.data.Coords;
@@ -94,7 +99,7 @@ public class PWSAcqManager implements AcquisitionManager{
     }
       
     @Override
-    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata) {
+    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) {
         long configStartTime = System.currentTimeMillis();
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         int initialWv = 550;
@@ -106,14 +111,13 @@ public class PWSAcqManager implements AcquisitionManager{
             Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true);
             
             //Prepare metadata and start imsaver
-            JSONArray WV = new JSONArray();
+            List<Double> WV = new ArrayList<>();
             for (int i = 0; i < wv.length; i++) {
-                WV.put(wv[i]);
-            }        
-            metadata.put("wavelengths", WV);
-            metadata.put("exposure", conf.camera().getExposure()); //This must happen after we have set the camera to our desired exposure.
+                WV.add(Double.valueOf(wv[i]));
+            }     
+            PWSMetadata pmd = new PWSMetadata(metadata, WV, conf.camera().getExposure());  //This must happen after we have set the camera to our desired exposure.
             MMSaver imSaver_ = new MMSaver(this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), this.getFilePrefix());
-            imSaver_.setMetadata(metadata);
+            imSaver_.setMetadata(pmd.toJson());
             imSaver_.start();
             
             long seqEndTime=0;
