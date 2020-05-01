@@ -32,14 +32,20 @@ import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
+import java.awt.Window;
 import java.util.List;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingWorker;
+import javax.swing.WindowConstants;
 import net.miginfocom.swing.MigLayout;
 import org.micromanager.internal.utils.MMFrame;
 import org.micromanager.internal.utils.ReportingUtils;
@@ -59,10 +65,9 @@ public class PluginFrame extends MMFrame{
     private final PWSPanel pwsPanel = new PWSPanel();
     private final FluorPanel flPanel = new FluorPanel();
     private final DynPanel dynPanel = new DynPanel();
-    private final HWConfPanel hwPanel = new HWConfPanel();
+    private final ConfDialog configDialog = new ConfDialog(this);
     private final MutablePropertyMapView settings_;
     
-    private HWConfigurationSettings lastHWConfig;
     private PWSSettings lastPWSSettings;
     private DynSettings lastDynSettings;
     private FluorSettings lastFluorSettings;
@@ -74,6 +79,18 @@ public class PluginFrame extends MMFrame{
         this.setTitle(String.format("%s %s", PWSPlugin.menuName, PWSPlugin.versionNumber));
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         this.setResizable(true);
+        
+        JMenuBar ma = new JMenuBar();
+        JMenu mb = new JMenu("Advanced");
+        JMenuItem mc = new JMenuItem("Configuration");
+        ma.add(mb);
+        mb.add(mc);
+        mc.addActionListener((evt)->{
+            HWConfigurationSettings newSettings = this.configDialog.showDialog();
+            Globals.setHardwareConfigurationSettings(newSettings);
+        });
+        
+        this.setJMenuBar(ma);
         
         dirSelect = new DirectorySelector(DirectorySelector.DefaultMMFunctions.MMDataSetDirectory);
         cellNumSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
@@ -90,7 +107,6 @@ public class PluginFrame extends MMFrame{
         tabs.addTab("PWS", this.pwsPanel);
         tabs.addTab("Fluorescence", this.flPanel);
         tabs.addTab("Dynamics", this.dynPanel);
-        tabs.addTab("Config", this.hwPanel);
         
         JPanel bottomPanel = new JPanel(new MigLayout());
         bottomPanel.add(dirSelect, "grow, pushx");
@@ -112,7 +128,7 @@ public class PluginFrame extends MMFrame{
         set.pwsSettings = this.pwsPanel.build();
         set.dynSettings = this.dynPanel.build();
         set.flSettings = this.flPanel.build();
-        set.hwConfiguration = this.hwPanel.build();
+        set.hwConfiguration = Globals.getHardwareConfiguration().getSettings();
         set.saveDir = this.dirSelect.getText();
         set.cellNum = (int) this.cellNumSpinner.getValue();
         return set;
@@ -123,14 +139,19 @@ public class PluginFrame extends MMFrame{
     }
     
     public final void loadSettings() {
-        PWSPluginSettings set = PWSPluginSettings.fromJsonString(this.settings_.getString("settings", ""));
+        PWSPluginSettings set;
+        try {
+            set = PWSPluginSettings.fromJsonString(this.settings_.getString("settings", ""));
+        } catch (com.google.gson.JsonParseException e) {
+            ReportingUtils.logError(e); //Sometimes when we change the code we are unable to load old settings. Don't let that prevent things from starting up.
+            return;
+        }
         if (set==null) {
             Globals.mm().logs().logMessage("PWS Plugin: no settings found in user profile.");
         } else {
             try{ this.pwsPanel.populateFields(set.pwsSettings); } catch(Exception e) {ReportingUtils.logError(e); }
             try{ this.dynPanel.populateFields(set.dynSettings); } catch(Exception e) {ReportingUtils.logError(e); }
             try{ this.flPanel.populateFields(set.flSettings); } catch(Exception e) {ReportingUtils.logError(e); }
-            try{ this.hwPanel.populateFields(set.hwConfiguration); } catch(Exception e) {ReportingUtils.logError(e); }
             Globals.setHardwareConfigurationSettings(set.hwConfiguration);
             this.dirSelect.setText(set.saveDir);
             this.cellNumSpinner.setValue(set.cellNum);
@@ -167,11 +188,6 @@ public class PluginFrame extends MMFrame{
     }
     
     private void configureManager() throws Exception {
-        HWConfigurationSettings config = this.hwPanel.build();
-        if (!config.equals(this.lastHWConfig)) {
-            this.lastHWConfig = config;
-            Globals.setHardwareConfigurationSettings(config);
-        }
         PWSSettings pwsSettings = this.pwsPanel.build();
         if (!pwsSettings.equals(this.lastPWSSettings)) {
             this.lastPWSSettings = pwsSettings;
@@ -247,5 +263,35 @@ public class PluginFrame extends MMFrame{
     
     public void setFluorescenceEmissionWavelength(int wv) {
         this.flPanel.setEmissionWavelength(wv);
+    }
+}
+
+class ConfDialog extends JDialog {
+    JButton acceptButton = new JButton("Accept");
+    public HWConfigurationSettings result = null; // Will only be non-null if the accept button is hit.
+    public ConfDialog(Window owner) {
+        super(owner, "Hardware Configuration");
+        this.setModal(true);
+        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        this.setLocationRelativeTo(owner);
+        HWConfPanel hwc = new HWConfPanel();
+        hwc.populateFields(Globals.getHardwareConfiguration().getSettings());
+        
+        acceptButton.addActionListener((evt)->{
+            result = hwc.build();
+            this.setVisible(false);
+            this.dispose();
+        });
+        
+        JPanel pnl = new JPanel(new MigLayout());
+        pnl.add(hwc, "wrap");
+        pnl.add(acceptButton, "span, align center");
+        this.setContentPane(pnl);
+        this.pack();
+    }
+    
+    public HWConfigurationSettings showDialog() {
+        this.setVisible(true);
+        return result;
     }
 }
