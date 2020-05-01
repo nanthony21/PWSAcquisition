@@ -53,33 +53,15 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     HWConfigurationSettings config;
     
     public void acquirePWS() {
-        if (!acquisitionRunning_) {
-            acquisitionRunning_ = true;
-            run(pwsManager_);
-            acquisitionRunning_ = false;
-        } else {
-            ReportingUtils.logError("Attempting to start PWS acquisition when acquisition is already running.");
-        }
+        run(pwsManager_);
     }
     
     public void acquireDynamics() {
-        if (!acquisitionRunning_) {
-            acquisitionRunning_ = true;
-            run(dynManager_);
-            acquisitionRunning_ = false;
-        } else {
-            ReportingUtils.logError("Attempting to start Dyn acquisition when acquisition is already running.");
-        }
+        run(dynManager_);
     }
     
     public void acquireFluorescence() {
-        if (!acquisitionRunning_) {
-            acquisitionRunning_ = true;
-            run(flManager_);
-            acquisitionRunning_ = false;
-        } else {
-            ReportingUtils.logError("Attempting to start Fluorescence acquisition when acquisition is already running.");
-        }
+        run(flManager_);
     }
     
     public boolean isAcquisitionRunning() {
@@ -114,6 +96,11 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     }
     
     private void run(AcquisitionManager manager) {
+        if (acquisitionRunning_) {
+            throw new RuntimeException("Attempting to start acquisition when acquisition is already running.");
+        }
+        acquisitionRunning_ = true;
+
         if (Globals.core().getPixelSizeUm() == 0.0) {
             ReportingUtils.showMessage("It is highly recommended that you provide MicroManager with a pixel size setting for the current setup. Having this information is useful for analysis.");
         }
@@ -135,6 +122,8 @@ public class AcqManager { // A parent acquisition manager that can direct comman
             ReportingUtils.logError("PWSPlugin, in AcqManager: " + ex.toString());
             ReportingUtils.showError("PWSPlugin, in AcqManager: " + ex.toString());
             imageQueue.clear();
+        } finally {
+            acquisitionRunning_ = false;
         }
     }
 }
