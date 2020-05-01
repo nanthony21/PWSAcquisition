@@ -25,13 +25,13 @@ public abstract class DefaultTunableFilter extends TunableFilter{
     
     @Override
     public void setWavelength(int wavelength) throws Exception {
-        Globals.instance().core().setProperty(devName, wvProp, String.valueOf(wavelength));
+        Globals.core().setProperty(devName, wvProp, String.valueOf(wavelength));
     }
     
     
     @Override
     public int getWavelength() throws Exception{ 
-        int wv = (int) Math.round(Double.valueOf(Globals.instance().core().getProperty(devName, wvProp)));
+        int wv = (int) Math.round(Double.valueOf(Globals.core().getProperty(devName, wvProp)));
         return wv;
     }
     
@@ -40,7 +40,7 @@ public abstract class DefaultTunableFilter extends TunableFilter{
     
     @Override
     public int getMaxSequenceLength() throws Exception {
-        return Globals.instance().core().getPropertySequenceMaxLength(devName, wvProp);
+        return Globals.core().getPropertySequenceMaxLength(devName, wvProp);
     }
     
     @Override
@@ -49,27 +49,27 @@ public abstract class DefaultTunableFilter extends TunableFilter{
         for (int i = 0; i < wavelengthSequence.length; i++) {   //Convert wv from int to string for sending to the device.
             strv.add(String.valueOf(wavelengthSequence[i]));
         }
-        Globals.instance().mm().core().loadPropertySequence(devName, wvProp, strv);
+        Globals.mm().core().loadPropertySequence(devName, wvProp, strv);
     }
     
     @Override
     public void startSequence() throws Exception {
-        Globals.instance().core().startPropertySequence(devName, wvProp);
+        Globals.core().startPropertySequence(devName, wvProp);
     }
     
     @Override
     public void stopSequence() throws Exception {
-        Globals.instance().core().stopPropertySequence(devName, wvProp);
+        Globals.core().stopPropertySequence(devName, wvProp);
     }
     
     @Override
     public boolean isBusy() throws Exception {
-        return Globals.instance().core().deviceBusy(devName);
+        return Globals.core().deviceBusy(devName);
     }
     
     @Override
     public double getDelayMs() throws Exception {
-        return Globals.instance().core().getDeviceDelayMs(devName);
+        return Globals.core().getDeviceDelayMs(devName);
     }
     
     @Override

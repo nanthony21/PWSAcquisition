@@ -53,11 +53,11 @@ public class FluorPanel extends SingleBuilderJPanel<FluorSettings>{
     
     
     private DefaultComboBoxModel<String> getFilterComboModel() {    
-        return new DefaultComboBoxModel<>((String[]) Globals.instance().getMMConfigAdapter().getFilters().toArray());
+        return new DefaultComboBoxModel<>((String[]) Globals.getMMConfigAdapter().getFilters().toArray());
     }
     
     private DefaultComboBoxModel<String> getCameraComboModel() {
-        return new DefaultComboBoxModel<>((String[]) Globals.instance().getMMConfigAdapter().getConnectedCameras().toArray());
+        return new DefaultComboBoxModel<>((String[]) Globals.getMMConfigAdapter().getConnectedCameras().toArray());
     }
     
     @Override

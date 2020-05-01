@@ -23,7 +23,7 @@ public class MMConfigAdapter {
     public MMConfigAdapter() {
         //Scan the hardware configuration
         //Fluorescence filters
-        this.filters = Arrays.asList(Globals.instance().core().getAvailableConfigs("Filter").toArray());
+        this.filters = Arrays.asList(Globals.core().getAvailableConfigs("Filter").toArray());
         if (this.filters.isEmpty()) {
             this.autoFilterSwitching = false;
             ReportingUtils.showMessage("Micromanager is missing a `Filter` config group which is needed for automated fluorescence. The first setting of the group should be the filter block used for PWS");
@@ -31,7 +31,7 @@ public class MMConfigAdapter {
             this.autoFilterSwitching = true;
         }
         //Cameras
-        this.connectedCameras = Arrays.asList(Globals.instance().core().getLoadedDevicesOfType(DeviceType.CameraDevice).toArray());
+        this.connectedCameras = Arrays.asList(Globals.core().getLoadedDevicesOfType(DeviceType.CameraDevice).toArray());
     } //Scan the hardware configuration
     //Fluorescence filters
     //Cameras

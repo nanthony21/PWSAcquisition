@@ -27,7 +27,7 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
     @Override
     public void setFluorescenceSettings(FluorSettings settings) {
         super.setFluorescenceSettings(settings);
-        ImagingConfiguration imConf = Globals.instance().getHardwareConfiguration().getConfigurationByName(this.settings.imConfigName);
+        ImagingConfiguration imConf = Globals.getHardwareConfiguration().getConfigurationByName(this.settings.imConfigName);
         this.camera = imConf.camera();
     }
     
@@ -42,10 +42,10 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
             return;
         }
         try{
-            if (Globals.instance().getMMConfigAdapter().autoFilterSwitching) {
-                initialFilter = Globals.instance().core().getCurrentConfig("Filter");
-                Globals.instance().core().setConfig("Filter", settings.filterConfigName);
-                Globals.instance().core().waitForConfig("Filter", settings.filterConfigName); // Wait for the device to be ready.
+            if (Globals.getMMConfigAdapter().autoFilterSwitching) {
+                initialFilter = Globals.core().getCurrentConfig("Filter");
+                Globals.core().setConfig("Filter", settings.filterConfigName);
+                Globals.core().waitForConfig("Filter", settings.filterConfigName); // Wait for the device to be ready.
             } else {
                 ReportingUtils.showMessage("Set the correct fluorescence filter and click `OK`.");
             }
@@ -54,15 +54,15 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
             return;
         }
         try {
-            String origCam = Globals.instance().core().getCurrentConfig("Camera");
+            String origCam = Globals.core().getCurrentConfig("Camera");
             camera.setExposure(settings.exposure);
-            Globals.instance().core().clearCircularBuffer();
+            Globals.core().clearCircularBuffer();
             Image img = camera.snapImage();
             metadata.put("exposure", camera.getExposure()); //This must happen after we have set our exposure.
             metadata.put("filterBlock", settings.filterConfigName);
             metadata.put("altCameraTransform", camera.getSettings().affineTransform); //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera.
-            Globals.instance().core().setConfig("Camera", origCam);
-            Pipeline pipeline = Globals.instance().mm().data().copyApplicationPipeline(Globals.instance().mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
+            Globals.core().setConfig("Camera", origCam);
+            Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
             Coords coords = img.getCoords();
             pipeline.insertImage(img); //Add image to the data pipeline for processing
             img = pipeline.getDatastore().getImage(coords); //Retrieve the processed image.                 
@@ -75,10 +75,10 @@ public class AltCamFluorAcqManager extends FluorAcqManager{
         } catch (Exception e) {
             ReportingUtils.showError(e);
         } finally {
-            if (Globals.instance().getMMConfigAdapter().autoFilterSwitching) {
+            if (Globals.getMMConfigAdapter().autoFilterSwitching) {
                 try {
-                    Globals.instance().core().setConfig("Filter", initialFilter);
-                    Globals.instance().core().waitForConfig("Filter", initialFilter); // Wait for the device to be ready.
+                    Globals.core().setConfig("Filter", initialFilter);
+                    Globals.core().waitForConfig("Filter", initialFilter); // Wait for the device to be ready.
                 } catch (Exception e){
                     ReportingUtils.showError(e);
                 }

@@ -103,7 +103,7 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     }
     
     public void setFluorescenceSettings(FluorSettings settings) {
-        if (Globals.instance().getHardwareConfiguration().getConfigurationByName(settings.imConfigName).settings().configType == ImagingConfiguration.Types.StandardCamera) {
+        if (Globals.getHardwareConfiguration().getConfigurationByName(settings.imConfigName).settings().configType == ImagingConfiguration.Types.StandardCamera) {
             //Acquire fluorescence with another camera so you don't have to go through the LCTF.
             flManager_ = new AltCamFluorAcqManager();
         } else {
@@ -114,17 +114,17 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     }
     
     private void run(AcquisitionManager manager) {
-        if (Globals.instance().core().getPixelSizeUm() == 0.0) {
+        if (Globals.core().getPixelSizeUm() == 0.0) {
             ReportingUtils.showMessage("It is highly recommended that you provide MicroManager with a pixel size setting for the current setup. Having this information is useful for analysis.");
         }
-        ImagingConfigurationSettings imConf = Globals.instance().getHardwareConfiguration().settings.configs.get(0);
+        ImagingConfigurationSettings imConf = Globals.getHardwareConfiguration().settings.configs.get(0);
         JSONObject metadata = new MetadataBase(imConf.camSettings.linearityPolynomial,
-            Globals.instance().getHardwareConfiguration().settings.systemName,
+            Globals.getHardwareConfiguration().settings.systemName,
             imConf.camSettings.darkCounts).toJson();
         
         try {
-            if (Globals.instance().mm().live().getIsLiveModeOn()) {
-                Globals.instance().mm().live().setLiveMode(false);
+            if (Globals.mm().live().getIsLiveModeOn()) {
+                Globals.mm().live().setLiveMode(false);
             }
             if (imageQueue.size() > 0) {
                 ReportingUtils.showMessage(String.format("The image queue started a new acquisition with %d images already in it! Your image file is likely corrupted. This can mean that Java has not been allocated enough heap size.", imageQueue.size()));

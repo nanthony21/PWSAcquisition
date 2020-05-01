@@ -85,7 +85,7 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         this.setResizable(true);
         
-        Globals.instance().addPropertyChangeListener(this);
+        Globals.addPropertyChangeListener(this);
         
         JMenuBar ma = new JMenuBar();
         JMenu mb = new JMenu("Advanced");
@@ -94,7 +94,7 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         mb.add(mc);
         mc.addActionListener((evt)->{
             HWConfigurationSettings newSettings = this.configDialog.showDialog();
-            Globals.instance().setHardwareConfigurationSettings(newSettings);
+            Globals.setHardwareConfigurationSettings(newSettings);
         });
         
         this.setJMenuBar(ma);
@@ -103,7 +103,7 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         cellNumSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
         ((JSpinner.DefaultEditor)cellNumSpinner.getEditor()).getTextField().setColumns(4);
         
-        this.settings_ = Globals.instance().mm().profile().getSettings(PluginFrame.class);
+        this.settings_ = Globals.mm().profile().getSettings(PluginFrame.class);
         this.loadSettings();
         
         acqDynButton.addActionListener((e)->{ this.acquireDynamics(); });
@@ -151,7 +151,7 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         set.pwsSettings = this.pwsPanel.build();
         set.dynSettings = this.dynPanel.build();
         set.flSettings = this.flPanel.build();
-        set.hwConfiguration = Globals.instance().getHardwareConfiguration().getSettings();
+        set.hwConfiguration = Globals.getHardwareConfiguration().getSettings();
         set.saveDir = this.dirSelect.getText();
         set.cellNum = (int) this.cellNumSpinner.getValue();
         return set;
@@ -170,12 +170,12 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
             return;
         }
         if (set==null) {
-            Globals.instance().mm().logs().logMessage("PWS Plugin: no settings found in user profile.");
+            Globals.mm().logs().logMessage("PWS Plugin: no settings found in user profile.");
         } else {
             try{ this.pwsPanel.populateFields(set.pwsSettings); } catch(Exception e) {ReportingUtils.logError(e); }
             try{ this.dynPanel.populateFields(set.dynSettings); } catch(Exception e) {ReportingUtils.logError(e); }
             try{ this.flPanel.populateFields(set.flSettings); } catch(Exception e) {ReportingUtils.logError(e); }
-            Globals.instance().setHardwareConfigurationSettings(set.hwConfiguration);
+            Globals.setHardwareConfigurationSettings(set.hwConfiguration);
             this.dirSelect.setText(set.saveDir);
             this.cellNumSpinner.setValue(set.cellNum);
         }
@@ -204,7 +204,7 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         try {
             this.configureManager();
         } catch (Exception e) {
-            Globals.instance().mm().logs().showError(e);
+            Globals.mm().logs().showError(e);
             return;
         }
         SwingWorker worker = runInBackground(button, f);
@@ -214,35 +214,35 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         PWSSettings pwsSettings = this.pwsPanel.build();
         if (!pwsSettings.equals(this.lastPWSSettings)) {
             this.lastPWSSettings = pwsSettings;
-            Globals.instance().acqManager().setPWSSettings(pwsSettings);
+            Globals.acqManager().setPWSSettings(pwsSettings);
         }
         DynSettings dynSettings = this.dynPanel.build();
         if (!dynSettings.equals(this.lastDynSettings)) {
             this.lastDynSettings = dynSettings;
-            Globals.instance().acqManager().setDynamicsSettings(dynSettings);
+            Globals.acqManager().setDynamicsSettings(dynSettings);
         }
         FluorSettings fluorSettings = flPanel.build();
         if (!fluorSettings.equals(this.lastFluorSettings)) {
             this.lastFluorSettings = fluorSettings;
-            Globals.instance().acqManager().setFluorescenceSettings(fluorSettings);
+            Globals.acqManager().setFluorescenceSettings(fluorSettings);
         }        
         String savePath = this.dirSelect.getText();
         //TODO validate path
-        Globals.instance().acqManager().setCellNum((int) this.cellNumSpinner.getValue());
-        Globals.instance().acqManager().setSavePath(savePath);
+        Globals.acqManager().setCellNum((int) this.cellNumSpinner.getValue());
+        Globals.acqManager().setSavePath(savePath);
     }
     
     //Public API
     public void acquirePws() {
-        acquire(acqPwsButton, Globals.instance().acqManager()::acquirePWS);
+        acquire(acqPwsButton, Globals.acqManager()::acquirePWS);
     }
     
     public void acquireDynamics() {
-        acquire(acqDynButton, Globals.instance().acqManager()::acquireDynamics);
+        acquire(acqDynButton, Globals.acqManager()::acquireDynamics);
     }
     
     public void acquireFluorescence() {
-        acquire(acqFlButton, Globals.instance().acqManager()::acquireFluorescence);
+        acquire(acqFlButton, Globals.acqManager()::acquireFluorescence);
     }
     
     public void setSavePath(String savepath) {
@@ -271,11 +271,11 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
     
     public void setFluorescenceFilter(String filterBlockName) {
        if (!this.getFluorescenceFilterNames().contains(filterBlockName)) {
-           Globals.instance().mm().logs().showMessage(filterBlockName + " is not a valid filter block name.");
+           Globals.mm().logs().showMessage(filterBlockName + " is not a valid filter block name.");
        } else {
            boolean success = this.flPanel.setFluorescenceFilter(filterBlockName);
            if (!success) {
-               Globals.instance().mm().logs().showMessage("Error settings fluoresence filter via API.");
+               Globals.mm().logs().showMessage("Error settings fluoresence filter via API.");
            }
        }
     }
@@ -314,7 +314,7 @@ class ConfDialog extends JDialog {
     }
     
     public HWConfigurationSettings showDialog() {
-        hwc.populateFields(Globals.instance().getHardwareConfiguration().getSettings());
+        hwc.populateFields(Globals.getHardwareConfiguration().getSettings());
         this.setVisible(true);
         return result;
     }

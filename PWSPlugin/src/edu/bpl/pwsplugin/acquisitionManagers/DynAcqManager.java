@@ -63,20 +63,20 @@ public class DynAcqManager implements AcquisitionManager{
     
     @Override
     public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, JSONObject metadata) {
-        ImagingConfiguration conf = Globals.instance().getHardwareConfiguration().getConfigurationByName(this.settings.imConfigName);
+        ImagingConfiguration conf = Globals.getHardwareConfiguration().getConfigurationByName(this.settings.imConfigName);
         Camera camera = conf.camera();
         TunableFilter tunableFilter = conf.tunableFilter();
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
         try {
             tunableFilter.setWavelength(wavelength_);
             camera.setExposure(exposure_);
-            Globals.instance().core().setCircularBufferMemoryFootprint(1000); //increase the circular buffer to 1Gb to avoid weird issues with lost images
-            Globals.instance().core().clearCircularBuffer();
+            Globals.core().setCircularBufferMemoryFootprint(1000); //increase the circular buffer to 1Gb to avoid weird issues with lost images
+            Globals.core().clearCircularBuffer();
             camera.startSequence(numFrames_, 0, false);
         } catch (Exception e) {
             ReportingUtils.showError(e);
         }
-        Pipeline pipeline = Globals.instance().mm().data().copyApplicationPipeline(Globals.instance().mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
+        Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
         try {
             MMSaver imSaver = new MMSaver(this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), this.getFilePrefix());
             imSaver.start();
@@ -84,12 +84,12 @@ public class DynAcqManager implements AcquisitionManager{
             metadata.put("exposure", camera.getExposure()); //This must happen after we have set our exposure.
             JSONArray times = new JSONArray();
             for (int i=0; i<numFrames_; i++) {
-                while (Globals.instance().core().getRemainingImageCount() < 1) { //Wait for an image to be ready
+                while (Globals.core().getRemainingImageCount() < 1) { //Wait for an image to be ready
                     Thread.sleep(10);
                 }
-                TaggedImage taggedIm = Globals.instance().core().popNextTaggedImage();
+                TaggedImage taggedIm = Globals.core().popNextTaggedImage();
                 times.put(Double.parseDouble((String) taggedIm.tags.get("ElapsedTime-ms"))); //Convert to float and save to json array.
-                Image im = Globals.instance().mm().data().convertTaggedImage(taggedIm);
+                Image im = Globals.mm().data().convertTaggedImage(taggedIm);
                 Coords newCoords = im.getCoords().copyBuilder().t(i).build();
                 im = im.copyAtCoords(newCoords);
                 pipeline.insertImage(im); //Add image to the data pipeline for processing

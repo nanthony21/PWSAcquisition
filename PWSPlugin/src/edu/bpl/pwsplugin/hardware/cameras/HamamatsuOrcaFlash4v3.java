@@ -27,11 +27,11 @@ public class HamamatsuOrcaFlash4v3 extends Camera{
     
     @Override
     public void initialize() throws Exception {        
-        Globals.instance().core().setProperty(this._devName, "TRIGGER SOURCE", "INTERNAL");
-        Globals.instance().core().setProperty(this._devName, "MASTER PULSE TRIGGER SOURCE", "SOFTWARE");
-        Globals.instance().core().setProperty(this._devName, "MASTER PULSE MODE", "CONTINUOUS");
-        Globals.instance().core().setProperty(this._devName, "OUTPUT TRIGGER SOURCE[0]", "READOUT END");
-        Globals.instance().core().setProperty(this._devName, "OUTPUT TRIGGER POLARITY[0]", "POSITIVE");
+        Globals.core().setProperty(this._devName, "TRIGGER SOURCE", "INTERNAL");
+        Globals.core().setProperty(this._devName, "MASTER PULSE TRIGGER SOURCE", "SOFTWARE");
+        Globals.core().setProperty(this._devName, "MASTER PULSE MODE", "CONTINUOUS");
+        Globals.core().setProperty(this._devName, "OUTPUT TRIGGER SOURCE[0]", "READOUT END");
+        Globals.core().setProperty(this._devName, "OUTPUT TRIGGER POLARITY[0]", "POSITIVE");
     }
     
     @Override
@@ -43,12 +43,12 @@ public class HamamatsuOrcaFlash4v3 extends Camera{
     @Override
     public void configureTriggerOutput(boolean enable) throws Exception {
         if (enable) {
-            Globals.instance().core().setProperty(_devName, "OUTPUT TRIGGER SOURCE[0]", "READOUT END");
-            Globals.instance().core().setProperty(_devName, "OUTPUT TRIGGER POLARITY[0]", "POSITIVE");
-            Globals.instance().core().setProperty(_devName, "OUTPUT TRIGGER KIND[0]", "PROGRAMMABLE");
-            Globals.instance().core().setProperty(_devName, "OUTPUT TRIGGER PERIOD[0]", 0.001); //The default is shorter than this and it is often missed by other devices.
+            Globals.core().setProperty(_devName, "OUTPUT TRIGGER SOURCE[0]", "READOUT END");
+            Globals.core().setProperty(_devName, "OUTPUT TRIGGER POLARITY[0]", "POSITIVE");
+            Globals.core().setProperty(_devName, "OUTPUT TRIGGER KIND[0]", "PROGRAMMABLE");
+            Globals.core().setProperty(_devName, "OUTPUT TRIGGER PERIOD[0]", 0.001); //The default is shorter than this and it is often missed by other devices.
         } else {
-            Globals.instance().core().setProperty(_devName, "OUTPUT TRIGGER KIND[0]", "LOW");
+            Globals.core().setProperty(_devName, "OUTPUT TRIGGER KIND[0]", "LOW");
         }
     }
     
@@ -60,22 +60,22 @@ public class HamamatsuOrcaFlash4v3 extends Camera{
     @Override
     public void startSequence(int numImages, double delayMs, boolean externalTriggering) throws Exception{
         if (externalTriggering) {
-            Globals.instance().core().setProperty(this._devName, "TRIGGER SOURCE", "EXTERNAL");
-            Globals.instance().core().setProperty(this._devName, "TRIGGER DELAY", delayMs/1000); //This is in units of seconds.
+            Globals.core().setProperty(this._devName, "TRIGGER SOURCE", "EXTERNAL");
+            Globals.core().setProperty(this._devName, "TRIGGER DELAY", delayMs/1000); //This is in units of seconds.
         } else {
             double exposurems = this.getExposure();
             double readoutms = 12; //This is based on the frame rate calculation portion of the 13440-20CU camera. 9.7 us per line, reading two lines at once, 2048 lines -> 0.097*2048/2 ~= 10 ms. However testing has shown if we set this exactly then we end up missing every other frame and getting half our frame rate add a buffer of 2ms to be safe.
             double intervalMs = (exposurems+readoutms+delayMs);
-            Globals.instance().core().setProperty(this._devName, "TRIGGER SOURCE", "MASTER PULSE"); //Make sure that Master Pulse is triggering the camera.
-            Globals.instance().core().setProperty(this._devName, "MASTER PULSE INTERVAL", intervalMs/1000.0); //In units of seconds
+            Globals.core().setProperty(this._devName, "TRIGGER SOURCE", "MASTER PULSE"); //Make sure that Master Pulse is triggering the camera.
+            Globals.core().setProperty(this._devName, "MASTER PULSE INTERVAL", intervalMs/1000.0); //In units of seconds
         }
-        Globals.instance().core().startSequenceAcquisition(this._devName, numImages, 0, false); //The hamamatsu adapter throws an error if the interval is not 0.
+        Globals.core().startSequenceAcquisition(this._devName, numImages, 0, false); //The hamamatsu adapter throws an error if the interval is not 0.
     }
     
     @Override
     public void stopSequence() throws Exception {
-        Globals.instance().core().stopSequenceAcquisition(this._devName);
-        Globals.instance().core().setProperty(this._devName, "TRIGGER SOURCE", "MASTER PULSE"); //Set the trigger source back ot what it was originally
+        Globals.core().stopSequenceAcquisition(this._devName);
+        Globals.core().setProperty(this._devName, "TRIGGER SOURCE", "MASTER PULSE"); //Set the trigger source back ot what it was originally
     }
     
     @Override
@@ -85,26 +85,26 @@ public class HamamatsuOrcaFlash4v3 extends Camera{
     
     @Override
     public void setExposure(double exposureMs) throws Exception {
-        Globals.instance().core().setExposure(_devName, exposureMs);
+        Globals.core().setExposure(_devName, exposureMs);
     }
     
     @Override
     public double getExposure() throws Exception {
-        return Globals.instance().core().getExposure(_devName);
+        return Globals.core().getExposure(_devName);
     }
     
     @Override
     public Image snapImage() throws Exception {
         //TODO what if we are not set as the core camera at this point.
-        Globals.instance().core().snapImage();
-        return Globals.instance().mm().data().convertTaggedImage(Globals.instance().core().getTaggedImage());
+        Globals.core().snapImage();
+        return Globals.mm().data().convertTaggedImage(Globals.core().getTaggedImage());
     }
     
     @Override
     public List<String> validate() {
         List<String> errs = new ArrayList<>();
         try {
-            if (!Globals.instance().core().getDeviceName(this._devName).equals("HamamatsuHam_DCAM")) {
+            if (!Globals.core().getDeviceName(this._devName).equals("HamamatsuHam_DCAM")) {
                 errs.add(_devName + " is not a HamamatsuHam_DCAM device");
             }
         } catch (Exception e) {
