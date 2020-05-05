@@ -20,6 +20,8 @@ package edu.bpl.pwsplugin;
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
+//TODO add z offset for fluorescence, add sequencing, file overwriting.
+
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.UI.PluginFrame;
 import edu.bpl.pwsplugin.settings.CamSettings;

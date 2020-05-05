@@ -28,6 +28,7 @@ import edu.bpl.pwsplugin.UI.subpages.FluorPanel;
 import edu.bpl.pwsplugin.UI.subpages.HWConfPanel;
 import edu.bpl.pwsplugin.UI.subpages.PWSPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
+import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
@@ -128,15 +129,24 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
     
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        //We subscribe to the Globals property changes. This gets fired when a change is detected.
         if (evt.getPropertyName().equals("config")) {
             HWConfiguration cfg = (HWConfiguration) evt.getNewValue();
-            List<String> names = new ArrayList<>();
+            List<String> normalNames = new ArrayList<>();
+            List<String> spectralNames = new ArrayList<>();
             for (ImagingConfigurationSettings setting : cfg.getSettings().configs) {
-                names.add(setting.name);
+                if (setting.configType == ImagingConfiguration.Types.StandardCamera) {
+                    normalNames.add(setting.name);
+                } else if (setting.configType == ImagingConfiguration.Types.SpectralCamera) {
+                    spectralNames.add(setting.name);
+                }
             }
-            this.pwsPanel.setAvailableConfigNames(names);
-            this.dynPanel.setAvailableConfigNames(names);
-            this.flPanel.setAvailableConfigNames(names);            
+            this.pwsPanel.setAvailableConfigNames(spectralNames);
+            this.dynPanel.setAvailableConfigNames(spectralNames);
+            List<String> allNames = new ArrayList<>();
+            allNames.addAll(normalNames);
+            allNames.addAll(spectralNames);
+            this.flPanel.setAvailableConfigNames(allNames);            
         }
     }
     
@@ -165,19 +175,6 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         try{ this.dirSelect.setText(set.saveDir); } catch(Exception e) {ReportingUtils.logError(e); }
         try{ this.cellNumSpinner.setValue(set.cellNum); } catch(Exception e) {ReportingUtils.logError(e); }
     }
-    
-    private SwingWorker<Void, Void> runInBackground(JButton button, Runnable myFunc) {
-        //This function will run myFunc in a separate thread. `button` will be disabled while the function is running.
-        return new SwingWorker<Void, Void>() {
-            Object o = new Object() {{button.setEnabled(false); execute();}}; //Fake constructor.
-            
-            @Override
-            public Void doInBackground() {myFunc.run(); return null;}
-
-            @Override
-            public void done() {button.setEnabled(true);}
-        };
-    }
         
     private void acquire(JButton button, Runnable f) {
         try {
@@ -186,7 +183,15 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
             Globals.mm().logs().showError(e);
             return;
         }
-        SwingWorker worker = runInBackground(button, f);
+        SwingWorker worker = new SwingWorker() {   //This function will run myFunc in a separate thread. `button` will be disabled while the function is running.
+            @Override
+            protected Object doInBackground() { f.run(); return null; }
+            @Override
+            public void done() { button.setEnabled(true); }
+        };
+        
+        button.setEnabled(false);
+        worker.execute();           
     }
     
     private void configureManager() throws Exception {
