@@ -50,6 +50,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import net.miginfocom.swing.MigLayout;
@@ -62,9 +63,8 @@ import org.micromanager.internal.utils.ReportingUtils;
  */
 public class PluginFrame extends MMFrame implements PropertyChangeListener{
     private final JTabbedPane tabs = new JTabbedPane();
-    private final JButton acqDynButton = new JButton("Acquire Dynamics");
-    private final JButton acqFlButton = new JButton("Acquire Fluorescence");
-    private final JButton acqPwsButton = new JButton("Acquire PWS");
+    private final JButton acqButton = new JButton("Acquire");
+    private final JButton addToSeqButton = new JButton("Add to Sequence");
     private final DirectorySelector dirSelect;
     private final JSpinner cellNumSpinner;
     private final PWSPanel pwsPanel = new PWSPanel();
@@ -102,10 +102,16 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         cellNumSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
         ((JSpinner.DefaultEditor)cellNumSpinner.getEditor()).getTextField().setColumns(4);
         
-        
-        acqDynButton.addActionListener((e)->{ this.acquireDynamics(); });
-        acqFlButton.addActionListener((e)->{ this.acquireFluorescence(); });
-        acqPwsButton.addActionListener((e)->{ this.acquirePws(); });
+        acqButton.addActionListener((e)->{  //Acquire the current tab.
+            JPanel currentPanel = (JPanel) this.tabs.getSelectedComponent();
+            if (currentPanel == this.pwsPanel) {
+                this.acquirePws();
+            } else if (currentPanel == this.dynPanel) {
+                this.acquireDynamics();
+            } else if (currentPanel == this.flPanel) {
+                this.acquireFluorescence();
+            }
+        });
 
         this.add(tabs, "wrap, span, grow");
         tabs.addTab("PWS", this.pwsPanel);
@@ -117,9 +123,8 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         bottomPanel.add(new JLabel("Cell#:"), "shrink");
         bottomPanel.add(cellNumSpinner, "wrap");
         JPanel buttons = new JPanel(new MigLayout());
-        buttons.add(acqPwsButton);
-        buttons.add(acqFlButton);
-        buttons.add(acqDynButton);
+        buttons.add(acqButton);
+        buttons.add(addToSeqButton);
         bottomPanel.add(buttons, "span, align center");
         this.add(bottomPanel, "dock south");
         
@@ -176,7 +181,7 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         try{ this.cellNumSpinner.setValue(set.cellNum); } catch(Exception e) {ReportingUtils.logError(e); }
     }
         
-    private void acquire(JButton button, Runnable f) {
+    private void acquire(Runnable f) {
         try {
             this.configureManager();
         } catch (Exception e) {
@@ -185,12 +190,18 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         }
         SwingWorker worker = new SwingWorker() {   //This function will run myFunc in a separate thread. `button` will be disabled while the function is running.
             @Override
-            protected Object doInBackground() { f.run(); return null; }
-            @Override
-            public void done() { button.setEnabled(true); }
+            protected Object doInBackground() {
+                try {
+                    f.run();
+                } finally {
+                    SwingUtilities.invokeLater(()->{
+                        acqButton.setEnabled(true);
+                    });
+                } return null; 
+            }
         };
         
-        button.setEnabled(false);
+        acqButton.setEnabled(false);
         worker.execute();           
     }
     
@@ -218,15 +229,15 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
     
     //Public API
     public void acquirePws() {
-        acquire(acqPwsButton, Globals.acqManager()::acquirePWS);
+        acquire(Globals.acqManager()::acquirePWS);
     }
     
     public void acquireDynamics() {
-        acquire(acqDynButton, Globals.acqManager()::acquireDynamics);
+        acquire(Globals.acqManager()::acquireDynamics);
     }
     
     public void acquireFluorescence() {
-        acquire(acqFlButton, Globals.acqManager()::acquireFluorescence);
+        acquire(Globals.acqManager()::acquireFluorescence);
     }
     
     public void setSavePath(String savepath) {
