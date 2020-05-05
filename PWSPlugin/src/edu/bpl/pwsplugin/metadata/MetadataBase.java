@@ -1,11 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package edu.bpl.pwsplugin.metadata;
 
-import edu.bpl.pwsplugin.Globals;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -14,10 +9,7 @@ import mmcorej.org.json.JSONException;
 import mmcorej.org.json.JSONObject;
 import org.micromanager.internal.utils.ReportingUtils;
 
-/**
- *
- * @author Nick Anthony <nickmanthony at hotmail.com>
- */
+
 public class MetadataBase {
     List<Double> linearityPoly;
     String system;
@@ -61,7 +53,6 @@ public class MetadataBase {
             md.put("system", this.system);
             md.put("darkCounts", this.darkCounts);
             md.put("time", this.time);
-            //TODO validate jsonschema
             return md;
         } catch (JSONException e) {
             throw new RuntimeException(e);

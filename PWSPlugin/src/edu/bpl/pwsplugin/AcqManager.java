@@ -27,7 +27,6 @@ import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.AltCamFluorAcqManager;
 import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.FluorAcqManager;
 import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.LCTFFluorAcqManager;
 import java.util.concurrent.LinkedBlockingQueue;
-import mmcorej.org.json.JSONObject;
 import org.micromanager.internal.utils.ReportingUtils;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
@@ -47,49 +46,6 @@ public class AcqManager { // A parent acquisition manager that can direct comman
     private int cellNum_;
     private String savePath_;
     HWConfigurationSettings config;
-    
-    public void acquirePWS() {
-        run(pwsManager_);
-    }
-    
-    public void acquireDynamics() {
-        run(dynManager_);
-    }
-    
-    public void acquireFluorescence() {
-        run(flManager_);
-    }
-    
-    public boolean isAcquisitionRunning() {
-        return acquisitionRunning_;
-    }
-    
-    public void setCellNum(int num) {
-        cellNum_ = num;
-    }
-    
-    public void setSavePath(String savePath) {
-        savePath_ = savePath;
-    }
-    
-    public void setPWSSettings(PWSSettings settings) throws Exception {
-        pwsManager_.setSequenceSettings(settings);
-    }
-    
-    public void setDynamicsSettings(DynSettings settings) {
-        dynManager_.setSequenceSettings(settings);
-    }
-    
-    public void setFluorescenceSettings(FluorSettings settings) {
-        if (Globals.getHardwareConfiguration().getConfigurationByName(settings.imConfigName).settings().configType == ImagingConfiguration.Types.StandardCamera) {
-            //Acquire fluorescence with another camera so you don't have to go through the LCTF.
-            flManager_ = new AltCamFluorAcqManager();
-        } else {
-            //Acquire fluorescence through the LCTF filter using the same camera.
-            flManager_ = new LCTFFluorAcqManager();
-        }
-        flManager_.setFluorescenceSettings(settings);
-    }
     
     private void run(AcquisitionManager manager) {
         if (acquisitionRunning_) {
@@ -122,4 +78,31 @@ public class AcqManager { // A parent acquisition manager that can direct comman
             acquisitionRunning_ = false;
         }
     }
+    
+    public void setFluorescenceSettings(FluorSettings settings) {
+        if (Globals.getHardwareConfiguration().getConfigurationByName(settings.imConfigName).settings().configType == ImagingConfiguration.Types.StandardCamera) {
+            //Acquire fluorescence with another camera so you don't have to go through the LCTF.
+            flManager_ = new AltCamFluorAcqManager();
+        } else {
+            //Acquire fluorescence through the LCTF filter using the same camera.
+            flManager_ = new LCTFFluorAcqManager();
+        }
+        flManager_.setFluorescenceSettings(settings);
+    }
+    
+    public void setCellNum(int num) { cellNum_ = num; }
+    
+    public void setSavePath(String savePath) { savePath_ = savePath;}
+    
+    public void setPWSSettings(PWSSettings settings) throws Exception { pwsManager_.setSequenceSettings(settings); }
+    
+    public void setDynamicsSettings(DynSettings settings) { dynManager_.setSequenceSettings(settings); }
+    
+    public void acquirePWS() { run(pwsManager_); }
+    
+    public void acquireDynamics() { run(dynManager_); }
+    
+    public void acquireFluorescence() { run(flManager_); }
+    
+    public boolean isAcquisitionRunning() { return acquisitionRunning_; }
 }

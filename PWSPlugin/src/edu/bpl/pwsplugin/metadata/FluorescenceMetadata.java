@@ -5,8 +5,6 @@
  */
 package edu.bpl.pwsplugin.metadata;
 
-import java.util.List;
-import mmcorej.org.json.JSONArray;
 import mmcorej.org.json.JSONException;
 import mmcorej.org.json.JSONObject;
 

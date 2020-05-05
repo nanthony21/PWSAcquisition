@@ -44,6 +44,7 @@ import java.util.concurrent.TimeUnit;
 
 
 public class ImSaverRaw extends SaverThread {
+    //This isn't currently used. SAves to TIFF using imageJ functions.
     boolean debug_;
     public LinkedBlockingQueue queue;
     Thread t;

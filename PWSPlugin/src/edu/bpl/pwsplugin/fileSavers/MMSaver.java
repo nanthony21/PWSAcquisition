@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package edu.bpl.pwsplugin.fileSavers;
 
 import edu.bpl.pwsplugin.Globals;
@@ -14,29 +10,20 @@ import ij.process.ImageConverter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import mmcorej.org.json.JSONException;
 import mmcorej.org.json.JSONObject;
-import org.micromanager.Studio;
 import org.micromanager.data.Image;
-import org.micromanager.PropertyMap;
 import org.micromanager.internal.utils.ReportingUtils;
 import org.micromanager.data.Metadata;
-import org.micromanager.PropertyMaps;
 import org.micromanager.data.Datastore;
 import org.micromanager.data.Coords;
 import org.micromanager.data.internal.DefaultMetadata;
 
-/**
- *
- * @author N2-LiveCell
- */
 public class MMSaver extends SaverThread {
+    //A thread that saves a tiff file using Micro-Managers `DataStore`. Metadata is saved to a separate json file.
     public LinkedBlockingQueue queue;
     int expectedFrames_;
     String savePath_;
@@ -44,10 +31,10 @@ public class MMSaver extends SaverThread {
     String filePrefix_;
 
     public MMSaver(String savePath, LinkedBlockingQueue imageQueue, int expectedFrames, String filePrefix){
-        queue = imageQueue;
-        expectedFrames_ = expectedFrames;
-        savePath_ = savePath;
-        filePrefix_ = filePrefix;
+        queue = imageQueue; //The queue to receive images through.
+        expectedFrames_ = expectedFrames; // The number of image frames that are expected to be received via queue
+        savePath_ = savePath; // The file path to save to
+        filePrefix_ = filePrefix; // The prefix to name the image file by. This is used by the analysis software to find images.
     }
     
     @Override
