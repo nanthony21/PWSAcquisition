@@ -54,7 +54,6 @@ import javax.swing.WindowConstants;
 import net.miginfocom.swing.MigLayout;
 import org.micromanager.internal.utils.MMFrame;
 import org.micromanager.internal.utils.ReportingUtils;
-import org.micromanager.propertymap.MutablePropertyMapView;
 
 /**
  *
@@ -71,7 +70,6 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
     private final FluorPanel flPanel = new FluorPanel();
     private final DynPanel dynPanel = new DynPanel();
     private final ConfDialog configDialog = new ConfDialog(this);
-    private final MutablePropertyMapView settings_;
     
     private PWSSettings lastPWSSettings;
     private DynSettings lastDynSettings;
@@ -103,8 +101,6 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         cellNumSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
         ((JSpinner.DefaultEditor)cellNumSpinner.getEditor()).getTextField().setColumns(4);
         
-        this.settings_ = Globals.mm().profile().getSettings(PluginFrame.class);
-        this.loadSettings();
         
         acqDynButton.addActionListener((e)->{ this.acquireDynamics(); });
         acqFlButton.addActionListener((e)->{ this.acquireFluorescence(); });
@@ -140,9 +136,7 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
             }
             this.pwsPanel.setAvailableConfigNames(names);
             this.dynPanel.setAvailableConfigNames(names);
-            this.flPanel.setAvailableConfigNames(names);
-
-            
+            this.flPanel.setAvailableConfigNames(names);            
         }
     }
     
@@ -151,40 +145,25 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         set.pwsSettings = this.pwsPanel.build();
         set.dynSettings = this.dynPanel.build();
         set.flSettings = this.flPanel.build();
-        set.hwConfiguration = Globals.getHardwareConfiguration().getSettings();
+        set.hwConfiguration = this.configDialog.build();
         set.saveDir = this.dirSelect.getText();
         set.cellNum = (int) this.cellNumSpinner.getValue();
         return set;
     }
     
-    public void saveSettings() {
-        this.settings_.putString("settings", this.getSettings().toJsonString());
-    }
-    
-    public final void loadSettings() {
-        PWSPluginSettings set;
-        try {
-            set = PWSPluginSettings.fromJsonString(this.settings_.getString("settings", ""));
-        } catch (com.google.gson.JsonParseException e) {
-            ReportingUtils.logError(e); //Sometimes when we change the code we are unable to load old settings. Don't let that prevent things from starting up.
-            return;
-        }
-        if (set==null) {
-            Globals.mm().logs().logMessage("PWS Plugin: no settings found in user profile.");
-        } else {
-            try{ this.pwsPanel.populateFields(set.pwsSettings); } catch(Exception e) {ReportingUtils.logError(e); }
-            try{ this.dynPanel.populateFields(set.dynSettings); } catch(Exception e) {ReportingUtils.logError(e); }
-            try{ this.flPanel.populateFields(set.flSettings); } catch(Exception e) {ReportingUtils.logError(e); }
-            Globals.setHardwareConfigurationSettings(set.hwConfiguration);
-            this.dirSelect.setText(set.saveDir);
-            this.cellNumSpinner.setValue(set.cellNum);
-        }
-    }
-    
     @Override
     public void dispose() {
-        this.saveSettings();
+        Globals.saveSettings(this.getSettings());
         super.dispose();
+    }
+    
+    public final void populateFields(PWSPluginSettings set) {
+        try{ this.pwsPanel.populateFields(set.pwsSettings); } catch(Exception e) {ReportingUtils.logError(e); }
+        try{ this.dynPanel.populateFields(set.dynSettings); } catch(Exception e) {ReportingUtils.logError(e); }
+        try{ this.flPanel.populateFields(set.flSettings); } catch(Exception e) {ReportingUtils.logError(e); }
+        try{ this.configDialog.populateFields(set.hwConfiguration); } catch(Exception e) {ReportingUtils.logError(e); }
+        try{ this.dirSelect.setText(set.saveDir); } catch(Exception e) {ReportingUtils.logError(e); }
+        try{ this.cellNumSpinner.setValue(set.cellNum); } catch(Exception e) {ReportingUtils.logError(e); }
     }
     
     private SwingWorker<Void, Void> runInBackground(JButton button, Runnable myFunc) {
@@ -291,7 +270,6 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
 
 class ConfDialog extends JDialog {
     JButton acceptButton = new JButton("Accept");
-    public HWConfigurationSettings result = null; // Will only be non-null if the accept button is hit.
     private HWConfPanel hwc = new HWConfPanel();
     
     public ConfDialog(Window owner) {
@@ -301,7 +279,6 @@ class ConfDialog extends JDialog {
         this.setLocationRelativeTo(owner);
         
         acceptButton.addActionListener((evt)->{
-            result = hwc.build();
             this.setVisible(false);
             this.dispose();
         });
@@ -313,9 +290,16 @@ class ConfDialog extends JDialog {
         this.pack();
     }
     
+    public void populateFields(HWConfigurationSettings config) {
+        hwc.populateFields(config);
+    }
+    
+    public HWConfigurationSettings build() {
+        return hwc.build();
+    }
+    
     public HWConfigurationSettings showDialog() {
-        hwc.populateFields(Globals.getHardwareConfiguration().getSettings());
         this.setVisible(true);
-        return result;
+        return this.build();
     }
 }

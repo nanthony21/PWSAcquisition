@@ -64,8 +64,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
             JsonableParam.registerClass(CamSettings.class);
             JsonableParam.registerClass(PWSPluginSettings.class);
             
-            Globals.init(studio_);
-            
+            Globals.init(studio_);       
             initialized_ = true;
         }
         Globals.frame().setVisible(true);

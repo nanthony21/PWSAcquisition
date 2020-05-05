@@ -1,21 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package edu.bpl.pwsplugin;
 
 import edu.bpl.pwsplugin.UI.PluginFrame;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
+import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import mmcorej.CMMCore;
 import org.micromanager.Studio;
+import org.micromanager.internal.utils.ReportingUtils;
 
-/**
- *
- * @author LCPWS3
- */
 public class Globals {
     private static Globals instance = null;
     private Studio studio_ = null;
@@ -27,7 +21,8 @@ public class Globals {
     
     private Globals() {}
     
-    public static Globals instance() {
+    private static Globals instance() {
+        //Stores a reference to the singleton instance of this class
         if (instance == null) {
             instance = new Globals();
         }
@@ -39,6 +34,30 @@ public class Globals {
         instance().mmAdapter = new MMConfigAdapter();
         instance().acqMan_ = new AcqManager();
         instance().frame = new PluginFrame();
+        //Load settings
+        PWSPluginSettings settings = Globals.loadSettings();
+        instance().frame.populateFields(settings);
+        if (settings != null) {
+            Globals.setHardwareConfigurationSettings(settings.hwConfiguration);
+        }
+    }
+    
+    public static void saveSettings(PWSPluginSettings settings) {
+        instance().mm().profile().getSettings(PWSPlugin.class).putString("settings", settings.toJsonString());
+    }
+    
+    private static PWSPluginSettings loadSettings() {
+        String settingsStr = Globals.mm().profile().getSettings(PWSPlugin.class).getString("settings", "");
+        PWSPluginSettings set = null;
+        try {
+            set = PWSPluginSettings.fromJsonString(settingsStr);
+        } catch (com.google.gson.JsonParseException e) {
+            ReportingUtils.logError(e); //Sometimes when we change the code we are unable to load old settings. Don't let that prevent things from starting up.
+        }
+        if (set==null) {
+            Globals.mm().logs().logMessage("PWS Plugin: no settings found in user profile.");
+        }
+        return set;
     }
     
     public static void addPropertyChangeListener(PropertyChangeListener l) {
