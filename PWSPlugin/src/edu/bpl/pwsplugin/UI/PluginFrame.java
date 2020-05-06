@@ -63,7 +63,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  */
 public class PluginFrame extends MMFrame implements PropertyChangeListener{
     private final JTabbedPane tabs = new JTabbedPane();
-    private final JButton acqButton = new JButton("Acquire");
+    private final JButton acqButton = new JButton("Acquire Now");
     private final JButton addToSeqButton = new JButton("Add to Sequence");
     private final DirectorySelector dirSelect;
     private final JSpinner cellNumSpinner;
