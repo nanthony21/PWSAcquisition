@@ -36,6 +36,9 @@ import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class AcqManager { // A parent acquisition manager that can direct commands down to more specific acquisition managers.
     private final PWSAcqManager pwsManager_ = new PWSAcqManager(new PWSAlbum("PWS"));
@@ -53,10 +56,23 @@ public class AcqManager { // A parent acquisition manager that can direct comman
         }
         acquisitionRunning_ = true;
 
-        if (Globals.core().getPixelSizeUm() == 0.0) {
+        //Validate all imaging configurations.
+        List<String> errs = new ArrayList<>();
+        for (ImagingConfigurationSettings settings : Globals.getHardwareConfiguration().getSettings().configs) {
+            ImagingConfiguration conf = Globals.getHardwareConfiguration().getConfigurationByName(settings.name);
+            errs.addAll(conf.validate());
+        }
+        if (errs.size() > 0) {
+            String errStr = errs.stream().collect(Collectors.joining("\n"));
+            Globals.mm().logs().showMessage("Errors!\n" + errStr);
+            return;
+        }
+        
+        if (Globals.core().getPixelSizeUm() == 0.0) { //TODO bundle this into the `Metadata`
             ReportingUtils.showMessage("It is highly recommended that you provide MicroManager with a pixel size setting for the current setup. Having this information is useful for analysis.");
         }
         ImagingConfigurationSettings imConf = Globals.getHardwareConfiguration().settings.configs.get(0);
+  
         MetadataBase metadata = new MetadataBase(imConf.camSettings.linearityPolynomial,
             Globals.getHardwareConfiguration().settings.systemName,
             imConf.camSettings.darkCounts);
