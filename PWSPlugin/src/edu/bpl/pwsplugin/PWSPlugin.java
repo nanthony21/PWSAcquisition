@@ -28,6 +28,7 @@ import edu.bpl.pwsplugin.settings.CamSettings;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
+import edu.bpl.pwsplugin.settings.IlluminatorSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
@@ -64,6 +65,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
             JsonableParam.registerClass(DynSettings.class);
             JsonableParam.registerClass(HWConfigurationSettings.class);
             JsonableParam.registerClass(CamSettings.class);
+            JsonableParam.registerClass(IlluminatorSettings.class);
             JsonableParam.registerClass(PWSPluginSettings.class);
             
             Globals.init(studio_);       
