@@ -6,7 +6,6 @@
 package edu.bpl.pwsplugin.hardware.cameras;
 
 import edu.bpl.pwsplugin.settings.CamSettings;
-import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.List;
 import org.micromanager.data.Image;
 
@@ -27,9 +26,9 @@ public abstract class Camera {
     
     public abstract String getName(); //Get the device name used in Micro-Manager.
     
-    public abstract void startSequence(int numImages, double delayMs, boolean externalTriggering) throws Exception;
+    public abstract void startSequence(int numImages, double delayMs, boolean externalTriggering) throws Exception; //If the camera support "Trigger output" then this should start the seqeunce
     
-    public abstract void stopSequence() throws Exception;
+    public abstract void stopSequence() throws Exception; // Clean up and reset the sequence. Only needed for cameras that support trigger output.
     
     public abstract void setExposure(double exposureMs) throws Exception;
     
@@ -44,12 +43,15 @@ public abstract class Camera {
     public static Camera getInstance(CamSettings settings) {
         if (settings.camType == Types.HamamatsuOrca4V3) {
             return new HamamatsuOrcaFlash4v3(settings);
+        } else if (settings.camType == Types.HamamatsuEMCCD) {
+            return new HamamatsuEMCCD(settings);
         } else {
             return null; //This shouldn't ever happen.
         }
     }
     
     public enum Types {
-        HamamatsuOrca4V3;
+        HamamatsuOrca4V3,
+        HamamatsuEMCCD;
     }
 }
