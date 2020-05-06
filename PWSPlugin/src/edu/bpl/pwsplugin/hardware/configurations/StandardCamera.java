@@ -6,10 +6,11 @@
 package edu.bpl.pwsplugin.hardware.configurations;
 
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
+import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
-import edu.bpl.pwsplugin.settings.CamSettings;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
-import edu.bpl.pwsplugin.settings.PWSPluginSettings;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -17,10 +18,12 @@ import edu.bpl.pwsplugin.settings.PWSPluginSettings;
  */
 public class StandardCamera extends ImagingConfiguration {
     Camera _cam;
+    Illuminator _illum;
     
     public StandardCamera(ImagingConfigurationSettings settings) {
         super(settings);
         _cam = Camera.getInstance(settings.camSettings);
+        _illum = Illuminator.getInstance(settings.illuminatorSettings);
     }
     
     @Override
@@ -30,5 +33,16 @@ public class StandardCamera extends ImagingConfiguration {
     public Camera camera() { return _cam; }
     
     @Override
-    public TunableFilter tunableFilter() { return null; } //TODO should this throw an exception instead?
+    public TunableFilter tunableFilter() { throw new UnsupportedOperationException("StandardCamera configuration has no tunable filter"); }
+    
+    @Override
+    public Illuminator illuminator() { return _illum; }
+    
+    @Override
+    public List<String> validate() {
+        List<String> errs = new ArrayList<>();
+        errs.addAll(this._cam.validate());
+        errs.addAll(this._illum.validate());
+        return errs;
+    }
 }

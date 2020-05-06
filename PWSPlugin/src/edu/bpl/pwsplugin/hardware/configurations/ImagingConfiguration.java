@@ -6,9 +6,10 @@
 package edu.bpl.pwsplugin.hardware.configurations;
 
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
+import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
-import edu.bpl.pwsplugin.settings.PWSPluginSettings;
+import java.util.List;
 
 /**
  *
@@ -28,6 +29,8 @@ public abstract class ImagingConfiguration {
     public abstract boolean hasTunableFilter();
     public abstract Camera camera();
     public abstract TunableFilter tunableFilter();
+    public abstract Illuminator illuminator();
+    public abstract List<String> validate();
     
     public static ImagingConfiguration getInstance(ImagingConfigurationSettings settings) {
         if (settings.configType == Types.SpectralCamera) {

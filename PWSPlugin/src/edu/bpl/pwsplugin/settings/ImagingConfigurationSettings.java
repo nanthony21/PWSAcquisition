@@ -17,4 +17,5 @@ public class ImagingConfigurationSettings extends JsonableParam {
     public ImagingConfiguration.Types configType;
     public CamSettings camSettings;
     public TunableFilterSettings filtSettings;
+    public IlluminatorSettings illuminatorSettings;
 }

@@ -6,11 +6,14 @@
 package edu.bpl.pwsplugin.hardware.configurations;
 
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
+import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.settings.CamSettings;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.TunableFilterSettings;
+import java.util.ArrayList;
+import java.util.List;
 import org.micromanager.data.Image;
 
 /**
@@ -20,11 +23,13 @@ import org.micromanager.data.Image;
 public class SpectralCamera extends ImagingConfiguration {
     Camera _cam;
     TunableFilter _filt;
+    Illuminator _illum;
     
     public SpectralCamera(ImagingConfigurationSettings settings) {
         super(settings);
         _cam = Camera.getInstance(settings.camSettings);
         _filt = TunableFilter.getInstance(settings.filtSettings);
+        _illum = Illuminator.getInstance(settings.illuminatorSettings);
     }
     
     @Override
@@ -38,6 +43,20 @@ public class SpectralCamera extends ImagingConfiguration {
     @Override
     public TunableFilter tunableFilter() {
         return _filt;
+    }
+    
+    @Override
+    public Illuminator illuminator() {
+        return _illum;
+    }
+
+    @Override
+    public List<String> validate() {
+        List<String> errs = new ArrayList<>();
+        errs.addAll(this._cam.validate());
+        errs.addAll(this._filt.validate());
+        errs.addAll(this._illum.validate());
+        return errs;
     }
     
     public boolean supportsTTLSequencing() {

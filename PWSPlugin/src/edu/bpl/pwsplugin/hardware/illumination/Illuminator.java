@@ -1,9 +1,7 @@
 package edu.bpl.pwsplugin.hardware.illumination;
 
-import edu.bpl.pwsplugin.hardware.cameras.HamamatsuOrcaFlash4v3;
-import edu.bpl.pwsplugin.settings.CamSettings;
+import edu.bpl.pwsplugin.settings.IlluminatorSettings;
 import java.util.List;
-import org.micromanager.data.Image;
 
 
 public abstract class Illuminator {
