@@ -37,6 +37,8 @@ public class AcqSequencer {
     Path directoryName;
     int cellnum;
     AcqManager acqMan;
+    boolean autoShutter;
+    double autoShutterDelay;
     
     public AcqSequencer(AcqManager manager) {
         acqMan = manager;
@@ -57,10 +59,12 @@ public class AcqSequencer {
         return true;
     }
         
-    public void setSettings(int timeSteps, double timeInterval, boolean useMultiplePositions, boolean pws, boolean dynamics, boolean fluor, Path dir, int cellNum) {
+    public void setSettings(int timeSteps, double timeInterval, boolean useMultiplePositions, boolean autoShutter, double autoShutterDelay, boolean pws, boolean dynamics, boolean fluor, Path dir, int cellNum) {
         this.num_frames = timeSteps;
         frame_interval = timeInterval;
         this.useMultiplePositions = useMultiplePositions;
+        this.autoShutter = autoShutter;
+        this.autoShutterDelay = autoShutterDelay;
         pwsEnabled = pws;
         dynamicsEnabled = dynamics;
         fluorescenceEnabled = fluor;
@@ -300,6 +304,12 @@ public class AcqSequencer {
                 ThrowingFunction<Integer, Integer> handleSoFar = acquisitionHandle;
                 acquisitionHandle = (startingCellNum)->{
                     return acquireFromPositionList(handleSoFar, startingCellNum); //Create a handle to a function that will evaluate the previous handle at each position in the micromanager position list. takes as input the initial cell number and the number of times it has been run by the parent routine.
+                };
+            }
+            if (autoShutter) {
+                ThrowingFunction<Integer, Integer> handleSoFar = acquisitionHandle;
+                acquisitionHandle = (saveNum)->{
+                    return autoShutter(autoShutterDelay, handleSoFar, saveNum);
                 };
             }
             if (num_frames > 1) {
