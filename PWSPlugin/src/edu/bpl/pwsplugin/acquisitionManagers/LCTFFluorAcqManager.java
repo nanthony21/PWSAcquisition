@@ -28,7 +28,7 @@ class LCTFFluorAcqManager extends FluorAcqManager{
     @Override
     public void setSettings(FluorSettings settings) {
         super.setSettings(settings);
-        ImagingConfiguration imConf = Globals.getHardwareConfiguration().getConfigurationByName(this.settings.imConfigName);
+        ImagingConfiguration imConf = Globals.getHardwareConfiguration().getConfigurationByName(settings.imConfigName);
         this.camera = imConf.camera();
         this.tunableFilter = imConf.tunableFilter();
     }

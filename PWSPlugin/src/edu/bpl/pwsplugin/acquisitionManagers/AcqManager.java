@@ -44,7 +44,7 @@ public class AcqManager {
     private volatile boolean acquisitionRunning_ = false;
     private int cellNum_;
     private String savePath_;
-    HWConfigurationSettings config;
+    private HWConfigurationSettings config;
     
     private void run(AcquisitionManager manager) {
         if (acquisitionRunning_) {
