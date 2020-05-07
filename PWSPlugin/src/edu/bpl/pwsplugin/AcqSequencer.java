@@ -190,36 +190,41 @@ public class AcqSequencer {
         return numOfNewAcqs;
     }
 
-    private Integer acquirePWSCube(Path directoryName, Integer cellNum, Double exposure) {
+    private Integer acquirePWSCube(Path directoryName, Integer cellNum) {
         //Acquires and saves a PWS cube returns the number of acquisitions saved: 1.    
         this.acqMan.setCellNum(cellNum);
         this.acqMan.setSavePath(directoryName.toString());
-        handles.plugin.setPWSExposure(exposure);
         this.acqMan.acquirePWS();
         return 1; 
     }
     
     
-    private Integer acquireFluorescence(Path directoryName, Integer cellNum, Double exposure) {
+    private Integer acquireFluorescence(Path directoryName, Integer cellNum) {
         this.acqMan.setCellNum(cellNum);
         this.acqMan.setSavePath(directoryName.toString());
-        handles.plugin.setFluorescenceExposure(exposure);
-        handles.plugin.setFluorescenceFilter(handles.pop_fl_filter.Value);
-        handles.plugin.setFluorescenceEmissionWavelength(round(handles.fluorEmissionSpinner.Value)); //This needs to be integer.
         this.acqMan.acquireFluorescence();
         return 1;
     }
         
         
-    private Integer acquireDynamics(Double exposure, Path directoryName, Integer cellNum) {
+    private Integer acquireDynamics(Path directoryName, Integer cellNum) {
         //Acquires and saves a PWS dynamics cube returns the number of acquisitions saved: 1.
         this.acqMan.setCellNum(cellNum);
         this.acqMan.setSavePath(directoryName.toString());
-        handles.plugin.setDynamicsExposure(exposure);
         this.acqMan.acquireDynamics();
         return 1;
     }
-   
+
+    private Integer autoShutter(Double delaySeconds, ThrowingFunction<Integer, Integer> acquisitionHandle, Integer startingCellNum) throws Exception {
+        //AUTOSHUTTER A function that turns on the lamp, waits `delay` seconds, runs the acquisitionHandle, then turns off the lamp.
+        Globals.mm().getShutterManager().setShutter(true); //Turn on the shutter
+        Globals.statusAlert().setText("Delaying acquisition while lamp warms up.");
+        Thread.sleep((long)(delaySeconds*1000));
+        Integer numOfNewAcqs = acquisitionHandle.apply(startingCellNum);
+        Globals.mm().getShutterManager().setShutter(false); //Turn off the shutter
+        return numOfNewAcqs;
+    }
+    
     public void run() {
         //Build an array of all the used filenames.
         int posNums;
@@ -271,14 +276,14 @@ public class AcqSequencer {
             ThrowingFunction<Integer, Integer> acquisitionHandle = (saveNum)->{return saveNum;}; //Just a placeholder to get the handle initialized.
             if (fluorescenceEnabled) {
                 ThrowingFunction<Integer, Integer> fluorHandle = (saveNum)->{
-                    acquireFluorescence(directoryName, saveNum, flExposure);
+                    acquireFluorescence(directoryName, saveNum);
                     return saveNum;
                 };
                 acquisitionHandle = acquisitionHandle.andThen(fluorHandle);
             }
             if (pwsEnabled) {
                 ThrowingFunction<Integer, Integer> pwsHandle = (saveNum)->{
-                    acquirePWSCube(directoryName,saveNum, pwsExposure); //A handle to the PWS cube acquisition routine. It takes the cell number as input
+                    acquirePWSCube(directoryName,saveNum); //A handle to the PWS cube acquisition routine. It takes the cell number as input
                     return saveNum;
                 };
                 acquisitionHandle = acquisitionHandle.andThen(pwsHandle);
@@ -286,7 +291,7 @@ public class AcqSequencer {
             }
             if (dynamicsEnabled) {
                 ThrowingFunction<Integer, Integer> dynHandle = (saveNum)->{
-                    acquireDynamics(dynamicsExposure,directoryName, saveNum);
+                    acquireDynamics(directoryName, saveNum);
                     return 0;
                 };
                 acquisitionHandle = acquisitionHandle.andThen(dynHandle);
