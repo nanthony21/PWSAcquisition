@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin;
+package edu.bpl.pwsplugin.acquisitionSequencer;
 
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
@@ -28,7 +29,7 @@ import org.micromanager.PositionList;
  *TODO run all acquisitions through this sequencer.
  * @author nick
  */
-public class AcqSequencer {
+public class AcquisitionSequencer {
     int num_frames;
     double frame_interval;
     boolean useMultiplePositions;
@@ -41,7 +42,7 @@ public class AcqSequencer {
     boolean autoShutter;
     double autoShutterDelay;
     
-    public AcqSequencer(AcquisitionManager manager) {
+    public AcquisitionSequencer(AcquisitionManager manager) {
         acqMan = manager;
     }
     

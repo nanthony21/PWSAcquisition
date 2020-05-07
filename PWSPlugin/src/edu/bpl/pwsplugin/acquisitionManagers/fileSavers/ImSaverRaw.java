@@ -18,7 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
-package edu.bpl.pwsplugin.fileSavers;
+package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
 import java.nio.file.Paths;
 import java.io.File;

@@ -2,7 +2,7 @@
 package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.fileSavers.MMSaver;
+import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;

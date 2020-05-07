@@ -23,7 +23,7 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
-import edu.bpl.pwsplugin.fileSavers.MMSaver;
+import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.hardware.configurations.SpectralCamera;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.metadata.MetadataBase;

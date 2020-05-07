@@ -1,5 +1,5 @@
 
-package edu.bpl.pwsplugin.fileSavers;
+package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
 import edu.bpl.pwsplugin.Globals;
 import ij.ImagePlus;
