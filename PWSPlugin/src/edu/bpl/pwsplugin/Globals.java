@@ -8,6 +8,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import mmcorej.CMMCore;
 import org.micromanager.Studio;
+import org.micromanager.alerts.UpdatableAlert;
 import org.micromanager.internal.utils.ReportingUtils;
 
 public class Globals {
@@ -18,6 +19,7 @@ public class Globals {
     private MMConfigAdapter mmAdapter;
     private PluginFrame frame;
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private UpdatableAlert statusAlert_;
     
     private Globals() {}
     
@@ -40,6 +42,7 @@ public class Globals {
         if (settings != null) {
             Globals.setHardwareConfigurationSettings(settings.hwConfiguration);
         }
+        instance().statusAlert_ = studio.alerts().postUpdatableAlert("PWS Status", " ");
     }
     
     public static void saveSettings(PWSPluginSettings settings) {
@@ -96,5 +99,8 @@ public class Globals {
     public static MMConfigAdapter getMMConfigAdapter() {
         return instance().mmAdapter;
     }
-
+    
+    public static UpdatableAlert statusAlert() {
+        return instance().statusAlert_;
+    }
 }

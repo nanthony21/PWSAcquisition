@@ -91,6 +91,38 @@ public class AcqSequencer {
         
     }
     
+    private static Integer acquireTimeSeries(double frame_interval, int num_frames, Function<Integer, Integer> acquisitionFuncHandle, int startingCellNum, boolean autoShutoffLight) throws Exception {
+        //TIMESERIES execute acquisitionFunHandle repeatedly at a specified time
+        //interval. the handle must take as input the Cell number to start at. It
+        //will return the number of new acquisitions that it tood.
+        int numOfNewAcqs = 0;
+        double lastAcqTime = 0;
+        for (int k=0; k<num_frames; k++) {
+            // wait for the specified frame interval before proceeding to next frame
+            if (k!=0) { //No pause for the first iteration
+                int count = 0;
+                while ((System.currentTimeMillis() - lastAcqTime)/1000 < frame_interval) {
+                    String msg = String.format("Waiting %.1f seconds before acquiring next frame", frame_interval - (System.currentTimeMillis() - lastAcqTime)/1000);
+                    Globals.statusAlert().setText(msg);
+                    count++;
+                    Thread.sleep(500);
+                }   
+                if (count == 0) {
+                    Globals.statusAlert().setText(String.format("Acquistion took %.1f seconds. Longer than the frame interval.", (System.currentTimeMillis() - lastAcqTime)/1000));
+                }
+            }
+            int saveNum = startingCellNum + numOfNewAcqs;
+            lastAcqTime = System.currentTimeMillis(); //Save the current time so we can figure out when to start the next acquisition.
+            numOfNewAcqs += acquisitionFuncHandle.apply(saveNum);
+            String msg = String.format("Finished frame %d of %d", k, num_frames);
+            Globals.mm().alerts().postAlert("PWS", null, msg);
+        }
+        if (autoShutoffLight) {
+            Globals.mm().getShutterManager().setShutter(false); //Turn off the shutter //TODO use the Illuminator for this.
+        }
+        return numOfNewAcqs;
+    }
+    
     public void run() {
     
     
@@ -106,7 +138,7 @@ public class AcqSequencer {
     
     List<Path> names = new ArrayList<>();
     for (int i=0; i<numAcquisitions; i++) {
-        String cellFolderName = String.format("%s%d",filePrefix, cellnum+i);
+        String cellFolderName = String.format("//s//d",filePrefix, cellnum+i);
         if (pwsEnabled) {
             names.add(Paths.get(cellFolderName, pwsFolder));
             count++;
@@ -166,12 +198,12 @@ public class AcqSequencer {
         }
         if (useMultiplePositions) {
             acquisitionHandle = (startingCellNum)->{
-                subroutine.acquireFromPositionList(handles, acquisitionHandle,startingCellNum); //Create a handle to a function that will evaluate the previous handle at each position in the micromanager position list. takes as input the initial cell number and the number of times it has been run by the parent routine.
+                acquireFromPositionList(handles, acquisitionHandle,startingCellNum); //Create a handle to a function that will evaluate the previous handle at each position in the micromanager position list. takes as input the initial cell number and the number of times it has been run by the parent routine.
             };
         }
         if (num_frames > 1)
             acquisitionHandle = (startingCellNum)->{
-                subroutine.acquireTimeSeries(handles,frame_interval,num_frames, acquisitionHandle, startingCellNum, true); //A handle that will evaluate the previous handles in a timed loop.
+                return acquireTimeSeries(frame_interval,num_frames, acquisitionHandle, startingCellNum, true); //A handle that will evaluate the previous handles in a timed loop.
             };
         }
     
