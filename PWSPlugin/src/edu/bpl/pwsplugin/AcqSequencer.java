@@ -14,10 +14,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
+import org.micromanager.AutofocusPlugin;
 import org.micromanager.MultiStagePosition;
 import org.micromanager.PositionList;
 
@@ -34,10 +36,11 @@ public class AcqSequencer {
     boolean dynamicsEnabled;
     Path directoryName;
     int cellnum;
-    static String filePrefix = "Cell";
-    static String dynamicsFolder = "Dynamics";
-    static String pwsFolder = "PWS";
-    static String flFolder = "Fluorescence";
+    AcqManager acqMan;
+    
+    public AcqSequencer(AcqManager manager) {
+        acqMan = manager;
+    }
     
     private static boolean validateConfigurations() {
         //Validate all imaging configurations.
@@ -93,6 +96,32 @@ public class AcqSequencer {
         
     }
     
+    private static void alignPFS() throws Exception {
+        //ALIGNPFS Turns on the pfs for a few seconds and then turns it off. If it's
+        //already on then just proceed.
+        if (Globals.core().getProperty("TIPFSStatus", "State").equals("Off")) {
+            Globals.core().setProperty("TIPFSStatus", "State", "On");
+            Thread.sleep(3000);
+            Globals.core().setProperty("TIPFSStatus", "State", "Off");
+        }
+    }
+    
+    private static void autoFocusThenPFS() throws Exception {
+        //AUTOFOCUSTHENPFS Summary of this function goes here
+        //   Detailed explanation goes here
+        AutofocusPlugin afPlugin = Globals.mm().getAutofocusManager().getAutofocusMethod();
+        afPlugin.fullFocus(); //This blocks until the focus is done
+        Thread.sleep(3000);
+        Globals.core().setProperty("TIPFSStatus", "State", "On");
+        Thread.sleep(5000);
+    }
+    
+    private static void pauseThenPFS() throws Exception {
+        Thread.sleep(1000);
+        Globals.core().setProperty("TIPFSStatus", "State", "On");
+        Thread.sleep(3000);
+    }
+    
     private static Integer acquireTimeSeries(double frame_interval, int num_frames, Function<Integer, Integer> acquisitionFuncHandle, int startingCellNum, boolean autoShutoffLight) throws Exception {
         //TIMESERIES execute acquisitionFunHandle repeatedly at a specified time
         //interval. the handle must take as input the Cell number to start at. It
@@ -104,19 +133,19 @@ public class AcqSequencer {
             if (k!=0) { //No pause for the first iteration
                 int count = 0;
                 while ((System.currentTimeMillis() - lastAcqTime)/1000 < frame_interval) {
-                    String msg = String.format("Waiting //.1f seconds before acquiring next frame", frame_interval - (System.currentTimeMillis() - lastAcqTime)/1000);
+                    String msg = String.format("Waiting %.1f seconds before acquiring next frame", frame_interval - (System.currentTimeMillis() - lastAcqTime)/1000);
                     Globals.statusAlert().setText(msg);
                     count++;
                     Thread.sleep(500);
                 }   
                 if (count == 0) {
-                    Globals.statusAlert().setText(String.format("Acquistion took //.1f seconds. Longer than the frame interval.", (System.currentTimeMillis() - lastAcqTime)/1000));
+                    Globals.statusAlert().setText(String.format("Acquistion took %.1f seconds. Longer than the frame interval.", (System.currentTimeMillis() - lastAcqTime)/1000));
                 }
             }
             int saveNum = startingCellNum + numOfNewAcqs;
             lastAcqTime = System.currentTimeMillis(); //Save the current time so we can figure out when to start the next acquisition.
             numOfNewAcqs += acquisitionFuncHandle.apply(saveNum);
-            String msg = String.format("Finished frame //d of //d", k, num_frames);
+            String msg = String.format("Finished frame %d of %d", k, num_frames);
             Globals.mm().alerts().postAlert("PWS", null, msg);
         }
         if (autoShutoffLight) {
@@ -158,13 +187,40 @@ public class AcqSequencer {
             numOfNewAcqs = numOfNewAcqs + acquisitionFuncHandle.apply(save_num);
         }
         list.getPosition(0).goToPosition(list.getPosition(0), Globals.core());
+        return numOfNewAcqs;
     }
 
-
+    private Integer acquirePWSCube(Path directoryName, Integer cellNum, Double exposure) {
+        //Acquires and saves a PWS cube returns the number of acquisitions saved: 1.    
+        this.acqMan.setCellNum(cellNum);
+        this.acqMan.setSavePath(directoryName.toString());
+        handles.plugin.setPWSExposure(exposure);
+        this.acqMan.acquirePWS();
+        return 1; 
+    }
     
+    
+    private Integer acquireFluorescence(Path directoryName, Integer cellNum, Double exposure) {
+        this.acqMan.setCellNum(cellNum);
+        this.acqMan.setSavePath(directoryName.toString());
+        handles.plugin.setFluorescenceExposure(exposure);
+        handles.plugin.setFluorescenceFilter(handles.pop_fl_filter.Value);
+        handles.plugin.setFluorescenceEmissionWavelength(round(handles.fluorEmissionSpinner.Value)); //This needs to be integer.
+        this.acqMan.acquireFluorescence();
+        return 1;
+    }
+        
+        
+    private Integer acquireDynamics(Double exposure, Path directoryName, Integer cellNum) {
+        //Acquires and saves a PWS dynamics cube returns the number of acquisitions saved: 1.
+        this.acqMan.setCellNum(cellNum);
+        this.acqMan.setSavePath(directoryName.toString());
+        handles.plugin.setDynamicsExposure(exposure);
+        this.acqMan.acquireDynamics();
+        return 1;
+    }
+   
     public void run() {
-    
-
         //Build an array of all the used filenames.
         int posNums;
         if (useMultiplePositions) {
@@ -177,17 +233,17 @@ public class AcqSequencer {
 
         List<Path> names = new ArrayList<>();
         for (int i=0; i<numAcquisitions; i++) {
-            String cellFolderName = String.format("//s//d",filePrefix, cellnum+i);
+            String cellFolderName = String.format("%s%d", "Cell", cellnum+i);
             if (pwsEnabled) {
-                names.add(Paths.get(cellFolderName, pwsFolder));
+                names.add(Paths.get(cellFolderName, "PWS"));
                 count++;
             }
             if (dynamicsEnabled) {
-                names.add(Paths.get(cellFolderName, dynamicsFolder));
+                names.add(Paths.get(cellFolderName, "Dynamics"));
                 count++;
             }
             if (fluorescenceEnabled) {
-                names.add(Paths.get(cellFolderName, flFolder));
+                names.add(Paths.get(cellFolderName, "Fluorescence"));
                 count++;
             }
         }
@@ -212,45 +268,77 @@ public class AcqSequencer {
         // No errors occurred. Proceed.
         try {
             List<Function<Integer, Void>> tasks = new ArrayList<>();
-            Function<Integer, Integer> acquisitionHandle = (saveNum)->{return saveNum;}; //Just a placeholder to get the handle initialized.
+            ThrowingFunction<Integer, Integer> acquisitionHandle = (saveNum)->{return saveNum;}; //Just a placeholder to get the handle initialized.
             if (fluorescenceEnabled) {
-                Function<Integer, Integer> fluorHandle = (saveNum)->{
-                    //subroutine.acquireFluorescence(handles, directoryName, saveNum, flExposure);
+                ThrowingFunction<Integer, Integer> fluorHandle = (saveNum)->{
+                    acquireFluorescence(directoryName, saveNum, flExposure);
                     return saveNum;
                 };
                 acquisitionHandle = acquisitionHandle.andThen(fluorHandle);
             }
             if (pwsEnabled) {
-                Function<Integer, Integer> pwsHandle = (saveNum)->{
-                    //subroutine.acquirePWSCube(handles, directoryName,saveNum, pwsExposure); //A handle to the PWS cube acquisition routine. It takes the cell number as input
+                ThrowingFunction<Integer, Integer> pwsHandle = (saveNum)->{
+                    acquirePWSCube(directoryName,saveNum, pwsExposure); //A handle to the PWS cube acquisition routine. It takes the cell number as input
                     return saveNum;
                 };
                 acquisitionHandle = acquisitionHandle.andThen(pwsHandle);
 
             }
             if (dynamicsEnabled) {
-                Function<Integer, Integer> dynHandle = (saveNum)->{
-                    //subroutine.acquireDynamics(handles, dynamicsExposure,directoryName, saveNum);
+                ThrowingFunction<Integer, Integer> dynHandle = (saveNum)->{
+                    acquireDynamics(dynamicsExposure,directoryName, saveNum);
                     return 0;
                 };
                 acquisitionHandle = acquisitionHandle.andThen(dynHandle);
             }
             if (useMultiplePositions) {
-                Function<Integer, Integer> handleSoFar = acquisitionHandle;
+                ThrowingFunction<Integer, Integer> handleSoFar = acquisitionHandle;
                 acquisitionHandle = (startingCellNum)->{
-                    return acquireFromPositionList(handleSoFar,startingCellNum); //Create a handle to a function that will evaluate the previous handle at each position in the micromanager position list. takes as input the initial cell number and the number of times it has been run by the parent routine.
+                    return acquireFromPositionList(handleSoFar, startingCellNum); //Create a handle to a function that will evaluate the previous handle at each position in the micromanager position list. takes as input the initial cell number and the number of times it has been run by the parent routine.
                 };
             }
             if (num_frames > 1) {
-                Function<Integer, Integer> handleSoFar = acquisitionHandle;
+                ThrowingFunction<Integer, Integer> handleSoFar = acquisitionHandle;
                 acquisitionHandle = (startingCellNum)->{
-                    return acquireTimeSeries(frame_interval,num_frames, handleSoFar, startingCellNum, true); //A handle that will evaluate the previous handles in a timed loop.
+                    return acquireTimeSeries(frame_interval, num_frames, handleSoFar, startingCellNum, true); //A handle that will evaluate the previous handles in a timed loop.
                 };
             }
 
             acquisitionHandle.apply(cellnum);
         } catch (Exception e) {
             Globals.mm().logs().showError(e);
+        }
+    }
+}
+
+@FunctionalInterface
+interface ThrowingFunction<T, R> extends Function<T, R> {
+    @Override
+    default R apply(T t){
+        try{
+            return applyThrows(t);
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    R applyThrows(T t) throws Exception;
+    
+    default <V> ThrowingFunction<T, V> andThen(ThrowingFunction<? super R, ? extends V> after){
+        Objects.requireNonNull(after);
+        try{
+             return (T t) -> after.apply(apply(t));
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    default <V> ThrowingFunction<V, R> compose(ThrowingFunction<? super V, ? extends T> before) {
+        Objects.requireNonNull(before);
+        try {
+            return (V v) -> apply(before.apply(v));
+        }catch (Exception e){
+            throw new RuntimeException(e);
         }
     }
 }
