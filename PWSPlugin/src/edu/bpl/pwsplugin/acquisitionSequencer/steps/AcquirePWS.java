@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.nio.file.Path;
@@ -19,10 +20,10 @@ public class AcquirePWS implements Step{
     AcquisitionManager acqMan;
     PWSSettings settings;
     
-    public AcquirePWS(Path directoryName, AcquisitionManager acqMan, PWSSettings settings) {
+    public AcquirePWS(Path directoryName, PWSSettings settings) {
         //Acquires and saves a PWS cube returns the number of acquisitions saved: 1.
         directory = directoryName;
-        this.acqMan = acqMan;
+        this.acqMan = Globals.acqManager();
         this.settings = settings;
     }
     

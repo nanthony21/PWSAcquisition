@@ -43,13 +43,10 @@ public class AcquisitionSequencer {
     DynSettings dynamics;
     Path directoryName;
     int cellnum;
-    AcquisitionManager acqMan;
     boolean autoShutter;
     double autoShutterDelay;
     
-    public AcquisitionSequencer(AcquisitionManager manager) {
-        acqMan = manager;
-    }
+    public AcquisitionSequencer() {}
     
     private static boolean validateConfigurations() {
         //Validate all imaging configurations.
@@ -151,7 +148,7 @@ public class AcquisitionSequencer {
 
         // No errors occurred. Proceed.
         try {
-            Step acquisitionHandle = new AcquireCell(directoryName, acqMan, pws, dynamics, fluorescence);
+            Step acquisitionHandle = new AcquireCell(directoryName, pws, dynamics, fluorescence);
             if (useMultiplePositions) {
                 Step handleSoFar = acquisitionHandle;
                 acquisitionHandle = new AcquireFromPositionList(handleSoFar, Globals.mm().positions().getPositionList());

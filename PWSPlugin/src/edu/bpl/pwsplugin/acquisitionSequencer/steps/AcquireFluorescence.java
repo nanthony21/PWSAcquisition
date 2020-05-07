@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import java.nio.file.Path;
@@ -19,10 +20,10 @@ public class AcquireFluorescence implements Step {
     AcquisitionManager acqMan;
     FluorSettings settings;
     
-    public AcquireFluorescence(Path directoryName, AcquisitionManager acqMan, FluorSettings settings) {
+    public AcquireFluorescence(Path directoryName, FluorSettings settings) {
         //Acquires and saves a PWS cube returns the number of acquisitions saved: 1.
         directory = directoryName;
-        this.acqMan = acqMan;
+        this.acqMan = Globals.acqManager();
         this.settings = settings;
     }
     
