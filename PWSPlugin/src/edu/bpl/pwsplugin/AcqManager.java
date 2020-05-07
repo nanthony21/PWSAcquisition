@@ -36,11 +36,11 @@ import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
-public class AcqManager { // A parent acquisition manager that can direct commands down to more specific acquisition managers.
+public class AcqManager { 
+    /* A parent acquisition manager that can direct commands down to more specific acquisition managers.
+    There should only be one of these objects for a given set of hardware in order to avoid trying to run multiple acquisitions at once.
+    */
     private final PWSAcqManager pwsManager_ = new PWSAcqManager(new PWSAlbum("PWS"));
     private final DynAcqManager dynManager_ = new DynAcqManager(new PWSAlbum("Dynamics"));
     private FluorAcqManager flManager_ = null;
