@@ -44,7 +44,7 @@ import org.micromanager.data.Pipeline;
 import org.micromanager.data.PipelineErrorException;
 
 
-class PWSAcqManager implements AcquisitionManager<PWSSettings>{
+class PWSAcquisition implements Acquisition<PWSSettings>{
     int[] wv; //The array of wavelengths to image at.
     final String filtProp  = "Wavelength"; //The property name of the filter that we want to tune.
     Boolean hardwareSequence; // Whether or not to attempt to use TTL triggering between the camera and spectral filter.
@@ -54,7 +54,7 @@ class PWSAcqManager implements AcquisitionManager<PWSSettings>{
     SpectralCamera conf;
     PWSSettings settings;
     
-    public PWSAcqManager(PWSAlbum album) {
+    public PWSAcquisition(PWSAlbum album) {
         album_ = album;
     }
     

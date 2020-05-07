@@ -17,7 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  *
  * @author LCPWS3
  */
-abstract class FluorAcqManager implements AcquisitionManager<FluorSettings>{
+abstract class FluorescenceAcquisition implements Acquisition<FluorSettings>{
     protected FluorSettings settings;
     
     @Override

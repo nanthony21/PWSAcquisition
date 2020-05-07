@@ -1,7 +1,7 @@
 
 package edu.bpl.pwsplugin;
 
-import edu.bpl.pwsplugin.acquisitionManagers.AcqManager;
+import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.UI.PluginFrame;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
@@ -15,7 +15,7 @@ import org.micromanager.internal.utils.ReportingUtils;
 public class Globals {
     private static Globals instance = null;
     private Studio studio_ = null;
-    private AcqManager acqMan_;
+    private AcquisitionManager acqMan_;
     private HWConfiguration config;
     private MMConfigAdapter mmAdapter;
     private PluginFrame frame;
@@ -35,7 +35,7 @@ public class Globals {
     public static void init(Studio studio) {
         instance().studio_ = studio;
         instance().mmAdapter = new MMConfigAdapter();
-        instance().acqMan_ = new AcqManager();
+        instance().acqMan_ = new AcquisitionManager();
         instance().frame = new PluginFrame();
         //Load settings
         PWSPluginSettings settings = Globals.loadSettings();
@@ -80,7 +80,7 @@ public class Globals {
         return instance().studio_.core();
     }
     
-    public static AcqManager acqManager() {
+    public static AcquisitionManager acqManager() {
         return instance().acqMan_;
     }
     

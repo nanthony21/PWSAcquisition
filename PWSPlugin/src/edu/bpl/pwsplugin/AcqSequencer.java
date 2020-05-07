@@ -5,7 +5,7 @@
  */
 package edu.bpl.pwsplugin;
 
-import edu.bpl.pwsplugin.acquisitionManagers.AcqManager;
+import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import java.io.FileNotFoundException;
@@ -37,11 +37,11 @@ public class AcqSequencer {
     boolean dynamicsEnabled;
     Path directoryName;
     int cellnum;
-    AcqManager acqMan;
+    AcquisitionManager acqMan;
     boolean autoShutter;
     double autoShutterDelay;
     
-    public AcqSequencer(AcqManager manager) {
+    public AcqSequencer(AcquisitionManager manager) {
         acqMan = manager;
     }
     

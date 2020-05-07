@@ -47,14 +47,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-class DynAcqManager implements AcquisitionManager<DynSettings>{
+class DynamicsAcquisition implements Acquisition<DynSettings>{
     double exposure_; //The camera exposure in milliseconds.
     int wavelength_; //The wavelength to acquire images at
     int numFrames_; //The number of images to acquire.
     PWSAlbum album_;
     DynSettings settings;
     
-    public DynAcqManager(PWSAlbum album){
+    public DynamicsAcquisition(PWSAlbum album){
         album_ = album;
     }
     
