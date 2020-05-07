@@ -7,15 +7,19 @@ package edu.bpl.pwsplugin.acquisitionSequencer;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireCell;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireDynamics;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireFluorescence;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireFromPositionList;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.utility.AcquireFromPositionList;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquirePWS;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireTimeSeries;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.AutoShutter;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.utility.AcquireTimeSeries;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.utility.AutoShutter;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
+import edu.bpl.pwsplugin.settings.DynSettings;
+import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
+import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,7 +27,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 
@@ -35,9 +38,9 @@ public class AcquisitionSequencer {
     int num_frames;
     double frame_interval;
     boolean useMultiplePositions;
-    boolean pwsEnabled;
-    boolean fluorescenceEnabled;
-    boolean dynamicsEnabled;
+    PWSSettings pws;
+    List<FluorSettings> fluorescence;
+    DynSettings dynamics;
     Path directoryName;
     int cellnum;
     AcquisitionManager acqMan;
@@ -63,15 +66,17 @@ public class AcquisitionSequencer {
         return true;
     }
         
-    public void setSettings(int timeSteps, double timeInterval, boolean useMultiplePositions, boolean autoShutter, double autoShutterDelay, boolean pws, boolean dynamics, boolean fluor, Path dir, int cellNum) {
+    public void setSettings(int timeSteps, double timeInterval, boolean useMultiplePositions, 
+            boolean autoShutter, double autoShutterDelay, PWSSettings pws, DynSettings dynamics, 
+            List<FluorSettings> fluor, Path dir, int cellNum) {
         this.num_frames = timeSteps;
         frame_interval = timeInterval;
         this.useMultiplePositions = useMultiplePositions;
         this.autoShutter = autoShutter;
         this.autoShutterDelay = autoShutterDelay;
-        pwsEnabled = pws;
-        dynamicsEnabled = dynamics;
-        fluorescenceEnabled = fluor;
+        this.pws = pws;
+        this.dynamics = dynamics;
+        fluorescence = fluor;
         directoryName = dir;
         cellnum = cellNum;
     }
@@ -116,13 +121,13 @@ public class AcquisitionSequencer {
         List<Path> names = new ArrayList<>();
         for (int i=0; i<numAcquisitions; i++) {
             String cellFolderName = String.format("%s%d", "Cell", cellnum+i);
-            if (pwsEnabled) {
+            if (pws) {
                 names.add(Paths.get(cellFolderName, "PWS"));
             }
-            if (dynamicsEnabled) {
+            if (dynamics) {
                 names.add(Paths.get(cellFolderName, "Dynamics"));
             }
-            if (fluorescenceEnabled) {
+            if (fluorescence) {
                 names.add(Paths.get(cellFolderName, "Fluorescence"));
             }
         }
@@ -146,35 +151,7 @@ public class AcquisitionSequencer {
 
         // No errors occurred. Proceed.
         try {
-            List<Function<Integer, Void>> tasks = new ArrayList<>();
-            Step acquisitionHandle = (saveNum)->{return saveNum;}; //Just a placeholder to get the handle initialized.
-            if (fluorescenceEnabled) {
-                Step handleSoFar = acquisitionHandle;
-                Step flHandle = new AcquireFluorescence(directoryName, acqMan);
-                acquisitionHandle = (saveNum) -> {
-                    handleSoFar.apply(saveNum);
-                    flHandle.apply(saveNum);
-                    return 1;
-                };
-            }
-            if (pwsEnabled) {
-                Step handleSoFar = acquisitionHandle;
-                Step pwsHandle = new AcquirePWS(directoryName, acqMan);
-                acquisitionHandle = (saveNum)->{
-                    handleSoFar.apply(saveNum);
-                    pwsHandle.apply(saveNum);
-                    return 1;
-                };
-            }
-            if (dynamicsEnabled) {
-                Step handleSoFar = acquisitionHandle;
-                Step dynHandle = new AcquireDynamics(directoryName, acqMan);
-                acquisitionHandle = (saveNum)->{
-                    handleSoFar.apply(saveNum);
-                    dynHandle.apply(saveNum);
-                    return 1;
-                };
-            }
+            Step acquisitionHandle = new AcquireCell(directoryName, acqMan, pws, dynamics, fluorescence);
             if (useMultiplePositions) {
                 Step handleSoFar = acquisitionHandle;
                 acquisitionHandle = new AcquireFromPositionList(handleSoFar, Globals.mm().positions().getPositionList());

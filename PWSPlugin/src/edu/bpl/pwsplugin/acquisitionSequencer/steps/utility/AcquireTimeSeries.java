@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.acquisitionSequencer.steps;
+package edu.bpl.pwsplugin.acquisitionSequencer.steps.utility;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 
 /**
  *

@@ -21,7 +21,7 @@
 package edu.bpl.pwsplugin.UI;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.HWConfiguration;
+import edu.bpl.pwsplugin.hardware.HWConfiguration;
 import edu.bpl.pwsplugin.PWSPlugin;
 import edu.bpl.pwsplugin.UI.subpages.DynPanel;
 import edu.bpl.pwsplugin.UI.subpages.FluorPanel;

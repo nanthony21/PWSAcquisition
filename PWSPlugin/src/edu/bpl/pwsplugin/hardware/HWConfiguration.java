@@ -1,4 +1,4 @@
-package edu.bpl.pwsplugin;
+package edu.bpl.pwsplugin.hardware;
 
 
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
