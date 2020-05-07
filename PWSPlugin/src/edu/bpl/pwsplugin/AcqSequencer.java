@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin;
 
+import edu.bpl.pwsplugin.acquisitionManagers.AcqManager;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import java.io.FileNotFoundException;

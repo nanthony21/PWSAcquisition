@@ -1,6 +1,7 @@
 
 package edu.bpl.pwsplugin;
 
+import edu.bpl.pwsplugin.acquisitionManagers.AcqManager;
 import edu.bpl.pwsplugin.UI.PluginFrame;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;

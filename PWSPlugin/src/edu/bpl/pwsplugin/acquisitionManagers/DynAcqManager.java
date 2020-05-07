@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class DynAcqManager implements AcquisitionManager{
+class DynAcqManager implements AcquisitionManager{
     double exposure_; //The camera exposure in milliseconds.
     int wavelength_; //The wavelength to acquire images at
     int numFrames_; //The number of images to acquire.

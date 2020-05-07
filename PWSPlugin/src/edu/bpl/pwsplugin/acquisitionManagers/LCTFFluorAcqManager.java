@@ -1,5 +1,5 @@
 
-package edu.bpl.pwsplugin.acquisitionManagers.fluorescence;
+package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
@@ -21,7 +21,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author backman05
  */
-public class LCTFFluorAcqManager extends FluorAcqManager{
+class LCTFFluorAcqManager extends FluorAcqManager{
     Camera camera;
     TunableFilter tunableFilter;
     

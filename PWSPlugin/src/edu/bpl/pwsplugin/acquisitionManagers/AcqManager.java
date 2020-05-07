@@ -18,14 +18,9 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
-package edu.bpl.pwsplugin;
+package edu.bpl.pwsplugin.acquisitionManagers;
 
-import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
-import edu.bpl.pwsplugin.acquisitionManagers.PWSAcqManager;
-import edu.bpl.pwsplugin.acquisitionManagers.DynAcqManager;
-import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.AltCamFluorAcqManager;
-import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.FluorAcqManager;
-import edu.bpl.pwsplugin.acquisitionManagers.fluorescence.LCTFFluorAcqManager;
+import edu.bpl.pwsplugin.Globals;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.micromanager.internal.utils.ReportingUtils;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
@@ -40,6 +35,7 @@ import edu.bpl.pwsplugin.settings.PWSSettings;
 public class AcqManager { 
     /* A parent acquisition manager that can direct commands down to more specific acquisition managers.
     There should only be one of these objects for a given set of hardware in order to avoid trying to run multiple acquisitions at once.
+    This should be the only way to access any of sublevel acquisition managers.
     */
     private final PWSAcqManager pwsManager_ = new PWSAcqManager(new PWSAlbum("PWS"));
     private final DynAcqManager dynManager_ = new DynAcqManager(new PWSAlbum("Dynamics"));
@@ -59,10 +55,10 @@ public class AcqManager {
         if (Globals.core().getPixelSizeUm() == 0.0) { //TODO bundle this into the `Metadata`
             ReportingUtils.showMessage("It is highly recommended that you provide MicroManager with a pixel size setting for the current setup. Having this information is useful for analysis.");
         }
-        ImagingConfigurationSettings imConf = Globals.getHardwareConfiguration().settings.configs.get(0);
+        ImagingConfigurationSettings imConf = Globals.getHardwareConfiguration().getSettings().configs.get(0);
   
         MetadataBase metadata = new MetadataBase(imConf.camSettings.linearityPolynomial,
-            Globals.getHardwareConfiguration().settings.systemName,
+            Globals.getHardwareConfiguration().getSettings().systemName,
             imConf.camSettings.darkCounts);
         
         try {

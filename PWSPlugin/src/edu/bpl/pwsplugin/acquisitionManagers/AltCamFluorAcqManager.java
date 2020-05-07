@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.acquisitionManagers.fluorescence;
+package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.fileSavers.MMSaver;
@@ -23,7 +23,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author LCPWS3
  */
-public class AltCamFluorAcqManager extends FluorAcqManager{
+class AltCamFluorAcqManager extends FluorAcqManager{
     Camera camera;
     
     @Override

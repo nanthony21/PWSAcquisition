@@ -3,24 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.acquisitionManagers.fluorescence;
+package edu.bpl.pwsplugin.acquisitionManagers;
 
-import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.FluorSettings;
-import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.LinkedBlockingQueue;
-import mmcorej.org.json.JSONObject;
 
 /**
  *
  * @author LCPWS3
  */
-public abstract class FluorAcqManager implements AcquisitionManager{
+abstract class FluorAcqManager implements AcquisitionManager{
     protected FluorSettings settings;
     
     @Override
