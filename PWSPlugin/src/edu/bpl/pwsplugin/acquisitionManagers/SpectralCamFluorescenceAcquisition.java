@@ -28,7 +28,7 @@ class SpectralCamFluorescenceAcquisition extends FluorescenceAcquisition{
     @Override
     public void setSettings(FluorSettings settings) {
         super.setSettings(settings);
-        ImagingConfiguration imConf = Globals.getHardwareConfiguration().getConfigurationByName(settings.imConfigName);
+        ImagingConfiguration imConf = Globals.getHardwareConfiguration().getImagingConfigurationByName(settings.imConfigName);
         this.camera = imConf.camera();
         this.tunableFilter = imConf.tunableFilter();
     }

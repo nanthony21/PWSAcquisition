@@ -80,7 +80,7 @@ public class AcquisitionManager {
     }
     
     public void setFluorescenceSettings(FluorSettings settings) {
-        if (Globals.getHardwareConfiguration().getConfigurationByName(settings.imConfigName).settings().configType == ImagingConfiguration.Types.StandardCamera) {
+        if (Globals.getHardwareConfiguration().getImagingConfigurationByName(settings.imConfigName).settings().configType == ImagingConfiguration.Types.StandardCamera) {
             //Acquire fluorescence with another camera so you don't have to go through the LCTF.
             flManager_ = new StandardCamFluorescenceAcquisition();
         } else {

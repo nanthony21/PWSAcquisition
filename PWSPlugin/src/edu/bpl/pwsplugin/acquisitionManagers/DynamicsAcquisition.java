@@ -73,7 +73,7 @@ class DynamicsAcquisition implements Acquisition<DynSettings>{
     
     @Override
     public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) {
-        ImagingConfiguration conf = Globals.getHardwareConfiguration().getConfigurationByName(this.settings.imConfigName);
+        ImagingConfiguration conf = Globals.getHardwareConfiguration().getImagingConfigurationByName(this.settings.imConfigName);
         Camera camera = conf.camera();
         TunableFilter tunableFilter = conf.tunableFilter();
         try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}

@@ -9,6 +9,8 @@ public abstract class Illuminator {
 
     public abstract void initialize() throws Exception;
     
+    public abstract void setShutter(boolean on) throws Exception;
+    
     public static Illuminator getInstance(IlluminatorSettings settings) {
         if (settings.type == Types.XCite120LED) {
             return new XCite120LED(settings);

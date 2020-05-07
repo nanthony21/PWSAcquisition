@@ -61,7 +61,7 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
     @Override
     public void setSettings(PWSSettings settings) {
         this.settings = settings;
-        conf = (SpectralCamera) Globals.getHardwareConfiguration().getConfigurationByName(settings.imConfigName);
+        conf = (SpectralCamera) Globals.getHardwareConfiguration().getImagingConfigurationByName(settings.imConfigName);
         TunableFilter filter = conf.tunableFilter();
         exposure_ = settings.exposure;
         useExternalTrigger = settings.externalCamTriggering;

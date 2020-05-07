@@ -4,7 +4,9 @@ package edu.bpl.pwsplugin;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -25,7 +27,11 @@ public class HWConfiguration {
         return this.settings;
     }
     
-    public ImagingConfiguration getConfigurationByName(String name) {
+    public ImagingConfiguration getImagingConfigurationByName(String name) {
         return this.imConfigs.get(name);
+    }
+    
+    public List<ImagingConfiguration> getImagingConfigurations() {
+        return new ArrayList<>(this.imConfigs.values());
     }
 }

@@ -22,6 +22,11 @@ public class XCite120LED extends Illuminator {
     }
     
     @Override
+    public void setShutter(boolean on) throws Exception {
+        Globals.core().setShutterOpen(this.settings.name, on);
+    }
+    
+    @Override
     public List<String> validate() {
         List<String> errs = new ArrayList<>();
         try {
