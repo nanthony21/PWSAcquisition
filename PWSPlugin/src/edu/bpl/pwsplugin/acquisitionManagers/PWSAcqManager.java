@@ -44,7 +44,7 @@ import org.micromanager.data.Pipeline;
 import org.micromanager.data.PipelineErrorException;
 
 
-class PWSAcqManager implements AcquisitionManager{
+class PWSAcqManager implements AcquisitionManager<PWSSettings>{
     int[] wv; //The array of wavelengths to image at.
     final String filtProp  = "Wavelength"; //The property name of the filter that we want to tune.
     Boolean hardwareSequence; // Whether or not to attempt to use TTL triggering between the camera and spectral filter.
@@ -52,12 +52,15 @@ class PWSAcqManager implements AcquisitionManager{
     double exposure_; // The camera exposure.
     PWSAlbum album_;
     SpectralCamera conf;
+    PWSSettings settings;
     
     public PWSAcqManager(PWSAlbum album) {
         album_ = album;
     }
     
-    public void setSequenceSettings(PWSSettings settings) throws Exception {
+    @Override
+    public void setSettings(PWSSettings settings) {
+        this.settings = settings;
         conf = (SpectralCamera) Globals.getHardwareConfiguration().getConfigurationByName(settings.imConfigName);
         TunableFilter filter = conf.tunableFilter();
         exposure_ = settings.exposure;
@@ -66,14 +69,23 @@ class PWSAcqManager implements AcquisitionManager{
         hardwareSequence =  settings.ttlTriggering;           
         
         if (hardwareSequence) {
-            if (!filter.supportsSequencing()) {
-                throw new Exception("The filter device does not support hardware TTL sequencing.");
+            try {
+                if (!filter.supportsSequencing()) {
+                    throw new RuntimeException("The filter device does not support hardware TTL sequencing.");
+                }
+                if (filter.getMaxSequenceLength() < wv.length) {
+                    throw new RuntimeException("The filter device does not support sequencing as many wavelengths as have been specified. Max is " + filter.getMaxSequenceLength());
+                }
+                filter.loadSequence(wv);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
-            if (filter.getMaxSequenceLength() < wv.length) {
-                throw new Exception("The filter device does not support sequencing as many wavelengths as have been specified. Max is " + filter.getMaxSequenceLength());
-            }
-            filter.loadSequence(wv);
         }  
+    }
+    
+    @Override
+    public PWSSettings getSettings() {
+        return this.settings;
     }
     
     @Override

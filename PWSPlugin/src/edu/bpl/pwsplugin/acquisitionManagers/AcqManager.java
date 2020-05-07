@@ -87,16 +87,20 @@ public class AcqManager {
             //Acquire fluorescence through the LCTF filter using the same camera.
             flManager_ = new LCTFFluorAcqManager();
         }
-        flManager_.setFluorescenceSettings(settings);
+        flManager_.setSettings(settings);
     }
     
     public void setCellNum(int num) { cellNum_ = num; }
     
     public void setSavePath(String savePath) { savePath_ = savePath;}
     
-    public void setPWSSettings(PWSSettings settings) throws Exception { pwsManager_.setSequenceSettings(settings); }
+    public void setPWSSettings(PWSSettings settings) throws Exception { pwsManager_.setSettings(settings); }
     
-    public void setDynamicsSettings(DynSettings settings) { dynManager_.setSequenceSettings(settings); }
+    public void setDynamicsSettings(DynSettings settings) { dynManager_.setSettings(settings); }
+    
+    public PWSSettings getPWSSettings() { return pwsManager_.getSettings(); }
+    public DynSettings getDynSettings() { return dynManager_.getSettings(); }
+    public FluorSettings getFluorescenceSettings() { return flManager_.getSettings(); }
     
     public void acquirePWS() { run(pwsManager_); }
     

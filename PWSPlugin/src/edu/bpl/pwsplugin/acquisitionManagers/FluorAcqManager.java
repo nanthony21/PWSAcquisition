@@ -17,7 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  *
  * @author LCPWS3
  */
-abstract class FluorAcqManager implements AcquisitionManager{
+abstract class FluorAcqManager implements AcquisitionManager<FluorSettings>{
     protected FluorSettings settings;
     
     @Override
@@ -42,7 +42,13 @@ abstract class FluorAcqManager implements AcquisitionManager{
     @Override
     public abstract void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata);
     
-    public void setFluorescenceSettings(FluorSettings settings) {
+    @Override
+    public void setSettings(FluorSettings settings) {
         this.settings = settings;
+    }
+    
+    @Override
+    public FluorSettings getSettings() {
+        return this.settings;
     }
 }

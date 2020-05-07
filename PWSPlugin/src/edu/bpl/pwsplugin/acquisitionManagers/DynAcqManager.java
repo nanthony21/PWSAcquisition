@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-class DynAcqManager implements AcquisitionManager{
+class DynAcqManager implements AcquisitionManager<DynSettings>{
     double exposure_; //The camera exposure in milliseconds.
     int wavelength_; //The wavelength to acquire images at
     int numFrames_; //The number of images to acquire.
@@ -58,11 +58,17 @@ class DynAcqManager implements AcquisitionManager{
         album_ = album;
     }
     
-    public void setSequenceSettings(DynSettings settings) {
+    @Override
+    public void setSettings(DynSettings settings) {
         this.exposure_ = settings.exposure;
         this.wavelength_ = settings.wavelength;
         this.numFrames_ = settings.numFrames;
         this.settings = settings;
+    }
+    
+    @Override
+    public DynSettings getSettings() {
+        return this.settings;
     }
     
     @Override
