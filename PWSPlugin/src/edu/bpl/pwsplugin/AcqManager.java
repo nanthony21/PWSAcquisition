@@ -56,18 +56,6 @@ public class AcqManager { // A parent acquisition manager that can direct comman
         }
         acquisitionRunning_ = true;
 
-        //Validate all imaging configurations.
-        List<String> errs = new ArrayList<>();
-        for (ImagingConfigurationSettings settings : Globals.getHardwareConfiguration().getSettings().configs) {
-            ImagingConfiguration conf = Globals.getHardwareConfiguration().getConfigurationByName(settings.name);
-            errs.addAll(conf.validate());
-        }
-        if (errs.size() > 0) {
-            String errStr = errs.stream().collect(Collectors.joining("\n"));
-            Globals.mm().logs().showMessage("Errors!\n" + errStr);
-            return;
-        }
-        
         if (Globals.core().getPixelSizeUm() == 0.0) { //TODO bundle this into the `Metadata`
             ReportingUtils.showMessage("It is highly recommended that you provide MicroManager with a pixel size setting for the current setup. Having this information is useful for analysis.");
         }
