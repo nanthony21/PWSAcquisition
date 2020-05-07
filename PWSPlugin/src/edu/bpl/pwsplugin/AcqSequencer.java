@@ -18,6 +18,8 @@ import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
+import org.micromanager.MultiStagePosition;
+import org.micromanager.PositionList;
 
 /**
  *TODO run all acquisitions through this sequencer.
@@ -102,19 +104,19 @@ public class AcqSequencer {
             if (k!=0) { //No pause for the first iteration
                 int count = 0;
                 while ((System.currentTimeMillis() - lastAcqTime)/1000 < frame_interval) {
-                    String msg = String.format("Waiting %.1f seconds before acquiring next frame", frame_interval - (System.currentTimeMillis() - lastAcqTime)/1000);
+                    String msg = String.format("Waiting //.1f seconds before acquiring next frame", frame_interval - (System.currentTimeMillis() - lastAcqTime)/1000);
                     Globals.statusAlert().setText(msg);
                     count++;
                     Thread.sleep(500);
                 }   
                 if (count == 0) {
-                    Globals.statusAlert().setText(String.format("Acquistion took %.1f seconds. Longer than the frame interval.", (System.currentTimeMillis() - lastAcqTime)/1000));
+                    Globals.statusAlert().setText(String.format("Acquistion took //.1f seconds. Longer than the frame interval.", (System.currentTimeMillis() - lastAcqTime)/1000));
                 }
             }
             int saveNum = startingCellNum + numOfNewAcqs;
             lastAcqTime = System.currentTimeMillis(); //Save the current time so we can figure out when to start the next acquisition.
             numOfNewAcqs += acquisitionFuncHandle.apply(saveNum);
-            String msg = String.format("Finished frame %d of %d", k, num_frames);
+            String msg = String.format("Finished frame //d of //d", k, num_frames);
             Globals.mm().alerts().postAlert("PWS", null, msg);
         }
         if (autoShutoffLight) {
@@ -123,92 +125,132 @@ public class AcqSequencer {
         return numOfNewAcqs;
     }
     
+    
+    private static Integer acquireFromPositionList(Function<Integer, Integer> acquisitionFuncHandle, int startingCellNum) throws Exception {
+        //ACQUIREFROMPOSITIONLIST Loops through the micromanager position list and
+        //runs acquisitionFuncHandle at each position.
+        int numOfNewAcqs = 0;
+
+        Globals.core().setTimeoutMs(30000); //TODO put somewhere else. set timeout to 30 seconds. Otherwise we get an error if a position move takes greater than 5 seconds. (default timeout)
+        PositionList list = Globals.mm().positions().getPositionList();
+        for (int posNum=0; posNum < list.getNumberOfPositions(); posNum++) {
+            MultiStagePosition pos = list.getPosition(posNum);
+            String label = pos.getLabel();
+            Callable<Void> preMoveRoutine = ()->{return null;};
+            Callable<Void> postMoveRoutine = ()->{return null;};
+
+            if (label.contains("APFS")) { //Turn off pfs before moving. after moving run autofocus to get bakc i the right range. then enable pfs again.
+                preMoveRoutine = ()->{ Globals.core().setProperty("TIPFSStatus", "State", "Off"); return null; };
+                postMoveRoutine = ()->{ autoFocusThenPFS(); return null; };     
+            } else if (label.contains("ZPFS")) { //Turn off pfs, move, reenable pfs. make sure to set a coordinate for z-nonpfs for this to work.
+                preMoveRoutine = ()->{ Globals.core().setProperty("TIPFSStatus", "State", "Off"); return null; };     
+                postMoveRoutine = ()->{ pauseThenPFS(); return null; };
+            } else if (label.contains("PFS")) { //If the position name has PFS then turn on pfs for this acquisition and then turn off.
+                postMoveRoutine = ()->{ alignPFS(); return null; };
+            }
+            preMoveRoutine.call();
+            pos.goToPosition(pos, Globals.core());   //Yes, I know this is weird. It's a static method that needs a position and the core as input.
+            postMoveRoutine.call();
+            int save_num = startingCellNum + numOfNewAcqs;
+            // Set the display message for the type of data being acquired
+            String msg = String.format("Acquiring cell: %d at position: %s", save_num, label);           
+            Globals.statusAlert().setText(msg);
+            numOfNewAcqs = numOfNewAcqs + acquisitionFuncHandle.apply(save_num);
+        }
+        list.getPosition(0).goToPosition(list.getPosition(0), Globals.core());
+    }
+
+
+    
     public void run() {
     
-    
-    //Build an array of all the used filenames.
-    int posNums;
-    if (useMultiplePositions) {
-        posNums = Globals.mm().positions().getPositionList().getNumberOfPositions();
-    } else {
-        posNums = 1;
-    }
-    int numAcquisitions = (num_frames * posNums);
-    int count = 1;
-    
-    List<Path> names = new ArrayList<>();
-    for (int i=0; i<numAcquisitions; i++) {
-        String cellFolderName = String.format("//s//d",filePrefix, cellnum+i);
-        if (pwsEnabled) {
-            names.add(Paths.get(cellFolderName, pwsFolder));
-            count++;
-        }
-        if (dynamicsEnabled) {
-            names.add(Paths.get(cellFolderName, dynamicsFolder));
-            count++;
-        }
-        if (fluorescenceEnabled) {
-            names.add(Paths.get(cellFolderName, flFolder));
-            count++;
-        }
-    }
 
-    //// check for any invalid parameters and handle Errors
-    try {
-        if (!this.verifyFileName(directoryName,names)) {
+        //Build an array of all the used filenames.
+        int posNums;
+        if (useMultiplePositions) {
+            posNums = Globals.mm().positions().getPositionList().getNumberOfPositions();
+        } else {
+            posNums = 1;
+        }
+        int numAcquisitions = (num_frames * posNums);
+        int count = 1;
+
+        List<Path> names = new ArrayList<>();
+        for (int i=0; i<numAcquisitions; i++) {
+            String cellFolderName = String.format("//s//d",filePrefix, cellnum+i);
+            if (pwsEnabled) {
+                names.add(Paths.get(cellFolderName, pwsFolder));
+                count++;
+            }
+            if (dynamicsEnabled) {
+                names.add(Paths.get(cellFolderName, dynamicsFolder));
+                count++;
+            }
+            if (fluorescenceEnabled) {
+                names.add(Paths.get(cellFolderName, flFolder));
+                count++;
+            }
+        }
+
+        //// check for any invalid parameters and handle Errors
+        try {
+            if (!verifyFileName(directoryName,names)) {
+                return;
+            }
+        } catch (IOException e) {
+            Globals.mm().logs().showError(e);
+        }
+
+        if (frame_interval < 0) {
+            Globals.mm().logs().showMessage("Error: Must specify valid frame interval.");
+            return;
+        } else if (num_frames < 1) {
+            Globals.mm().logs().showMessage("Error: Must specify at least 1 frame.");
             return;
         }
-    } catch (IOException e) {
-        Globals.mm().logs().showError(e);
-    }
-    
-    if (frame_interval < 0) {
-        Globals.mm().logs().showMessage("Error: Must specify valid frame interval.");
-        return;
-    } else if (num_frames < 1) {
-        Globals.mm().logs().showMessage("Error: Must specify at least 1 frame.");
-        return;
-    }
 
-    // No errors occurred. Proceed.
-    try {
-        List<Function<Integer, Void>> tasks = new ArrayList<>();
-        Function<Integer, Integer> acquisitionHandle = (saveNum)->{return saveNum;}; //Just a placeholder to get the handle initialized.
-        if (fluorescenceEnabled) {
-            Function<Integer, Integer> fluorHandle = (saveNum)->{
-                //subroutine.acquireFluorescence(handles, directoryName, saveNum, flExposure);
-                return saveNum;
-            };
-            acquisitionHandle = acquisitionHandle.andThen(fluorHandle);
+        // No errors occurred. Proceed.
+        try {
+            List<Function<Integer, Void>> tasks = new ArrayList<>();
+            Function<Integer, Integer> acquisitionHandle = (saveNum)->{return saveNum;}; //Just a placeholder to get the handle initialized.
+            if (fluorescenceEnabled) {
+                Function<Integer, Integer> fluorHandle = (saveNum)->{
+                    //subroutine.acquireFluorescence(handles, directoryName, saveNum, flExposure);
+                    return saveNum;
+                };
+                acquisitionHandle = acquisitionHandle.andThen(fluorHandle);
+            }
+            if (pwsEnabled) {
+                Function<Integer, Integer> pwsHandle = (saveNum)->{
+                    //subroutine.acquirePWSCube(handles, directoryName,saveNum, pwsExposure); //A handle to the PWS cube acquisition routine. It takes the cell number as input
+                    return saveNum;
+                };
+                acquisitionHandle = acquisitionHandle.andThen(pwsHandle);
+
+            }
+            if (dynamicsEnabled) {
+                Function<Integer, Integer> dynHandle = (saveNum)->{
+                    //subroutine.acquireDynamics(handles, dynamicsExposure,directoryName, saveNum);
+                    return 0;
+                };
+                acquisitionHandle = acquisitionHandle.andThen(dynHandle);
+            }
+            if (useMultiplePositions) {
+                Function<Integer, Integer> handleSoFar = acquisitionHandle;
+                acquisitionHandle = (startingCellNum)->{
+                    return acquireFromPositionList(handleSoFar,startingCellNum); //Create a handle to a function that will evaluate the previous handle at each position in the micromanager position list. takes as input the initial cell number and the number of times it has been run by the parent routine.
+                };
+            }
+            if (num_frames > 1) {
+                Function<Integer, Integer> handleSoFar = acquisitionHandle;
+                acquisitionHandle = (startingCellNum)->{
+                    return acquireTimeSeries(frame_interval,num_frames, handleSoFar, startingCellNum, true); //A handle that will evaluate the previous handles in a timed loop.
+                };
+            }
+
+            acquisitionHandle.apply(cellnum);
+        } catch (Exception e) {
+            Globals.mm().logs().showError(e);
         }
-        if (pwsEnabled) {
-            Function<Integer, Integer> pwsHandle = (saveNum)->{
-                //subroutine.acquirePWSCube(handles, directoryName,saveNum, pwsExposure); //A handle to the PWS cube acquisition routine. It takes the cell number as input
-                return saveNum;
-            };
-            acquisitionHandle = acquisitionHandle.andThen(pwsHandle);
-   
-        }
-        if (dynamicsEnabled) {
-            Function<Integer, Integer> dynHandle = (saveNum)->{
-                //subroutine.acquireDynamics(handles, dynamicsExposure,directoryName, saveNum);
-                return 0;
-            };
-            acquisitionHandle = acquisitionHandle.andThen(dynHandle);
-        }
-        if (useMultiplePositions) {
-            acquisitionHandle = (startingCellNum)->{
-                acquireFromPositionList(handles, acquisitionHandle,startingCellNum); //Create a handle to a function that will evaluate the previous handle at each position in the micromanager position list. takes as input the initial cell number and the number of times it has been run by the parent routine.
-            };
-        }
-        if (num_frames > 1)
-            acquisitionHandle = (startingCellNum)->{
-                return acquireTimeSeries(frame_interval,num_frames, acquisitionHandle, startingCellNum, true); //A handle that will evaluate the previous handles in a timed loop.
-            };
-        }
-    
-        acquisitionHandle.apply(cellnum);
-    } catch (Exception e) {
-        Globals.mm().logs().showError(e);
     }
 }
