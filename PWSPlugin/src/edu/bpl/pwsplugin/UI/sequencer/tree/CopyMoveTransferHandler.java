@@ -3,26 +3,31 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.UI.sequencer;
+package edu.bpl.pwsplugin.UI.sequencer.tree;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import static javax.swing.TransferHandler.COPY;
+import static javax.swing.TransferHandler.COPY_OR_MOVE;
+import static javax.swing.TransferHandler.MOVE;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
-class CopyOnlyTransferHandler extends TransferHandler {
+class CopyMoveTransferHandler extends TransferHandler {
     DataFlavor nodesFlavor;
     DataFlavor[] flavors = new DataFlavor[1];
+    List<DefaultMutableTreeNode> nodesToRemove;
 
-    public CopyOnlyTransferHandler() {
+    public CopyMoveTransferHandler() {
         try {
             String mimeType = DataFlavor.javaJVMLocalObjectMimeType +
                               ";class=\"" +
@@ -41,7 +46,28 @@ class CopyOnlyTransferHandler extends TransferHandler {
 
     @Override
     public boolean canImport(TransferHandler.TransferSupport support) {
-        return false;
+        if(!support.isDrop() || !support.isDataFlavorSupported(nodesFlavor)) {
+            return false; //Not A drop action, no supported
+        }
+        support.setShowDropLocation(true);
+
+        JTree.DropLocation dl = (JTree.DropLocation)support.getDropLocation();
+        JTree tree = (JTree)support.getComponent();
+        List<DefaultMutableTreeNode> nodes;
+        try {
+            nodes = (List<DefaultMutableTreeNode>) support.getTransferable().getTransferData(nodesFlavor);
+        } catch (UnsupportedFlavorException | IOException e) {
+            throw new RuntimeException(e);
+        }       
+        
+        // Do not allow a drop on the drag source selections.
+        DefaultMutableTreeNode dropNode = (DefaultMutableTreeNode) dl.getPath().getLastPathComponent();
+        for (DefaultMutableTreeNode node : nodes) {
+            if (node.equals(dropNode)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -53,9 +79,11 @@ class CopyOnlyTransferHandler extends TransferHandler {
             // another for/of the nodes that will be removed in
             // exportDone after a successful drop.
             List<DefaultMutableTreeNode> copies = new ArrayList<>();
+            List<DefaultMutableTreeNode> toRemove = new ArrayList<>();
             DefaultMutableTreeNode node = (DefaultMutableTreeNode)paths[0].getLastPathComponent();
             DefaultMutableTreeNode copy = new CopiedMutableTreeNode(node);
             copies.add(copy);
+            toRemove.add(node);
             for(int i = 1; i < paths.length; i++) {
                 DefaultMutableTreeNode next =
                     (DefaultMutableTreeNode)paths[i].getLastPathComponent();
@@ -64,22 +92,68 @@ class CopyOnlyTransferHandler extends TransferHandler {
                     break;
                 } else { // sibling
                     copies.add(new CopiedMutableTreeNode(next));
+                    toRemove.add(next);
                 }
             }
+            nodesToRemove = toRemove;
             return new NodesTransferable(copies);
         }
         return null;
     }
 
     @Override
+    protected void exportDone(JComponent source, Transferable data, int action) {
+        //If this was a move (rather than a copy) then remove the old copies.
+        if((action & MOVE) == MOVE) {
+            JTree tree = (JTree)source;
+            DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
+            // Remove nodes saved in nodesToRemove in createTransferable.
+            for(int i = 0; i < nodesToRemove.size(); i++) {
+                model.removeNodeFromParent(nodesToRemove.get(i));
+            }
+        }
+    }
+
+    @Override
     public int getSourceActions(JComponent c) {
-        return COPY; //The type of actions allowed.
+        return COPY_OR_MOVE; //The type of actions allowed.
     }
 
     @Override
     public boolean importData(TransferHandler.TransferSupport support) {
         //Implments how to import a transfer (drop operation);
-        return false; //don't allow import.
+        if(!canImport(support)) {
+            return false;
+        }
+        // Extract transfer data.
+        List<DefaultMutableTreeNode> nodes = null;
+        try {
+            Transferable t = support.getTransferable();
+            nodes = (List<DefaultMutableTreeNode>)t.getTransferData(nodesFlavor);
+        } catch(UnsupportedFlavorException ufe) {
+            System.out.println("UnsupportedFlavor: " + ufe.getMessage());
+        } catch(java.io.IOException ioe) {
+            System.out.println("I/O error: " + ioe.getMessage());
+        }
+        // Get drop location info.
+        JTree.DropLocation dl =
+                (JTree.DropLocation)support.getDropLocation();
+        int childIndex = dl.getChildIndex();
+        TreePath dest = dl.getPath();
+        DefaultMutableTreeNode parent =
+            (DefaultMutableTreeNode)dest.getLastPathComponent();
+        JTree tree = (JTree)support.getComponent();
+        DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
+        // Configure for drop mode.
+        int index = childIndex;    // DropMode.INSERT
+        if(childIndex == -1) {     // DropMode.ON
+            index = parent.getChildCount();
+        }
+        // Add data to model.
+        for(int i = 0; i < nodes.size(); i++) {
+            model.insertNodeInto(nodes.get(i), parent, index++);
+        }
+        return true;
     }
 
     @Override

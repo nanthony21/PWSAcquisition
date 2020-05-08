@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.UI.sequencer;
 
+import edu.bpl.pwsplugin.UI.sequencer.tree.TreeDragAndDrop;
 import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
 

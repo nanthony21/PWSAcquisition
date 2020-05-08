@@ -1,4 +1,4 @@
-package edu.bpl.pwsplugin.UI.sequencer;
+package edu.bpl.pwsplugin.UI.sequencer.tree;
 
 import java.util.Enumeration;
 import javax.swing.DropMode;

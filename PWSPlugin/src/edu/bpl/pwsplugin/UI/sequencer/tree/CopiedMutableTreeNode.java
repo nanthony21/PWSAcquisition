@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.UI.sequencer;
+package edu.bpl.pwsplugin.UI.sequencer.tree;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
