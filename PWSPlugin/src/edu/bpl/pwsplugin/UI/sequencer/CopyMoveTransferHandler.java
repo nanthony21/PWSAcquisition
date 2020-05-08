@@ -123,32 +123,7 @@ class CopyMoveTransferHandler extends TransferHandler {
         return null;
     }
     
-    class CopiedMutableTreeNode extends DefaultMutableTreeNode {
-        DefaultMutableTreeNode originalNode;
-        public CopiedMutableTreeNode(DefaultMutableTreeNode node) {
-            super(node.getUserObject());
-            this.setAllowsChildren(node.getAllowsChildren());
-            for(int iChildren=node.getChildCount(), i=0; i<iChildren; i++) {
-                this.add(new CopiedMutableTreeNode((DefaultMutableTreeNode) node.getChildAt(i)));
-            }    
-            
-            //Save a reference to the original
-            if (node instanceof CopiedMutableTreeNode) {
-                originalNode = ((CopiedMutableTreeNode) node).originalNode;
-            } else {
-                originalNode = node;
-            }
-        }
-        
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof CopiedMutableTreeNode) {
-                return this.originalNode == ((CopiedMutableTreeNode) o).originalNode;
-            } else {
-                return this.originalNode == o;
-            }
-        }
-    }
+
 
     @Override
     protected void exportDone(JComponent source, Transferable data, int action) {
