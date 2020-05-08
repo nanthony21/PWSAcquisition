@@ -15,6 +15,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquirePWS;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.utility.AcquireTimeSeries;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.utility.AutoShutter;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
@@ -78,14 +79,10 @@ public class AcquisitionSequencer {
         cellnum = cellNum;
     }
     
-    public static boolean verifyFileName(Path directoryName, List<Path> fileNames) throws FileNotFoundException, IOException {
-        if (!Files.isDirectory(directoryName)) {
-            throw new FileNotFoundException(directoryName.toString() + " does not exist.");
-        }
-
+    public static boolean verifyFileName(List<Path> fileNames) throws FileNotFoundException, IOException {
         List<Path> conflictingNames = new ArrayList<>();
         for (Path path : fileNames) {
-            if (!Files.isDirectory(directoryName.resolve(path))) {
+            if (!Files.isDirectory(path)) {
                 conflictingNames.add(path);
             }
         }
@@ -94,7 +91,7 @@ public class AcquisitionSequencer {
             int option = JOptionPane.showConfirmDialog(Globals.frame(), String.valueOf(conflictingNames.size()) + " files already exist. Replace?", "Overwrite?", JOptionPane.YES_NO_OPTION);
             if (option == JOptionPane.YES_OPTION) {
                 for (Path path : fileNames) {
-                    Files.delete(directoryName.resolve(path));
+                    Files.delete(path);
                 }
                 return true;
             } else {
@@ -117,21 +114,24 @@ public class AcquisitionSequencer {
 
         List<Path> names = new ArrayList<>();
         for (int i=0; i<numAcquisitions; i++) {
-            String cellFolderName = String.format("%s%d", "Cell", cellnum+i);
-            if (pws) {
-                names.add(Paths.get(cellFolderName, "PWS"));
+            Path cellFolder = FileSpecs.getCellFolderName(directoryName, cellnum+i);
+            if (pws != null) {
+                String subFolder = FileSpecs.getSubfolderName(FileSpecs.Type.PWS);
+                names.add(cellFolder.resolve(subFolder));
             }
-            if (dynamics) {
-                names.add(Paths.get(cellFolderName, "Dynamics"));
+            if (dynamics != null) {
+                String subFolder = FileSpecs.getSubfolderName(FileSpecs.Type.DYNAMICS);
+                names.add(cellFolder.resolve(subFolder));
             }
-            if (fluorescence) {
-                names.add(Paths.get(cellFolderName, "Fluorescence"));
+            if (fluorescence != null || fluorescence.isEmpty()) {
+                String subFolder = FileSpecs.getSubfolderName(FileSpecs.Type.FLUORESCENCE);
+                names.add(cellFolder.resolve(subFolder));
             }
         }
 
         //// check for any invalid parameters and handle Errors
         try {
-            if (!verifyFileName(directoryName, names)) {
+            if (!verifyFileName(names)) {
                 return;
             }
         } catch (IOException e) {
