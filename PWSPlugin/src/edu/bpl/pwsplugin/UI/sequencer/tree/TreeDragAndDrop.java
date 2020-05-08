@@ -13,7 +13,7 @@ import javax.swing.tree.TreeSelectionModel;
 import net.miginfocom.swing.MigLayout;
 
 public class TreeDragAndDrop extends JPanel{
-    private JTree tree = new JTree();
+    protected JTree tree = new JTree();
     
     public TreeDragAndDrop(TransferHandler handler) {
         super(new MigLayout());
@@ -22,7 +22,6 @@ public class TreeDragAndDrop extends JPanel{
         tree.setTransferHandler(handler);
         tree.getSelectionModel().setSelectionMode(
                 TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
-        expandTree(tree);
         this.add(new JScrollPane(tree));
     }
 
@@ -37,10 +36,6 @@ public class TreeDragAndDrop extends JPanel{
             int row = tree.getRowForPath(new TreePath(node.getPath()));
             tree.expandRow(row);
         }
-    }
-    
-    public clear() {
-        
     }
 
     public static void main(String[] args) {

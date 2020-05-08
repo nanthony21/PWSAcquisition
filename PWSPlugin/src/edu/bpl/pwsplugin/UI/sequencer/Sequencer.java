@@ -24,8 +24,8 @@ import net.miginfocom.swing.MigLayout;
  * @author nick
  */
 public class Sequencer extends JPanel {
-    TreeDragAndDrop seqTree = new TreeDragAndDrop(new CopyMoveTransferHandler());
-    TreeDragAndDrop newStepsTree = new TreeDragAndDrop(new CopyOnlyTransferHandler());
+    SequenceTree seqTree = new SequenceTree();
+    NewStepsTree newStepsTree = new NewStepsTree();
     JPanel settingsPanel = new SettingsPanel();
     
     public Sequencer() {
@@ -72,5 +72,20 @@ class SettingsPanel extends JPanel {
         Dimension dim = new Dimension(maxW, maxH);
         this.setSize(dim);
         this.setMinimumSize(dim);
+    }
+}
+
+class NewStepsTree extends TreeDragAndDrop {
+    public NewStepsTree() {
+        super(new CopyOnlyTransferHandler());
+        
+        this.tree.removeAll();
+    }
+}
+
+class SequenceTree extends TreeDragAndDrop {
+    public SequenceTree() {
+        super(new CopyMoveTransferHandler());
+        
     }
 }

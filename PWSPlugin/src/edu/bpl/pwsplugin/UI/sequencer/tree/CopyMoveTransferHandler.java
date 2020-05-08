@@ -119,27 +119,23 @@ public class CopyMoveTransferHandler extends TransferHandler {
 
     @Override
     public boolean importData(TransferHandler.TransferSupport support) {
-        //Implments how to import a transfer (drop operation);
+        //Implements how to import a transfer (drop operation);
         if(!canImport(support)) {
             return false;
         }
         // Extract transfer data.
-        List<DefaultMutableTreeNode> nodes = null;
+        List<DefaultMutableTreeNode> nodes;
         try {
             Transferable t = support.getTransferable();
             nodes = (List<DefaultMutableTreeNode>)t.getTransferData(nodesFlavor);
-        } catch(UnsupportedFlavorException ufe) {
-            System.out.println("UnsupportedFlavor: " + ufe.getMessage());
-        } catch(java.io.IOException ioe) {
-            System.out.println("I/O error: " + ioe.getMessage());
+        } catch(UnsupportedFlavorException | java.io.IOException e) {
+            throw new RuntimeException(e);
         }
         // Get drop location info.
-        JTree.DropLocation dl =
-                (JTree.DropLocation)support.getDropLocation();
+        JTree.DropLocation dl = (JTree.DropLocation)support.getDropLocation();
         int childIndex = dl.getChildIndex();
         TreePath dest = dl.getPath();
-        DefaultMutableTreeNode parent =
-            (DefaultMutableTreeNode)dest.getLastPathComponent();
+        DefaultMutableTreeNode parent = (DefaultMutableTreeNode) dest.getLastPathComponent();
         JTree tree = (JTree)support.getComponent();
         DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
         // Configure for drop mode.
