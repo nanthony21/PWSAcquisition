@@ -14,15 +14,13 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
-import static javax.swing.TransferHandler.COPY;
 import static javax.swing.TransferHandler.COPY_OR_MOVE;
 import static javax.swing.TransferHandler.MOVE;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
-class CopyMoveTransferHandler extends TransferHandler {
+public class CopyMoveTransferHandler extends TransferHandler {
     DataFlavor nodesFlavor;
     DataFlavor[] flavors = new DataFlavor[1];
     List<DefaultMutableTreeNode> nodesToRemove;

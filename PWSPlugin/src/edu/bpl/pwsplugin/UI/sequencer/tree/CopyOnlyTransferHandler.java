@@ -15,10 +15,9 @@ import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import static javax.swing.TransferHandler.COPY;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
-class CopyOnlyTransferHandler extends TransferHandler {
+public class CopyOnlyTransferHandler extends TransferHandler {
     DataFlavor nodesFlavor;
     DataFlavor[] flavors = new DataFlavor[1];
 

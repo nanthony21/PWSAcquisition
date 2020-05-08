@@ -53,11 +53,19 @@ public class FluorPanel extends SingleBuilderJPanel<FluorSettings>{
     
     
     private DefaultComboBoxModel<String> getFilterComboModel() {    
-        return new DefaultComboBoxModel<>((String[]) Globals.getMMConfigAdapter().getFilters().toArray());
+        try { // Allow the panel to show up even if we don't have our connection to micromanager working (useful for testing).
+            return new DefaultComboBoxModel<>((String[]) Globals.getMMConfigAdapter().getFilters().toArray());
+        } catch (NullPointerException e) {
+            return new DefaultComboBoxModel<>();
+        }
     }
     
     private DefaultComboBoxModel<String> getCameraComboModel() {
-        return new DefaultComboBoxModel<>((String[]) Globals.getMMConfigAdapter().getConnectedCameras().toArray());
+        try { // Allow the panel to show up even if we don't have our connection to micromanager working (useful for testing).
+            return new DefaultComboBoxModel<>((String[]) Globals.getMMConfigAdapter().getConnectedCameras().toArray());
+        } catch (NullPointerException e) {
+            return new DefaultComboBoxModel<>();
+        }
     }
     
     @Override
