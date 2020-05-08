@@ -14,10 +14,7 @@ import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import static javax.swing.TransferHandler.COPY;
-import static javax.swing.TransferHandler.COPY_OR_MOVE;
-import static javax.swing.TransferHandler.MOVE;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
@@ -57,7 +54,7 @@ class CopyOnlyTransferHandler extends TransferHandler {
             // exportDone after a successful drop.
             List<DefaultMutableTreeNode> copies = new ArrayList<>();
             DefaultMutableTreeNode node = (DefaultMutableTreeNode)paths[0].getLastPathComponent();
-            DefaultMutableTreeNode copy = copy(node);
+            DefaultMutableTreeNode copy = new CopiedMutableTreeNode(node);
             copies.add(copy);
             for(int i = 1; i < paths.length; i++) {
                 DefaultMutableTreeNode next =
@@ -66,23 +63,12 @@ class CopyOnlyTransferHandler extends TransferHandler {
                 if(next.getLevel() < node.getLevel()) {
                     break;
                 } else { // sibling
-                    copies.add(copy(next));
+                    copies.add(new CopiedMutableTreeNode(next));
                 }
             }
             return new NodesTransferable(copies);
         }
         return null;
-    }
-
-    private DefaultMutableTreeNode copy(DefaultMutableTreeNode node) {
-        //Copies a node and it's children. doesn't copy parent though.
-        DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(node.getUserObject());
-        newNode.setAllowsChildren(node.getAllowsChildren());
-        for(int iChildren=node.getChildCount(), i=0; i<iChildren; i++) {
-            newNode.add((MutableTreeNode) copy((DefaultMutableTreeNode) node.getChildAt(i)));
-        }
-        return newNode;    
-        //return new DefaultMutableTreeNode(node);
     }
 
     @Override

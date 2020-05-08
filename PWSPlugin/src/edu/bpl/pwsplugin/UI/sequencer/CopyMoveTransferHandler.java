@@ -8,6 +8,7 @@ package edu.bpl.pwsplugin.UI.sequencer;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComponent;
@@ -50,18 +51,24 @@ class CopyMoveTransferHandler extends TransferHandler {
         }
         support.setShowDropLocation(true);
 
-        // Do not allow a drop on the drag source selections.
         JTree.DropLocation dl = (JTree.DropLocation)support.getDropLocation();
         JTree tree = (JTree)support.getComponent();
-        int dropRow = tree.getRowForPath(dl.getPath());
-        int[] selRows = tree.getSelectionRows();
-        //support.getTransferable().getTransferData(nodesFlavor)
-        for(int i = 0; i < selRows.length; i++) {
-            if(selRows[i] == dropRow) {
-                log(String.format("selRows %d %d", dropRow, selRows[i]));
+                
+        // Do not allow a drop on the drag source selections.
+        List<DefaultMutableTreeNode> nodes;
+        try {
+            nodes = (List<DefaultMutableTreeNode>) support.getTransferable().getTransferData(nodesFlavor);
+        } catch (UnsupportedFlavorException | IOException e) {
+            throw new RuntimeException(e);
+        }
+        DefaultMutableTreeNode dropNode = (DefaultMutableTreeNode) dl.getPath().getLastPathComponent();
+        for (DefaultMutableTreeNode node : nodes) {
+            if (node.equals(dropNode)) {
+                log("HAHA");
                 return false;
             }
         }
+
         // Do not allow MOVE-action drops if a non-leaf node is
         // selected unless all of its children are also selected.
         int action = support.getDropAction();
@@ -74,7 +81,7 @@ class CopyMoveTransferHandler extends TransferHandler {
                 TreePath dest = dl.getPath();
                 DefaultMutableTreeNode target =
                     (DefaultMutableTreeNode)dest.getLastPathComponent();
-                TreePath path = tree.getPathForRow(selRows[0]);
+                TreePath path = tree.getSelectionPath();
                 DefaultMutableTreeNode firstNode = (DefaultMutableTreeNode)path.getLastPathComponent();
                 if(firstNode.getChildCount() > 0 && target.getLevel() < firstNode.getLevel()) {
                     log("Not sure");
@@ -96,7 +103,7 @@ class CopyMoveTransferHandler extends TransferHandler {
             List<DefaultMutableTreeNode> copies = new ArrayList<>();
             List<DefaultMutableTreeNode> toRemove = new ArrayList<>();
             DefaultMutableTreeNode node = (DefaultMutableTreeNode)paths[0].getLastPathComponent();
-            DefaultMutableTreeNode copy = copy(node);
+            DefaultMutableTreeNode copy = new CopiedMutableTreeNode(node);
             copies.add(copy);
             toRemove.add(node);
             for(int i = 1; i < paths.length; i++) {
@@ -106,7 +113,7 @@ class CopyMoveTransferHandler extends TransferHandler {
                 if(next.getLevel() < node.getLevel()) {
                     break;
                 } else { // sibling
-                    copies.add(copy(next));
+                    copies.add(new CopiedMutableTreeNode(next));
                     toRemove.add(next);
                 }
             }
@@ -115,16 +122,32 @@ class CopyMoveTransferHandler extends TransferHandler {
         }
         return null;
     }
-
-    private DefaultMutableTreeNode copy(DefaultMutableTreeNode node) {
-        //Copies a node and it's children. doesn't copy parent though.
-        DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(node.getUserObject());
-        newNode.setAllowsChildren(node.getAllowsChildren());
-        for(int iChildren=node.getChildCount(), i=0; i<iChildren; i++) {
-            newNode.add((MutableTreeNode) copy((DefaultMutableTreeNode) node.getChildAt(i)));
+    
+    class CopiedMutableTreeNode extends DefaultMutableTreeNode {
+        DefaultMutableTreeNode originalNode;
+        public CopiedMutableTreeNode(DefaultMutableTreeNode node) {
+            super(node.getUserObject());
+            this.setAllowsChildren(node.getAllowsChildren());
+            for(int iChildren=node.getChildCount(), i=0; i<iChildren; i++) {
+                this.add(new CopiedMutableTreeNode((DefaultMutableTreeNode) node.getChildAt(i)));
+            }    
+            
+            //Save a reference to the original
+            if (node instanceof CopiedMutableTreeNode) {
+                originalNode = ((CopiedMutableTreeNode) node).originalNode;
+            } else {
+                originalNode = node;
+            }
         }
-        return newNode;    
-        //return new DefaultMutableTreeNode(node);
+        
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof CopiedMutableTreeNode) {
+                return this.originalNode == ((CopiedMutableTreeNode) o).originalNode;
+            } else {
+                return this.originalNode == o;
+            }
+        }
     }
 
     @Override
