@@ -22,19 +22,11 @@ public class CopiedMutableTreeNode extends DefaultMutableTreeNode {
         }    
 
         //Save a reference to the original
-        if (node instanceof CopiedMutableTreeNode) {
-            originalNode = ((CopiedMutableTreeNode) node).originalNode;
-        } else {
-            originalNode = node;
-        }
+        originalNode = node;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof CopiedMutableTreeNode) {
-            return this.originalNode == ((CopiedMutableTreeNode) o).originalNode;
-        } else {
-            return this.originalNode == o;
-        }
+    public DefaultMutableTreeNode original() {
+        //Returns true if this objects original is equal to o.
+        return originalNode;
     }
 }

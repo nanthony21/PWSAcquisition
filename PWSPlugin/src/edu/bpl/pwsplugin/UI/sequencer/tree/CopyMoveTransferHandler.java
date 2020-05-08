@@ -51,17 +51,20 @@ public class CopyMoveTransferHandler extends TransferHandler {
 
         JTree.DropLocation dl = (JTree.DropLocation)support.getDropLocation();
         JTree tree = (JTree)support.getComponent();
-        List<DefaultMutableTreeNode> nodes;
+        List<CopiedMutableTreeNode> nodes;
         try {
-            nodes = (List<DefaultMutableTreeNode>) support.getTransferable().getTransferData(nodesFlavor);
+            nodes = (List<CopiedMutableTreeNode>) support.getTransferable().getTransferData(nodesFlavor);
         } catch (UnsupportedFlavorException | IOException e) {
             throw new RuntimeException(e);
         }       
         
-        // Do not allow a drop on the drag source selections.
+        // Do not allow a drop on the drag source selections. or a child of the source selections.
         DefaultMutableTreeNode dropNode = (DefaultMutableTreeNode) dl.getPath().getLastPathComponent();
-        for (DefaultMutableTreeNode node : nodes) {
-            if (node.equals(dropNode)) {
+        for (CopiedMutableTreeNode node : nodes) {
+            if (node.original().equals(dropNode)) {
+                return false;
+            }
+            else if (node.original().isNodeDescendant(dropNode)) {
                 return false;
             }
         }
@@ -124,10 +127,10 @@ public class CopyMoveTransferHandler extends TransferHandler {
             return false;
         }
         // Extract transfer data.
-        List<DefaultMutableTreeNode> nodes;
+        List<CopiedMutableTreeNode> nodes;
         try {
             Transferable t = support.getTransferable();
-            nodes = (List<DefaultMutableTreeNode>)t.getTransferData(nodesFlavor);
+            nodes = (List<CopiedMutableTreeNode>) t.getTransferData(nodesFlavor);
         } catch(UnsupportedFlavorException | java.io.IOException e) {
             throw new RuntimeException(e);
         }
