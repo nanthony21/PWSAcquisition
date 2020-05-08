@@ -3,24 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.UI.subpages;
+package edu.bpl.pwsplugin.UI.settings;
 
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
-import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
-import org.micromanager.PropertyMap;
 
 /**
  *
@@ -32,7 +27,6 @@ public class PWSPanel extends SingleBuilderJPanel<PWSSettings>{
     private JSpinner wvStopSpinner;
     private JSpinner wvStepSpinner;
     private JComboBox<String> imConfName = new JComboBox<>();
-    //private JTextField imConfName = new JTextField(20);
     private JCheckBox ttlTriggerCheckbox = new JCheckBox("Use TTL Sequencing");
     private JCheckBox externalTriggerCheckBox = new JCheckBox("Use External TTL Trigger");
     
