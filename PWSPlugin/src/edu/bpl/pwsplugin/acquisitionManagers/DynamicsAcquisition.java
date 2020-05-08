@@ -80,7 +80,7 @@ class DynamicsAcquisition implements Acquisition<DynSettings>{
         Globals.core().clearCircularBuffer();
         camera.startSequence(numFrames_, 0, false);
         Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
-        MMSaver imSaver = new MMSaver(this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), this.getFilePrefix());
+        MMSaver imSaver = new MMSaver(this.getSavePath(savePath, cellNum), imagequeue, numFrames_, this.getFilePrefix());
         imSaver.start();
         List<Double> times = new ArrayList<>();
         for (int i=0; i<numFrames_; i++) {
@@ -115,10 +115,5 @@ class DynamicsAcquisition implements Acquisition<DynSettings>{
     @Override
     public String getFilePrefix() { //TODO Should be static, handle file spec stuff in a separate class. That way we can refer to the same information from other places (file scanning).
         return "dyn";
-    }
-    
-    @Override
-    public int getExpectedFrames() {
-        return numFrames_;
     }
 }

@@ -29,7 +29,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 interface Acquisition <S extends JsonableParam> {
     public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) throws Exception; //Begin the acquisition process.
     public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException; // given a parent directory and a cell number, return the full path to save to.
-    public int getExpectedFrames(); //The number of images that are expected from running `acquireImages`
     public String getFilePrefix(); //Return the prefix that the saved files should have.
     public void setSettings(S settings);
     public S getSettings();

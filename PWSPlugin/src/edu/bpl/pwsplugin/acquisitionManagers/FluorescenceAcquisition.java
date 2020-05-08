@@ -26,11 +26,6 @@ abstract class FluorescenceAcquisition implements Acquisition<FluorSettings>{
     }
     
     @Override
-    public int getExpectedFrames() {
-        return 1;
-    }
-    
-    @Override
     public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException {
         Path path = Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).resolve("Fluorescence");
         if (Files.isDirectory(path)){

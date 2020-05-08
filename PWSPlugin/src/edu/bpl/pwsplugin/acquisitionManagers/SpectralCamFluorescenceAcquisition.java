@@ -53,7 +53,7 @@ class SpectralCamFluorescenceAcquisition extends FluorescenceAcquisition{
             Coords coords = img.getCoords();
             pipeline.insertImage(img); //Add image to the data pipeline for processing
             img = pipeline.getDatastore().getImage(coords); //Retrieve the processed image.                 
-            MMSaver imSaver = new MMSaver(fullSavePath, imagequeue, this.getExpectedFrames(), this.getFilePrefix());
+            MMSaver imSaver = new MMSaver(fullSavePath, imagequeue, 1, this.getFilePrefix());
             imSaver.start();
             FluorescenceMetadata flmd = new FluorescenceMetadata(metadata, settings.filterConfigName, camera.getExposure()); //This must happen after we have set our exposure. We don't use the settings.exposure becuase the actual exposure may differ by a little bit.
             JSONObject md = flmd.toJson();

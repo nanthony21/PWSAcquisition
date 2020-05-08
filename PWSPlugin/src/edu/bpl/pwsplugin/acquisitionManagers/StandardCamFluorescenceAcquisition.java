@@ -58,7 +58,7 @@ class StandardCamFluorescenceAcquisition extends FluorescenceAcquisition{
             Coords coords = img.getCoords();
             pipeline.insertImage(img); //Add image to the data pipeline for processing
             img = pipeline.getDatastore().getImage(coords); //Retrieve the processed image.                 
-            MMSaver imSaver = new MMSaver(fullSavePath, imagequeue, this.getExpectedFrames(), this.getFilePrefix());
+            MMSaver imSaver = new MMSaver(fullSavePath, imagequeue, 1, this.getFilePrefix());
             imSaver.start();
 
             imSaver.setMetadata(md);

@@ -89,11 +89,6 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
     }
     
     @Override
-    public int getExpectedFrames() {
-        return wv.length;
-    }
-    
-    @Override
     public String getFilePrefix() {
         return "pws";
     }
@@ -125,7 +120,7 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
                 WV.add(Double.valueOf(wv[i]));
             }     
             PWSMetadata pmd = new PWSMetadata(metadata, WV, conf.camera().getExposure());  //This must happen after we have set the camera to our desired exposure.
-            MMSaver imSaver_ = new MMSaver(this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), this.getFilePrefix());
+            MMSaver imSaver_ = new MMSaver(this.getSavePath(savePath, cellNum), imagequeue, wv.length, this.getFilePrefix());
             imSaver_.setMetadata(pmd.toJson());
             imSaver_.start();
             
