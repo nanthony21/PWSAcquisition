@@ -108,9 +108,9 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
     }
       
     @Override
-    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) {
+    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) throws Exception {
         long configStartTime = System.currentTimeMillis();
-        try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
+        album_.clear();
         int initialWv = 550;
 
         try {    
@@ -165,16 +165,8 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
                             canExit = true;
                         }
                     }
-                } catch (Exception e) {
-                    ReportingUtils.logError(e);
-                    ReportingUtils.showError(e);
                 } finally {
-                    try {
-                        conf.stopTTLSequence(); //Got to make sure to stop the sequencing behaviour.
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        ReportingUtils.logMessage("ERROR: PWSPlugin: Stopping property sequence: " + ex.getMessage());
-                    }
+                    conf.stopTTLSequence(); //Got to make sure to stop the sequencing behaviour.         
                     String timeMsg = "PWSPlugin: Hardware Sequenced Acq: ConfigurationTime:" + (seqStartTime-configStartTime)/1000.0 + "HWAcqTime:"+(seqEndTime-seqStartTime)/1000.0+"ImgCollectionTime:"+(collectionEndTime-seqEndTime)/1000.0;
                     ReportingUtils.logMessage(timeMsg);
                 }
@@ -186,17 +178,8 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
                 }
             }
             imSaver_.join();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            ReportingUtils.logMessage("ERROR: PWSPlugin: " + ex.getMessage());
         } finally {
-            try{
-                conf.tunableFilter().setWavelength(initialWv); //Set back to initial wavelength
-            } catch (Exception ex) {
-                ReportingUtils.showError(ex);
-                ex.printStackTrace();
-                ReportingUtils.logMessage("ERROR: PWSPlugin: " + ex.getMessage());
-            }
+            conf.tunableFilter().setWavelength(initialWv); //Set back to initial wavelength
         }
     }
     

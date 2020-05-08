@@ -40,7 +40,7 @@ abstract class FluorescenceAcquisition implements Acquisition<FluorSettings>{
     }
     
     @Override
-    public abstract void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata);
+    public abstract void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) throws Exception;
     
     @Override
     public void setSettings(FluorSettings settings) {

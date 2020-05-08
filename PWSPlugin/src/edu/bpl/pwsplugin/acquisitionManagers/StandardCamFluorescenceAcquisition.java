@@ -34,26 +34,16 @@ class StandardCamFluorescenceAcquisition extends FluorescenceAcquisition{
     }
     
     @Override
-    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) {
+    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) throws Exception {
         String fullSavePath;
         String initialFilter = "";
-        try {
-            fullSavePath = this.getSavePath(savePath, cellNum); //This also checks if the file already exists, throws error if it does.
-        } catch (Exception e) {
-            ReportingUtils.showMessage("Fluoresence save path already exists. Cancelling.");
-            return;
-        }
-        try{
-            if (Globals.getMMConfigAdapter().autoFilterSwitching) {
-                initialFilter = Globals.core().getCurrentConfig("Filter");
-                Globals.core().setConfig("Filter", settings.filterConfigName);
-                Globals.core().waitForConfig("Filter", settings.filterConfigName); // Wait for the device to be ready.
-            } else {
-                ReportingUtils.showMessage("Set the correct fluorescence filter and click `OK`.");
-            }
-        } catch (Exception e) {
-            ReportingUtils.showMessage("Failed to set fluoresence filter. Cancelling.");
-            return;
+        fullSavePath = this.getSavePath(savePath, cellNum); //This also checks if the file already exists, throws error if it does.
+        if (Globals.getMMConfigAdapter().autoFilterSwitching) {
+            initialFilter = Globals.core().getCurrentConfig("Filter");
+            Globals.core().setConfig("Filter", settings.filterConfigName);
+            Globals.core().waitForConfig("Filter", settings.filterConfigName); // Wait for the device to be ready.
+        } else {
+            ReportingUtils.showMessage("Set the correct fluorescence filter and click `OK`.");
         }
         try {
             String origCam = Globals.core().getCurrentConfig("Camera");
@@ -74,16 +64,10 @@ class StandardCamFluorescenceAcquisition extends FluorescenceAcquisition{
             imSaver.setMetadata(md);
             imSaver.queue.put(img);
             imSaver.join();
-        } catch (Exception e) {
-            ReportingUtils.showError(e);
         } finally {
             if (Globals.getMMConfigAdapter().autoFilterSwitching) {
-                try {
-                    Globals.core().setConfig("Filter", initialFilter);
-                    Globals.core().waitForConfig("Filter", initialFilter); // Wait for the device to be ready.
-                } catch (Exception e){
-                    ReportingUtils.showError(e);
-                }
+                Globals.core().setConfig("Filter", initialFilter);
+                Globals.core().waitForConfig("Filter", initialFilter); // Wait for the device to be ready.
             } else {
                 ReportingUtils.showMessage("Return to the PWS filter block and click `OK`.");
             }

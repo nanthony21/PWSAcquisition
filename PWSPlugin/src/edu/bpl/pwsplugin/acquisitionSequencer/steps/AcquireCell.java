@@ -5,7 +5,6 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
-import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
@@ -26,15 +25,15 @@ public class AcquireCell implements Step {
     AcquireDynamics dyn;
     List<AcquireFluorescence> fluor;
     
-    public AcquireCell(Path directory, AcquisitionManager acqMan, PWSSettings  pws,  DynSettings dyn, List<FluorSettings> fluor) {
+    public AcquireCell(Path directory, PWSSettings  pws,  DynSettings dyn, List<FluorSettings> fluor) {
         if (pws != null) {
-            this.pws = new AcquirePWS(directory, acqMan, pws);
+            this.pws = new AcquirePWS(directory, pws);
         }
         if (dyn != null) {
-            this.dyn = new AcquireDynamics(directory, acqMan, dyn);
+            this.dyn = new AcquireDynamics(directory, dyn);
         }
         if (fluor != null) {
-            Function<FluorSettings, AcquireFluorescence> constructStep = (setting)->{return new AcquireFluorescence(directory, acqMan, setting);};
+            Function<FluorSettings, AcquireFluorescence> constructStep = (setting)->{return new AcquireFluorescence(directory, setting);};
             this.fluor = fluor.stream().map(constructStep).collect(Collectors.toList()); //Build a list of fluorescence steps.
         } else {
             this.fluor = new ArrayList<>();

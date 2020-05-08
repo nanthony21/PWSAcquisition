@@ -29,15 +29,12 @@ import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.metadata.DynamicsMetadata;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.DynSettings;
-import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.LinkedBlockingQueue;
 import mmcorej.TaggedImage;
-import mmcorej.org.json.JSONArray;
-import mmcorej.org.json.JSONObject;
 import org.micromanager.data.Coords;
 import org.micromanager.data.Image;
 import org.micromanager.data.Pipeline;
@@ -72,46 +69,38 @@ class DynamicsAcquisition implements Acquisition<DynSettings>{
     }
     
     @Override
-    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) {
+    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) throws Exception {
         ImagingConfiguration conf = Globals.getHardwareConfiguration().getImagingConfigurationByName(this.settings.imConfigName);
         Camera camera = conf.camera();
         TunableFilter tunableFilter = conf.tunableFilter();
-        try {album_.clear();} catch (IOException e) {ReportingUtils.logError(e, "Error from PWSALBUM");}
-        try {
-            tunableFilter.setWavelength(wavelength_);
-            camera.setExposure(exposure_);
-            Globals.core().setCircularBufferMemoryFootprint(1000); //increase the circular buffer to 1Gb to avoid weird issues with lost images
-            Globals.core().clearCircularBuffer();
-            camera.startSequence(numFrames_, 0, false);
-        } catch (Exception e) {
-            ReportingUtils.showError(e);
-        }
+        album_.clear();
+        tunableFilter.setWavelength(wavelength_);
+        camera.setExposure(exposure_);
+        Globals.core().setCircularBufferMemoryFootprint(1000); //increase the circular buffer to 1Gb to avoid weird issues with lost images
+        Globals.core().clearCircularBuffer();
+        camera.startSequence(numFrames_, 0, false);
         Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
-        try {
-            MMSaver imSaver = new MMSaver(this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), this.getFilePrefix());
-            imSaver.start();
-            List<Double> times = new ArrayList<>();
-            for (int i=0; i<numFrames_; i++) {
-                while (Globals.core().getRemainingImageCount() < 1) { //Wait for an image to be ready
-                    Thread.sleep(10);
-                }
-                TaggedImage taggedIm = Globals.core().popNextTaggedImage();
-                times.add(Double.parseDouble((String) taggedIm.tags.get("ElapsedTime-ms"))); //Convert to float and save to json array.
-                Image im = Globals.mm().data().convertTaggedImage(taggedIm);
-                Coords newCoords = im.getCoords().copyBuilder().t(i).build();
-                im = im.copyAtCoords(newCoords);
-                pipeline.insertImage(im); //Add image to the data pipeline for processing
-                im = pipeline.getDatastore().getImage(newCoords); //Retrieve the processed image.
-                imSaver.queue.put(im);
-                album_.addImage(im);
+        MMSaver imSaver = new MMSaver(this.getSavePath(savePath, cellNum), imagequeue, this.getExpectedFrames(), this.getFilePrefix());
+        imSaver.start();
+        List<Double> times = new ArrayList<>();
+        for (int i=0; i<numFrames_; i++) {
+            while (Globals.core().getRemainingImageCount() < 1) { //Wait for an image to be ready
+                Thread.sleep(10);
             }
-            DynamicsMetadata dmd = new DynamicsMetadata(metadata, Double.valueOf(wavelength_), times, camera.getExposure());
-
-            imSaver.setMetadata(dmd.toJson());
-            imSaver.join();
-        } catch (Exception e) {
-            ReportingUtils.showError(e);
+            TaggedImage taggedIm = Globals.core().popNextTaggedImage();
+            times.add(Double.parseDouble((String) taggedIm.tags.get("ElapsedTime-ms"))); //Convert to float and save to json array.
+            Image im = Globals.mm().data().convertTaggedImage(taggedIm);
+            Coords newCoords = im.getCoords().copyBuilder().t(i).build();
+            im = im.copyAtCoords(newCoords);
+            pipeline.insertImage(im); //Add image to the data pipeline for processing
+            im = pipeline.getDatastore().getImage(newCoords); //Retrieve the processed image.
+            imSaver.queue.put(im);
+            album_.addImage(im);
         }
+        DynamicsMetadata dmd = new DynamicsMetadata(metadata, Double.valueOf(wavelength_), times, camera.getExposure());
+
+        imSaver.setMetadata(dmd.toJson());
+        imSaver.join();
     }
     
     @Override
@@ -124,7 +113,7 @@ class DynamicsAcquisition implements Acquisition<DynSettings>{
     }
     
     @Override
-    public String getFilePrefix() {
+    public String getFilePrefix() { //TODO Should be static, handle file spec stuff in a separate class. That way we can refer to the same information from other places (file scanning).
         return "dyn";
     }
     
