@@ -108,7 +108,7 @@ class TreeTransferHandler extends TransferHandler {
         int action = support.getDropAction();
         switch (action) {
             case MOVE:
-                return true;//haveCompleteNode(tree);
+                return true;
             case COPY:
                 // Do not allow a non-leaf node to be copied to a level
                 // which is less than its source level.
@@ -146,7 +146,7 @@ class TreeTransferHandler extends TransferHandler {
                 // Do not allow higher level nodes to be added to list.
                 if(next.getLevel() < node.getLevel()) {
                     break;
-                } else {                                        // sibling
+                } else { // sibling
                     copies.add(copy(next));
                     toRemove.add(next);
                 }
@@ -232,27 +232,7 @@ class TreeTransferHandler extends TransferHandler {
         List<DefaultMutableTreeNode> nodes;
 
         public NodesTransferable(List<DefaultMutableTreeNode> nodes) {
-            //Remove any node in nodes that is a child of another member of nodes, otherwise it will get copied twice.
-            /*List<DefaultMutableTreeNode> allChildren = new ArrayList<>();
-            for (DefaultMutableTreeNode node : nodes) {
-                allChildren.addAll(getAllChildren(node));
-            }
-            for (DefaultMutableTreeNode node : nodes) {
-                if (allChildren.contains(node)) {
-                    nodes.remove(node);
-                }
-            }*/
             this.nodes = nodes;
-         }
-        
-        private List<DefaultMutableTreeNode> getAllChildren(DefaultMutableTreeNode node) {
-            List<DefaultMutableTreeNode> allChildren = new ArrayList<>();
-            List<DefaultMutableTreeNode> children = Collections.list(node.children());
-            allChildren.addAll(children);
-            for (DefaultMutableTreeNode child : children) {
-                allChildren.addAll(getAllChildren(child));
-            }
-            return allChildren;
         }
         
         @Override
