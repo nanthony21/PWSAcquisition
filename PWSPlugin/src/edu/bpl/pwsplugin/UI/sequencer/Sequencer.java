@@ -5,6 +5,10 @@
  */
 package edu.bpl.pwsplugin.UI.sequencer;
 
+import edu.bpl.pwsplugin.UI.sequencer.stepSettings.AutoFocusUI;
+import edu.bpl.pwsplugin.UI.sequencer.stepSettings.FocusLockUI;
+import edu.bpl.pwsplugin.UI.sequencer.stepSettings.PositionSequenceUI;
+import edu.bpl.pwsplugin.UI.sequencer.stepSettings.TimeSeriesUI;
 import edu.bpl.pwsplugin.UI.sequencer.tree.CopyMoveTransferHandler;
 import edu.bpl.pwsplugin.UI.sequencer.tree.CopyOnlyTransferHandler;
 import edu.bpl.pwsplugin.UI.sequencer.tree.StepNode;
@@ -18,6 +22,8 @@ import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -63,24 +69,32 @@ class SettingsPanel extends JPanel implements TreeSelectionListener {
     public SettingsPanel() {
         super(new CardLayout());
         
-        BuilderJPanel[] panels = {new PWSPanel(), new DynPanel(), new FluorPanel()};
-        Consts.Type[] names = {Consts.Type.PWS, Consts.Type.DYN, Consts.Type.FLUOR};
-        assert panels.length == names.length;
+        Map<Consts.Type, BuilderJPanel> m = new HashMap<>();
+        m.put(Consts.Type.PWS, new PWSPanel());
+        m.put(Consts.Type.DYN, new DynPanel());
+        m.put(Consts.Type.FLUOR, new FluorPanel());
+        m.put(Consts.Type.AF, new AutoFocusUI());
+        m.put(Consts.Type.PFS, new FocusLockUI());
+        m.put(Consts.Type.POS, new PositionSequenceUI());
+        m.put(Consts.Type.TIME, new TimeSeriesUI());
         
         int maxH = 0;
         int maxW = 0;
         
-        for (int i=0; i<panels.length; i++) {
-            this.add(panels[i], names[i].toString());
-            int h = panels[i].getHeight();
+       
+        
+        for (Map.Entry<Consts.Type, BuilderJPanel> e : m.entrySet()) {
+            this.add(e.getValue(), e.getKey().toString());
+            int h = e.getValue().getHeight();
             if (h > maxH) {
                 maxH = h;
             }
-            int w = panels[i].getWidth();
+            int w = e.getValue().getWidth();
             if (w > maxW) {
                 maxW = w;
             }
         }
+
         Dimension dim = new Dimension(maxW, maxH);
         this.setSize(dim);
         this.setMinimumSize(dim);
