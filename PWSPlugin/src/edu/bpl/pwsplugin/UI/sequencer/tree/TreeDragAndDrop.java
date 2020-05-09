@@ -8,20 +8,21 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import net.miginfocom.swing.MigLayout;
 
 public class TreeDragAndDrop extends JPanel{
     protected JTree tree = new JTree();
+    protected DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
     
     public TreeDragAndDrop(TransferHandler handler) {
         super(new MigLayout());
         tree.setDragEnabled(true);
         tree.setDropMode(DropMode.ON_OR_INSERT);
         tree.setTransferHandler(handler);
-        tree.getSelectionModel().setSelectionMode(
-                TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
+        tree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
         this.add(new JScrollPane(tree));
     }
 
@@ -37,8 +38,16 @@ public class TreeDragAndDrop extends JPanel{
             tree.expandRow(row);
         }
     }
+    
+    public JTree tree() {
+        return tree;
+    }
+    
+    public DefaultTreeModel model() {
+        return model;
+    }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         JFrame f = new JFrame();
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel p = new JPanel(new MigLayout());
@@ -50,7 +59,7 @@ public class TreeDragAndDrop extends JPanel{
         f.setSize(400,400);
         f.setLocation(200,200);
         f.setVisible(true);
-    }
+    }*/
 }
 
 

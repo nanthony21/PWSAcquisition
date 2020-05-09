@@ -5,39 +5,19 @@
  */
 package edu.bpl.pwsplugin.UI.sequencer.tree;
 
-import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
-import static javax.swing.TransferHandler.COPY;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 public class CopyOnlyTransferHandler extends TransferHandler {
-    DataFlavor nodesFlavor;
-    DataFlavor[] flavors = new DataFlavor[1];
 
-    public CopyOnlyTransferHandler() {
-        try {
-            String mimeType = DataFlavor.javaJVMLocalObjectMimeType +
-                              ";class=\"" +
-                javax.swing.tree.DefaultMutableTreeNode[].class.getName() +
-                              "\"";
-            nodesFlavor = new DataFlavor(mimeType);
-            flavors[0] = nodesFlavor;
-        } catch(ClassNotFoundException e) {
-            System.out.println("ClassNotFound: " + e.getMessage());
-        }
-    }
+    public CopyOnlyTransferHandler() {}
     
-    private void log(String msg) {
-        System.out.println(msg);
-    }
-
     @Override
     public boolean canImport(TransferHandler.TransferSupport support) {
         return false;
@@ -65,14 +45,14 @@ public class CopyOnlyTransferHandler extends TransferHandler {
                     copies.add(new CopiedMutableTreeNode(next));
                 }
             }
-            return new NodesTransferable(copies);
+            return new Transferables.NodesTransferable(copies);
         }
         return null;
     }
 
     @Override
     public int getSourceActions(JComponent c) {
-        return COPY; //The type of actions allowed.
+        return TransferHandler.COPY; //The type of actions allowed.
     }
 
     @Override
@@ -84,31 +64,5 @@ public class CopyOnlyTransferHandler extends TransferHandler {
     @Override
     public String toString() {
         return getClass().getName();
-    }
-
-    public class NodesTransferable implements Transferable {
-        List<DefaultMutableTreeNode> nodes;
-
-        public NodesTransferable(List<DefaultMutableTreeNode> nodes) {
-            this.nodes = nodes;
-        }
-        
-        @Override
-        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-            if(!isDataFlavorSupported(flavor)) {
-                throw new UnsupportedFlavorException(flavor);
-            }
-            return nodes;
-        }
-
-        @Override
-        public DataFlavor[] getTransferDataFlavors() {
-            return flavors;
-        }
-
-        @Override
-        public boolean isDataFlavorSupported(DataFlavor flavor) {
-            return nodesFlavor.equals(flavor);
-        }
     }
 }

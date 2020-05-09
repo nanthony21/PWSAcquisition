@@ -22,24 +22,14 @@ import javax.swing.tree.TreePath;
 
 public class CopyMoveTransferHandler extends TransferHandler {
     DataFlavor nodesFlavor;
-    DataFlavor[] flavors = new DataFlavor[1];
     List<DefaultMutableTreeNode> nodesToRemove;
 
     public CopyMoveTransferHandler() {
         try {
-            String mimeType = DataFlavor.javaJVMLocalObjectMimeType +
-                              ";class=\"" +
-                javax.swing.tree.DefaultMutableTreeNode[].class.getName() +
-                              "\"";
-            nodesFlavor = new DataFlavor(mimeType);
-            flavors[0] = nodesFlavor;
+            nodesFlavor = new DataFlavors.CopiedNodeDataFlavor();
         } catch(ClassNotFoundException e) {
-            System.out.println("ClassNotFound: " + e.getMessage());
+            throw new RuntimeException(e);
         }
-    }
-    
-    private void log(String msg) {
-        System.out.println(msg);
     }
 
     @Override
@@ -97,7 +87,7 @@ public class CopyMoveTransferHandler extends TransferHandler {
                 }
             }
             nodesToRemove = toRemove;
-            return new NodesTransferable(copies);
+            return new Transferables.NodesTransferable(copies);
         }
         return null;
     }
@@ -156,31 +146,5 @@ public class CopyMoveTransferHandler extends TransferHandler {
     @Override
     public String toString() {
         return getClass().getName();
-    }
-
-    public class NodesTransferable implements Transferable {
-        List<DefaultMutableTreeNode> nodes;
-
-        public NodesTransferable(List<DefaultMutableTreeNode> nodes) {
-            this.nodes = nodes;
-        }
-        
-        @Override
-        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-            if(!isDataFlavorSupported(flavor)) {
-                throw new UnsupportedFlavorException(flavor);
-            }
-            return nodes;
-        }
-
-        @Override
-        public DataFlavor[] getTransferDataFlavors() {
-            return flavors;
-        }
-
-        @Override
-        public boolean isDataFlavorSupported(DataFlavor flavor) {
-            return nodesFlavor.equals(flavor);
-        }
     }
 }
