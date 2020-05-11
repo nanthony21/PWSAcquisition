@@ -6,7 +6,6 @@
 package edu.bpl.pwsplugin.UI.sequencer.tree;
 
 import edu.bpl.pwsplugin.UI.sequencer.Consts;
-import edu.bpl.pwsplugin.UI.sequencer.SequencerUI;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.tree.DefaultMutableTreeNode;
 
