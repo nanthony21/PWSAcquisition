@@ -55,6 +55,9 @@ public class CopyMoveTransferHandler extends TransferHandler {
         } catch (NullPointerException e) {
             return false; // In some cases the path can be null. No need to throw an error though.
         }
+        if (!dropNode.getAllowsChildren()) {
+            return false;
+        }
         for (CopyableMutableTreeNode node : nodes) {
             if (node.equals(dropNode)) {
                 return false;

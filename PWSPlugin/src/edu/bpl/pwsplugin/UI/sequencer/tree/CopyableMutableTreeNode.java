@@ -17,7 +17,7 @@ public class CopyableMutableTreeNode extends DefaultMutableTreeNode {
     //Subclasses must 
     UUID id;
     
-    public CopyableMutableTreeNode() {
+    protected CopyableMutableTreeNode() {
         this(UUID.randomUUID());
     }
     

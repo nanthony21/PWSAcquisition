@@ -12,6 +12,7 @@ import edu.bpl.pwsplugin.UI.sequencer.stepSettings.PositionSequenceUI;
 import edu.bpl.pwsplugin.UI.sequencer.stepSettings.TimeSeriesUI;
 import edu.bpl.pwsplugin.UI.sequencer.tree.CopyMoveTransferHandler;
 import edu.bpl.pwsplugin.UI.sequencer.tree.CopyOnlyTransferHandler;
+import edu.bpl.pwsplugin.UI.sequencer.tree.EndpointStepNode;
 import edu.bpl.pwsplugin.UI.sequencer.tree.StepNode;
 import edu.bpl.pwsplugin.UI.sequencer.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.UI.settings.DynPanel;
@@ -136,9 +137,9 @@ class NewStepsTree extends TreeDragAndDrop {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
         
         DefaultMutableTreeNode acquisitions = new DefaultMutableTreeNode("Acquisitions");
-        acquisitions.add(new StepNode(new PWSSettings(), Consts.Type.PWS));
-        acquisitions.add(new StepNode(new DynSettings(), Consts.Type.DYN));
-        acquisitions.add(new StepNode(new FluorSettings(), Consts.Type.FLUOR));
+        acquisitions.add(new EndpointStepNode(new PWSSettings(), Consts.Type.PWS));
+        acquisitions.add(new EndpointStepNode(new DynSettings(), Consts.Type.DYN));
+        acquisitions.add(new EndpointStepNode(new FluorSettings(), Consts.Type.FLUOR));
         root.add(acquisitions);
         
         DefaultMutableTreeNode utility = new DefaultMutableTreeNode("Utility");
