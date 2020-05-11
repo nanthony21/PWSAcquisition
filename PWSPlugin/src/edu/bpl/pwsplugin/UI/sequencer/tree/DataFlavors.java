@@ -12,10 +12,14 @@ import java.awt.datatransfer.DataFlavor;
  * @author nick
  */
 public class DataFlavors {
-    public static class CopiedNodeDataFlavor extends DataFlavor {
-        private static String mimeType = DataFlavor.javaJVMLocalObjectMimeType +  ";class=\"" + CopyableMutableTreeNode.class.getName() + "\"";
-        public CopiedNodeDataFlavor() throws ClassNotFoundException {
-            super(mimeType);
+    public static DataFlavor CopiedNodeDataFlavor;
+
+    private static String CopiedNodeDataFlavorMime = DataFlavor.javaJVMLocalObjectMimeType +  ";class=\"" + CopyableMutableTreeNode.class.getName() + "\"";
+    static {
+        try {
+            CopiedNodeDataFlavor = new DataFlavor(CopiedNodeDataFlavorMime);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }

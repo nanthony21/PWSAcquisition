@@ -21,11 +21,7 @@ public class Transferables {
 
         public NodesTransferable(List<CopyableMutableTreeNode> nodes) {
             this.nodes = nodes;
-            try {
-                flavors[0] = new DataFlavors.CopiedNodeDataFlavor();
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            flavors[0] = DataFlavors.CopiedNodeDataFlavor;
         }
 
         @Override

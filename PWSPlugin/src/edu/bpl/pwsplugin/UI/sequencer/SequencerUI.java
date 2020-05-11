@@ -165,7 +165,6 @@ class SequenceTree extends TreeDragAndDrop {
         
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Sequence Root");
         
-        
         model.setRoot(root);
 
     }

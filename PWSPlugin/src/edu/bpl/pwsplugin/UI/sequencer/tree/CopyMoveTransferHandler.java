@@ -25,11 +25,7 @@ public class CopyMoveTransferHandler extends TransferHandler {
     List<CopyableMutableTreeNode> nodesToRemove;
 
     public CopyMoveTransferHandler() {
-        try {
-            nodesFlavor = new DataFlavors.CopiedNodeDataFlavor();
-        } catch(ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        nodesFlavor = DataFlavors.CopiedNodeDataFlavor;
     }
 
     @Override
@@ -83,8 +79,7 @@ public class CopyMoveTransferHandler extends TransferHandler {
                 return null; //We can't work with non copyable nodes.
             }
             CopyableMutableTreeNode node = (CopyableMutableTreeNode)paths[0].getLastPathComponent();
-            CopyableMutableTreeNode copy = node.copyWithUUID();
-            copies.add(copy);
+            copies.add(node);
             toRemove.add(node);
             for(int i = 1; i < paths.length; i++) {
                 CopyableMutableTreeNode next = (CopyableMutableTreeNode) paths[i].getLastPathComponent();
@@ -92,7 +87,7 @@ public class CopyMoveTransferHandler extends TransferHandler {
                 if(next.getLevel() < node.getLevel()) {
                     break;
                 } else { // sibling
-                    copies.add(next.copyWithUUID());
+                    copies.add(next);
                     toRemove.add(next);
                 }
             }
