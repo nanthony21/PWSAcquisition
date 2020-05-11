@@ -14,10 +14,11 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
  */
 public class StepNode extends CopyableMutableTreeNode {
     Consts.Type type;
+    JsonableParam settings;
     public StepNode(JsonableParam settings, Consts.Type type) {
         this();     
         this.type = type;
-        this.setUserObject(settings);
+        this.settings = settings;
     }
     
     protected StepNode() {
@@ -28,6 +29,14 @@ public class StepNode extends CopyableMutableTreeNode {
         return type;
     }
     
+    public JsonableParam getSettings() {
+        return this.settings;
+    }
+    
+    public void setSettings(JsonableParam settings) {
+        this.settings = settings;
+    }
+    
     @Override
     protected void copyAttributes(CopyableMutableTreeNode from, CopyableMutableTreeNode to) {
         if (!(from instanceof StepNode) || !(to instanceof StepNode)) {
@@ -35,6 +44,7 @@ public class StepNode extends CopyableMutableTreeNode {
         }
         super.copyAttributes(from, to);
         ((StepNode)to).type = ((StepNode)from).type;
+        ((StepNode)to).settings = ((StepNode)from).settings.clone();
     }
     
     @Override

@@ -34,7 +34,11 @@ public class JsonableParam {
     public JsonableParam() {
         this.registerClass(this.getClass());
     }
-            
+        
+    @Override
+    public JsonableParam clone() {
+        return JsonableParam.fromJsonString(this.toJsonString(), this.getClass());
+    }
     
     public String toJsonString() {
         Gson gson = GsonUtils.getGson();

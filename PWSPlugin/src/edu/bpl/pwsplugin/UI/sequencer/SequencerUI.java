@@ -112,7 +112,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener {
     public void valueChanged(TreeSelectionEvent e) {
         //Make sure to save previous settings.
         if (this.lastSelectedNode != null) {
-            this.lastSelectedNode.setUserObject(panelTypeMapping.get(this.lastSelectedNode.getType()).build());
+            this.lastSelectedNode.setSettings(panelTypeMapping.get(this.lastSelectedNode.getType()).build());
         }
         
         Object node = e.getPath().getLastPathComponent();
@@ -122,7 +122,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener {
             ((CardLayout) this.getLayout()).show(this, n.getType().toString());
             BuilderJPanel panel = panelTypeMapping.get(n.getType());
             try {
-                panel.populateFields(n.getUserObject());
+                panel.populateFields(n.getSettings());
             } catch (Exception exc) {
                 Globals.mm().logs().logError(exc);
             }
