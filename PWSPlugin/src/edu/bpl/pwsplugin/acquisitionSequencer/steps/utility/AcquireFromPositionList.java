@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps.utility;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
@@ -17,7 +18,7 @@ import org.micromanager.PositionList;
  *
  * @author nick
  */
-public class AcquireFromPositionList implements Step {
+public class AcquireFromPositionList implements ContainerStep {
     //Executes `step` at each position in the positionlist and increments the cell number each time.
     Step step;
     PositionList list;

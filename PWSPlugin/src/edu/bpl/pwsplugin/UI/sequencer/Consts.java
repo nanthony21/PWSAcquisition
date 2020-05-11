@@ -42,7 +42,7 @@ public class Consts {
             case TIME:
                 return "Time Series";
             case ZOFFSET:
-                return "Z Offset";
+                return "Z Offset"; //TODO combine with focuslock?
             case AF:
                 return "Software Autofocus";                  
         }

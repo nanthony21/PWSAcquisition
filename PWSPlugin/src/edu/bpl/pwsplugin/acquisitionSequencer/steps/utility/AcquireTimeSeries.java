@@ -6,13 +6,14 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps.utility;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 
 /**
  *
  * @author nick
  */
-public class AcquireTimeSeries implements Step{
+public class AcquireTimeSeries implements ContainerStep {
     double frame_interval;
     int num_frames;
     Step step;

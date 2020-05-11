@@ -14,7 +14,7 @@ import java.nio.file.Path;
  *
  * @author nick
  */
-public class AcquireFluorescence implements Step {
+public class AcquireFluorescence implements EndpointStep {
     //This doesn't increment the cell number because for all we know we still want to save other acquisition types to the same cell number.
     Path directory;
     AcquisitionManager acqMan;

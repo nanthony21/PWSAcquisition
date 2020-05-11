@@ -26,7 +26,7 @@ public class TimeSeriesUI extends SingleBuilderJPanel<AcquireTimeSeriesSettings>
         super(new MigLayout(), AcquireTimeSeriesSettings.class);
         
         numFrames = new JSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
-        frameIntervalMinutes = new JSpinner(new SpinnerNumberModel(1.0, 0.0, 10000000000.0, 1.0));
+        frameIntervalMinutes = new JSpinner(new SpinnerNumberModel(1.0, 0.0, 1000000000.0, 1.0));
         
         this.add(new JLabel("Number of time frames:"));
         this.add(numFrames, "wrap");
@@ -38,7 +38,7 @@ public class TimeSeriesUI extends SingleBuilderJPanel<AcquireTimeSeriesSettings>
     public Map<String, Object> getPropertyFieldMap() {
         HashMap<String, Object> m = new HashMap<>();
         m.put("numFrames", numFrames);
-        m.put("frameIntervalMinues", frameIntervalMinutes);
+        m.put("frameIntervalMinutes", frameIntervalMinutes);
         return m;
     }
 }

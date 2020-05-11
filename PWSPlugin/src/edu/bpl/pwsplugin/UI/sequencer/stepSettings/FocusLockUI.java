@@ -26,7 +26,7 @@ public class FocusLockUI extends SingleBuilderJPanel<FocusLockSettings>{
     public FocusLockUI() {
         super(new MigLayout(), FocusLockSettings.class);
         
-        offset = new JSpinner(new SpinnerNumberModel(0, -Double.MAX_VALUE, Double.MAX_VALUE, 1));
+        offset = new JSpinner(new SpinnerNumberModel(0, -1e8, 1e8, 1));
         delay = new JSpinner(new SpinnerNumberModel(1.0, 0.0, 30.0, 1.0));
         
         this.add(new JLabel("Z Offset"));

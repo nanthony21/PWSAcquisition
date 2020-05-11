@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps.utility;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 
@@ -13,7 +14,7 @@ import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
  *
  * @author nick
  */
-public class AutoShutter implements Step {
+public class AutoShutter implements ContainerStep {
     double delay;
     Step step;
     Illuminator illuminator;

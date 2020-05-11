@@ -14,7 +14,7 @@ import java.nio.file.Path;
  *
  * @author nick
  */
-public class AcquireDynamics implements Step {
+public class AcquireDynamics implements EndpointStep {
     //This doesn't increment the cell number because for all we know we still want to save other acquisition types to the same cell number.
     Path directory;
     DynSettings settings;

@@ -14,6 +14,7 @@ import org.micromanager.internal.utils.ReportingUtils;
 
 
 public class JsonableParam {    
+    //Note: Subclasses of this can not have any attributes names `type`. if they do they won't work with the runtime type adapter.
     private static final RuntimeTypeAdapterFactory<JsonableParam> adapter = 
             RuntimeTypeAdapterFactory.of(JsonableParam.class);
 

@@ -49,7 +49,12 @@ public class CopyMoveTransferHandler extends TransferHandler {
         }       
         
         // Do not allow a drop on the drag source selections. or a child of the source selections.
-        DefaultMutableTreeNode dropNode = (DefaultMutableTreeNode) dl.getPath().getLastPathComponent();
+        DefaultMutableTreeNode dropNode;
+        try {
+            dropNode = (DefaultMutableTreeNode) dl.getPath().getLastPathComponent();
+        } catch (NullPointerException e) {
+            return false; // In some cases the path can be null. No need to throw an error though.
+        }
         for (CopiedMutableTreeNode node : nodes) {
             if (node.original().equals(dropNode)) {
                 return false;

@@ -12,10 +12,10 @@ public abstract class Illuminator {
     public abstract void setShutter(boolean on) throws Exception;
     
     public static Illuminator getInstance(IlluminatorSettings settings) {
-        if (settings.type == Types.XCite120LED) {
+        if (settings.illuminatorType == Types.XCite120LED) {
             return new XCite120LED(settings);
         } else {
-            throw new RuntimeException("Programming Error: Illumator type " + settings.type + " is not supported.");
+            throw new RuntimeException("Programming Error: Illumator type " + settings.illuminatorType + " is not supported.");
         }
     }
     
