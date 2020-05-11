@@ -10,5 +10,5 @@ package edu.bpl.pwsplugin.acquisitionSequencer.settings;
  * @author nick
  */
 public class SoftwareAutoFocusSettings extends SequencerSettings {
-    public String afPluginName;
+    public String afPluginName = "OughtaFocus";
 }

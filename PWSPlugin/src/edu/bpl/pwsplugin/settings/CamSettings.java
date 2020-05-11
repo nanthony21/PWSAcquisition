@@ -14,9 +14,9 @@ import java.util.List;
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class CamSettings extends JsonableParam {
-    public String name;
-    public Camera.Types camType;
-    public List<Double> linearityPolynomial;
-    public int darkCounts;
-    public double[] affineTransform; //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera. For simplicity we store this array as a 1d array of length 6
+    public String name = "";
+    public Camera.Types camType = Camera.Types.HamamatsuOrca4V3;
+    public List<Double> linearityPolynomial = null;
+    public int darkCounts = 0;
+    public double[] affineTransform = {0, 0, 0, 0, 0, 0}; //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera. For simplicity we store this array as a 1d array of length 6
 }

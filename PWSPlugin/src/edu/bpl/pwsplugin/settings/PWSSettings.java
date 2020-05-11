@@ -11,13 +11,13 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 
 public class PWSSettings extends JsonableParam {
 
-    public String imConfigName;
-    public int wvStart;
-    public int wvStop;
-    public int wvStep;
-    public double exposure;
-    public boolean ttlTriggering;
-    public boolean externalCamTriggering;
+    public String imConfigName = "";
+    public int wvStart = 500;
+    public int wvStop = 700;
+    public int wvStep = 2;
+    public double exposure = 100;
+    public boolean ttlTriggering = false;
+    public boolean externalCamTriggering = false;
 
     public int[] getWavelengthArray() {
         int numWvs = java.lang.Math.abs(wvStart - wvStop) / wvStep + 1;

@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.settings;
 
 import edu.bpl.pwsplugin.utils.JsonableParam;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,8 +15,8 @@ import java.util.List;
  */
 public class HWConfigurationSettings extends JsonableParam {
     
-    public String systemName;
-    public List<ImagingConfigurationSettings> configs;
+    public String systemName = "";
+    public List<ImagingConfigurationSettings> configs = new ArrayList<>();
 
     public ImagingConfigurationSettings getConfigurationByName(String name) {
         for (int i = 0; i < this.configs.size(); i++) {

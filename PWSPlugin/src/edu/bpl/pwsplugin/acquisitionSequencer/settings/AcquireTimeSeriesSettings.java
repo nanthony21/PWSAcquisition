@@ -12,7 +12,7 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
  * @author nick
  */
 public class AcquireTimeSeriesSettings extends SequencerSettings {
-    public int numFrames;
-    public double frameIntervalMinutes;
+    public int numFrames = 1;
+    public double frameIntervalMinutes = 1;
     
 }

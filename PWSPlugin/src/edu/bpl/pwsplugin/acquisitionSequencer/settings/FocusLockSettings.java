@@ -12,6 +12,6 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
  * @author nick
  */
 public class FocusLockSettings extends JsonableParam {
-    public double zOffset;
-    public double preDelay;
+    public double zOffset = 0;
+    public double preDelay = 1;
 }

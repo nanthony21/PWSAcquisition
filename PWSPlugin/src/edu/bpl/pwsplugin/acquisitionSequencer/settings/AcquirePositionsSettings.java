@@ -12,6 +12,6 @@ import org.micromanager.PositionList;
  * @author nick
  */
 public class AcquirePositionsSettings extends SequencerSettings {
-    public PositionList posList;
+    public PositionList posList = new PositionList();
     
 }

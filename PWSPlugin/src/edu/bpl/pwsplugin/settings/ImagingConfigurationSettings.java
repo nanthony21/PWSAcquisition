@@ -13,9 +13,9 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class ImagingConfigurationSettings extends JsonableParam {
-    public String name;
-    public ImagingConfiguration.Types configType;
-    public CamSettings camSettings;
-    public TunableFilterSettings filtSettings;
-    public IlluminatorSettings illuminatorSettings;
+    public String name = "";
+    public ImagingConfiguration.Types configType = ImagingConfiguration.Types.StandardCamera;
+    public CamSettings camSettings = new CamSettings();
+    public TunableFilterSettings filtSettings = new TunableFilterSettings();
+    public IlluminatorSettings illuminatorSettings = new IlluminatorSettings();
 }
