@@ -29,9 +29,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import net.miginfocom.swing.MigLayout;
         
 
@@ -39,12 +37,12 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author nick
  */
-public class Sequencer extends JPanel {
+public class SequencerUI extends JPanel {
     SequenceTree seqTree = new SequenceTree();
     NewStepsTree newStepsTree = new NewStepsTree();
     SettingsPanel settingsPanel = new SettingsPanel();
     
-    public Sequencer() {
+    public SequencerUI() {
         super(new MigLayout());
 
         this.settingsPanel.setBorder(BorderFactory.createEtchedBorder());
@@ -58,7 +56,7 @@ public class Sequencer extends JPanel {
     
     public static void main(String[] args) {
         JFrame f = new JFrame();
-        f.add(new Sequencer());
+        f.add(new SequencerUI());
         f.pack();
         f.setVisible(true);
     }
@@ -111,11 +109,14 @@ class SettingsPanel extends JPanel implements TreeSelectionListener {
 class NewStepsTree extends TreeDragAndDrop {
     public NewStepsTree() {
         super(new CopyOnlyTransferHandler());
-        StepNode root = new StepNode(new PWSSettings(), Consts.Type.PWS);
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode();
         
-        root.add(new StepNode(new DynSettings(), Consts.Type.DYN));
-        root.add(new StepNode(new FluorSettings(), Consts.Type.TIME));
-        //((DefaultMutableTreeNode) this.model.getRoot()).removeAllChildren();
+        DefaultMutableTreeNode acquisitions = new DefaultMutableTreeNode("Acquisitions");
+        acquisitions.add(new StepNode(new PWSSettings(), Consts.Type.PWS));
+        acquisitions.add(new StepNode(new DynSettings(), Consts.Type.DYN));
+        acquisitions.add(new StepNode(new FluorSettings(), Consts.Type.TIME));
+        root.add(acquisitions);
+        
         model.setRoot(root);
     }
 }

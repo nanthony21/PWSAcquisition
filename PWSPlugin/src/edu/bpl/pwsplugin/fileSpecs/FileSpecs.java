@@ -6,7 +6,6 @@
 package edu.bpl.pwsplugin.fileSpecs;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  *

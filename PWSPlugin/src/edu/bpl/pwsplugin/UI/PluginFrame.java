@@ -23,6 +23,7 @@ package edu.bpl.pwsplugin.UI;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.HWConfiguration;
 import edu.bpl.pwsplugin.PWSPlugin;
+import edu.bpl.pwsplugin.UI.sequencer.SequencerUI;
 import edu.bpl.pwsplugin.UI.settings.DynPanel;
 import edu.bpl.pwsplugin.UI.settings.FluorPanel;
 import edu.bpl.pwsplugin.UI.settings.HWConfPanel;
@@ -70,6 +71,7 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
     private final PWSPanel pwsPanel = new PWSPanel();
     private final FluorPanel flPanel = new FluorPanel();
     private final DynPanel dynPanel = new DynPanel();
+    private final SequencerUI sequencePanel = new SequencerUI();
     private final ConfDialog configDialog = new ConfDialog(this);
     
     private PWSSettings lastPWSSettings;
@@ -117,6 +119,7 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         tabs.addTab("PWS", this.pwsPanel);
         tabs.addTab("Fluorescence", this.flPanel);
         tabs.addTab("Dynamics", this.dynPanel);
+        tabs.addTab("Sequencer", this.sequencePanel);
         
         JPanel bottomPanel = new JPanel(new MigLayout());
         bottomPanel.add(dirSelect, "grow, pushx");

@@ -22,7 +22,7 @@ public class AutoFocusUI extends BuilderJPanel<SoftwareAutoFocusSettings> {
     
     public AutoFocusUI() {
         super(new MigLayout(), SoftwareAutoFocusSettings.class);
-        afNames.setModel(new DefaultComboBoxModel<>((String[]) Globals.mm().getAutofocusManager().getAllAutofocusMethods().toArray()));
+        afNames.setModel(new DefaultComboBoxModel<>(Globals.mm().getAutofocusManager().getAllAutofocusMethods().toArray(new String[0])));
         
         this.add(new JLabel("Autofocus Method:"));
         this.add(afNames);

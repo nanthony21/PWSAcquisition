@@ -5,8 +5,10 @@
  */
 package edu.bpl.pwsplugin.UI.sequencer.stepSettings;
 
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquirePositionsSettings;
+import javax.swing.JButton;
 import net.miginfocom.swing.MigLayout;
 import org.micromanager.PositionList;
 import org.micromanager.internal.positionlist.PositionListDlg;
@@ -17,22 +19,29 @@ import org.micromanager.internal.positionlist.PositionListDlg;
  */
 public class PositionSequenceUI extends BuilderJPanel<AcquirePositionsSettings>{
     PositionListDlg dlg;
-    PositionList posList;
+    JButton showDlgButton = new JButton("Show Position List");
+    //PositionList posList;
     
     public PositionSequenceUI() {
-        super(new MigLayout(), AcquirePositionsSettings.class);
-         
-        dlg = new PositionListDlg(core, studio, new PositionList(), acd);
-         
+        super(new MigLayout(), AcquirePositionsSettings.class);    
+        dlg = new PositionListDlg(Globals.mm(), new PositionList());
+        
+        showDlgButton.addActionListener((evt)->{
+            dlg.setVisible(true);
+        });
+        
+        this.add(showDlgButton);
     }
     
+    @Override
     public AcquirePositionsSettings build() {
         AcquirePositionsSettings settings = new AcquirePositionsSettings();
-        settings
+        settings.posList = dlg.getPositionList();
+        return settings;
     }
     
     @Override
     public void populateFields(AcquirePositionsSettings settings) {
-        
+        dlg.setPositionList(settings.posList);
     }
 }
