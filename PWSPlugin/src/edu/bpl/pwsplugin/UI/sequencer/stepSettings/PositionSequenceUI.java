@@ -5,10 +5,34 @@
  */
 package edu.bpl.pwsplugin.UI.sequencer.stepSettings;
 
+import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
+import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquirePositionsSettings;
+import net.miginfocom.swing.MigLayout;
+import org.micromanager.PositionList;
+import org.micromanager.internal.positionlist.PositionListDlg;
+
 /**
  *
  * @author nick
  */
-public class PositionSequenceUI {
-    //TODO
+public class PositionSequenceUI extends BuilderJPanel<AcquirePositionsSettings>{
+    PositionListDlg dlg;
+    PositionList posList;
+    
+    public PositionSequenceUI() {
+        super(new MigLayout(), AcquirePositionsSettings.class);
+         
+        dlg = new PositionListDlg(core, studio, new PositionList(), acd);
+         
+    }
+    
+    public AcquirePositionsSettings build() {
+        AcquirePositionsSettings settings = new AcquirePositionsSettings();
+        settings
+    }
+    
+    @Override
+    public void populateFields(AcquirePositionsSettings settings) {
+        
+    }
 }
