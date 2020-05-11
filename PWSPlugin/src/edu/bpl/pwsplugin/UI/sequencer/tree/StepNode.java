@@ -44,7 +44,7 @@ public class StepNode extends CopyableMutableTreeNode {
         }
         super.copyAttributes(from, to);
         ((StepNode)to).type = ((StepNode)from).type;
-        ((StepNode)to).settings = ((StepNode)from).settings.clone();
+        ((StepNode)to).settings = ((StepNode)from).settings.copy();
     }
     
     @Override

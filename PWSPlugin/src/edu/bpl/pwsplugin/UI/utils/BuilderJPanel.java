@@ -1,7 +1,6 @@
 
 package edu.bpl.pwsplugin.UI.utils;
 
-import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.LayoutManager;
 import javax.swing.JPanel;
 
@@ -9,7 +8,7 @@ import javax.swing.JPanel;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public abstract class BuilderJPanel<T extends JsonableParam> extends JPanel{
+public abstract class BuilderJPanel<T> extends JPanel{
     //Base class for UI componenets that can `build` and be populated from an instance
     //of an UIbuildable class.
     protected Class<T> typeParamClass;

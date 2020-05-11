@@ -35,8 +35,7 @@ public class JsonableParam {
         this.registerClass(this.getClass());
     }
         
-    @Override
-    public JsonableParam clone() {
+    public JsonableParam copy() {
         return JsonableParam.fromJsonString(this.toJsonString(), this.getClass());
     }
     
