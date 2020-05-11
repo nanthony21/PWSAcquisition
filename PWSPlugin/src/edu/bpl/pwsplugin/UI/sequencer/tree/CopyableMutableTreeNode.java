@@ -5,7 +5,6 @@
  */
 package edu.bpl.pwsplugin.UI.sequencer.tree;
 
-import java.util.UUID;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
@@ -15,41 +14,26 @@ import javax.swing.tree.DefaultMutableTreeNode;
 public class CopyableMutableTreeNode extends DefaultMutableTreeNode {
     //Creates a copy of a tree node and compares as equal to it's parent or another copy with the same parent.
     //Subclasses must 
-    UUID id;
     
     protected CopyableMutableTreeNode() {
-        this(UUID.randomUUID());
-    }
-    
-    private CopyableMutableTreeNode(UUID id) {
         super();
-        this.id = id;
-
     }
     
-    public CopyableMutableTreeNode copyWithUUID() {
-        CopyableMutableTreeNode n = copy(this, true);
+    public CopyableMutableTreeNode copy() {
+        CopyableMutableTreeNode n = recursiveCopy(this);
         return n;
     }
     
-    public CopyableMutableTreeNode copyWithoutUUID() {
-        CopyableMutableTreeNode n = copy(this, false);
-        return n;
-    }
-    
-    private CopyableMutableTreeNode copy(CopyableMutableTreeNode node, boolean withUUID) {
+    private CopyableMutableTreeNode recursiveCopy(CopyableMutableTreeNode node) {
         CopyableMutableTreeNode n;
         try {
             n = this.getClass().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        if (withUUID) {
-            n.id = node.id;
-        }
         this.copyAttributes(node, n);
         for(int iChildren=node.getChildCount(), i=0; i<iChildren; i++) {
-            n.add(copy((CopyableMutableTreeNode) node.getChildAt(i), withUUID));
+            n.add(recursiveCopy((CopyableMutableTreeNode) node.getChildAt(i)));
         }
         return n;
     }
@@ -61,6 +45,7 @@ public class CopyableMutableTreeNode extends DefaultMutableTreeNode {
     }
 
     public static CopyableMutableTreeNode create(DefaultMutableTreeNode node, Class<? extends CopyableMutableTreeNode> clazz) {
+        //Converts a defaultMutableTreeNode to a copyable tree node.
         CopyableMutableTreeNode n;
         try {
             n = clazz.newInstance();
@@ -74,16 +59,4 @@ public class CopyableMutableTreeNode extends DefaultMutableTreeNode {
         }
         return n;
     }
-    
-    @Override
-    public boolean equals(Object node) {
-        //Determine equality based on UUID.
-        if (node instanceof CopyableMutableTreeNode) {
-            return this.id.equals(((CopyableMutableTreeNode) node).id);
-        } else {
-            return false;
-        }
-    }
-    
-    //TODO isNodeAncector, isNodeDescendant need to have the UUID comparison behavior implemented.
 }

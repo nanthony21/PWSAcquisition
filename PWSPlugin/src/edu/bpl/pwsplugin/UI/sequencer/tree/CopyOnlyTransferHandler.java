@@ -35,15 +35,14 @@ public class CopyOnlyTransferHandler extends TransferHandler {
                 return null; //We can't work with non copyable nodes.
             }
             CopyableMutableTreeNode node = (CopyableMutableTreeNode) paths[0].getLastPathComponent();
-            CopyableMutableTreeNode copy = node.copyWithUUID();
-            copies.add(copy);
+            copies.add(node.copy());
             for(int i = 1; i < paths.length; i++) {
                 CopyableMutableTreeNode next = (CopyableMutableTreeNode)paths[i].getLastPathComponent();
                 // Do not allow higher level nodes to be added to list.
                 if(next.getLevel() < node.getLevel()) {
                     break;
                 } else { // sibling
-                    copies.add(next.copyWithUUID());
+                    copies.add(next.copy());
                 }
             }
             return new Transferables.NodesTransferable(copies);

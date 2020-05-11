@@ -70,17 +70,12 @@ public class CopyMoveTransferHandler extends TransferHandler {
         JTree tree = (JTree)c;
         TreePath[] paths = tree.getSelectionPaths();
         if(paths != null) {
-            // Make up a node array of copies for transfer and
-            // another for/of the nodes that will be removed in
-            // exportDone after a successful drop.
             List<CopyableMutableTreeNode> copies = new ArrayList<>();
-            List<CopyableMutableTreeNode> toRemove = new ArrayList<>();
             if (!(paths[0].getLastPathComponent() instanceof CopyableMutableTreeNode)) {
                 return null; //We can't work with non copyable nodes.
             }
-            CopyableMutableTreeNode node = (CopyableMutableTreeNode)paths[0].getLastPathComponent();
+            CopyableMutableTreeNode node = (CopyableMutableTreeNode) paths[0].getLastPathComponent();
             copies.add(node);
-            toRemove.add(node);
             for(int i = 1; i < paths.length; i++) {
                 CopyableMutableTreeNode next = (CopyableMutableTreeNode) paths[i].getLastPathComponent();
                 // Do not allow higher level nodes to be added to list.
@@ -88,10 +83,9 @@ public class CopyMoveTransferHandler extends TransferHandler {
                     break;
                 } else { // sibling
                     copies.add(next);
-                    toRemove.add(next);
                 }
             }
-            nodesToRemove = toRemove;
+            nodesToRemove = copies;
             return new Transferables.NodesTransferable(copies);
         }
         return null;
@@ -143,7 +137,7 @@ public class CopyMoveTransferHandler extends TransferHandler {
         }
         // Add data to model.
         for(int i = 0; i < nodes.size(); i++) {
-            model.insertNodeInto(nodes.get(i).copyWithoutUUID(), parent, index++); //Copy with a new UUID so that the nodes are no longer considered equal.
+            model.insertNodeInto(nodes.get(i).copy(), parent, index++); //Copy with a new UUID so that the nodes are no longer considered equal.
         }
         return true;
     }
