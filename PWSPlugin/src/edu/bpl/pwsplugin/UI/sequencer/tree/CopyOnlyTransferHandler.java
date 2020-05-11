@@ -11,7 +11,6 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 public class CopyOnlyTransferHandler extends TransferHandler {
@@ -31,18 +30,20 @@ public class CopyOnlyTransferHandler extends TransferHandler {
             // Make up a node array of copies for transfer and
             // another for/of the nodes that will be removed in
             // exportDone after a successful drop.
-            List<DefaultMutableTreeNode> copies = new ArrayList<>();
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode)paths[0].getLastPathComponent();
-            DefaultMutableTreeNode copy = new CopiedMutableTreeNode(node);
+            List<CopyableMutableTreeNode> copies = new ArrayList<>();
+            if (!(paths[0].getLastPathComponent() instanceof CopyableMutableTreeNode)) {
+                return null; //We can't work with non copyable nodes.
+            }
+            CopyableMutableTreeNode node = (CopyableMutableTreeNode) paths[0].getLastPathComponent();
+            CopyableMutableTreeNode copy = node.copyWithUUID();
             copies.add(copy);
             for(int i = 1; i < paths.length; i++) {
-                DefaultMutableTreeNode next =
-                    (DefaultMutableTreeNode)paths[i].getLastPathComponent();
+                CopyableMutableTreeNode next = (CopyableMutableTreeNode)paths[i].getLastPathComponent();
                 // Do not allow higher level nodes to be added to list.
                 if(next.getLevel() < node.getLevel()) {
                     break;
                 } else { // sibling
-                    copies.add(new CopiedMutableTreeNode(next));
+                    copies.add(next.copyWithUUID());
                 }
             }
             return new Transferables.NodesTransferable(copies);

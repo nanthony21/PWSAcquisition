@@ -13,7 +13,7 @@ import java.awt.datatransfer.DataFlavor;
  */
 public class DataFlavors {
     public static class CopiedNodeDataFlavor extends DataFlavor {
-        private static String mimeType = DataFlavor.javaJVMLocalObjectMimeType +  ";class=\"" + CopiedMutableTreeNode.class.getName() + "\"";
+        private static String mimeType = DataFlavor.javaJVMLocalObjectMimeType +  ";class=\"" + CopyableMutableTreeNode.class.getName() + "\"";
         public CopiedNodeDataFlavor() throws ClassNotFoundException {
             super(mimeType);
         }

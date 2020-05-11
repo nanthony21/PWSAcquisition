@@ -9,7 +9,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.util.List;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  *
@@ -17,10 +16,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
  */
 public class Transferables {
     public static class NodesTransferable implements Transferable {
-        List<DefaultMutableTreeNode> nodes;
+        List<CopyableMutableTreeNode> nodes;
         DataFlavor[] flavors = new DataFlavor[1];
 
-        public NodesTransferable(List<DefaultMutableTreeNode> nodes) {
+        public NodesTransferable(List<CopyableMutableTreeNode> nodes) {
             this.nodes = nodes;
             try {
                 flavors[0] = new DataFlavors.CopiedNodeDataFlavor();

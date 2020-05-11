@@ -19,6 +19,19 @@ public class TreeDragAndDrop extends JPanel{
     
     public TreeDragAndDrop(TransferHandler handler) {
         super(new MigLayout());
+        
+        CopyableMutableTreeNode root = CopyableMutableTreeNode.create((DefaultMutableTreeNode) model.getRoot(), CopyableMutableTreeNode.class);
+        model.setRoot(root);
+        
+        //Enumeration<DefaultMutableTreeNode> e = ((DefaultMutableTreeNode) model.getRoot()).breadthFirstEnumeration();
+        
+        /*while (e.hasMoreElements()) {
+            DefaultMutableTreeNode n = e.nextElement();
+            CopyableMutableTreeNode n2 = CopyableMutableTreeNode.create(n);
+            
+        }*/
+        
+        
         tree.setDragEnabled(true);
         tree.setDropMode(DropMode.ON_OR_INSERT);
         tree.setTransferHandler(handler);
@@ -47,11 +60,12 @@ public class TreeDragAndDrop extends JPanel{
         return model;
     }
 
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         JFrame f = new JFrame();
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel p = new JPanel(new MigLayout());
         p.add(new TreeDragAndDrop(new CopyMoveTransferHandler()));
+        
         p.add(new TreeDragAndDrop(new CopyOnlyTransferHandler()));
         f.add(p);
         //f.pack();
@@ -59,8 +73,7 @@ public class TreeDragAndDrop extends JPanel{
         f.setSize(400,400);
         f.setLocation(200,200);
         f.setVisible(true);
-    }*/
+    }
 }
-
 
     

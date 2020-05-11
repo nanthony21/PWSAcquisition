@@ -22,7 +22,7 @@ import javax.swing.tree.TreePath;
 
 public class CopyMoveTransferHandler extends TransferHandler {
     DataFlavor nodesFlavor;
-    List<DefaultMutableTreeNode> nodesToRemove;
+    List<CopyableMutableTreeNode> nodesToRemove;
 
     public CopyMoveTransferHandler() {
         try {
@@ -41,9 +41,9 @@ public class CopyMoveTransferHandler extends TransferHandler {
 
         JTree.DropLocation dl = (JTree.DropLocation)support.getDropLocation();
         JTree tree = (JTree)support.getComponent();
-        List<CopiedMutableTreeNode> nodes;
+        List<CopyableMutableTreeNode> nodes;
         try {
-            nodes = (List<CopiedMutableTreeNode>) support.getTransferable().getTransferData(nodesFlavor);
+            nodes = (List<CopyableMutableTreeNode>) support.getTransferable().getTransferData(nodesFlavor);
         } catch (UnsupportedFlavorException | IOException e) {
             throw new RuntimeException(e);
         }       
@@ -55,11 +55,11 @@ public class CopyMoveTransferHandler extends TransferHandler {
         } catch (NullPointerException e) {
             return false; // In some cases the path can be null. No need to throw an error though.
         }
-        for (CopiedMutableTreeNode node : nodes) {
-            if (node.original().equals(dropNode)) {
+        for (CopyableMutableTreeNode node : nodes) {
+            if (node.equals(dropNode)) {
                 return false;
             }
-            else if (node.original().isNodeDescendant(dropNode)) {
+            else if (node.isNodeDescendant(dropNode)) {
                 return false;
             }
         }
@@ -74,20 +74,22 @@ public class CopyMoveTransferHandler extends TransferHandler {
             // Make up a node array of copies for transfer and
             // another for/of the nodes that will be removed in
             // exportDone after a successful drop.
-            List<DefaultMutableTreeNode> copies = new ArrayList<>();
-            List<DefaultMutableTreeNode> toRemove = new ArrayList<>();
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode)paths[0].getLastPathComponent();
-            DefaultMutableTreeNode copy = new CopiedMutableTreeNode(node);
+            List<CopyableMutableTreeNode> copies = new ArrayList<>();
+            List<CopyableMutableTreeNode> toRemove = new ArrayList<>();
+            if (!(paths[0].getLastPathComponent() instanceof CopyableMutableTreeNode)) {
+                return null; //We can't work with non copyable nodes.
+            }
+            CopyableMutableTreeNode node = (CopyableMutableTreeNode)paths[0].getLastPathComponent();
+            CopyableMutableTreeNode copy = node.copyWithUUID();
             copies.add(copy);
             toRemove.add(node);
             for(int i = 1; i < paths.length; i++) {
-                DefaultMutableTreeNode next =
-                    (DefaultMutableTreeNode)paths[i].getLastPathComponent();
+                CopyableMutableTreeNode next = (CopyableMutableTreeNode) paths[i].getLastPathComponent();
                 // Do not allow higher level nodes to be added to list.
                 if(next.getLevel() < node.getLevel()) {
                     break;
                 } else { // sibling
-                    copies.add(new CopiedMutableTreeNode(next));
+                    copies.add(next.copyWithUUID());
                     toRemove.add(next);
                 }
             }
@@ -122,10 +124,10 @@ public class CopyMoveTransferHandler extends TransferHandler {
             return false;
         }
         // Extract transfer data.
-        List<CopiedMutableTreeNode> nodes;
+        List<CopyableMutableTreeNode> nodes;
         try {
             Transferable t = support.getTransferable();
-            nodes = (List<CopiedMutableTreeNode>) t.getTransferData(nodesFlavor);
+            nodes = (List<CopyableMutableTreeNode>) t.getTransferData(nodesFlavor);
         } catch(UnsupportedFlavorException | java.io.IOException e) {
             throw new RuntimeException(e);
         }
@@ -143,7 +145,7 @@ public class CopyMoveTransferHandler extends TransferHandler {
         }
         // Add data to model.
         for(int i = 0; i < nodes.size(); i++) {
-            model.insertNodeInto(nodes.get(i), parent, index++);
+            model.insertNodeInto(nodes.get(i).copyWithoutUUID(), parent, index++); //Copy with a new UUID so that the nodes are no longer considered equal.
         }
         return true;
     }

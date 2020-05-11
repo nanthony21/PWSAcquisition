@@ -7,13 +7,12 @@ package edu.bpl.pwsplugin.UI.sequencer.tree;
 
 import edu.bpl.pwsplugin.UI.sequencer.Consts;
 import edu.bpl.pwsplugin.utils.JsonableParam;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  *
  * @author nick
  */
-public class StepNode extends DefaultMutableTreeNode {
+public class StepNode extends CopyableMutableTreeNode {
     Consts.Type type;
     public StepNode(JsonableParam settings, Consts.Type type) {
         super();     
@@ -21,8 +20,20 @@ public class StepNode extends DefaultMutableTreeNode {
         this.setUserObject(settings);
     }
     
+    public StepNode() {
+        super();
+    }
+    
     public Consts.Type getType() {
         return type;
+    }
+    
+    @Override
+    protected void copyAttributes(CopyableMutableTreeNode from, CopyableMutableTreeNode to) {
+        if (!(from instanceof StepNode) || !(to instanceof StepNode)) {
+            throw new RuntimeException("Type error");
+        }
+        ((StepNode)to).type = ((StepNode)from).type;
     }
     
     @Override
