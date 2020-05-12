@@ -20,43 +20,38 @@ public class CopyableMutableTreeNode extends DefaultMutableTreeNode {
     }
     
     public CopyableMutableTreeNode copy() {
-        CopyableMutableTreeNode n = recursiveCopy(this);
+        CopyableMutableTreeNode n = create(this, this.getClass());
         return n;
     }
     
-    private CopyableMutableTreeNode recursiveCopy(CopyableMutableTreeNode node) {
-        CopyableMutableTreeNode n;
-        try {
-            n = this.getClass().newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        this.copyAttributes(node, n);
-        for(int iChildren=node.getChildCount(), i=0; i<iChildren; i++) {
-            n.add(recursiveCopy((CopyableMutableTreeNode) node.getChildAt(i)));
-        }
-        return n;
+    public static CopyableMutableTreeNode create(DefaultMutableTreeNode node) {
+        return create(node, CopyableMutableTreeNode.class);
     }
     
-    protected void copyAttributes(CopyableMutableTreeNode from, CopyableMutableTreeNode to) {
-        //Subclasses should override this to copy any additional information.
-        to.setUserObject(from.getUserObject());
-        to.setAllowsChildren(from.getAllowsChildren());
-    }
-
     public static CopyableMutableTreeNode create(DefaultMutableTreeNode node, Class<? extends CopyableMutableTreeNode> clazz) {
-        //Converts a defaultMutableTreeNode to a copyable tree node.
+        //Subclasses of CopyableMutableTreeNode can be created with this.
         CopyableMutableTreeNode n;
         try {
             n = clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        n.setUserObject(node.getUserObject());
-        n.setAllowsChildren(node.getAllowsChildren());
+        n.copyAttributesFrom(node);
         for(int iChildren=node.getChildCount(), i=0; i<iChildren; i++) {
             n.add(create((DefaultMutableTreeNode) node.getChildAt(i), clazz));
         }
         return n;
     }
+    
+    protected void copyAttributesFrom(DefaultMutableTreeNode from) {
+        CopyableMutableTreeNode.copyDefaultAttributes(from, this);
+    }
+    
+    private static void copyDefaultAttributes(DefaultMutableTreeNode from, DefaultMutableTreeNode to) {
+        //Subclasses should override this to copy any additional information.
+        to.setUserObject(from.getUserObject());
+        to.setAllowsChildren(from.getAllowsChildren());
+    }
+
+
 }
