@@ -26,6 +26,9 @@ import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireTimeSeriesSettings
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.FocusLockSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.SoftwareAutoFocusSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerFunction;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.FocusEvent;
@@ -35,6 +38,7 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -57,15 +61,47 @@ public class SequencerUI extends JPanel {
     SequenceTree seqTree = new SequenceTree();
     NewStepsTree newStepsTree = new NewStepsTree();
     SettingsPanel settingsPanel = new SettingsPanel(seqTree, newStepsTree);
+    JButton runButton = new JButton("Run");
+    Step compiledStep; //TODO just a placeholder until we know what to do with the compiled step.
     
     public SequencerUI() {
         super(new MigLayout());
 
         this.settingsPanel.setBorder(BorderFactory.createEtchedBorder());
         
+        this.runButton.addActionListener((evt)->{ 
+            compiledStep = SequencerUI.compileSequenceNodes((DefaultMutableTreeNode)seqTree.model().getRoot()); 
+        }); //Run starting at cell 1.
+        
         this.add(seqTree);
         this.add(newStepsTree);
-        this.add(settingsPanel);
+        this.add(settingsPanel, "wrap");
+        this.add(runButton);
+    }
+    
+    private static Step compileSequenceNodes(DefaultMutableTreeNode parent) {
+        //Only the Root can be DefaultMutableTreeNode, the rest better be StepNodes
+        Step subStep = null;
+        for (int i=0; i<parent.getChildCount(); i++) {
+            Step compileSequenceNodes((StepNode) parent.getChildAt(i));
+            //TODO build substep here.
+        }
+        if (parent instanceof StepNode) {
+            Step step = Consts.getStepObject(((StepNode) parent).getType()).newInstance();
+            step.setSettings(((StepNode) parent).getSettings());
+            if (step instanceof ContainerStep) {
+                if (subStep == null) { // If our step is a container step then we must have children for the node
+                    throw new RuntimeException("Programming error");
+                }
+                ((ContainerStep) step).setSubStep(subStep);
+            } else {
+                if (subStep != null) { //If our step isn't a container then there shouldn't have been any children of the node. programming error
+                    throw new RuntimeException("Programming error");
+                }
+            }
+            return step;
+        }
+        throw new RuntimeException("AHDHDAAHDA");
     }
     
     public static void main(String[] args) {
@@ -90,17 +126,16 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
             trees[i].tree().addFocusListener(this);
         }
 
-        panelTypeMapping.put(Consts.Type.ACQ, new AcquireCellUI());
-        panelTypeMapping.put(Consts.Type.AF, new SoftwareAutoFocusUI());
-        panelTypeMapping.put(Consts.Type.PFS, new FocusLockUI());
-        panelTypeMapping.put(Consts.Type.POS, new AcquirePostionsUI());
-        panelTypeMapping.put(Consts.Type.TIME, new TimeSeriesUI());
+        for (Consts.Type type : Consts.Type.values()) {
+            try {
+                panelTypeMapping.put(type, Consts.getUI(type).newInstance());
+            } catch (InstantiationException | IllegalAccessException e) {
+                Globals.mm().logs().logError(e);
+            }
+        }
         
         int maxH = 0;
         int maxW = 0;
-        
-       
-        
         for (Map.Entry<Consts.Type, BuilderJPanel> e : panelTypeMapping.entrySet()) {
             this.add(e.getValue(), e.getKey().toString());
             int h = e.getValue().getHeight();
@@ -156,8 +191,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
     }
     
     @Override
-    public void focusLost(FocusEvent evt) { 
-        //When the user clicks on any other component than one of the Trees make sure to save settings.
+    public void focusLost(FocusEvent evt) {  //When the user clicks on any other component than one of the Trees make sure to save settings.
         saveSettingsOfLastNode();
     } 
 }
@@ -175,7 +209,6 @@ class NewStepsTree extends TreeDragAndDrop {
         DefaultMutableTreeNode utility = new DefaultMutableTreeNode("Utility");
         utility.add(new StepNode(new SoftwareAutoFocusSettings(), Consts.Type.AF));
         utility.add(new StepNode(new FocusLockSettings(), Consts.Type.PFS));
-//        utility.add(new StepNode(, Consts.Type.ZOFFSET));
         root.add(utility);
         
         DefaultMutableTreeNode sequences = new DefaultMutableTreeNode("Sequences");
