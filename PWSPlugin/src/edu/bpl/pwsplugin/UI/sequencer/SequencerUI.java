@@ -196,6 +196,8 @@ class SequenceTree extends TreeDragAndDrop {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Sequence Root");
         
         model.setRoot(root);
+        tree.setRootVisible(false);
+        tree.setShowsRootHandles(true);
         
         setComponentPopupMenu(new PopupMenu());
 
@@ -204,7 +206,7 @@ class SequenceTree extends TreeDragAndDrop {
     class PopupMenu extends JPopupMenu {
         public PopupMenu() {
             super();
-            JMenuItem deleteItem = new JMenuItem("delete");
+            JMenuItem deleteItem = new JMenuItem("Delete");
             deleteItem.addActionListener((evt)->{
                 for (TreePath path : tree.getSelectionPaths()) {
                     model.removeNodeFromParent((MutableTreeNode) path.getLastPathComponent());
@@ -212,6 +214,11 @@ class SequenceTree extends TreeDragAndDrop {
             });
             
             this.add(deleteItem);
+        }
+        
+        @Override
+        public void setVisible(boolean vis) {
+            super.setVisible(vis); //just for a debug breakpoint
         }
     }
 }

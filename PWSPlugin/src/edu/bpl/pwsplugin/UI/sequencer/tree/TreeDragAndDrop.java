@@ -43,7 +43,7 @@ public class TreeDragAndDrop extends JPanel{
         this.add(scroll);
     }
 
-    public void expandTree(JTree tree) {
+    public void expandTree() {
         DefaultMutableTreeNode root =
             (DefaultMutableTreeNode)tree.getModel().getRoot();
         Enumeration e = root.breadthFirstEnumeration();

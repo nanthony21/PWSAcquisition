@@ -49,7 +49,7 @@ public class CopyMoveTransferHandler extends TransferHandler {
         try {
             dropNode = (DefaultMutableTreeNode) dl.getPath().getLastPathComponent();
         } catch (NullPointerException e) {
-            return false; // In some cases the path can be null. No need to throw an error though.
+            dropNode = (DefaultMutableTreeNode) tree.getModel().getRoot();// In some cases the path can be null. Treat this as though dropping to the root.
         }
         if (!dropNode.getAllowsChildren()) {
             return false;
@@ -112,9 +112,9 @@ public class CopyMoveTransferHandler extends TransferHandler {
     @Override
     public boolean importData(TransferHandler.TransferSupport support) {
         //Implements how to import a transfer (drop operation);
-        if(!canImport(support)) {
+        /*if(!canImport(support)) { //This is already handled by the API, no need to call it here.
             return false;
-        }
+        }*/
         // Extract transfer data.
         List<CopyableMutableTreeNode> nodes;
         try {
@@ -125,10 +125,14 @@ public class CopyMoveTransferHandler extends TransferHandler {
         }
         // Get drop location info.
         JTree.DropLocation dl = (JTree.DropLocation)support.getDropLocation();
+        JTree tree = (JTree)support.getComponent();
         int childIndex = dl.getChildIndex();
         TreePath dest = dl.getPath();
+        if (dest == null) { //In cases where there is only the root node this can happen. Just treat it like the destination is the root
+            dest = new TreePath(((DefaultMutableTreeNode) tree.getModel().getRoot()).getPath()[0]);
+        }
         DefaultMutableTreeNode parent = (DefaultMutableTreeNode) dest.getLastPathComponent();
-        JTree tree = (JTree)support.getComponent();
+        
         DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
         // Configure for drop mode.
         int index = childIndex;    // DropMode.INSERT
@@ -137,8 +141,9 @@ public class CopyMoveTransferHandler extends TransferHandler {
         }
         // Add data to model.
         for(int i = 0; i < nodes.size(); i++) {
-            model.insertNodeInto(nodes.get(i).copy(), parent, index++); //Copy with a new UUID so that the nodes are no longer considered equal.
+            model.insertNodeInto(nodes.get(i).copy(), parent, index++);
         }
+        tree.expandPath(new TreePath(parent.getPath())); //Expand the path that was just copied to.
         return true;
     }
 
