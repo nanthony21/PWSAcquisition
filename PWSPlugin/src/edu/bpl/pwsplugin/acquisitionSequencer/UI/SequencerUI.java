@@ -44,6 +44,7 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -123,9 +124,14 @@ public class SequencerUI extends JPanel {
 class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListener {
     Map<Consts.Type, BuilderJPanel> panelTypeMapping = new HashMap<>();
     StepNode lastSelectedNode = null;
+    JPanel cardPanel = new JPanel(new CardLayout());
+    JLabel nameLabel = new JLabel();
     
     public SettingsPanel(TreeDragAndDrop... trees) {
-        super(new CardLayout());
+        super(new MigLayout());
+        
+        this.add(nameLabel, "wrap");
+        this.add(cardPanel);
         
         //Register as a listener for the trees that we want to display settings for.
         for (int i=0; i<trees.length; i++) {
@@ -144,7 +150,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         int maxH = 0;
         int maxW = 0;
         for (Map.Entry<Consts.Type, BuilderJPanel> e : panelTypeMapping.entrySet()) {
-            this.add(e.getValue(), e.getKey().toString());
+            cardPanel.add(e.getValue(), e.getKey().toString());
             int h = e.getValue().getHeight();
             if (h > maxH) {
                 maxH = h;
@@ -156,8 +162,10 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         }
 
         Dimension dim = new Dimension(maxW, maxH);
-        this.setSize(dim);
-        this.setMinimumSize(dim);
+        cardPanel.setSize(dim);
+        cardPanel.setMinimumSize(dim);
+        
+        showPanelForType(Consts.Type.ACQ);
     }
     
     @Override
@@ -178,13 +186,18 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
     private void updateSettingsFromNewNode(StepNode node) { 
         StepNode n = (StepNode) node;
         this.lastSelectedNode = n;
-        ((CardLayout) this.getLayout()).show(this, n.getType().toString());
-        BuilderJPanel panel = panelTypeMapping.get(n.getType());
+        BuilderJPanel panel = showPanelForType(n.getType());
         try {
             panel.populateFields(n.getSettings());
         } catch (Exception exc) {
             Globals.mm().logs().logError(exc);
         }
+    }
+    
+    private BuilderJPanel showPanelForType(Consts.Type type) {
+        nameLabel.setText(Consts.getName(type));
+        ((CardLayout) cardPanel.getLayout()).show(cardPanel, type.toString());
+        return panelTypeMapping.get(type);
     }
     
     @Override
