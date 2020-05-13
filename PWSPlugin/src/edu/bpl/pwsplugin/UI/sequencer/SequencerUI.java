@@ -7,9 +7,9 @@ package edu.bpl.pwsplugin.UI.sequencer;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.sequencer.stepSettings.AcquireCellUI;
-import edu.bpl.pwsplugin.UI.sequencer.stepSettings.AutoFocusUI;
+import edu.bpl.pwsplugin.UI.sequencer.stepSettings.SoftwareAutoFocusUI;
 import edu.bpl.pwsplugin.UI.sequencer.stepSettings.FocusLockUI;
-import edu.bpl.pwsplugin.UI.sequencer.stepSettings.PositionSequenceUI;
+import edu.bpl.pwsplugin.UI.sequencer.stepSettings.AcquirePostionsUI;
 import edu.bpl.pwsplugin.UI.sequencer.stepSettings.TimeSeriesUI;
 import edu.bpl.pwsplugin.UI.sequencer.tree.CopyMoveTransferHandler;
 import edu.bpl.pwsplugin.UI.sequencer.tree.CopyOnlyTransferHandler;
@@ -91,9 +91,9 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         }
 
         panelTypeMapping.put(Consts.Type.ACQ, new AcquireCellUI());
-        panelTypeMapping.put(Consts.Type.AF, new AutoFocusUI());
+        panelTypeMapping.put(Consts.Type.AF, new SoftwareAutoFocusUI());
         panelTypeMapping.put(Consts.Type.PFS, new FocusLockUI());
-        panelTypeMapping.put(Consts.Type.POS, new PositionSequenceUI());
+        panelTypeMapping.put(Consts.Type.POS, new AcquirePostionsUI());
         panelTypeMapping.put(Consts.Type.TIME, new TimeSeriesUI());
         
         int maxH = 0;
@@ -168,9 +168,9 @@ class NewStepsTree extends TreeDragAndDrop {
         this.tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
         
-        DefaultMutableTreeNode acquisitions = new DefaultMutableTreeNode("Acquisitions");
-        acquisitions.add(new EndpointStepNode(new AcquireCellSettings(), Consts.Type.ACQ));
-        root.add(acquisitions);
+        //DefaultMutableTreeNode acquisitions = new DefaultMutableTreeNode("Acquisitions");
+        //acquisitions.add(new EndpointStepNode(new AcquireCellSettings(), Consts.Type.ACQ));
+        root.add(new EndpointStepNode(new AcquireCellSettings(), Consts.Type.ACQ));
         
         DefaultMutableTreeNode utility = new DefaultMutableTreeNode("Utility");
         utility.add(new StepNode(new SoftwareAutoFocusSettings(), Consts.Type.AF));

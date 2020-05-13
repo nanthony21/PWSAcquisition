@@ -17,10 +17,10 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author nick
  */
-public class AutoFocusUI extends BuilderJPanel<SoftwareAutoFocusSettings> {
+public class SoftwareAutoFocusUI extends BuilderJPanel<SoftwareAutoFocusSettings> {
     JComboBox<String> afNames = new JComboBox<>();
     
-    public AutoFocusUI() {
+    public SoftwareAutoFocusUI() {
         super(new MigLayout(), SoftwareAutoFocusSettings.class);
         afNames.setModel(new DefaultComboBoxModel<>(Globals.mm().getAutofocusManager().getAllAutofocusMethods().toArray(new String[0])));
         

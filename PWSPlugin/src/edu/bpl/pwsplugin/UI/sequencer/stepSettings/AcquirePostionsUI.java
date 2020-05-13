@@ -17,12 +17,12 @@ import org.micromanager.internal.positionlist.PositionListDlg;
  *
  * @author nick
  */
-public class PositionSequenceUI extends BuilderJPanel<AcquirePositionsSettings>{
+public class AcquirePostionsUI extends BuilderJPanel<AcquirePositionsSettings>{
     PositionListDlg dlg;
     JButton showDlgButton = new JButton("Show Position List");
     //PositionList posList;
     
-    public PositionSequenceUI() {
+    public AcquirePostionsUI() {
         super(new MigLayout(), AcquirePositionsSettings.class);    
         dlg = new PositionListDlg(Globals.mm(), new PositionList());
         
