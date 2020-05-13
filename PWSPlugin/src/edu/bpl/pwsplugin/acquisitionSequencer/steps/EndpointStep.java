@@ -5,11 +5,15 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
+import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
+
 /**
  *
  * @author nick
  */
-public interface EndpointStep extends Step {
+public abstract class EndpointStep extends Step {
     //A `Step` which is an endpoint (does not contain any substeps
-    
+    public EndpointStep(SequencerSettings settings) {
+        super(settings);
+    }
 }

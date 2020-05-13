@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.UI.sequencer.tree;
 
 import edu.bpl.pwsplugin.UI.sequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /**
@@ -18,7 +19,7 @@ public class EndpointStepNode extends StepNode {
         this.setAllowsChildren(false);
     }
     
-    public EndpointStepNode(JsonableParam settings, Consts.Type type) {
+    public EndpointStepNode(SequencerSettings settings, Consts.Type type) {
         super(settings, type);
         this.setAllowsChildren(false);
     }

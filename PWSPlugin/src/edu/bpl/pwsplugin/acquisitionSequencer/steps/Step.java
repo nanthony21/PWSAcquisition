@@ -5,46 +5,18 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
-import java.util.Objects;
-import java.util.function.Function;
+import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
 
 /**
  *
  * @author nick
  */
-@FunctionalInterface
-public interface Step extends ThrowingFunction<Integer, Integer>{
-    //Represents a step in a sequence. It's `apply` method takes the current acquisition number as input and returns the number of new acquisitions.
-}
-
-@FunctionalInterface
-interface ThrowingFunction<T, R> extends Function<T, R> {
-    @Override
-    default R apply(T t){
-        try{
-            return applyThrows(t);
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
+public abstract class Step {
+    private SequencerSettings settings; 
+    public Step(SequencerSettings settings) {
+        this.setSettings(settings);
     }
-
-    R applyThrows(T t) throws Exception;
-    
-    default <V> ThrowingFunction<T, V> andThen(ThrowingFunction<? super R, ? extends V> after){
-        Objects.requireNonNull(after);
-        try{
-             return (T t) -> after.apply(apply(t));
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
-    }
-
-    default <V> ThrowingFunction<V, R> compose(ThrowingFunction<? super V, ? extends T> before) {
-        Objects.requireNonNull(before);
-        try {
-            return (V v) -> apply(before.apply(v));
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
-    }
+    public final SequencerSettings getSettings() { return settings; }
+    public final void setSettings(SequencerSettings settings) { this.settings = settings; }
+    public abstract SequencerFunction getFunction();
 }

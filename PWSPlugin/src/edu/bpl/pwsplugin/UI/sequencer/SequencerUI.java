@@ -22,6 +22,7 @@ import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquirePositionsSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireTimeSeriesSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.FocusLockSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.SoftwareAutoFocusSettings;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
@@ -113,7 +114,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener {
     public void valueChanged(TreeSelectionEvent e) {
         //Make sure to save previous settings.
         if (this.lastSelectedNode != null) {
-            this.lastSelectedNode.setSettings((JsonableParam) panelTypeMapping.get(this.lastSelectedNode.getType()).build());
+            this.lastSelectedNode.setSettings((SequencerSettings) panelTypeMapping.get(this.lastSelectedNode.getType()).build());
         }
         
         Object node = e.getPath().getLastPathComponent();

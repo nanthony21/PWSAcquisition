@@ -11,7 +11,7 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
  *
  * @author nick
  */
-public class FocusLockSettings extends JsonableParam {
+public class FocusLockSettings extends SequencerSettings {
     public double zOffset = 0;
     public double preDelay = 1;
 }

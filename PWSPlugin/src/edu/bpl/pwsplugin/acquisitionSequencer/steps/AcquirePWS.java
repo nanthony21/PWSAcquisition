@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
+import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.nio.file.Path;
 
@@ -14,25 +15,30 @@ import java.nio.file.Path;
  *
  * @author nick
  */
-public class AcquirePWS implements EndpointStep{
+public class AcquirePWS extends EndpointStep{
     //This doesn't increment the cell number because for all we know we still want to save other acquisition types to the same cell number.
     Path directory;
     AcquisitionManager acqMan;
-    PWSSettings settings;
     
-    public AcquirePWS(Path directoryName, PWSSettings settings) {
+    public AcquirePWS(Path directoryName, SequencerSettings settings) {
         //Acquires and saves a PWS cube returns the number of acquisitions saved: 1.
+        super(settings);
         directory = directoryName;
         this.acqMan = Globals.acqManager();
-        this.settings = settings;
     }
     
     @Override
-    public Integer applyThrows(Integer cellNum) throws Exception{
-        this.acqMan.setCellNum(cellNum);
-        this.acqMan.setSavePath(this.directory.toString());
-        this.acqMan.setPWSSettings(settings);
-        this.acqMan.acquirePWS();
-        return 1; 
-    }   
+    public SequencerFunction getFunction() {
+        SequencerSettings pwsSettings = this.getSettings();
+        return new SequencerFunction() {
+            @Override
+            public Integer applyThrows(Integer cellNum) throws Exception{
+                acqMan.setCellNum(cellNum);
+                acqMan.setSavePath(directory.toString());
+                acqMan.setPWSSettings(pwsSettings);
+                acqMan.acquirePWS();
+                return 1; 
+            } 
+        };
+    } 
 }

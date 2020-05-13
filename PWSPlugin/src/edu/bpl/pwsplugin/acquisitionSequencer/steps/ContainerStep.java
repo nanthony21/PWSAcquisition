@@ -5,10 +5,26 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
+import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
+
 /**
  *
  * @author nick
  */
-public interface ContainerStep extends Step {
+public abstract class ContainerStep extends Step {
     //A `Step` that takes other `Step`s and wraps functionality around them.
+    private Step step;
+    
+    public ContainerStep(SequencerSettings settings, Step subStep) {
+        super(settings);
+        this.setSubStep(subStep);
+    }
+    
+    public Step getSubStep() {
+        return this.step;
+    }
+    
+    public void setSubStep(Step step) {
+        this.step = step;
+    }
 }

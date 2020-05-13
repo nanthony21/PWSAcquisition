@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  *
  * @author nick
  */
-public class AcquireCell implements EndpointStep {
+public class AcquireCell extends EndpointStep {
     //Represents the acquisition of a single "CellXXX" folder, it can contain multiple PWS, Dynamics, and Fluorescence acquisitions.
     Path directory;
     AcquirePWS  pws;
@@ -42,18 +42,27 @@ public class AcquireCell implements EndpointStep {
     }
     
     @Override
-    public Integer applyThrows(Integer saveNum) throws Exception{ //TODO need to make the fluorescence not overwrite eachother.
-        for (AcquireFluorescence fl : this.fluor) {
-            fl.apply(saveNum);
-        }
-        if (pws != null) {
-            this.pws.apply(saveNum);
-        }
-        if (dyn != null) {
-            this.dyn.apply(saveNum);
-        }
-        
-        return 1;
+    public SequencerFunction getFunction() {
+        List<SequencerFunction> flFuncs = this.fluor.stream().map(AcquireFluorescence::getFunction).collect(Collectors.toList());
+        SequencerFunction dynFunc = null;
+        if (this.dyn != null) { this.dyn.getFunction(); }
+        SequencerFunction pwsFunc = null;
+        if (this.pws != null) { this.pws.getFunction(); }
+        return new SequencerFunction() {
+            @Override
+            public Integer applyThrows(Integer saveNum) throws Exception{ //TODO need to make the fluorescence not overwrite eachother.
+                for (SequencerFunction flFunc : flFuncs) {
+                    flFunc.apply(saveNum);
+                }
+                if (pwsFunc != null) {
+                    pwsFunc.apply(saveNum);
+                }
+                if (dynFunc != null) {
+                    dynFunc.apply(saveNum);
+                }
+
+                return 1;
+            }
+        };
     }
-    
 }
