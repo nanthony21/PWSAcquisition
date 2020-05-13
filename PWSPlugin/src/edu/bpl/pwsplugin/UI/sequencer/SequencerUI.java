@@ -30,15 +30,20 @@ import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import net.miginfocom.swing.MigLayout;
@@ -181,7 +186,7 @@ class NewStepsTree extends TreeDragAndDrop {
         model.setRoot(root);
         tree.setRootVisible(false);
         tree.setShowsRootHandles(true);
-    }
+    }    
 }
 
 class SequenceTree extends TreeDragAndDrop {
@@ -191,7 +196,23 @@ class SequenceTree extends TreeDragAndDrop {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Sequence Root");
         
         model.setRoot(root);
+        
+        setComponentPopupMenu(new PopupMenu());
 
+    }
+    
+    class PopupMenu extends JPopupMenu {
+        public PopupMenu() {
+            super();
+            JMenuItem deleteItem = new JMenuItem("delete");
+            deleteItem.addActionListener((evt)->{
+                for (TreePath path : tree.getSelectionPaths()) {
+                    model.removeNodeFromParent((MutableTreeNode) path.getLastPathComponent());
+                }
+            });
+            
+            this.add(deleteItem);
+        }
     }
 }
 

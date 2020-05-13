@@ -37,7 +37,10 @@ public class TreeDragAndDrop extends JPanel{
         tree.setTransferHandler(handler);
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
         tree.setCellRenderer(new TreeRenderer());
-        this.add(new JScrollPane(tree));
+        JScrollPane scroll = new JScrollPane(tree);
+        scroll.setInheritsPopupMenu(true);
+        tree.setInheritsPopupMenu(true);
+        this.add(scroll);
     }
 
     public void expandTree(JTree tree) {
