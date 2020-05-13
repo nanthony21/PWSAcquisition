@@ -3,13 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.acquisitionSequencer.steps.utility;
+package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquirePositionsSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerFunction;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import java.util.concurrent.Callable;
 import org.micromanager.AutofocusPlugin;
 import org.micromanager.MultiStagePosition;

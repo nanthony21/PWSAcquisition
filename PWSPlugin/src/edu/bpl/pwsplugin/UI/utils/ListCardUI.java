@@ -130,7 +130,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
     }
     
     @Override
-    public void populateFields(T t) throws Exception {
+    public void populateFields(T t) {
         cardPanel.removeAll(); //Make sure to remove the old stuff if this is a refresh.
         combo.removeAllItems();
         components = new ArrayList<BuilderJPanel<S>>();
