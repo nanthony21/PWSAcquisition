@@ -1,4 +1,4 @@
-package edu.bpl.pwsplugin.UI.sequencer.tree;
+package edu.bpl.pwsplugin.acquisitionSequencer.UI.tree;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

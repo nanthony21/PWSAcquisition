@@ -3,19 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.UI.sequencer;
+package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.UI.sequencer.stepSettings.AcquireCellUI;
-import edu.bpl.pwsplugin.UI.sequencer.stepSettings.SoftwareAutoFocusUI;
-import edu.bpl.pwsplugin.UI.sequencer.stepSettings.FocusLockUI;
-import edu.bpl.pwsplugin.UI.sequencer.stepSettings.AcquirePostionsUI;
-import edu.bpl.pwsplugin.UI.sequencer.stepSettings.TimeSeriesUI;
-import edu.bpl.pwsplugin.UI.sequencer.tree.CopyMoveTransferHandler;
-import edu.bpl.pwsplugin.UI.sequencer.tree.CopyOnlyTransferHandler;
-import edu.bpl.pwsplugin.UI.sequencer.tree.EndpointStepNode;
-import edu.bpl.pwsplugin.UI.sequencer.tree.StepNode;
-import edu.bpl.pwsplugin.UI.sequencer.tree.TreeDragAndDrop;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings.AcquireCellUI;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings.SoftwareAutoFocusUI;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings.FocusLockUI;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings.AcquirePostionsUI;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings.TimeSeriesUI;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyMoveTransferHandler;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyOnlyTransferHandler;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.EndpointStepNode;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.StepNode;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.UI.settings.DynPanel;
 import edu.bpl.pwsplugin.UI.settings.FluorPanel;
 import edu.bpl.pwsplugin.UI.settings.PWSPanel;

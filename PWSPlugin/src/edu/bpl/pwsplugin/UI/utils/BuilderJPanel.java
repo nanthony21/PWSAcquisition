@@ -10,7 +10,7 @@ import javax.swing.JPanel;
  */
 public abstract class BuilderJPanel<T> extends JPanel{
     //Base class for UI componenets that can `build` and be populated from an instance
-    //of an UIbuildable class.
+    //of an UIbuildable class. This should probably just be an interface.
     protected Class<T> typeParamClass;
 
     public BuilderJPanel(LayoutManager layout, Class<T> clazz) {

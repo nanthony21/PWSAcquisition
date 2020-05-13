@@ -23,7 +23,7 @@ package edu.bpl.pwsplugin.UI;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.HWConfiguration;
 import edu.bpl.pwsplugin.PWSPlugin;
-import edu.bpl.pwsplugin.UI.sequencer.SequencerUI;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.SequencerUI;
 import edu.bpl.pwsplugin.UI.settings.DynPanel;
 import edu.bpl.pwsplugin.UI.settings.FluorPanel;
 import edu.bpl.pwsplugin.UI.settings.HWConfPanel;

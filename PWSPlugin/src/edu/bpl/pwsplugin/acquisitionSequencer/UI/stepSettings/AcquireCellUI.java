@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.UI.sequencer.stepSettings;
+package edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings;
 
 import edu.bpl.pwsplugin.UI.settings.DynPanel;
 import edu.bpl.pwsplugin.UI.settings.PWSPanel;
