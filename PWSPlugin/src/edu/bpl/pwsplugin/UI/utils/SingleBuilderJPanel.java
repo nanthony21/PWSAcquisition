@@ -61,25 +61,35 @@ public abstract class SingleBuilderJPanel<T> extends BuilderJPanel<T>{
     }
     
     @Override
-    public void populateFields(T t) throws Exception {
+    public void populateFields(T t) {
         //Fill in the the UI componenents based on the values of the data members
         //of `t`.
         Map<String, Object> m = this.getPropertyFieldMap();
         for (Map.Entry<String, Object> entry: m.entrySet()) {
-            Field prop = t.getClass().getField(entry.getKey());
+            Field prop;
+            Object property;
+            try {
+                prop = t.getClass().getField(entry.getKey());
+                property = prop.get(t);
+            } catch (IllegalAccessException | NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
+            if (property == null) {
+                throw new RuntimeException(String.format("Property %s of %s object is null", prop.getName(), t.toString()));
+            }
             Object field = entry.getValue();
             if (field instanceof JTextField) {
-                ((JTextField) field).setText((String) prop.get(t));
+                ((JTextField) field).setText((String) property);
             } else if (field instanceof JSpinner) {
-                ((JSpinner) field).setValue(prop.get(t));
+                ((JSpinner) field).setValue(property);
             } else if (field instanceof JCheckBox) {
-                ((JCheckBox) field).setSelected((boolean) prop.get(t));
+                ((JCheckBox) field).setSelected((boolean) property);
             } else if (field instanceof BuilderJPanel) {
-                ((BuilderJPanel) field).populateFields(prop.get(t));
+                ((BuilderJPanel) field).populateFields(property);
             } else if (field instanceof DirectorySelector) {
-                ((DirectorySelector) field).setText((String) prop.get(t));
+                ((DirectorySelector) field).setText((String) property);
             } else if (field instanceof JComboBox) {
-                Object val = prop.get(t);
+                Object val = property;
                 ((JComboBox) field).setSelectedItem(val);
             }else {
                 throw new UnsupportedOperationException("Build() does not support type: " + field.getClass().getName());

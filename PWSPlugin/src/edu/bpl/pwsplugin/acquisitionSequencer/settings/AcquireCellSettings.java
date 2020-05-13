@@ -9,6 +9,7 @@ import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,8 +17,12 @@ import java.util.List;
  * @author nick
  */
 public class AcquireCellSettings extends SequencerSettings {
-    public PWSSettings pwsSettings;
-    public DynSettings dynSettings;
-    public List<FluorSettings> fluorSettings;
-    public String directory;
+    public PWSSettings pwsSettings = new PWSSettings();
+    public DynSettings dynSettings = new DynSettings();
+    public List<FluorSettings> fluorSettings = new ArrayList<>();
+    public String directory = "";
+    
+    public AcquireCellSettings() {
+        fluorSettings.add(new FluorSettings());
+    }
 }

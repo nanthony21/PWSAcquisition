@@ -117,16 +117,18 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
     public void valueChanged(TreeSelectionEvent e) { //When a new node is selected in a tree, show the settings for the node.
         Object node = e.getPath().getLastPathComponent();
         if (node instanceof StepNode) { // Some nodes may be default nodes used as folders. We don't want to respond to those selections.
-            updateSettingsFromNode((StepNode) node);
+            saveSettingsOfLastNode();
+            updateSettingsFromNewNode((StepNode) node);
         }
     }
     
-    private void updateSettingsFromNode(StepNode node) {
-        //Make sure to save previous settings.
+    private void saveSettingsOfLastNode() {
         if (this.lastSelectedNode != null) {
             this.lastSelectedNode.setSettings((SequencerSettings) panelTypeMapping.get(this.lastSelectedNode.getType()).build());
-        }
-        
+        } 
+    }
+    
+    private void updateSettingsFromNewNode(StepNode node) { 
         StepNode n = (StepNode) node;
         this.lastSelectedNode = n;
         ((CardLayout) this.getLayout()).show(this, n.getType().toString());
@@ -138,18 +140,21 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         }
     }
     
-    @Override //TODO still a little weird
+    @Override
     public void focusGained(FocusEvent evt) { // Clicking from one JTree to another one doesn't fire a TreeSelectionEvent. Force one to happen so the panel always shows the right settings
         TreePath path = ((JTree) evt.getComponent()).getSelectionPath();
         if (path == null) { return; }
         DefaultMutableTreeNode node = ((DefaultMutableTreeNode)path.getLastPathComponent());
         if (node instanceof StepNode) {
-            updateSettingsFromNode((StepNode) node);
+            updateSettingsFromNewNode((StepNode) node);
         }
     }
     
     @Override
-    public void focusLost(FocusEvent evt) { } //Do nothing
+    public void focusLost(FocusEvent evt) { 
+        //When the user clicks on any other component than one of the Trees make sure to save settings.
+        saveSettingsOfLastNode();
+    } 
 }
 
 class NewStepsTree extends TreeDragAndDrop {

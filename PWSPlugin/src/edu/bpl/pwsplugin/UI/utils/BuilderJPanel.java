@@ -19,5 +19,5 @@ public abstract class BuilderJPanel<T> extends JPanel{
     }
     
     public abstract T build();
-    public abstract void populateFields(T t) throws Exception;
+    public abstract void populateFields(T t);
 }
