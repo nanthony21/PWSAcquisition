@@ -6,9 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.acquisitionSequencer.settings.AutoshutterSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.SoftwareAutoFocusSettings;
-import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 
 /**
  *
@@ -26,7 +24,7 @@ public class SoftwareAutofocus extends EndpointStep {
             @Override
             public Integer applyThrows(Integer cellNum) throws Exception {
                 Globals.mm().getAutofocusManager().setAutofocusMethodByName(settings.afPluginName);
-                Globals.mm().autoFocusNow();
+                Globals.mm().getAutofocusManager().getAutofocusMethod().fullFocus();
                 return 0;
             } 
         };

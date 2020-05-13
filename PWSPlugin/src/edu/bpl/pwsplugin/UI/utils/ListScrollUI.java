@@ -86,7 +86,7 @@ public class ListScrollUI<T extends List<S>, S extends JsonableParam> extends Li
     }
     
     @Override
-    public void populateFields(T t) throws Exception {
+    public void populateFields(T t) {
         this.scrollContents.removeAll(); //Make sure to remove the old stuff if this is a refresh.
         components = new ArrayList<BuilderJPanel<S>>();
         Integer i = 0;

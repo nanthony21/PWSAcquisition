@@ -15,6 +15,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireCell;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireFromPositionList;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireTimeSeries;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.FocusLock;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.SoftwareAutofocus;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 
 /**
@@ -67,7 +68,7 @@ public class Consts {
         if (type == Type.ACQ) {
             return AcquireCell.class;
         } else if (type == Type.AF) {
-            return SoftwareAutoFocus
+            return SoftwareAutofocus.class;
         } else if (type == Type.PFS) {
             return FocusLock.class;
         } else if (type == Type.POS) {
