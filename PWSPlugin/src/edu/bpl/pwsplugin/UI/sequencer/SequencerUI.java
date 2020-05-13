@@ -26,20 +26,20 @@ import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireTimeSeriesSettings
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.FocusLockSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.SoftwareAutoFocusSettings;
-import edu.bpl.pwsplugin.settings.DynSettings;
-import edu.bpl.pwsplugin.settings.FluorSettings;
-import edu.bpl.pwsplugin.settings.PWSSettings;
-import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import net.miginfocom.swing.MigLayout;
         
@@ -51,15 +51,12 @@ import net.miginfocom.swing.MigLayout;
 public class SequencerUI extends JPanel {
     SequenceTree seqTree = new SequenceTree();
     NewStepsTree newStepsTree = new NewStepsTree();
-    SettingsPanel settingsPanel = new SettingsPanel();
+    SettingsPanel settingsPanel = new SettingsPanel(seqTree, newStepsTree);
     
     public SequencerUI() {
         super(new MigLayout());
 
         this.settingsPanel.setBorder(BorderFactory.createEtchedBorder());
-        
-        this.newStepsTree.tree().addTreeSelectionListener(this.settingsPanel);
-        this.seqTree.tree().addTreeSelectionListener(this.settingsPanel);
         
         this.add(seqTree);
         this.add(newStepsTree);
@@ -75,13 +72,19 @@ public class SequencerUI extends JPanel {
 }
 
 
-class SettingsPanel extends JPanel implements TreeSelectionListener {
+class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListener {
     Map<Consts.Type, BuilderJPanel> panelTypeMapping = new HashMap<>();
     StepNode lastSelectedNode = null;
     
-    public SettingsPanel() {
+    public SettingsPanel(TreeDragAndDrop... trees) {
         super(new CardLayout());
-               
+        
+        //Register as a listener for the trees that we want to display settings for.
+        for (int i=0; i<trees.length; i++) {
+            trees[i].tree().addTreeSelectionListener(this);
+            trees[i].tree().addFocusListener(this);
+        }
+
         panelTypeMapping.put(Consts.Type.ACQ, new AcquireCellUI());
         panelTypeMapping.put(Consts.Type.AF, new AutoFocusUI());
         panelTypeMapping.put(Consts.Type.PFS, new FocusLockUI());
@@ -111,25 +114,42 @@ class SettingsPanel extends JPanel implements TreeSelectionListener {
     }
     
     @Override
-    public void valueChanged(TreeSelectionEvent e) {
+    public void valueChanged(TreeSelectionEvent e) { //When a new node is selected in a tree, show the settings for the node.
+        Object node = e.getPath().getLastPathComponent();
+        if (node instanceof StepNode) { // Some nodes may be default nodes used as folders. We don't want to respond to those selections.
+            updateSettingsFromNode((StepNode) node);
+        }
+    }
+    
+    private void updateSettingsFromNode(StepNode node) {
         //Make sure to save previous settings.
         if (this.lastSelectedNode != null) {
             this.lastSelectedNode.setSettings((SequencerSettings) panelTypeMapping.get(this.lastSelectedNode.getType()).build());
         }
         
-        Object node = e.getPath().getLastPathComponent();
-        if (node instanceof StepNode) { // Some nodes may be default nodes used as folders. We don't want to respond to those selections.
-            StepNode n = (StepNode) node;
-            this.lastSelectedNode = n;
-            ((CardLayout) this.getLayout()).show(this, n.getType().toString());
-            BuilderJPanel panel = panelTypeMapping.get(n.getType());
-            try {
-                panel.populateFields(n.getSettings());
-            } catch (Exception exc) {
-                Globals.mm().logs().logError(exc);
-            }
+        StepNode n = (StepNode) node;
+        this.lastSelectedNode = n;
+        ((CardLayout) this.getLayout()).show(this, n.getType().toString());
+        BuilderJPanel panel = panelTypeMapping.get(n.getType());
+        try {
+            panel.populateFields(n.getSettings());
+        } catch (Exception exc) {
+            Globals.mm().logs().logError(exc);
         }
     }
+    
+    @Override //TODO still a little weird
+    public void focusGained(FocusEvent evt) { // Clicking from one JTree to another one doesn't fire a TreeSelectionEvent. Force one to happen so the panel always shows the right settings
+        TreePath path = ((JTree) evt.getComponent()).getSelectionPath();
+        if (path == null) { return; }
+        DefaultMutableTreeNode node = ((DefaultMutableTreeNode)path.getLastPathComponent());
+        if (node instanceof StepNode) {
+            updateSettingsFromNode((StepNode) node);
+        }
+    }
+    
+    @Override
+    public void focusLost(FocusEvent evt) { } //Do nothing
 }
 
 class NewStepsTree extends TreeDragAndDrop {
