@@ -66,6 +66,12 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         super.add(moreButton, "wrap");
         super.add(cardPanel, "span, wrap");
         
+        try {
+            this.actuallyAddStepAction(this.defaultStepTypes[0]); // Add the default step so we at least have something there. Helps to get the initial component sized right.
+        } catch (Exception e) {
+            ReportingUtils.logError(e);
+        }
+        
         copyItem.setEnabled(false);
         remButton.setEnabled(false);
         
@@ -74,6 +80,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         
         combo.setEditable(false);
         combo.addItemListener(this);
+        
         
         addButton.addActionListener(
             (e)->{try{

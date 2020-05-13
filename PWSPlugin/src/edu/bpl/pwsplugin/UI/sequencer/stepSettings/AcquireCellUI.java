@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 
@@ -29,14 +31,19 @@ public class AcquireCellUI extends SingleBuilderJPanel<AcquireCellSettings> {
     JTextField directory = new JTextField(10);
     PWSPanel pwsSettings = new PWSPanel();
     DynPanel dynSettings = new DynPanel();
-    ListCardUI<List<FluorSettings>, FluorSettings> fluorSettings= new ListCardUI<>(ArrayList.class, "message", new FluorSettings());
+    ListCardUI<List<FluorSettings>, FluorSettings> fluorSettings= new ListCardUI<>(ArrayList.class, "Fluorescence", new FluorSettings());
     public AcquireCellUI() {
         super(new MigLayout(), AcquireCellSettings.class);
         
+        pwsSettings.setBorder(BorderFactory.createEtchedBorder());
+        dynSettings.setBorder(BorderFactory.createEtchedBorder());
+        fluorSettings.setBorder(BorderFactory.createEtchedBorder());
+
+        this.add(new JLabel("Directory:"));
         this.add(directory, "wrap");
-        this.add(pwsSettings, "wrap");
-        this.add(dynSettings, "wrap");
-        this.add(fluorSettings, "wrap");
+        this.add(pwsSettings, "wrap, span");
+        this.add(dynSettings, "wrap, span");
+        this.add(fluorSettings, "wrap, span");
     }
     
     @Override
