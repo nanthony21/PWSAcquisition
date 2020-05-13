@@ -13,13 +13,10 @@ import edu.bpl.pwsplugin.acquisitionSequencer.settings.FocusLockSettings;
  * @author nick
  */
 public class FocusLock extends ContainerStep {
-    public FocusLock(FocusLockSettings settings, Step subStep) {
-        super(settings, subStep);
-    }
     
     @Override
     public SequencerFunction getFunction() {
-        SequencerFunction stepFunction = this.getSubStep().getFunction();
+        SequencerFunction stepFunction = super.getFunction();
         FocusLockSettings settings = (FocusLockSettings) this.getSettings();
         return new SequencerFunction() {
             @Override

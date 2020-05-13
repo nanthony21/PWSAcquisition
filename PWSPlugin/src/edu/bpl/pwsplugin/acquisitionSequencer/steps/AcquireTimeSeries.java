@@ -13,13 +13,10 @@ import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireTimeSeriesSettings
  * @author nick
  */
 public class AcquireTimeSeries extends ContainerStep {    
-    public AcquireTimeSeries(AcquireTimeSeriesSettings settings, Step step) {
-        super(settings, step);
-    }
     
     @Override 
     public SequencerFunction getFunction() {
-        SequencerFunction stepFunction = this.getSubStep().getFunction();
+        SequencerFunction stepFunction = super.getFunction();
         AcquireTimeSeriesSettings settings = (AcquireTimeSeriesSettings) this.getSettings();
         return new SequencerFunction() {
             @Override

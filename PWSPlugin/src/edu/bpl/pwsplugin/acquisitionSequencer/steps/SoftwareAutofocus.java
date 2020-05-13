@@ -13,9 +13,6 @@ import edu.bpl.pwsplugin.acquisitionSequencer.settings.SoftwareAutoFocusSettings
  * @author nick
  */
 public class SoftwareAutofocus extends EndpointStep {
-    public SoftwareAutofocus(SoftwareAutoFocusSettings settings) {
-        super(settings);
-    }
     
     @Override
     public SequencerFunction getFunction() {

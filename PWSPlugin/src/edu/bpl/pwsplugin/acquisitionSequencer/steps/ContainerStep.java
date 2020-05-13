@@ -6,25 +6,41 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
  * @author nick
  */
-public abstract class ContainerStep extends Step {
+public class ContainerStep extends Step {
     //A `Step` that takes other `Step`s and wraps functionality around them.
-    private Step step;
+    private List<Step> steps;
     
-    public ContainerStep(SequencerSettings settings, Step subStep) {
-        super(settings);
-        this.setSubStep(subStep);
+    public ContainerStep() {
+        super();
     }
     
-    public Step getSubStep() {
-        return this.step;
+    public final List<Step> getSubSteps() {
+        return this.steps;
     }
     
-    public void setSubStep(Step step) {
-        this.step = step;
+    public final void setSubSteps(List<Step> steps) {
+        this.steps = steps;
+    }
+
+    @Override
+    public SequencerFunction getFunction() { // Execute each substep in sequence
+        List<SequencerFunction> stepFunctions = this.getSubSteps().stream().map(Step::getFunction).collect(Collectors.toList());
+        return new SequencerFunction() {
+            @Override
+            public Integer applyThrows(Integer cellNum) throws Exception {
+                int numOfNewAcqs = 0;
+                for (SequencerFunction func : stepFunctions) {
+                    numOfNewAcqs += func.apply(cellNum + numOfNewAcqs);
+                }
+                return numOfNewAcqs;   
+            }
+        };
     }
 }

@@ -27,6 +27,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.settings.FocusLockSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.SoftwareAutoFocusSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import java.awt.CardLayout;
@@ -35,7 +36,9 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -70,7 +73,12 @@ public class SequencerUI extends JPanel {
         this.settingsPanel.setBorder(BorderFactory.createEtchedBorder());
         
         this.runButton.addActionListener((evt)->{ 
-            compiledStep = SequencerUI.compileSequenceNodes((DefaultMutableTreeNode)seqTree.model().getRoot()); 
+            try {
+                compiledStep = SequencerUI.compileSequenceNodes((DefaultMutableTreeNode)seqTree.model().getRoot()); 
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+            int a = 1; //Debug breakpoint here
         }); //Run starting at cell 1.
         
         this.add(seqTree);
@@ -79,29 +87,27 @@ public class SequencerUI extends JPanel {
         this.add(runButton);
     }
     
-    private static Step compileSequenceNodes(DefaultMutableTreeNode parent) {
+    private static Step compileSequenceNodes(DefaultMutableTreeNode parent) throws InstantiationException, IllegalAccessException {
         //Only the Root can be DefaultMutableTreeNode, the rest better be StepNodes
-        Step subStep = null;
-        for (int i=0; i<parent.getChildCount(); i++) {
-            Step compileSequenceNodes((StepNode) parent.getChildAt(i));
-            //TODO build substep here.
-        }
-        if (parent instanceof StepNode) {
-            Step step = Consts.getStepObject(((StepNode) parent).getType()).newInstance();
-            step.setSettings(((StepNode) parent).getSettings());
-            if (step instanceof ContainerStep) {
-                if (subStep == null) { // If our step is a container step then we must have children for the node
-                    throw new RuntimeException("Programming error");
-                }
-                ((ContainerStep) step).setSubStep(subStep);
+        //Recursively compile a StepNode and it's children into a step which can be passed to the acquisition engine.
+        if (parent.getChildCount() > 0) {
+            List<Step> l = new ArrayList<>();
+            for (int i=0; i<parent.getChildCount(); i++) {  
+                l.add(compileSequenceNodes((StepNode) parent.getChildAt(i)));
+            } 
+            ContainerStep step;
+            if (!(parent instanceof StepNode)) { ///The only time we should get here is when we compile the root, which is not a step node.
+                step = new ContainerStep();        
             } else {
-                if (subStep != null) { //If our step isn't a container then there shouldn't have been any children of the node. programming error
-                    throw new RuntimeException("Programming error");
-                }
+                step = (ContainerStep) Consts.getStepObject(((StepNode) parent).getType()).newInstance();
+                step.setSettings(((StepNode) parent).getSettings());
             }
+            step.setSubSteps(l);
+            return step;
+        } else {
+            EndpointStep step = (EndpointStep) Consts.getStepObject(((StepNode) parent).getType()).newInstance();
             return step;
         }
-        throw new RuntimeException("AHDHDAAHDA");
     }
     
     public static void main(String[] args) {

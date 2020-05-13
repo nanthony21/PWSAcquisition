@@ -19,14 +19,10 @@ import org.micromanager.PositionList;
 public class AcquireFromPositionList extends ContainerStep {
     //Executes `step` at each position in the positionlist and increments the cell number each time.
     
-    public AcquireFromPositionList(Step step, AcquirePositionsSettings settings) {
-        super(settings, step);
-    }
-    
     @Override
     public SequencerFunction getFunction() {
         PositionList list = ((AcquirePositionsSettings) this.getSettings()).posList;
-        SequencerFunction stepFunction = this.getSubStep().getFunction();
+        SequencerFunction stepFunction = super.getFunction();
         return new SequencerFunction() {
             @Override
             public Integer applyThrows(Integer startingCellNum) throws Exception{

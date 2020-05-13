@@ -34,6 +34,7 @@ import javax.swing.JOptionPane;
  *TODO run all acquisitions through this sequencer.
  * @author nick
  */
+/*
 public class AcquisitionSequencer {
     int num_frames;
     double frame_interval;
@@ -166,5 +167,5 @@ public class AcquisitionSequencer {
             Globals.mm().logs().showError(e);
         }
     }
-}
+}*/
 

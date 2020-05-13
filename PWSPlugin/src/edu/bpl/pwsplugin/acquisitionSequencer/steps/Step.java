@@ -13,9 +13,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
  */
 public abstract class Step {
     private SequencerSettings settings; 
-    public Step(SequencerSettings settings) {
-        this.setSettings(settings);
-    }
+
     public final SequencerSettings getSettings() { return settings; }
     public final void setSettings(SequencerSettings settings) { this.settings = settings; }
     public abstract SequencerFunction getFunction();

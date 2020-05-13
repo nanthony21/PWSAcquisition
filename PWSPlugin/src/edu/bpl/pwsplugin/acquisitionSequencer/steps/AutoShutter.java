@@ -14,14 +14,10 @@ import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
  * @author nick
  */
 public class AutoShutter extends ContainerStep {
-
-    public AutoShutter(AutoshutterSettings settings, Step step) {
-        super(settings, step);
-    }
     
     @Override
     public SequencerFunction getFunction() {
-        SequencerFunction stepFunction = this.getSubStep().getFunction();
+        SequencerFunction stepFunction = super.getFunction();
         AutoshutterSettings settings = (AutoshutterSettings) this.getSettings();
         Illuminator illuminator = Globals.getHardwareConfiguration().getImagingConfigurationByName(settings.imagingConfigName).illuminator();//((AutoshutterSettings) this.getSettings()).illuminatorSettings //TODO how to get the illuminator?
         return new SequencerFunction() {

@@ -17,16 +17,11 @@ import edu.bpl.pwsplugin.settings.FluorSettings;
  */
 public class AcquireCell extends EndpointStep {
     //Represents the acquisition of a single "CellXXX" folder, it can contain multiple PWS, Dynamics, and Fluorescence acquisitions.
-    AcquisitionManager acqMan;
-    
-    public AcquireCell(AcquireCellSettings settings) {
-        super(settings);
-        this.acqMan = Globals.acqManager();
-    }
     
     @Override
     public SequencerFunction getFunction() {
         AcquireCellSettings settings = (AcquireCellSettings) this.getSettings();
+        AcquisitionManager acqMan = Globals.acqManager();
         return new SequencerFunction() {
             @Override
             public Integer applyThrows(Integer saveNum) throws Exception{ //TODO need to make the fluorescence not overwrite eachother.

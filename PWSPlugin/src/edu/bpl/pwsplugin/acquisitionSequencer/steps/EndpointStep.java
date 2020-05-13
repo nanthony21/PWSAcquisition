@@ -5,7 +5,6 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
 
 /**
  *
@@ -13,7 +12,5 @@ import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
  */
 public abstract class EndpointStep extends Step {
     //A `Step` which is an endpoint (does not contain any substeps
-    public EndpointStep(SequencerSettings settings) {
-        super(settings);
-    }
+    //TODO maybe this isn't needed
 }

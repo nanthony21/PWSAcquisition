@@ -7,7 +7,6 @@ package edu.bpl.pwsplugin.acquisitionSequencer.UI.tree;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
-import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
