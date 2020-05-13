@@ -1,6 +1,9 @@
 package edu.bpl.pwsplugin.UI.sequencer.tree;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.util.Enumeration;
+import javax.swing.BorderFactory;
 import javax.swing.DropMode;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -13,12 +16,12 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import net.miginfocom.swing.MigLayout;
 
-public class TreeDragAndDrop extends JPanel{
+public class TreeDragAndDrop extends JScrollPane{
     protected JTree tree = new JTree();
     protected DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
     
     public TreeDragAndDrop(TransferHandler handler) {
-        super(new MigLayout("insets 0 0 0 0"));
+        super();
         
         CopyableMutableTreeNode root = CopyableMutableTreeNode.create((DefaultMutableTreeNode) model.getRoot());
         model.setRoot(root);
@@ -29,10 +32,10 @@ public class TreeDragAndDrop extends JPanel{
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
         tree.setCellRenderer(new TreeRenderer());
         
-        JScrollPane scroll = new JScrollPane(tree);
-        scroll.setInheritsPopupMenu(true);
         tree.setInheritsPopupMenu(true);
-        this.add(scroll, "grow");
+        JPanel p = new JPanel(new BorderLayout());
+        p.add(tree);
+        this.setViewportView(p);
     }
 
     public void expandTree() {
