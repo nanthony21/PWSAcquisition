@@ -14,6 +14,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings.TimeSeriesUI;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireCell;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireFromPositionList;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireTimeSeries;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.FocusLock;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SoftwareAutofocus;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
@@ -92,5 +93,9 @@ public class Consts {
             return TimeSeriesUI.class;
         } 
         throw new RuntimeException("Shouldn't get here");
+    }
+    
+    public static boolean isContainer(Type type) {
+        return ContainerStep.class.isAssignableFrom(getStepObject(type));
     }
 }

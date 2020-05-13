@@ -20,6 +20,7 @@ import edu.bpl.pwsplugin.UI.settings.DynPanel;
 import edu.bpl.pwsplugin.UI.settings.FluorPanel;
 import edu.bpl.pwsplugin.UI.settings.PWSPanel;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.ContainerStepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquirePositionsSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireTimeSeriesSettings;
@@ -213,13 +214,13 @@ class NewStepsTree extends TreeDragAndDrop {
         root.add(new EndpointStepNode(new AcquireCellSettings(), Consts.Type.ACQ));
         
         DefaultMutableTreeNode utility = new DefaultMutableTreeNode("Utility");
-        utility.add(new StepNode(new SoftwareAutoFocusSettings(), Consts.Type.AF));
-        utility.add(new StepNode(new FocusLockSettings(), Consts.Type.PFS));
+        utility.add(new EndpointStepNode(new SoftwareAutoFocusSettings(), Consts.Type.AF));
+        utility.add(new ContainerStepNode(new FocusLockSettings(), Consts.Type.PFS));
         root.add(utility);
         
         DefaultMutableTreeNode sequences = new DefaultMutableTreeNode("Sequences");
-        sequences.add(new StepNode(new AcquirePositionsSettings(), Consts.Type.POS));
-        sequences.add(new StepNode(new AcquireTimeSeriesSettings(), Consts.Type.TIME));
+        sequences.add(new ContainerStepNode(new AcquirePositionsSettings(), Consts.Type.POS));
+        sequences.add(new ContainerStepNode(new AcquireTimeSeriesSettings(), Consts.Type.TIME));
         root.add(sequences);
         
         model.setRoot(root);

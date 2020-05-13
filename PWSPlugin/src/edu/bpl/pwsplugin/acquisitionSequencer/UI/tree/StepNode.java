@@ -13,7 +13,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
  *
  * @author nick
  */
-public class StepNode extends CopyableMutableTreeNode {
+public abstract class StepNode extends CopyableMutableTreeNode {
     Consts.Type type;
     SequencerSettings settings;
     
