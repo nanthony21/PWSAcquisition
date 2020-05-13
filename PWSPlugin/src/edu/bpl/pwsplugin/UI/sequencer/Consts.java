@@ -11,9 +11,7 @@ package edu.bpl.pwsplugin.UI.sequencer;
  */
 public class Consts {
     public enum Type {
-        PWS,
-        DYN,
-        FLUOR,
+        ACQ,
         PFS,
         POS,
         TIME,
@@ -29,12 +27,8 @@ public class Consts {
     
     public static String getName(Type type) {
         switch (type) {
-            case PWS:
-                return "PWS Acquisition";
-            case DYN:
-                return "Dynamics Acquisition";
-            case FLUOR:
-                return "Fluoresence Acquisition";
+            case ACQ:
+                return "Acquisition";
             case PFS:
                 return "Optical Focus Lock";
             case POS:
@@ -50,7 +44,7 @@ public class Consts {
     }
     
     public static Category getCategory(Type type) {
-        if (type == Type.PWS || type == Type.DYN || type == Type.FLUOR) {
+        if (type == Type.ACQ) {
             return Category.ACQ;
         } else if (type == Type.POS || type == Type.TIME) {
             return Category.SEQ;

@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.UI.sequencer;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.UI.sequencer.stepSettings.AcquireCellUI;
 import edu.bpl.pwsplugin.UI.sequencer.stepSettings.AutoFocusUI;
 import edu.bpl.pwsplugin.UI.sequencer.stepSettings.FocusLockUI;
 import edu.bpl.pwsplugin.UI.sequencer.stepSettings.PositionSequenceUI;
@@ -19,6 +20,7 @@ import edu.bpl.pwsplugin.UI.settings.DynPanel;
 import edu.bpl.pwsplugin.UI.settings.FluorPanel;
 import edu.bpl.pwsplugin.UI.settings.PWSPanel;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
+import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquirePositionsSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireTimeSeriesSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.FocusLockSettings;
@@ -80,9 +82,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener {
     public SettingsPanel() {
         super(new CardLayout());
                
-        panelTypeMapping.put(Consts.Type.PWS, new PWSPanel());
-        panelTypeMapping.put(Consts.Type.DYN, new DynPanel());
-        panelTypeMapping.put(Consts.Type.FLUOR, new FluorPanel());
+        panelTypeMapping.put(Consts.Type.ACQ, new AcquireCellUI());
         panelTypeMapping.put(Consts.Type.AF, new AutoFocusUI());
         panelTypeMapping.put(Consts.Type.PFS, new FocusLockUI());
         panelTypeMapping.put(Consts.Type.POS, new PositionSequenceUI());
@@ -139,9 +139,7 @@ class NewStepsTree extends TreeDragAndDrop {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
         
         DefaultMutableTreeNode acquisitions = new DefaultMutableTreeNode("Acquisitions");
-        acquisitions.add(new EndpointStepNode(new PWSSettings(), Consts.Type.PWS));
-        acquisitions.add(new EndpointStepNode(new DynSettings(), Consts.Type.DYN));
-        acquisitions.add(new EndpointStepNode(new FluorSettings(), Consts.Type.FLUOR));
+        acquisitions.add(new EndpointStepNode(new AcquireCellSettings(), Consts.Type.ACQ));
         root.add(acquisitions);
         
         DefaultMutableTreeNode utility = new DefaultMutableTreeNode("Utility");

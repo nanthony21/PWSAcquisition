@@ -26,7 +26,7 @@ public class AutoShutter extends ContainerStep {
     public SequencerFunction getFunction() {
         SequencerFunction stepFunction = this.getSubStep().getFunction();
         AutoshutterSettings settings = (AutoshutterSettings) this.getSettings();
-        Illuminator illuminator = ((AutoshutterSettings) this.getSettings()).illuminatorSettings //TODO how to get the illuminator?
+        Illuminator illuminator = Globals.getHardwareConfiguration().getImagingConfigurationByName(settings.imagingConfigName).illuminator();//((AutoshutterSettings) this.getSettings()).illuminatorSettings //TODO how to get the illuminator?
         return new SequencerFunction() {
             @Override
             public Integer applyThrows(Integer cellNum) throws Exception {
@@ -38,7 +38,7 @@ public class AutoShutter extends ContainerStep {
                 illuminator.setShutter(false);
                 return numOfNewAcqs;
             } 
-        }
+        };
     }
    
 }

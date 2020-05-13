@@ -6,12 +6,12 @@
 package edu.bpl.pwsplugin.acquisitionSequencer;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
+import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireCellSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquirePositionsSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireTimeSeriesSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.settings.AutoshutterSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireCell;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireDynamics;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireFluorescence;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.utility.AcquireFromPositionList;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquirePWS;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.utility.AcquireTimeSeries;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.utility.AutoShutter;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
@@ -25,7 +25,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -148,18 +147,18 @@ public class AcquisitionSequencer {
 
         // No errors occurred. Proceed.
         try {
-            Step acquisitionHandle = new AcquireCell(directoryName, pws, dynamics, fluorescence);
+            Step acquisitionHandle = new AcquireCell(new AcquireCellSettings());
             if (useMultiplePositions) {
                 Step handleSoFar = acquisitionHandle;
-                acquisitionHandle = new AcquireFromPositionList(handleSoFar, Globals.mm().positions().getPositionList());
+                acquisitionHandle = new AcquireFromPositionList(handleSoFar, new AcquirePositionsSettings());
             }
             if (autoShutter) {
                 Step handleSoFar = acquisitionHandle;
-                acquisitionHandle = new AutoShutter(autoShutterDelay, handleSoFar, Globals.getHardwareConfiguration().getImagingConfigurations().get(0).illuminator());
+                acquisitionHandle = new AutoShutter(new AutoshutterSettings(), handleSoFar);
             }
             if (num_frames > 1) {
                 Step handleSoFar = acquisitionHandle;
-                acquisitionHandle = new AcquireTimeSeries(frame_interval, num_frames, handleSoFar);
+                acquisitionHandle = new AcquireTimeSeries(new AcquireTimeSeriesSettings(), handleSoFar);
             }
 
             acquisitionHandle.getFunction().apply(cellnum);

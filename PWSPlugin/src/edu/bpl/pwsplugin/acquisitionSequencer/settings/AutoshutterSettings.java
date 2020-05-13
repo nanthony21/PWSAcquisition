@@ -13,5 +13,5 @@ import edu.bpl.pwsplugin.settings.IlluminatorSettings;
  */
 public class AutoshutterSettings extends SequencerSettings {
     public double delaySeconds;
-    public IlluminatorSettings illuminatorSettings;
+    public String imagingConfigName;
 }
