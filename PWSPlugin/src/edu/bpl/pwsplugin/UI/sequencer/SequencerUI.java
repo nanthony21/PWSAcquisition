@@ -186,6 +186,10 @@ class NewStepsTree extends TreeDragAndDrop {
         model.setRoot(root);
         tree.setRootVisible(false);
         tree.setShowsRootHandles(true);
+        
+        Dimension d = new Dimension(60, 200);
+        setSize(d);
+        setMinimumSize(d);
     }    
 }
 
@@ -198,6 +202,10 @@ class SequenceTree extends TreeDragAndDrop {
         model.setRoot(root);
         tree.setRootVisible(false);
         tree.setShowsRootHandles(true);
+        
+        Dimension d = new Dimension(60, 200);
+        setSize(d);
+        setMinimumSize(d);
         
         setComponentPopupMenu(new PopupMenu());
 
