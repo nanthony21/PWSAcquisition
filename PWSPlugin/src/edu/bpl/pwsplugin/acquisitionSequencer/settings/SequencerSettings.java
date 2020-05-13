@@ -17,5 +17,6 @@ public class SequencerSettings extends JsonableParam {
         JsonableParam.registerClass(AcquireTimeSeriesSettings.class);
         JsonableParam.registerClass(SoftwareAutoFocusSettings.class);
         JsonableParam.registerClass(FocusLockSettings.class);
+        JsonableParam.registerClass(AutoshutterSettings.class);
     }
 }

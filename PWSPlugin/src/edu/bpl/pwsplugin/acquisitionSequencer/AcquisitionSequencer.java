@@ -162,7 +162,7 @@ public class AcquisitionSequencer {
                 acquisitionHandle = new AcquireTimeSeries(frame_interval, num_frames, handleSoFar);
             }
 
-            acquisitionHandle.apply(cellnum);
+            acquisitionHandle.getFunction().apply(cellnum);
         } catch (Exception e) {
             Globals.mm().logs().showError(e);
         }

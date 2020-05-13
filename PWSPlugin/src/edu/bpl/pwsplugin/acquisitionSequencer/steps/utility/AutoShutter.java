@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps.utility;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.acquisitionSequencer.settings.AutoshutterSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
@@ -16,25 +17,23 @@ import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
  * @author nick
  */
 public class AutoShutter extends ContainerStep {
-    double delay;
-    Step step;
-    Illuminator illuminator;
-    public AutoShutter(double delaySeconds, Step step, Illuminator illum) {
-        delay = delaySeconds;
-        this.step = step;
-        illuminator = illum;
+
+    public AutoShutter(AutoshutterSettings settings, Step step) {
+        super(settings, step);
     }
     
     @Override
     public SequencerFunction getFunction() {
         SequencerFunction stepFunction = this.getSubStep().getFunction();
+        AutoshutterSettings settings = (AutoshutterSettings) this.getSettings();
+        Illuminator illuminator = ((AutoshutterSettings) this.getSettings()).illuminatorSettings //TODO how to get the illuminator?
         return new SequencerFunction() {
             @Override
             public Integer applyThrows(Integer cellNum) throws Exception {
                 //AUTOSHUTTER A function that turns on the lamp, waits `delay` seconds, runs the acquisitionHandle, then turns off the lamp.
                 illuminator.setShutter(true);
                 Globals.statusAlert().setText("Delaying acquisition while lamp warms up.");
-                Thread.sleep((long)(delay*1000));
+                Thread.sleep((long)(settings.delaySeconds*1000));
                 Integer numOfNewAcqs = stepFunction.apply(cellNum);
                 illuminator.setShutter(false);
                 return numOfNewAcqs;

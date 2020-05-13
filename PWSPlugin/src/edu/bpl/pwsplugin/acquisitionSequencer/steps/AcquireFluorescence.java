@@ -28,6 +28,7 @@ public class AcquireFluorescence extends EndpointStep {
     }
     
     public SequencerFunction getFunction() {
+        SequencerSettings settings = this.getSettings();
         return new SequencerFunction() {
             @Override
             public Integer applyThrows(Integer cellNum) {
