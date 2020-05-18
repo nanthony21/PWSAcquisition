@@ -21,6 +21,7 @@ import edu.bpl.pwsplugin.UI.settings.FluorPanel;
 import edu.bpl.pwsplugin.UI.settings.PWSPanel;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.ContainerStepNode;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeRenderers;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquirePositionsSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireTimeSeriesSettings;
@@ -243,6 +244,7 @@ class NewStepsTree extends TreeDragAndDrop {
         model.setRoot(root);
         tree.setRootVisible(false);
         tree.setShowsRootHandles(true);
+        tree.setCellRenderer(new TreeRenderers.NewStepsTreeRenderer());
         
         Dimension d = new Dimension(200, 200);
         setSize(d);
@@ -259,6 +261,7 @@ class SequenceTree extends TreeDragAndDrop {
         model.setRoot(root);
         tree.setRootVisible(false);
         tree.setShowsRootHandles(false);
+        tree.setCellRenderer(new TreeRenderers.SequenceTreeRenderer());
         
         Dimension d = new Dimension(200, 200);
         setSize(d);
