@@ -8,6 +8,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings;
 import edu.bpl.pwsplugin.UI.settings.DynPanel;
 import edu.bpl.pwsplugin.UI.settings.PWSPanel;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
+import edu.bpl.pwsplugin.UI.utils.CheckBoxPanel;
 import edu.bpl.pwsplugin.UI.utils.ListCardUI;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyMoveTransferHandler;
@@ -40,6 +41,9 @@ import net.miginfocom.swing.MigLayout;
  */
 public class AcquireCellUI extends SingleBuilderJPanel<AcquireCellSettings> {
     JTextField directory = new JTextField(10);
+    CheckBoxPanel pwsCBPanel = new CheckBoxPanel(new MigLayout("insets 0 0 0 0"), "PWS");
+    CheckBoxPanel dynCBPanel = new CheckBoxPanel(new MigLayout("insets 0 0 0 0"), "Dynamics");
+    CheckBoxPanel fluorCBPanel = new CheckBoxPanel(new MigLayout("insets 0 0 0 0"), "Fluorescence");
     PWSPanel pwsSettings = new PWSPanel();
     DynPanel dynSettings = new DynPanel();
     ListCardUI<List<FluorSettings>, FluorSettings> fluorSettings= new ListCardUI<>(ArrayList.class, "", new FluorSettings());
@@ -49,15 +53,16 @@ public class AcquireCellUI extends SingleBuilderJPanel<AcquireCellSettings> {
         pwsSettings.setBorder(BorderFactory.createEtchedBorder());
         dynSettings.setBorder(BorderFactory.createEtchedBorder());
         fluorSettings.setBorder(BorderFactory.createEtchedBorder());
+        
+        pwsCBPanel.add(pwsSettings);
+        dynCBPanel.add(dynSettings);
+        fluorCBPanel.add(fluorSettings);
 
         this.add(new JLabel("Directory:"));
         this.add(directory, "wrap");
-        this.add(new JLabel("PWS"));
-        this.add(pwsSettings, "wrap, span");
-        this.add(new JLabel("Dynamics"));
-        this.add(dynSettings, "wrap, span");
-        this.add(new JLabel("Fluorescence"));
-        this.add(fluorSettings, "wrap, span");
+        this.add(pwsCBPanel, "wrap, span");
+        this.add(dynCBPanel, "wrap, span");
+        this.add(fluorCBPanel, "wrap, span");
     }
     
     @Override
