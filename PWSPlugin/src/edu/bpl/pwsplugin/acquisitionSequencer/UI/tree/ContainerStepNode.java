@@ -13,7 +13,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
  * @author nick
  */
 public class ContainerStepNode extends StepNode {
-    public ContainerStepNode() { //TODO get rid of this constructor somehow.
+    public ContainerStepNode() { //TODO get rid of this constructor somehow. Why?
         super();
         this.setAllowsChildren(true);
     }

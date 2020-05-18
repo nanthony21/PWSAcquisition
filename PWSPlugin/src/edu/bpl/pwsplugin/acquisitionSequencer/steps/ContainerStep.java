@@ -5,7 +5,6 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
 import java.util.List;
 import java.util.stream.Collectors;
 

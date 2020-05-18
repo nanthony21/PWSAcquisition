@@ -77,8 +77,8 @@ public class SequencerUI extends JPanel {
         this.runButton.addActionListener((evt)->{ 
             try {
                 compiledStep = SequencerUI.compileSequenceNodes((DefaultMutableTreeNode)seqTree.model().getRoot()); 
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw new RuntimeException(e);
+            } catch (IllegalStateException | InstantiationException | IllegalAccessException e) {
+                Globals.mm().logs().showError(e);
             }
             int a = 1; //Debug breakpoint here
         }); //Run starting at cell 1.
@@ -92,13 +92,17 @@ public class SequencerUI extends JPanel {
     private static Step compileSequenceNodes(DefaultMutableTreeNode parent) throws InstantiationException, IllegalAccessException {
         //Only the Root can be DefaultMutableTreeNode, the rest better be StepNodes
         //Recursively compile a StepNode and it's children into a step which can be passed to the acquisition engine.
-        if (parent.getChildCount() > 0) {
+        
+        if (parent.getAllowsChildren()) {
+            if (parent.getChildCount() == 0) {
+                throw new IllegalStateException(String.format("%s container-node may not be empty", parent.toString()));
+            }
             List<Step> l = new ArrayList<>();
             for (int i=0; i<parent.getChildCount(); i++) {  
                 l.add(compileSequenceNodes((StepNode) parent.getChildAt(i)));
             } 
             ContainerStep step;
-            if (!(parent instanceof StepNode)) { ///The only time we should get here is when we compile the root, which is not a step node.
+            if (!(parent instanceof StepNode)) { ///The only time we should get here is when we compile the root, which is not a step node. Treat it as just a generic container that runs substeps in sequence.
                 step = new ContainerStep();        
             } else {
                 step = (ContainerStep) Consts.getStepObject(((StepNode) parent).getType()).newInstance();
