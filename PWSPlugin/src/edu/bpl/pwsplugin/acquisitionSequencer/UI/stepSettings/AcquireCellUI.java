@@ -10,20 +10,8 @@ import edu.bpl.pwsplugin.UI.settings.PWSPanel;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.CheckBoxPanel;
 import edu.bpl.pwsplugin.UI.utils.ListCardUI;
-import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyMoveTransferHandler;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyOnlyTransferHandler;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireCellSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.settings.SoftwareAutoFocusSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
-import edu.bpl.pwsplugin.utils.JsonableParam;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +19,6 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 
@@ -39,7 +26,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author nick
  */
-public class AcquireCellUI extends SingleBuilderJPanel<AcquireCellSettings> {
+public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> {
     JTextField directory = new JTextField(10);
     CheckBoxPanel pwsCBPanel = new CheckBoxPanel(new MigLayout("insets 0 0 0 0"), "PWS");
     CheckBoxPanel dynCBPanel = new CheckBoxPanel(new MigLayout("insets 0 0 0 0"), "Dynamics");
@@ -66,8 +53,34 @@ public class AcquireCellUI extends SingleBuilderJPanel<AcquireCellSettings> {
     }
     
     @Override
+    public AcquireCellSettings build() {
+        AcquireCellSettings settings = new AcquireCellSettings();
+        if (pwsCBPanel.isSelected()) {
+            settings.pwsSettings = pwsSettings.build();
+        } else {
+            settings.pwsSettings = null;
+        }
+        if (dynCBPanel.isSelected()) {
+            settings.dynSettings = dynSettings.build();
+        } else {
+            settings.dynSettings = null;
+        }
+        if (fluorCBPanel.isSelected()) {
+            settings.fluorSettings = fluorSettings.build();
+        } else {
+            settings.fluorSettings = null;
+        }
+        settings.directory = directory.getText();
+        return settings;
+    }
+    
+    @Override
+    public void populateFields(AcquireCellSettings settings) {
+         
+    }
+    
     public Map<String, Object> getPropertyFieldMap() {
-        Map<String, Object> m = new HashMap<String, Object>();
+        Map<String, Object> m = new HashMap<>();
         m.put("pwsSettings", pwsSettings);
         m.put("dynSettings", dynSettings);
         m.put("fluorSettings", fluorSettings);
