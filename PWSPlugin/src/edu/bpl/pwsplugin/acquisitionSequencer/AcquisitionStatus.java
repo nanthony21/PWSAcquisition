@@ -32,9 +32,15 @@ public class AcquisitionStatus { //TODO make this thread safe.
         pauseCallBack = status.pauseCallBack;
     }
     
-    public void publish() {
+    private void publish() {
         //Send a copy of this object back to the swingworker so it can be accessed from the `process` method.
         publishCallBack.apply(this);
+    }
+    
+    public void update(String message, Integer cellNumber) {
+        this.currentCellNum = cellNumber;
+        this.statusMsg = message;
+        this.publish();
     }
     
     public void allowPauseHere() {
