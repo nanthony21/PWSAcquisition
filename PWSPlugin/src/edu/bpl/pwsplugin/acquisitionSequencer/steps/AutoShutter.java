@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AutoshutterSettings;
 import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 
@@ -22,14 +23,14 @@ public class AutoShutter extends ContainerStep {
         Illuminator illuminator = Globals.getHardwareConfiguration().getImagingConfigurationByName(settings.imagingConfigName).illuminator();//((AutoshutterSettings) this.getSettings()).illuminatorSettings //TODO how to get the illuminator?
         return new SequencerFunction() {
             @Override
-            public Integer applyThrows(Integer cellNum) throws Exception {
+            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 //AUTOSHUTTER A function that turns on the lamp, waits `delay` seconds, runs the acquisitionHandle, then turns off the lamp.
                 illuminator.setShutter(true);
                 Globals.statusAlert().setText("Delaying acquisition while lamp warms up.");
                 Thread.sleep((long)(settings.delaySeconds*1000));
-                Integer numOfNewAcqs = stepFunction.apply(cellNum);
+                status = stepFunction.apply(status);
                 illuminator.setShutter(false);
-                return numOfNewAcqs;
+                return status;
             } 
         };
     }

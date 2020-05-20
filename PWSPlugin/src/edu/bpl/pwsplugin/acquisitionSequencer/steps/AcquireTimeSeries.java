@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireTimeSeriesSettings;
 
 /**
@@ -20,11 +21,10 @@ public class AcquireTimeSeries extends ContainerStep {
         AcquireTimeSeriesSettings settings = (AcquireTimeSeriesSettings) this.getSettings();
         return new SequencerFunction() {
             @Override
-            public Integer applyThrows(Integer startingCellNum) throws Exception {
+            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 //TIMESERIES execute acquisitionFunHandle repeatedly at a specified time
                 //interval. the handle must take as input the Cell number to start at. It
                 //will return the number of new acquisitions that it tood.
-                int numOfNewAcqs = 0;
                 double lastAcqTime = 0;
                 for (int k=0; k<settings.numFrames; k++) {
                     // wait for the specified frame interval before proceeding to next frame
@@ -40,13 +40,12 @@ public class AcquireTimeSeries extends ContainerStep {
                             Globals.statusAlert().setText(String.format("Acquistion took %.1f seconds. Longer than the frame interval.", (System.currentTimeMillis() - lastAcqTime)/1000));
                         }
                     }
-                    int saveNum = startingCellNum + numOfNewAcqs;
                     lastAcqTime = System.currentTimeMillis(); //Save the current time so we can figure out when to start the next acquisition.
-                    numOfNewAcqs += stepFunction.apply(saveNum);
+                    status = stepFunction.apply(status);
                     String msg = String.format("Finished frame %d of %d", k, settings.numFrames);
                     Globals.mm().alerts().postAlert("PWS", null, msg);
                 }
-                return numOfNewAcqs;
+                return status;
             }
         };
     }

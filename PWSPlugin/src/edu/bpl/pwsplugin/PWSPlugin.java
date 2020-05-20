@@ -21,9 +21,12 @@ package edu.bpl.pwsplugin;
 //
 
 //TODO add z offset for fluorescence, add sequencing, file overwriting.
+//TODO add automatic handling for multiple fluorescence images.
+//TODO test sequencer
+//TODO test test test
+//TODO make acquistionstatus class instead of passing integers.
 
 import com.google.common.eventbus.Subscribe;
-import edu.bpl.pwsplugin.UI.PluginFrame;
 import edu.bpl.pwsplugin.settings.CamSettings;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;

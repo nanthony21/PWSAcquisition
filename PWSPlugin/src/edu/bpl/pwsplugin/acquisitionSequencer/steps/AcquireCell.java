@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
+import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 
@@ -24,9 +25,9 @@ public class AcquireCell extends EndpointStep {
         AcquisitionManager acqMan = Globals.acqManager();
         return new SequencerFunction() {
             @Override
-            public Integer applyThrows(Integer saveNum) throws Exception{ //TODO need to make the fluorescence not overwrite eachother.
-                acqMan.setCellNum(saveNum);
-                acqMan.setSavePath(settings.directory.toString());
+            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception{ //TODO need to make the fluorescence not overwrite eachother.
+                acqMan.setCellNum(status.currentCellNum);
+                acqMan.setSavePath(settings.directory);
                 for (FluorSettings flSettings : settings.fluorSettings) {
                     acqMan.setFluorescenceSettings(flSettings);
                     acqMan.acquireFluorescence();
@@ -39,7 +40,8 @@ public class AcquireCell extends EndpointStep {
                     acqMan.setDynamicsSettings(settings.dynSettings);
                     acqMan.acquireDynamics();
                 }
-                return 1;
+                status.currentCellNum += 1;
+                return status;
             }
         };
     }

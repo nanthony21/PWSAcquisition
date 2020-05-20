@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquirePositionsSettings;
 import java.util.concurrent.Callable;
 import org.micromanager.AutofocusPlugin;
@@ -25,8 +26,7 @@ public class AcquireFromPositionList extends ContainerStep {
         SequencerFunction stepFunction = super.getFunction();
         return new SequencerFunction() {
             @Override
-            public Integer applyThrows(Integer startingCellNum) throws Exception{
-                int numOfNewAcqs = 0;
+            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception{
 
                 Globals.core().setTimeoutMs(30000); //TODO put somewhere else. set timeout to 30 seconds. Otherwise we get an error if a position move takes greater than 5 seconds. (default timeout)
                 for (int posNum=0; posNum < list.getNumberOfPositions(); posNum++) {
@@ -47,14 +47,13 @@ public class AcquireFromPositionList extends ContainerStep {
                     preMoveRoutine.call();
                     pos.goToPosition(pos, Globals.core());   //Yes, I know this is weird. It's a static method that needs a position and the core as input.
                     postMoveRoutine.call();
-                    int save_num = startingCellNum + numOfNewAcqs;
                     // Set the display message for the type of data being acquired
-                    String msg = String.format("Acquiring cell: %d at position: %s", save_num, label);           
+                    String msg = String.format("Acquiring cell: %d at position: %s", status.currentCellNum, label);           
                     Globals.statusAlert().setText(msg);
-                    numOfNewAcqs += stepFunction.apply(save_num);
+                     status = stepFunction.apply(status);
                 }
                 list.getPosition(0).goToPosition(list.getPosition(0), Globals.core());
-                return numOfNewAcqs;
+                return status;
             }
         };
     }

@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
+import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,12 +34,11 @@ public class ContainerStep extends Step {
         List<SequencerFunction> stepFunctions = this.getSubSteps().stream().map(Step::getFunction).collect(Collectors.toList());
         return new SequencerFunction() {
             @Override
-            public Integer applyThrows(Integer cellNum) throws Exception {
-                int numOfNewAcqs = 0;
+            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 for (SequencerFunction func : stepFunctions) {
-                    numOfNewAcqs += func.apply(cellNum + numOfNewAcqs);
+                    status = func.apply(status);
                 }
-                return numOfNewAcqs;   
+                return status;   
             }
         };
     }

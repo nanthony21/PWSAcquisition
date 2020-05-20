@@ -11,6 +11,6 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
  * @author nick
  */
 public abstract class EndpointStep extends Step {
-    //A `Step` which is an endpoint (does not contain any substeps
+    //A `Step` which is an endpoint (does not support containing any substeps
     //TODO maybe this isn't needed
 }

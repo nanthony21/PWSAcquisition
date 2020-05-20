@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
+import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -13,7 +14,7 @@ import java.util.function.Function;
  * @author nick
  */
 @FunctionalInterface
-public interface SequencerFunction extends ThrowingFunction<Integer, Integer> {
+public interface SequencerFunction extends ThrowingFunction<AcquisitionStatus, AcquisitionStatus> {
     
 }
 
@@ -22,7 +23,10 @@ interface ThrowingFunction<T, R> extends Function<T, R> {
     default R apply(T t){
         try{
             return applyThrows(t);
-        }catch (Exception e){
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(ie);
+        } catch (Exception e){
             throw new RuntimeException(e);
         }
     }

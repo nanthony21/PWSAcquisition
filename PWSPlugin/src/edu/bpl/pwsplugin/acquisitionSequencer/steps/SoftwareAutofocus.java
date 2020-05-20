@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.SoftwareAutoFocusSettings;
 
 /**
@@ -19,10 +20,10 @@ public class SoftwareAutofocus extends EndpointStep {
         SoftwareAutoFocusSettings settings = (SoftwareAutoFocusSettings) this.getSettings();
         return new SequencerFunction() {
             @Override
-            public Integer applyThrows(Integer cellNum) throws Exception {
+            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 Globals.mm().getAutofocusManager().setAutofocusMethodByName(settings.afPluginName);
                 Globals.mm().getAutofocusManager().getAutofocusMethod().fullFocus();
-                return 0;
+                return status;
             } 
         };
     }
