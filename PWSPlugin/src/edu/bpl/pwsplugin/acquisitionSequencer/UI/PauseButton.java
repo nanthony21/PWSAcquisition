@@ -27,7 +27,6 @@ public class PauseButton extends JButton{
         //If not in the middle of MDA acquisition we can just pause our own code whenever this function is called.
         //Returns whether or not a pause actually happened.
         if (this.shouldPause()) {
-            long sTime = System.currentTimeMillis();         
             this.setText(RESUME);
             resumeFutureTask_ = doNothingTask();
             try {

@@ -7,13 +7,16 @@ package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.StepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import java.awt.Dialog;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -50,7 +53,8 @@ public class SequencerUI extends JPanel {
             try {
                 Step rootStep = SequencerUI.compileSequenceNodes((DefaultMutableTreeNode)seqTree.model().getRoot());
                 SequencerFunction rootFunc = rootStep.getFunction();
-                acqThread = new AcquisitionThread(rootFunc, 1);
+                SequencerRunningDlg dlg = new SequencerRunningDlg(SwingUtilities.getWindowAncestor(this), "Acquisition Sequence Running");
+                acqThread = new AcquisitionThread(rootFunc, 1, dlg);
                 acqThread.execute();
             } catch (IllegalStateException | InstantiationException | IllegalAccessException e) {
                 Globals.mm().logs().showError(e);
@@ -104,8 +108,8 @@ class SequencerRunningDlg extends JDialog {
     JButton cancelButton = new JButton("Cancel");
     JProgressBar progress = new JProgressBar();
     
-    public SequencerRunningDlg(Frame owner, String title) {
-        super(owner, title, true);
+    public SequencerRunningDlg(Window owner, String title) {
+        super(owner, title, Dialog.ModalityType.APPLICATION_MODAL);
         
         JPanel contentPane = new JPanel(new MigLayout());
         this.setContentPane(contentPane);
@@ -123,17 +127,18 @@ class AcquisitionThread extends SwingWorker<AcquisitionStatus, AcquisitionStatus
     SequencerFunction rootFunc;
     private final AcquisitionStatus startingStatus;
     private AcquisitionStatus currentStatus;
-    private final Function<AcquisitionStatus, Void> publishCallback;
     private SequencerRunningDlg dlg;
     
     
     public AcquisitionThread(SequencerFunction rootFunc, Integer startingCellNum, SequencerRunningDlg dlg) {
         this.rootFunc = rootFunc;  
-        publishCallback = (status) -> { this.publish(status); return null; };
-        startingStatus = new AcquisitionStatus(publishCallback);
+        ThrowingFunction<AcquisitionStatus, Void> publishCallback = (status) -> { this.publish(status); return null; };
+        ThrowingFunction<Void, Void> pauseCallback = (nullInput) -> { dlg.pauseButton.pausePoint(); return nullInput; };
+        startingStatus = new AcquisitionStatus(publishCallback, pauseCallback);
         startingStatus.currentCellNum = startingCellNum;
         currentStatus = startingStatus;
         this.dlg = dlg;
+        dlg.setVisible(true);
     }
     
     @Override
@@ -151,7 +156,7 @@ class AcquisitionThread extends SwingWorker<AcquisitionStatus, AcquisitionStatus
     }
     
     public void finished() {
-        dlg.
+        dlg.dispose();
     }
     
     @Override
