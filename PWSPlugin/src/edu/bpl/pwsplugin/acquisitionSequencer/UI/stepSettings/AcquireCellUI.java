@@ -28,22 +28,19 @@ import net.miginfocom.swing.MigLayout;
  */
 public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> {
     JTextField directory = new JTextField(10);
-    CheckBoxPanel pwsCBPanel = new CheckBoxPanel(new MigLayout("insets 0 0 0 0"), "PWS");
-    CheckBoxPanel dynCBPanel = new CheckBoxPanel(new MigLayout("insets 0 0 0 0"), "Dynamics");
-    CheckBoxPanel fluorCBPanel = new CheckBoxPanel(new MigLayout("insets 0 0 0 0"), "Fluorescence");
     PWSPanel pwsSettings = new PWSPanel();
     DynPanel dynSettings = new DynPanel();
     ListCardUI<List<FluorSettings>, FluorSettings> fluorSettings= new ListCardUI<>(ArrayList.class, "", new FluorSettings());
+    CheckBoxPanel pwsCBPanel = new CheckBoxPanel(pwsSettings, "PWS");
+    CheckBoxPanel dynCBPanel = new CheckBoxPanel(dynSettings, "Dynamics");
+    CheckBoxPanel fluorCBPanel = new CheckBoxPanel(fluorSettings, "Fluorescence");
+
     public AcquireCellUI() {
         super(new MigLayout(), AcquireCellSettings.class);
         
         pwsSettings.setBorder(BorderFactory.createEtchedBorder());
         dynSettings.setBorder(BorderFactory.createEtchedBorder());
         fluorSettings.setBorder(BorderFactory.createEtchedBorder());
-        
-        pwsCBPanel.add(pwsSettings);
-        dynCBPanel.add(dynSettings);
-        fluorCBPanel.add(fluorSettings);
 
         this.add(new JLabel("Directory:"));
         this.add(directory, "wrap");
