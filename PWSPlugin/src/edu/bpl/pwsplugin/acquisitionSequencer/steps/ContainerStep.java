@@ -5,6 +5,9 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,5 +44,16 @@ public class ContainerStep extends Step {
                 return status;   
             }
         };
+    }
+    
+    @Override
+    public JsonObject toJsonObject() {
+        JsonObject obj = super.toJsonObject();
+        JsonArray arr = new JsonArray();
+        for (Step step : steps) {
+            arr.add(step.toJsonObject());
+        }
+        obj.add("subSteps", arr);
+        return obj;
     }
 }

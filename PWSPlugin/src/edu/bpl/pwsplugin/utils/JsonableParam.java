@@ -2,6 +2,7 @@
 package edu.bpl.pwsplugin.utils;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import java.io.FileReader;
 import java.util.HashSet;
@@ -36,7 +37,7 @@ public class JsonableParam {
     }
         
     public JsonableParam copy() {
-        return JsonableParam.fromJsonString(this.toJsonString(), this.getClass());
+        return JsonableParam.fromJson(this.toJsonString(), this.getClass());
     }
     
     public String toJsonString() {
@@ -45,7 +46,12 @@ public class JsonableParam {
         return json;
     }
     
-    public static JsonableParam fromJson(String path, Class clazz) {
+    public JsonObject toJsonObject() {
+        Gson gson = GsonUtils.getGson();
+        return (JsonObject) gson.toJsonTree(this);
+    }
+    
+    public static JsonableParam fromJsonFile(String path, Class clazz) {
         Gson gson = GsonUtils.getGson();
         FileReader reader;
         try {
@@ -58,9 +64,14 @@ public class JsonableParam {
         return (JsonableParam) gson.fromJson(reader, clazz);
     }
     
-    public static  JsonableParam fromJsonString(String jsonStr, Class clazz) {
+    public static  JsonableParam fromJson(String jsonStr, Class clazz) {
         Gson gson = GsonUtils.getGson();
         return (JsonableParam) gson.fromJson(jsonStr, clazz);
+    }
+    
+    public static JsonableParam fromJson(JsonObject obj, Class clazz) {
+        Gson gson = GsonUtils.getGson();
+        return (JsonableParam) gson.fromJson(obj, clazz);
     }
     
     @Override

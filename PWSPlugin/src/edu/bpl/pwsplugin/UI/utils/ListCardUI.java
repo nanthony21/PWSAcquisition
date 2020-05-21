@@ -208,7 +208,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
     
     private void actuallyAddStepAction(S step) throws Exception {
         T t = this.build();
-        S newS = (S) S.fromJsonString(step.toJsonString(), step.getClass()); //Create an independent copy of s.
+        S newS = (S) S.fromJson(step.toJsonString(), step.getClass()); //Create an independent copy of s.
         t.add(newS);
         this.populateFields(t);
         this.combo.setSelectedIndex(t.size()-1); //Go to the last item. the one we just selected.

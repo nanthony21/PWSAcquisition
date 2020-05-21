@@ -23,6 +23,6 @@ public class PWSPluginSettings extends JsonableParam {
     public int cellNum = 1;
 
     public static PWSPluginSettings fromJsonString(String str) {
-        return (PWSPluginSettings) JsonableParam.fromJsonString(str, PWSPluginSettings.class);
+        return (PWSPluginSettings) JsonableParam.fromJson(str, PWSPluginSettings.class);
     }
 }
