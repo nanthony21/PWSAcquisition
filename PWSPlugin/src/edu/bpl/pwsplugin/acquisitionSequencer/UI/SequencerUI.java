@@ -126,13 +126,12 @@ public class SequencerUI extends JPanel {
             if (!(parent instanceof StepNode)) { ///The only time we should get here is when we compile the root, which is not a step node. Treat it as just a generic container that runs substeps in sequence.
                 step = new ContainerStep();        
             } else {
-                step = (ContainerStep) Consts.getStepObject(((StepNode) parent).getType()).newInstance();
-                step.setSettings(((StepNode) parent).getSettings());
+                step = (ContainerStep) ((StepNode) parent).createStepObject();
             }
             step.setSubSteps(l);
             return step;
         } else {
-            EndpointStep step = (EndpointStep) Consts.getStepObject(((StepNode) parent).getType()).newInstance();
+            EndpointStep step = (EndpointStep) ((StepNode) parent).createStepObject();
             return step;
         }
     }
