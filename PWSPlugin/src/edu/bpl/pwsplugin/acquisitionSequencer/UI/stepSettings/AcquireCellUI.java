@@ -76,7 +76,25 @@ public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> {
     
     @Override
     public void populateFields(AcquireCellSettings settings) {
-         
+        if (settings.pwsSettings == null) {
+            this.pwsCBPanel.setSelected(false);
+        } else {
+            this.pwsCBPanel.setSelected(true);
+            this.pwsSettings.populateFields(settings.pwsSettings);
+        }
+        if (settings.dynSettings == null) {
+            this.dynCBPanel.setSelected(false);
+        } else {
+            this.dynCBPanel.setSelected(true);
+            this.dynSettings.populateFields(settings.dynSettings);
+        }         
+        if (settings.fluorSettings == null) {
+            this.fluorCBPanel.setSelected(false);
+        } else {
+            this.fluorCBPanel.setSelected(true);
+            this.fluorSettings.populateFields(settings.fluorSettings);
+        }
+        this.directory.setText(settings.directory);
     }
     
     public Map<String, Object> getPropertyFieldMap() {
