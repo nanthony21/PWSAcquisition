@@ -77,7 +77,22 @@ public class Consts {
         } else if (type == Type.TIME) {
             return AcquireTimeSeries.class;
         } 
-        throw new RuntimeException("Shouldn't get here");
+        throw new RuntimeException(String.format("Shouldn't get here. Type is %s", type.toString()));
+    }
+    
+    public static Type getTypeFromStepClass(Class<? extends Step> clazz) {
+        if (clazz == AcquireCell.class) {
+            return Type.ACQ;
+        } else if (clazz == SoftwareAutofocus.class) {
+            return Type.AF;
+        } else if (clazz == FocusLock.class) {
+            return Type.PFS;
+        } else if (clazz == AcquireFromPositionList.class) {
+            return Type.POS;
+        } else if (clazz == AcquireTimeSeries.class) {
+            return Type.TIME;
+        } 
+        throw new RuntimeException(String.format("Shouldn't get here. Class is %s", clazz.getName()));
     }
     
     public static Class<? extends BuilderJPanel> getUI(Type type) {

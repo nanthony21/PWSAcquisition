@@ -4,7 +4,10 @@ package edu.bpl.pwsplugin.utils;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashSet;
 import org.micromanager.internal.utils.ReportingUtils;
 
@@ -51,16 +54,17 @@ public class JsonableParam {
         return (JsonObject) gson.toJsonTree(this);
     }
     
-    public static JsonableParam fromJsonFile(String path, Class clazz) {
+    public void toJsonFile(String path) throws IOException {
+        //Saves to a JSON file.
+        FileWriter writer = new FileWriter(path);
+        writer.write(this.toJsonString());
+        writer.close();
+    }
+    
+    public static JsonableParam fromJsonFile(String path, Class clazz) throws FileNotFoundException {
         Gson gson = GsonUtils.getGson();
         FileReader reader;
-        try {
-            reader = new FileReader(path);
-        } catch (Exception e) {
-            ReportingUtils.showError(e);
-            ReportingUtils.logError(e);
-            return null;
-        }
+        reader = new FileReader(path);
         return (JsonableParam) gson.fromJson(reader, clazz);
     }
     
