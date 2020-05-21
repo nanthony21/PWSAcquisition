@@ -26,7 +26,7 @@ public class AutoShutter extends ContainerStep {
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 //AUTOSHUTTER A function that turns on the lamp, waits `delay` seconds, runs the acquisitionHandle, then turns off the lamp.
                 illuminator.setShutter(true);
-                Globals.statusAlert().setText("Delaying acquisition while lamp warms up.");
+                status.update("Delaying acquisition while lamp warms up.", status.currentCellNum);
                 Thread.sleep((long)(settings.delaySeconds*1000));
                 status = stepFunction.apply(status);
                 illuminator.setShutter(false);

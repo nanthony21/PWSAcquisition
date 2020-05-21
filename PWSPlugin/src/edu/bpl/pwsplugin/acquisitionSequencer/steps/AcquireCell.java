@@ -29,17 +29,24 @@ public class AcquireCell extends EndpointStep {
                 acqMan.setCellNum(status.currentCellNum);
                 acqMan.setSavePath(settings.directory);
                 for (FluorSettings flSettings : settings.fluorSettings) {
+                    status.allowPauseHere();
+                    status.update(String.format("Acquiring %s fluoresence", flSettings.filterConfigName), status.currentCellNum);
                     acqMan.setFluorescenceSettings(flSettings);
                     acqMan.acquireFluorescence();
                 }
                 if (settings.pwsSettings != null) {
+                    status.allowPauseHere();
+                    status.update("Acquiring PWS", status.currentCellNum);
                     acqMan.setPWSSettings(settings.pwsSettings);
                     acqMan.acquirePWS();
                 }
                 if (settings.dynSettings != null) {
+                    status.allowPauseHere();
+                    status.update("Acquiring Dynamics", status.currentCellNum);
                     acqMan.setDynamicsSettings(settings.dynSettings);
                     acqMan.acquireDynamics();
                 }
+                status.allowPauseHere();
                 status.currentCellNum += 1;
                 return status;
             }

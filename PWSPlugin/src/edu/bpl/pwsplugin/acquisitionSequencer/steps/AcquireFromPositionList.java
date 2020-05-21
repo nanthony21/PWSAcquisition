@@ -27,14 +27,13 @@ public class AcquireFromPositionList extends ContainerStep {
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception{
-
                 Globals.core().setTimeoutMs(30000); //TODO put somewhere else. set timeout to 30 seconds. Otherwise we get an error if a position move takes greater than 5 seconds. (default timeout)
                 for (int posNum=0; posNum < list.getNumberOfPositions(); posNum++) {
                     MultiStagePosition pos = list.getPosition(posNum);
                     String label = pos.getLabel();
                     Callable<Void> preMoveRoutine = ()->{return null;};
                     Callable<Void> postMoveRoutine = ()->{return null;};
-
+                    //TODO do we want to keep this undocumented naming stuff?
                     if (label.contains("APFS")) { //Turn off pfs before moving. after moving run autofocus to get bakc i the right range. then enable pfs again.
                         preMoveRoutine = ()->{ Globals.core().setProperty("TIPFSStatus", "State", "Off"); return null; };
                         postMoveRoutine = ()->{ PFSFuncs.autoFocusThenPFS(); return null; };     

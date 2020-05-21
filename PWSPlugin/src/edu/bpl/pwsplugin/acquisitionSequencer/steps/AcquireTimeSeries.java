@@ -42,8 +42,7 @@ public class AcquireTimeSeries extends ContainerStep {
                     }
                     lastAcqTime = System.currentTimeMillis(); //Save the current time so we can figure out when to start the next acquisition.
                     status = stepFunction.apply(status);
-                    String msg = String.format("Finished frame %d of %d", k, settings.numFrames);
-                    Globals.mm().alerts().postAlert("PWS", null, msg);
+                    status.update(String.format("Finished time set %d of %d", k, settings.numFrames), status.currentCellNum);
                 }
                 return status;
             }

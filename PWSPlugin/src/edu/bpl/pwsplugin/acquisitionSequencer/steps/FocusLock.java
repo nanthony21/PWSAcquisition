@@ -30,7 +30,7 @@ public class FocusLock extends ContainerStep {
                 AcquisitionStatus newstatus = stepFunction.apply(status);
                 if (!Globals.core().isContinuousFocusLocked()) {
                     Globals.mm().logs().logMessage("Autofocus failed!");
-                    Globals.statusAlert().setText("Autofocus failed!");
+                    status.update("Autofocus failed!", status.currentCellNum);
                 }
                 Globals.core().enableContinuousFocus(false);
                 return newstatus;
