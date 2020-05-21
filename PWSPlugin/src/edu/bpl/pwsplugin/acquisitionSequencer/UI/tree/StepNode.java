@@ -39,7 +39,7 @@ public abstract class StepNode extends CopyableMutableTreeNode {
     }
     
     public SequencerSettings getSettings() {
-        return this.settings;
+        return (SequencerSettings) this.settings.copy();
     }
     
     public void setSettings(SequencerSettings settings) {

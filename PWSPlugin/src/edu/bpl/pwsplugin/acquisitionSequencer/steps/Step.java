@@ -16,7 +16,7 @@ import org.micromanager.internal.utils.FileDialogs;
 public abstract class Step extends JsonableParam {
     private SequencerSettings settings; 
 
-    public final SequencerSettings getSettings() { return settings; }
+    public final SequencerSettings getSettings() { return (SequencerSettings) settings.copy(); }
     
     public final void setSettings(SequencerSettings settings) { this.settings = settings; }
     
