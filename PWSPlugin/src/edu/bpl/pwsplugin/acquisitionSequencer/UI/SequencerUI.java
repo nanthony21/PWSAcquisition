@@ -86,8 +86,12 @@ public class SequencerUI extends JPanel {
             try {
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
                 String path = FileDialogs.openFile(topFrame, "Load Sequence", Step.FILETYPE).getPath();
-                Step rootStep = (Step) JsonableParam.fromJsonFile(path, Step.class);
-                seqTree.model().setRoot(loadNodeFromStep(rootStep));
+                ContainerStep rootStep = (ContainerStep) JsonableParam.fromJsonFile(path, Step.class);
+                DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
+                for (Step subStep : rootStep.getSubSteps()) {
+                    rootNode.add(loadNodeFromStep(subStep));
+                }
+                seqTree.model().setRoot(rootNode);
             } catch (FileNotFoundException e) {
                 Globals.mm().logs().logError(e);
             }
