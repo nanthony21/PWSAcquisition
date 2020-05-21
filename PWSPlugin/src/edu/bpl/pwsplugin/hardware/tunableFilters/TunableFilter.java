@@ -42,6 +42,8 @@ public abstract class TunableFilter {
             return new VarispecLCTF(settings);
         } else if (settings.filterType == Types.KURIOSLCTF) {
             return new KuriosLCTF(settings);
+        }else if (settings.filterType == Types.Simulated) {
+            return new SimulatedFilter(settings);
         } else {
             return null; //This shouldn't ever happen.
         }
@@ -49,6 +51,7 @@ public abstract class TunableFilter {
     
     public enum Types {
         VARISPECLCTF,
-        KURIOSLCTF;
+        KURIOSLCTF,
+        Simulated;
     }
 }

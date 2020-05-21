@@ -45,6 +45,8 @@ public abstract class Camera {
             return new HamamatsuOrcaFlash4v3(settings);
         } else if (settings.camType == Types.HamamatsuEMCCD) {
             return new HamamatsuEMCCD(settings);
+        } else if (settings.camType == Types.Simulated) {
+            return new SimulatedCamera(settings);
         } else {
             return null; //This shouldn't ever happen.
         }
@@ -52,6 +54,7 @@ public abstract class Camera {
     
     public enum Types {
         HamamatsuOrca4V3,
-        HamamatsuEMCCD;
+        HamamatsuEMCCD,
+        Simulated;
     }
 }

@@ -14,6 +14,8 @@ public abstract class Illuminator {
     public static Illuminator getInstance(IlluminatorSettings settings) {
         if (settings.illuminatorType == Types.XCite120LED) {
             return new XCite120LED(settings);
+        } else if (settings.illuminatorType == Types.Simulated) {
+            return new SimulatedIlluminator(settings);
         } else {
             throw new RuntimeException("Programming Error: Illumator type " + settings.illuminatorType + " is not supported.");
         }
@@ -21,5 +23,6 @@ public abstract class Illuminator {
     
     public enum Types {
         XCite120LED,
+        Simulated,
     }
 }
