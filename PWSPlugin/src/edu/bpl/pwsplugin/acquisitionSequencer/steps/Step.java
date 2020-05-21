@@ -5,15 +5,15 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
-import com.google.gson.JsonObject;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
+import org.micromanager.internal.utils.FileDialogs;
 
 /**
  *
  * @author nick
  */
-public abstract class Step {
+public abstract class Step extends JsonableParam {
     private SequencerSettings settings; 
 
     public final SequencerSettings getSettings() { return settings; }
@@ -22,15 +22,15 @@ public abstract class Step {
     
     public abstract SequencerFunction getFunction();
     
-    public JsonObject toJsonObject() {
-        JsonObject obj = new JsonObject();
-        obj.add("settings", this.getSettings().toJsonObject());
-        return obj;
-    }
+    public static final FileDialogs.FileType FILETYPE = new FileDialogs.FileType("PWS Acquisition Sequence", "Sequence (.pwsseq)", "newAcqSequence.pwsseq", true, "pwsseq");
     
-    public static Step fromJsonObject(JsonObject obj) {
-        JsonObject settingsObj = (JsonObject) obj.get("settings");
-        //settingsClass
-                JsonableParam.fromJson(sett, clazz)
+    public static void registerWithGSON() {
+        JsonableParam.registerClass(SoftwareAutofocus.class);
+        JsonableParam.registerClass(FocusLock.class);
+        JsonableParam.registerClass(ContainerStep.class);
+        JsonableParam.registerClass(AutoShutter.class);
+        JsonableParam.registerClass(AcquireTimeSeries.class);
+        JsonableParam.registerClass(AcquireFromPositionList.class);
+        JsonableParam.registerClass(AcquireCell.class);
     }
 }

@@ -5,22 +5,31 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
+import com.google.gson.Gson;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.ContainerStepNode;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.EndpointStepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.StepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.utils.GsonUtils;
+import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.Dialog;
 import java.awt.Font;
 import java.awt.Window;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -28,6 +37,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.miginfocom.swing.MigLayout;
+import org.micromanager.internal.utils.FileDialogs;
         
 
 /**
@@ -39,6 +49,8 @@ public class SequencerUI extends JPanel {
     NewStepsTree newStepsTree = new NewStepsTree();
     SettingsPanel settingsPanel = new SettingsPanel(seqTree, newStepsTree);
     JButton runButton = new JButton("Run");
+    JButton saveButton = new JButton("Save");
+    JButton loadButton = new JButton("Load");
     AcquisitionThread acqThread;
     
     public SequencerUI() {
@@ -46,7 +58,7 @@ public class SequencerUI extends JPanel {
 
         this.settingsPanel.setBorder(BorderFactory.createEtchedBorder());
         
-        this.runButton.addActionListener((evt)->{  
+        this.runButton.addActionListener((evt) -> {  
             try {
                 Step rootStep = SequencerUI.compileSequenceNodes((DefaultMutableTreeNode)seqTree.model().getRoot());
                 SequencerFunction rootFunc = rootStep.getFunction();
@@ -59,6 +71,28 @@ public class SequencerUI extends JPanel {
             int a = 1; //Debug breakpoint here
         }); //Run starting at cell 1.
         
+        this.saveButton.addActionListener((evt) -> {
+            try { 
+                Step rootStep = compileSequenceNodes((DefaultMutableTreeNode) seqTree.model().getRoot());
+                JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                String path = FileDialogs.save(topFrame, "Save Sequence", Step.FILETYPE).getPath();
+                rootStep.toJsonFile(path);
+            } catch (InstantiationException | IllegalAccessException | IOException e) {
+                Globals.mm().logs().logError(e);
+            }
+        });
+        
+        this.loadButton.addActionListener((evt) -> {
+            try {
+                JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                String path = FileDialogs.openFile(topFrame, "Load Sequence", Step.FILETYPE).getPath();
+                Step rootStep = (Step) JsonableParam.fromJsonFile(path, Step.class);
+                seqTree.model().setRoot(loadNodeFromStep(rootStep));
+            } catch (FileNotFoundException e) {
+                Globals.mm().logs().logError(e);
+            }
+        });
+        
         JLabel l = new JLabel("Sequence");
         l.setFont(new Font("serif", Font.BOLD, 12));
         this.add(l);
@@ -69,6 +103,8 @@ public class SequencerUI extends JPanel {
         this.add(seqTree, "growy");
         this.add(newStepsTree, "growy, wrap");
         this.add(runButton, "spanx");
+        this.add(saveButton);
+        this.add(loadButton);
     }
     
     private static Step compileSequenceNodes(DefaultMutableTreeNode parent) throws InstantiationException, IllegalAccessException {
@@ -95,6 +131,20 @@ public class SequencerUI extends JPanel {
             EndpointStep step = (EndpointStep) Consts.getStepObject(((StepNode) parent).getType()).newInstance();
             return step;
         }
+    }
+    
+    private StepNode loadNodeFromStep(Step rootStep) {
+        if (rootStep instanceof ContainerStep) {
+            ContainerStepNode node = new ContainerStepNode(rootStep.getSettings(), Consts.getTypeFromStepClass(rootStep.getClass()));            
+            for (Step subStep : ((ContainerStep) rootStep).getSubSteps()) {
+                StepNode subNode = (StepNode) loadNodeFromStep(subStep);
+                node.add(subNode);
+            }
+            return node;
+        } else if (rootStep instanceof EndpointStep) {
+            return new EndpointStepNode(rootStep.getSettings(), Consts.getTypeFromStepClass(rootStep.getClass()));
+        }
+        throw new RuntimeException("Should not get here.");
     }
 }
 

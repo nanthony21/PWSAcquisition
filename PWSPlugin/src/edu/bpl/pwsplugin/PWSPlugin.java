@@ -71,6 +71,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
             JsonableParam.registerClass(IlluminatorSettings.class);
             JsonableParam.registerClass(PWSPluginSettings.class);
             edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings.registerWithGSON();
+            edu.bpl.pwsplugin.acquisitionSequencer.steps.Step.registerWithGSON();
             Globals.init(studio_);       
             initialized_ = true;
         }
