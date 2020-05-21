@@ -31,10 +31,11 @@ public class AcquireFromPositionList extends ContainerStep {
                 for (int posNum=0; posNum < list.getNumberOfPositions(); posNum++) {
                     MultiStagePosition pos = list.getPosition(posNum);
                     String label = pos.getLabel();
+                    status.update(String.format("Moving to position %s", label), status.currentCellNum);
                     Callable<Void> preMoveRoutine = ()->{return null;};
                     Callable<Void> postMoveRoutine = ()->{return null;};
-                    //TODO do we want to keep this undocumented naming stuff?
-                    if (label.contains("APFS")) { //Turn off pfs before moving. after moving run autofocus to get bakc i the right range. then enable pfs again.
+                    //TODO do we want to keep this undocumented naming stuff? How about we document it? duh
+                    if (label.contains("APFS")) { //Turn off pfs before moving. after moving run autofocus to get back i the right range. then enable pfs again.
                         preMoveRoutine = ()->{ Globals.core().setProperty("TIPFSStatus", "State", "Off"); return null; };
                         postMoveRoutine = ()->{ PFSFuncs.autoFocusThenPFS(); return null; };     
                     } else if (label.contains("ZPFS")) { //Turn off pfs, move, reenable pfs. make sure to set a coordinate for z-nonpfs for this to work.
@@ -46,10 +47,7 @@ public class AcquireFromPositionList extends ContainerStep {
                     preMoveRoutine.call();
                     pos.goToPosition(pos, Globals.core());   //Yes, I know this is weird. It's a static method that needs a position and the core as input.
                     postMoveRoutine.call();
-                    // Set the display message for the type of data being acquired
-                    String msg = String.format("Acquiring cell: %d at position: %s", status.currentCellNum, label);           
-                    Globals.statusAlert().setText(msg);
-                     status = stepFunction.apply(status);
+                    status = stepFunction.apply(status);
                 }
                 list.getPosition(0).goToPosition(list.getPosition(0), Globals.core());
                 return status;
