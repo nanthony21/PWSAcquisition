@@ -20,25 +20,27 @@ public class CopyableMutableTreeNode extends DefaultMutableTreeNode {
     }
     
     public CopyableMutableTreeNode copy() {
-        CopyableMutableTreeNode n = create(this, this.getClass());
+        CopyableMutableTreeNode n = create(this);
         return n;
     }
     
     public static CopyableMutableTreeNode create(DefaultMutableTreeNode node) {
-        return create(node, CopyableMutableTreeNode.class);
-    }
-    
-    public static CopyableMutableTreeNode create(DefaultMutableTreeNode node, Class<? extends CopyableMutableTreeNode> clazz) {
-        //Subclasses of CopyableMutableTreeNode can be created with this.
+        //Subclasses of CopyableMutableTreeNode can be created with this. If a node is not an instance or subclass of CopyableTreeNode it will be converted to CopyableTreeNode
         CopyableMutableTreeNode n;
         try {
-            n = clazz.newInstance();
+            Class<? extends CopyableMutableTreeNode> c;
+            if (CopyableMutableTreeNode.class.isAssignableFrom(node.getClass())) {
+                c = (Class<? extends CopyableMutableTreeNode>) node.getClass();
+            } else {
+                c = CopyableMutableTreeNode.class;
+            }
+            n = c.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
         n.copyAttributesFrom(node);
         for(int iChildren=node.getChildCount(), i=0; i<iChildren; i++) {
-            n.add(create((DefaultMutableTreeNode) node.getChildAt(i), clazz));
+            n.add(create((DefaultMutableTreeNode) node.getChildAt(i)));
         }
         return n;
     }
