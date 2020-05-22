@@ -29,6 +29,7 @@ package edu.bpl.pwsplugin;
 //Pause step
 //Change folder step.
 //Ability to switch objectives. independent of imaging config.
+//Autoexposure for PWS.
 
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.settings.CamSettings;

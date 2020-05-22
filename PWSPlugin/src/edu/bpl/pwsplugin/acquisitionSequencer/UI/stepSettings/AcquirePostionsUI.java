@@ -10,7 +10,6 @@ import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquirePositionsSettings;
 import java.awt.Container;
 import java.awt.Dimension;
-import javax.swing.JButton;
 import net.miginfocom.swing.MigLayout;
 import org.micromanager.PositionList;
 import org.micromanager.internal.positionlist.PositionListDlg;
