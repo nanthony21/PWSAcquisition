@@ -45,15 +45,4 @@ public class ContainerStep extends Step {
             }
         };
     }
-    
-    @Override
-    public JsonObject toJsonObject() {
-        JsonObject obj = super.toJsonObject();
-        JsonArray arr = new JsonArray();
-        for (Step step : steps) {
-            arr.add(step.toJsonObject());
-        }
-        obj.add("subSteps", arr);
-        return obj;
-    }
 }
