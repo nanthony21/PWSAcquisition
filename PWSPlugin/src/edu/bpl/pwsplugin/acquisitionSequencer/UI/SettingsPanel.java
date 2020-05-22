@@ -88,9 +88,10 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         }
     }
     
-    private void saveSettingsOfLastNode() {
+    public void saveSettingsOfLastNode() {
         if (this.lastSelectedNode != null) {
-            this.lastSelectedNode.setSettings((SequencerSettings) panelTypeMapping.get(this.lastSelectedNode.getType()).build());
+            SequencerSettings settings = (SequencerSettings) panelTypeMapping.get(this.lastSelectedNode.getType()).build();
+            this.lastSelectedNode.setSettings(settings);
         } 
     }
     
@@ -113,6 +114,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
     
     @Override
     public void focusGained(FocusEvent evt) { // Clicking from one JTree to another one doesn't fire a TreeSelectionEvent. Force one to happen so the panel always shows the right settings
+        saveSettingsOfLastNode();
         TreePath path = ((JTree) evt.getComponent()).getSelectionPath();
         if (path == null) { return; }
         DefaultMutableTreeNode node = ((DefaultMutableTreeNode)path.getLastPathComponent());
