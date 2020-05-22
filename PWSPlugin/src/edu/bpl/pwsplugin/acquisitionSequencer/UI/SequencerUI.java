@@ -5,7 +5,6 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
-import com.google.gson.Gson;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
@@ -16,13 +15,11 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
-import edu.bpl.pwsplugin.utils.GsonUtils;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.Dialog;
 import java.awt.Font;
 import java.awt.Window;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +57,7 @@ public class SequencerUI extends JPanel {
         
         this.runButton.addActionListener((evt) -> {  
             try {
-                Step rootStep = SequencerUI.compileSequenceNodes((DefaultMutableTreeNode)seqTree.model().getRoot());
+                Step rootStep = this.compileSequenceNodes((DefaultMutableTreeNode)seqTree.model().getRoot());
                 SequencerFunction rootFunc = rootStep.getFunction();
                 SequencerRunningDlg dlg = new SequencerRunningDlg(SwingUtilities.getWindowAncestor(this), "Acquisition Sequence Running");
                 acqThread = new AcquisitionThread(rootFunc, 1, dlg);
@@ -111,9 +108,10 @@ public class SequencerUI extends JPanel {
         this.add(loadButton);
     }
     
-    private static Step compileSequenceNodes(DefaultMutableTreeNode parent) throws InstantiationException, IllegalAccessException {
+    private Step compileSequenceNodes(DefaultMutableTreeNode parent) throws InstantiationException, IllegalAccessException {
         //Only the Root can be DefaultMutableTreeNode, the rest better be StepNodes
-        //Recursively compile a StepNode and it's children into a step which can be passed to the acquisition engine.   
+        //Recursively compile a StepNode and it's children into a step which can be passed to the acquisition engine. 
+        settingsPanel.saveSettingsOfLastNode(); //Make sure to update nodes with most recently set paremeters in the settings panel
         if (parent.getAllowsChildren()) {
             if (parent.getChildCount() == 0) {
                 throw new IllegalStateException(String.format("%s container-node may not be empty", parent.toString()));
