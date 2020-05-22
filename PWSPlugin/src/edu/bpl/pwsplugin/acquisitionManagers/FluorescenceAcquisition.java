@@ -27,10 +27,12 @@ abstract class FluorescenceAcquisition implements Acquisition<FluorSettings>{
     
     @Override
     public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException {
-        Path path = Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).resolve("Fluorescence");
-        if (Files.isDirectory(path)){
-            throw new FileAlreadyExistsException("Cell " + cellNum + " fluorescence already exists.");
-        } 
+        int i = 0;
+        Path path;
+        do { //Increment the folder numbering until a nonused folder is found.
+            path = Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).resolve(String.format("Fluorescence_%d", i));
+            i++;
+        } while(Files.isDirectory(path));
         return path.toString();
     }
     
