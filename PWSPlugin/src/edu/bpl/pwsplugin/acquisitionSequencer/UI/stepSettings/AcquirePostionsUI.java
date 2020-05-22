@@ -8,6 +8,8 @@ package edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquirePositionsSettings;
+import java.awt.Container;
+import java.awt.Dimension;
 import javax.swing.JButton;
 import net.miginfocom.swing.MigLayout;
 import org.micromanager.PositionList;
@@ -19,18 +21,13 @@ import org.micromanager.internal.positionlist.PositionListDlg;
  */
 public class AcquirePostionsUI extends BuilderJPanel<AcquirePositionsSettings>{
     PositionListDlg dlg;
-    JButton showDlgButton = new JButton("Show Position List");
-    //PositionList posList;
     
     public AcquirePostionsUI() {
-        super(new MigLayout(), AcquirePositionsSettings.class);    
-        dlg = new PositionListDlg(Globals.mm(), new PositionList());
-        
-        showDlgButton.addActionListener((evt)->{
-            dlg.setVisible(true);
-        });
-        
-        this.add(showDlgButton);
+        super(new MigLayout("insets 0 0 0 0, fill"), AcquirePositionsSettings.class);    
+        dlg = new PositionListDlg(Globals.mm(), new PositionList()); 
+        Container pane = dlg.getContentPane(); //We create a dialog, then steal in contents and put them in our own window, kind of hacky.
+        pane.setPreferredSize(new Dimension(100, pane.getHeight())); //Make it a bit slimmer.
+        this.add(pane, "grow");
     }
     
     @Override
