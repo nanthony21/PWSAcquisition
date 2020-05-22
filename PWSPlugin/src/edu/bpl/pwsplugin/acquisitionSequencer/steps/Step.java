@@ -32,5 +32,7 @@ public abstract class Step extends JsonableParam {
         JsonableParam.registerClass(AcquireTimeSeries.class);
         JsonableParam.registerClass(AcquireFromPositionList.class);
         JsonableParam.registerClass(AcquireCell.class);
+        JsonableParam.registerClass(ChangeConfigGroup.class);
+        JsonableParam.registerClass(PauseStep.class);
     }
 }
