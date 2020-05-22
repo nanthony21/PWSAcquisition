@@ -103,7 +103,7 @@ public class SequencerUI extends JPanel {
         this.add(settingsPanel, "wrap, spany 2");
         this.add(seqTree, "growy");
         this.add(newStepsTree, "growy, wrap");
-        this.add(runButton, "spanx");
+        this.add(runButton);
         this.add(saveButton);
         this.add(loadButton);
     }
@@ -147,6 +147,7 @@ public class SequencerUI extends JPanel {
         }
         throw new RuntimeException("Should not get here.");
     }
+    
 }
 
 class SequencerRunningDlg extends JDialog {

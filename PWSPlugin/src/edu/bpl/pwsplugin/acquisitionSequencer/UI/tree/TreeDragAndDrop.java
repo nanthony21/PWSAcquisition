@@ -30,9 +30,13 @@ public class TreeDragAndDrop extends JScrollPane{
         tree.setDropMode(DropMode.ON_OR_INSERT);
         tree.setTransferHandler(handler);
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);        
-        tree.setInheritsPopupMenu(true);
         JPanel p = new JPanel(new BorderLayout());
         p.add(tree);
+        
+        tree.setInheritsPopupMenu(true);//These lines allow us to specify a right click menu further up
+        p.setInheritsPopupMenu(true);
+        this.setInheritsPopupMenu(true);
+        
         this.setViewportView(p);
     }
 

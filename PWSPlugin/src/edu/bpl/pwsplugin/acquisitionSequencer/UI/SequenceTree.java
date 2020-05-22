@@ -9,6 +9,9 @@ import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyMoveTransferHandler;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeRenderers;
 import java.awt.Dimension;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -19,7 +22,7 @@ import javax.swing.tree.TreePath;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-class SequenceTree extends TreeDragAndDrop {
+class SequenceTree extends TreeDragAndDrop implements KeyListener {
     public SequenceTree() {
         super(new CopyMoveTransferHandler());
         
@@ -35,7 +38,31 @@ class SequenceTree extends TreeDragAndDrop {
         setMinimumSize(d);
         
         setComponentPopupMenu(new PopupMenu());
+        this.addKeyListener(this);
+        tree.addKeyListener(this);
 
+    }
+    
+    @Override
+    public void keyTyped(KeyEvent e) {}
+    
+    @Override
+    public void keyPressed(KeyEvent e) {}
+    
+    @Override
+    public void keyReleased(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+            deleteSelectedNodes();
+        }
+    }
+    
+    private void deleteSelectedNodes() {
+        TreePath[] paths = tree.getSelectionPaths();
+        if (paths != null) {
+            for (TreePath path : paths) {
+                model.removeNodeFromParent((MutableTreeNode) path.getLastPathComponent());
+            }
+        }
     }
     
     class PopupMenu extends JPopupMenu {
@@ -43,9 +70,7 @@ class SequenceTree extends TreeDragAndDrop {
             super();
             JMenuItem deleteItem = new JMenuItem("Delete");
             deleteItem.addActionListener((evt)->{
-                for (TreePath path : tree.getSelectionPaths()) {
-                    model.removeNodeFromParent((MutableTreeNode) path.getLastPathComponent());
-                }
+                deleteSelectedNodes();
             });
             
             this.add(deleteItem);

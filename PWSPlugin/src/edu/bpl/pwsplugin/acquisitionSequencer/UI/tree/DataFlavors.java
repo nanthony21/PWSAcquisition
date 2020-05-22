@@ -14,7 +14,8 @@ import java.awt.datatransfer.DataFlavor;
 public class DataFlavors {
     public static DataFlavor CopiedNodeDataFlavor;
 
-    private static String CopiedNodeDataFlavorMime = DataFlavor.javaJVMLocalObjectMimeType +  ";class=\"" + CopyableMutableTreeNode.class.getName() + "\"";
+    private final static String CopiedNodeDataFlavorMime = DataFlavor.javaJVMLocalObjectMimeType +  ";class=\"" + CopyableMutableTreeNode.class.getName() + "\"";
+    
     static {
         try {
             CopiedNodeDataFlavor = new DataFlavor(CopiedNodeDataFlavorMime);
