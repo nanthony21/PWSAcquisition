@@ -123,6 +123,10 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         });
     }
     
+    public List<BuilderJPanel<S>> getSubComponents() {
+        return this.components;
+    }
+    
     @Override
     public void itemStateChanged(ItemEvent evt) {
         CardLayout cl = (CardLayout)(cardPanel.getLayout());

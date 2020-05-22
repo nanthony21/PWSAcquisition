@@ -5,13 +5,21 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings;
 
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.settings.DynPanel;
+import edu.bpl.pwsplugin.UI.settings.FluorPanel;
 import edu.bpl.pwsplugin.UI.settings.PWSPanel;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.CheckBoxPanel;
 import edu.bpl.pwsplugin.UI.utils.ListCardUI;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireCellSettings;
+import edu.bpl.pwsplugin.hardware.HWConfiguration;
+import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.FluorSettings;
+import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +34,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author nick
  */
-public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> {
+public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements PropertyChangeListener {
     JTextField directory = new JTextField(10);
     PWSPanel pwsSettings = new PWSPanel();
     DynPanel dynSettings = new DynPanel();
@@ -37,6 +45,7 @@ public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> {
 
     public AcquireCellUI() {
         super(new MigLayout(), AcquireCellSettings.class);
+        Globals.addPropertyChangeListener(this);
         
         pwsSettings.setBorder(BorderFactory.createEtchedBorder());
         dynSettings.setBorder(BorderFactory.createEtchedBorder());
@@ -111,5 +120,30 @@ public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> {
         f.setSize(400,400);
         f.setLocation(200,200);
         f.setVisible(true);
+    }
+    
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        //We subscribe to the Globals property changes. This gets fired when a change is detected.
+        if (evt.getPropertyName().equals("config")) {
+            HWConfiguration cfg = (HWConfiguration) evt.getNewValue();
+            List<String> normalNames = new ArrayList<>();
+            List<String> spectralNames = new ArrayList<>();
+            for (ImagingConfigurationSettings setting : cfg.getSettings().configs) {
+                if (setting.configType == ImagingConfiguration.Types.StandardCamera) {
+                    normalNames.add(setting.name);
+                } else if (setting.configType == ImagingConfiguration.Types.SpectralCamera) {
+                    spectralNames.add(setting.name);
+                }
+            }
+            this.pwsSettings.setAvailableConfigNames(spectralNames);
+            this.dynSettings.setAvailableConfigNames(spectralNames);
+            List<String> allNames = new ArrayList<>();
+            allNames.addAll(normalNames);
+            allNames.addAll(spectralNames);
+            for (BuilderJPanel flSettings : fluorSettings.getSubComponents()) {
+                ((FluorPanel) flSettings).setAvailableConfigNames(allNames);
+            }
+        }
     }
 }
