@@ -31,9 +31,8 @@ public class ContainerStep extends Step {
     public final void setSubSteps(List<Step> steps) {
         this.steps = steps;
     }
-
-    @Override
-    public SequencerFunction getFunction() { // Execute each substep in sequence
+    
+    public final SequencerFunction getSubstepsFunction() { // Execute each substep in sequence
         List<SequencerFunction> stepFunctions = this.getSubSteps().stream().map(Step::getFunction).collect(Collectors.toList());
         return new SequencerFunction() {
             @Override
@@ -44,5 +43,10 @@ public class ContainerStep extends Step {
                 return status;   
             }
         };
+    }
+        
+    @Override
+    public SequencerFunction getFunction() { 
+        return getSubstepsFunction();
     }
 }
