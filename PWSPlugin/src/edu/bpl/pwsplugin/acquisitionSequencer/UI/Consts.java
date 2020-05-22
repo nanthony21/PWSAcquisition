@@ -30,6 +30,7 @@ public class Consts {
         POS,
         TIME,
         AF;
+
     }
     
     public enum Category {
@@ -50,6 +51,22 @@ public class Consts {
                 return "Time Series";
             case AF:
                 return "Software Autofocus";                  
+        }
+        throw new RuntimeException("Shouldn't get here");
+    }
+    
+    public static String getDescription(Type type) {
+        switch (type) {
+            case ACQ:
+                return "Acquire PWS, Dynamics, and Fluorescence into a single folder.";
+            case PFS:
+                return "Engage continuous hardware autofocus";
+            case POS:
+                return "Perform enclosed steps at each position in the list.";
+            case TIME:
+                return "Perform enclosed steps at multiple time points.";
+            case AF:
+                return "Run a software autofocus routine";                  
         }
         throw new RuntimeException("Shouldn't get here");
     }

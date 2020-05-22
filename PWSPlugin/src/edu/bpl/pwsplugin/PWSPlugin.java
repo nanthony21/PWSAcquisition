@@ -25,6 +25,10 @@ package edu.bpl.pwsplugin;
 //TODO test sequencer
 //TODO test test test
 //TODO make acquistionstatus class instead of passing integers.
+//ZOffset for fluorescence.
+//Pause step
+//Change folder step.
+//Ability to switch objectives. independent of imaging config.
 
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.settings.CamSettings;

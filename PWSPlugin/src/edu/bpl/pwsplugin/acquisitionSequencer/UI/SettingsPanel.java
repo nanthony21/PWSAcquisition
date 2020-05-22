@@ -35,13 +35,16 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
     StepNode lastSelectedNode = null;
     JPanel cardPanel = new JPanel(new CardLayout());
     JLabel nameLabel = new JLabel();
+    JLabel descriptionLabel = new JLabel();
     
     public SettingsPanel(TreeDragAndDrop... trees) {
         super(new MigLayout());
         
         nameLabel.setFont(new Font("serif", Font.BOLD, 12));
+        descriptionLabel.setFont(new Font("serif", Font.ITALIC, 9));
         
         this.add(nameLabel, "wrap");
+        this.add(descriptionLabel, "wrap");
         this.add(cardPanel);
         
         //Register as a listener for the trees that we want to display settings for.
@@ -108,6 +111,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
     
     private BuilderJPanel showPanelForType(Consts.Type type) {
         nameLabel.setText(Consts.getName(type));
+        descriptionLabel.setText(Consts.getDescription(type));
         ((CardLayout) cardPanel.getLayout()).show(cardPanel, type.toString());
         return panelTypeMapping.get(type);
     }
