@@ -111,7 +111,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
     
     private BuilderJPanel showPanelForType(Consts.Type type) {
         nameLabel.setText(Consts.getName(type));
-        descriptionLabel.setText(Consts.getDescription(type));
+        descriptionLabel.setText("<html>" + Consts.getDescription(type) + "</html>"); //The html tags here should enable text wrapping.
         ((CardLayout) cardPanel.getLayout()).show(cardPanel, type.toString());
         return panelTypeMapping.get(type);
     }
