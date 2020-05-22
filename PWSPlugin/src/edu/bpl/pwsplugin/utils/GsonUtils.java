@@ -16,7 +16,7 @@ import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 public class GsonUtils {
 
     private static final GsonBuilder gsonBuilder = new GsonBuilder()
-            .setPrettyPrinting();
+            .setPrettyPrinting().serializeNulls(); //Without `serializeNulls` null fields will be skipped, then we json is loaded the default values will be used instead of null.
 
     public static void registerType(RuntimeTypeAdapterFactory<?> adapter) {
         gsonBuilder.registerTypeAdapterFactory(adapter);
