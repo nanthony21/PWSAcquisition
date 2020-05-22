@@ -8,12 +8,15 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.PauseStepSettings;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
+import net.miginfocom.swing.MigLayout;
 
 /**
  *
@@ -50,10 +53,13 @@ class PauseDlg extends JDialog {
         this.setLocationRelativeTo(Globals.frame());
         
         messageLabel.setText("<html>" + msg + "</html>");
+        timerLabel.setBorder(BorderFactory.createRaisedBevelBorder());
         
-        this.add(messageLabel, "wrap");
-        this.add(timerLabel, "wrap");
-        this.add(proceedButton);
+        JPanel p = new JPanel(new MigLayout("fill, insets 0 0 0 0"));
+        p.add(messageLabel, "wrap, align center");
+        p.add(timerLabel, "wrap, align center");
+        p.add(proceedButton, "align center");
+        this.setContentPane(p);
         
         proceedButton.addActionListener((evt) -> {
             this.dispose();
@@ -74,7 +80,7 @@ class PauseDlg extends JDialog {
         minutes = minutes % 60;
         seconds = seconds % 60;
         String timeString = String.format("%d:%d:%d", hours, minutes, seconds);
-        timerLabel.setText(String.format("<html><font size=18>Paused for: <B>%s</B></font></html>", timeString));
+        timerLabel.setText(String.format("<html>Paused:<br><B>%s</B></html>", timeString));
     }
     
     @Override

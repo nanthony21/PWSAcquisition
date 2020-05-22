@@ -23,10 +23,10 @@ public class PauseStepUI extends BuilderJPanel<PauseStepSettings>{
     public PauseStepUI() {
         super(new MigLayout("insets 0 0 0 0, fill"), PauseStepSettings.class);
         
-        message.setPreferredSize(new Dimension(100, 100));
+        //message.setPreferredSize(new Dimension(100, 100));
         message.setBorder(BorderFactory.createLoweredBevelBorder());
         
-        this.add(new JLabel("Message:"), "wrap");
+        this.add(new JLabel("Message:"), "wrap, shrink");
         this.add(message, "grow");
     }
     

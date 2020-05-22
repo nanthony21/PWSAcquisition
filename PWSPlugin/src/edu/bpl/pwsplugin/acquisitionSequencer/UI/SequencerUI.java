@@ -60,8 +60,7 @@ public class SequencerUI extends JPanel {
                 Step rootStep = this.compileSequenceNodes((DefaultMutableTreeNode)seqTree.model().getRoot());
                 SequencerFunction rootFunc = rootStep.getFunction();
                 SequencerRunningDlg dlg = new SequencerRunningDlg(SwingUtilities.getWindowAncestor(this), "Acquisition Sequence Running");
-                acqThread = new AcquisitionThread(rootFunc, 1, dlg);
-                acqThread.execute();
+                acqThread = new AcquisitionThread(rootFunc, 1, dlg); //This opens the dialog and starts the thread.
             } catch (IllegalStateException | InstantiationException | IllegalAccessException e) {
                 Globals.mm().logs().showError(e);
             }
@@ -73,6 +72,9 @@ public class SequencerUI extends JPanel {
                 Step rootStep = compileSequenceNodes((DefaultMutableTreeNode) seqTree.model().getRoot());
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
                 String path = FileDialogs.save(topFrame, "Save Sequence", Step.FILETYPE).getPath();
+                if(!path.endsWith(".pwsseq")) {
+                    path = path + ".pwsseq"; //Make sure the extension is there.
+                }
                 rootStep.toJsonFile(path);
             } catch (InstantiationException | IllegalAccessException | IOException e) {
                 Globals.mm().logs().logError(e);
@@ -159,6 +161,7 @@ class SequencerRunningDlg extends JDialog {
     
     public SequencerRunningDlg(Window owner, String title) {
         super(owner, title, Dialog.ModalityType.APPLICATION_MODAL);
+        this.setLocationRelativeTo(owner);
         
         JPanel contentPane = new JPanel(new MigLayout());
         this.setContentPane(contentPane);
@@ -169,6 +172,7 @@ class SequencerRunningDlg extends JDialog {
         contentPane.add(progress, "wrap");
         contentPane.add(pauseButton);
         contentPane.add(cancelButton);
+        this.pack();
     }
 }
 
@@ -187,6 +191,7 @@ class AcquisitionThread extends SwingWorker<AcquisitionStatus, AcquisitionStatus
         startingStatus.currentCellNum = startingCellNum;
         currentStatus = startingStatus;
         this.dlg = dlg;
+        this.execute();
         dlg.setVisible(true);
     }
     
@@ -197,6 +202,7 @@ class AcquisitionThread extends SwingWorker<AcquisitionStatus, AcquisitionStatus
             this.currentStatus = status;
         } catch (Exception ie) {
             Globals.mm().logs().logError(ie);
+            Globals.mm().logs().showError(String.format("Error in sequencer. See core log file. %s", ie.getMessage()));
         }
         SwingUtilities.invokeLater(() -> {
             finished();
