@@ -5,9 +5,6 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,10 +16,6 @@ import java.util.stream.Collectors;
 public class ContainerStep extends Step {
     //A `Step` that takes other `Step`s and wraps functionality around them.
     private List<Step> steps;
-    
-    public ContainerStep() {
-        super();
-    }
     
     public final List<Step> getSubSteps() {
         return this.steps;

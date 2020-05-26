@@ -5,6 +5,8 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
+import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+
 
 /**
  *

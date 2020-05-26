@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
+import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.StepNode;
@@ -55,7 +56,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
 
         for (Consts.Type type : Consts.Type.values()) {
             try {
-                panelTypeMapping.put(type, Consts.getUI(type).newInstance());
+                panelTypeMapping.put(type, Consts.getFactory(type).getUI().newInstance());
             } catch (InstantiationException | IllegalAccessException e) {
                 Globals.mm().logs().logError(e);
             }
@@ -110,8 +111,8 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
     }
     
     private BuilderJPanel showPanelForType(Consts.Type type) {
-        nameLabel.setText(Consts.getName(type));
-        descriptionLabel.setText("<html>" + Consts.getDescription(type) + "</html>"); //The html tags here should enable text wrapping.
+        nameLabel.setText(Consts.getFactory(type).getName());
+        descriptionLabel.setText("<html>" + Consts.getFactory(type).getDescription() + "</html>"); //The html tags here should enable text wrapping.
         ((CardLayout) cardPanel.getLayout()).show(cardPanel, type.toString());
         return panelTypeMapping.get(type);
     }

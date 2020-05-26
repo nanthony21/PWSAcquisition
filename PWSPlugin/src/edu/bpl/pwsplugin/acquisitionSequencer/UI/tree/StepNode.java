@@ -5,7 +5,7 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.UI.tree;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -33,7 +33,7 @@ public abstract class StepNode extends CopyableMutableTreeNode {
     }
     
     public Step createStepObject() throws InstantiationException, IllegalAccessException {
-        Step obj = Consts.getStepObject(this.getType()).newInstance();
+        Step obj = Consts.getFactory(this.getType()).getStep().newInstance();
         obj.setSettings(this.getSettings());
         return obj;
     }
@@ -61,6 +61,6 @@ public abstract class StepNode extends CopyableMutableTreeNode {
     
     @Override
     public String toString() {
-        return Consts.getName(type);
+        return Consts.getFactory(this.getType()).getName();
     }
 }

@@ -12,7 +12,7 @@ import edu.bpl.pwsplugin.UI.settings.PWSPanel;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.CheckBoxPanel;
 import edu.bpl.pwsplugin.UI.utils.ListCardUI;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.hardware.HWConfiguration;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;

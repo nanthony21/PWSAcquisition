@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
+import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.ContainerStepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyOnlyTransferHandler;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.EndpointStepNode;
@@ -49,10 +50,10 @@ class NewStepsTree extends TreeDragAndDrop {
         }
         
         for (Consts.Type type : Consts.Type.values()) {
-            String name = Consts.getName(type);
+            String name = Consts.getFactory(type).getName();
             SequencerSettings settings;
             try {
-                settings = Consts.getSettingsClass(type).newInstance();
+                settings = Consts.getFactory(type).getSettings().newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
@@ -62,7 +63,7 @@ class NewStepsTree extends TreeDragAndDrop {
             } else {
                 node = new EndpointStepNode(settings, type);
             }
-            categories.get(Consts.getCategory(type)).add(node);
+            categories.get(Consts.getFactory(type).getCategory()).add(node);
         } 
         
         model.setRoot(root);

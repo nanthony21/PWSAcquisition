@@ -5,12 +5,14 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
+import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.ContainerStepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.EndpointStepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.StepNode;
+import edu.bpl.pwsplugin.acquisitionSequencer.factories.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerFunction;
@@ -137,15 +139,16 @@ public class SequencerUI extends JPanel {
     }
     
     private StepNode loadNodeFromStep(Step rootStep) {
+        StepFactory factory = Consts.getFactory(rootStep.getClass());
         if (rootStep instanceof ContainerStep) {
-            ContainerStepNode node = new ContainerStepNode(rootStep.getSettings(), Consts.getTypeFromStepClass(rootStep.getClass()));            
+            ContainerStepNode node = new ContainerStepNode(rootStep.getSettings(), factory.getType());            
             for (Step subStep : ((ContainerStep) rootStep).getSubSteps()) {
                 StepNode subNode = (StepNode) loadNodeFromStep(subStep);
                 node.add(subNode);
             }
             return node;
         } else if (rootStep instanceof EndpointStep) {
-            return new EndpointStepNode(rootStep.getSettings(), Consts.getTypeFromStepClass(rootStep.getClass()));
+            return new EndpointStepNode(rootStep.getSettings(), factory.getType());
         }
         throw new RuntimeException("Should not get here.");
     }
