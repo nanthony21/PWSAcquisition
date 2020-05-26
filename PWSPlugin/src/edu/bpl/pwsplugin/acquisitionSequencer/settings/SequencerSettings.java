@@ -5,23 +5,10 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.settings;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.PauseStep;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /**
  *
  * @author nick
  */
-public class SequencerSettings extends JsonableParam {
-    public static void registerWithGSON() {
-        JsonableParam.registerClass(AcquirePositionsSettings.class);
-        JsonableParam.registerClass(AcquireTimeSeriesSettings.class);
-        JsonableParam.registerClass(SoftwareAutoFocusSettings.class);
-        JsonableParam.registerClass(FocusLockSettings.class);
-        JsonableParam.registerClass(AutoshutterSettings.class);
-        JsonableParam.registerClass(AcquireCellSettings.class);
-        JsonableParam.registerClass(ChangeConfigGroupSettings.class);
-        JsonableParam.registerClass(PauseStepSettings.class);
-        JsonableParam.registerClass(EveryNTimesSettings.class);
-    }
-}
+public class SequencerSettings extends JsonableParam {}

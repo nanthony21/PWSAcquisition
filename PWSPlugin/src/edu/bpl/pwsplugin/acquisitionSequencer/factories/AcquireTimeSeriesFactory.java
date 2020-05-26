@@ -20,7 +20,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class AcquireTimeSeriesFactory  implements StepFactory {
+public class AcquireTimeSeriesFactory extends StepFactory {
     @Override
     public Class<? extends BuilderJPanel> getUI() {
         return TimeSeriesUI.class;

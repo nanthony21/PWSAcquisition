@@ -9,17 +9,23 @@ import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /**
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public interface StepFactory {
-    public Class<? extends BuilderJPanel> getUI();
-    public Class<? extends SequencerSettings> getSettings();
-    public Class<? extends Step> getStep();
-    public String getDescription();
-    public String getName();
-    public Consts.Category getCategory();
-    public Consts.Type getType();
+public abstract class StepFactory {
+    public abstract Class<? extends BuilderJPanel> getUI();
+    public abstract Class<? extends SequencerSettings> getSettings();
+    public abstract Class<? extends Step> getStep();
+    public abstract String getDescription();
+    public abstract String getName();
+    public abstract Consts.Category getCategory();
+    public abstract Consts.Type getType();
+    
+    public void registerGson() {
+        JsonableParam.registerClass(getSettings());
+        JsonableParam.registerClass(getStep());
+    }
 }

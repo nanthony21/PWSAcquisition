@@ -106,7 +106,9 @@ public class Consts {
         return ContainerStep.class.isAssignableFrom(getFactory(type).getStep());
     }
     
-    public static void registerJsonableParams() {
-        
+    public static void registerGson() {
+        for (Type t : Type.values()) {
+            getFactory(t).registerGson();
+        }
     }
 }

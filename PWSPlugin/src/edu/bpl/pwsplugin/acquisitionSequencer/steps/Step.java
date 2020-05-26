@@ -33,17 +33,4 @@ public abstract class Step extends JsonableParam {
     public abstract SequencerFunction getFunction();
     
     public static final FileDialogs.FileType FILETYPE = new FileDialogs.FileType("PWS Acquisition Sequence", "Sequence (.pwsseq)", "newAcqSequence.pwsseq", true, "pwsseq");
-    
-    public static void registerWithGSON() {
-        JsonableParam.registerClass(SoftwareAutofocus.class);
-        JsonableParam.registerClass(FocusLock.class);
-        JsonableParam.registerClass(ContainerStep.class);
-        JsonableParam.registerClass(AutoShutter.class);
-        JsonableParam.registerClass(AcquireTimeSeries.class);
-        JsonableParam.registerClass(AcquireFromPositionList.class);
-        JsonableParam.registerClass(AcquireCell.class);
-        JsonableParam.registerClass(ChangeConfigGroup.class);
-        JsonableParam.registerClass(PauseStep.class);
-        JsonableParam.registerClass(EveryNTimes.class);
-    }
 }

@@ -20,7 +20,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class SoftwareAutofocusFactory implements StepFactory {
+public class SoftwareAutofocusFactory extends StepFactory {
     @Override
     public Class<? extends BuilderJPanel> getUI() {
         return SoftwareAutoFocusUI.class;

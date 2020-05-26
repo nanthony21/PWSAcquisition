@@ -32,6 +32,7 @@ package edu.bpl.pwsplugin;
 //Autoexposure for PWS.
 
 import com.google.common.eventbus.Subscribe;
+import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.settings.CamSettings;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
@@ -75,8 +76,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
             JsonableParam.registerClass(CamSettings.class);
             JsonableParam.registerClass(IlluminatorSettings.class);
             JsonableParam.registerClass(PWSPluginSettings.class);
-            edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings.registerWithGSON();
-            edu.bpl.pwsplugin.acquisitionSequencer.steps.Step.registerWithGSON();
+            Consts.registerGson();
             Globals.init(studio_);       
             initialized_ = true;
         }

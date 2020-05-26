@@ -18,7 +18,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class AcquireCellFactory implements StepFactory {
+public class AcquireCellFactory extends StepFactory {
     @Override
     public Class<? extends BuilderJPanel> getUI() {
         return AcquireCellUI.class;

@@ -20,7 +20,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class EveryNTimesFactory implements StepFactory {
+public class EveryNTimesFactory extends StepFactory {
     @Override
     public Class<? extends BuilderJPanel> getUI() {
         return EveryNTimesUI.class;

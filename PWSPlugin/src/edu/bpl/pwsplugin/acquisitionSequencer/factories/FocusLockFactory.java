@@ -20,7 +20,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class FocusLockFactory implements StepFactory {
+public class FocusLockFactory extends StepFactory {
     @Override
     public Class<? extends BuilderJPanel> getUI() {
         return FocusLockUI.class;

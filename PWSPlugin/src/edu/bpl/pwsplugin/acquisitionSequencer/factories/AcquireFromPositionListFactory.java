@@ -17,7 +17,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class AcquireFromPositionListFactory implements StepFactory {
+public class AcquireFromPositionListFactory extends StepFactory {
     @Override
     public Class<? extends BuilderJPanel> getUI() {
         return AcquirePostionsUI.class;

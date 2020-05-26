@@ -20,7 +20,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class ChangeConfigGroupFactory implements StepFactory {
+public class ChangeConfigGroupFactory extends StepFactory {
     @Override
     public Class<? extends BuilderJPanel> getUI() {
         return ChangeConfigGroupUI.class;
