@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquirePositionsSettings;
 import java.util.concurrent.Callable;
 import org.micromanager.AutofocusPlugin;
@@ -19,6 +20,9 @@ import org.micromanager.PositionList;
  */
 public class AcquireFromPositionList extends ContainerStep {
     //Executes `step` at each position in the positionlist and increments the cell number each time.
+    public AcquireFromPositionList() {
+        super(Consts.Type.POS);
+    }
     
     @Override
     public SequencerFunction getFunction() {

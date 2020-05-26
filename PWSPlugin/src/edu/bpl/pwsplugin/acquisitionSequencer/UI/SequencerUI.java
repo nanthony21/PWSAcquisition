@@ -139,7 +139,7 @@ public class SequencerUI extends JPanel {
     }
     
     private StepNode loadNodeFromStep(Step rootStep) {
-        StepFactory factory = Consts.getFactory(rootStep.getClass());
+        StepFactory factory = Consts.getFactory(rootStep.getType());
         if (rootStep instanceof ContainerStep) {
             ContainerStepNode node = new ContainerStepNode(rootStep.getSettings(), factory.getType());            
             for (Step subStep : ((ContainerStep) rootStep).getSubSteps()) {

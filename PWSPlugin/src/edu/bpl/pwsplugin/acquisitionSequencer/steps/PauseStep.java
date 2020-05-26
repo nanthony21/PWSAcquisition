@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.PauseStepSettings;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -23,6 +24,11 @@ import net.miginfocom.swing.MigLayout;
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class PauseStep extends EndpointStep {
+    
+    public PauseStep() {
+        super(Consts.Type.PAUSE);
+    }
+    
     @Override
     public SequencerFunction getFunction() {
         PauseStepSettings settings = (PauseStepSettings) this.getSettings();

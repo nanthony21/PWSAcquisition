@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,10 @@ import java.util.stream.Collectors;
 public class ContainerStep extends Step {
     //A `Step` that takes other `Step`s and wraps functionality around them.
     private List<Step> steps;
+    
+    public ContainerStep(Consts.Type type) {
+        super(type);
+    }
     
     public final List<Step> getSubSteps() {
         return this.steps;

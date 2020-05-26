@@ -8,6 +8,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 
@@ -18,6 +19,9 @@ import edu.bpl.pwsplugin.settings.FluorSettings;
  */
 public class AcquireCell extends EndpointStep {
     //Represents the acquisition of a single "CellXXX" folder, it can contain multiple PWS, Dynamics, and Fluorescence acquisitions.
+    public AcquireCell() {
+        super(Consts.Type.ACQ);
+    }
     
     @Override
     public SequencerFunction getFunction() {

@@ -16,6 +16,15 @@ import org.micromanager.internal.utils.FileDialogs;
  */
 public abstract class Step extends JsonableParam {
     private SequencerSettings settings; 
+    private final Consts.Type stepType;
+    
+    public Step(Consts.Type type) {
+        stepType = type;
+    }
+    
+    public final Consts.Type getType() {
+        return stepType;
+    }
 
     public final SequencerSettings getSettings() { return (SequencerSettings) settings.copy(); }
     

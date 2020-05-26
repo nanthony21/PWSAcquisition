@@ -15,6 +15,13 @@ import edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings.PauseStepUI;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings.SoftwareAutoFocusUI;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings.TimeSeriesUI;
 import edu.bpl.pwsplugin.acquisitionSequencer.factories.AcquireCellFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.factories.AcquireFromPositionListFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.factories.AcquireTimeSeriesFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.factories.ChangeConfigGroupFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.factories.EveryNTimesFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.factories.FocusLockFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.factories.PauseFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.factories.SoftwareAutofocusFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factories.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquirePositionsSettings;
@@ -78,43 +85,28 @@ public class Consts {
             case ACQ:
                 return new AcquireCellFactory();
             case AF:
+                return new SoftwareAutofocusFactory();
             case PFS:
+                return new FocusLockFactory();
             case POS:
+                return new AcquireFromPositionListFactory();
             case TIME:
+                return new AcquireTimeSeriesFactory();
             case CONFIG:
+                return new ChangeConfigGroupFactory();
             case PAUSE:
+                return new PauseFactory();
             case EVERYN:
-                return new AcquireCellFactory();
+                return new EveryNTimesFactory();
         } 
         throw new RuntimeException("Shouldn't get here.");
     }
-    
-    public static StepFactory getFactory(Class<? extends Step> stepClass) {
-        return getFactory(getTypeFromStepClass(stepClass));
-    }
-    
-    private static Type getTypeFromStepClass(Class<? extends Step> clazz) {
-        if (clazz == AcquireCell.class) {
-            return Type.ACQ;
-        } else if (clazz == SoftwareAutofocus.class) {
-            return Type.AF;
-        } else if (clazz == FocusLock.class) {
-            return Type.PFS;
-        } else if (clazz == AcquireFromPositionList.class) {
-            return Type.POS;
-        } else if (clazz == AcquireTimeSeries.class) {
-            return Type.TIME;
-        } else if (clazz == ChangeConfigGroup.class) {
-            return Type.CONFIG;
-        } else if (clazz == PauseStep.class) {
-            return Type.PAUSE;
-        } else if (clazz == EveryNTimes.class) {
-            return Type.EVERYN;
-        }
-        throw new RuntimeException(String.format("Shouldn't get here. Class is %s", clazz.getName()));
-    }
- 
+
     public static boolean isContainer(Type type) {
         return ContainerStep.class.isAssignableFrom(getFactory(type).getStep());
+    }
+    
+    public static void registerJsonableParams() {
+        
     }
 }

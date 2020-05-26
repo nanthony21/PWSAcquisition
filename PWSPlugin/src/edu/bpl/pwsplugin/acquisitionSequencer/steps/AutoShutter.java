@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AutoshutterSettings;
 import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 
@@ -14,7 +15,10 @@ import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
  *
  * @author nick
  */
-public class AutoShutter extends ContainerStep {
+public class AutoShutter extends ContainerStep { //TODO this class isn't used anywhere.
+    public AutoShutter() {
+        super(Consts.Type.ACQ); //WRONG
+    }
     
     @Override
     public SequencerFunction getFunction() {

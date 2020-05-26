@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.SoftwareAutoFocusSettings;
 
 /**
@@ -14,6 +15,10 @@ import edu.bpl.pwsplugin.acquisitionSequencer.settings.SoftwareAutoFocusSettings
  * @author nick
  */
 public class SoftwareAutofocus extends EndpointStep {
+         
+    public SoftwareAutofocus() {
+        super(Consts.Type.AF);
+    }
     
     @Override
     public SequencerFunction getFunction() {

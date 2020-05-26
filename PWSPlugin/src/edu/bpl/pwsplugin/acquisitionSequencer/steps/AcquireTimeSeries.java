@@ -7,13 +7,17 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireTimeSeriesSettings;
 
 /**
  *
  * @author nick
  */
-public class AcquireTimeSeries extends ContainerStep {    
+public class AcquireTimeSeries extends ContainerStep {
+    public AcquireTimeSeries() {
+        super(Consts.Type.TIME);
+    }
     
     @Override 
     public SequencerFunction getFunction() {

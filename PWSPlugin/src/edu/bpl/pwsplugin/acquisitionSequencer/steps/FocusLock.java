@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.FocusLockSettings;
 
 /**
@@ -14,6 +15,9 @@ import edu.bpl.pwsplugin.acquisitionSequencer.settings.FocusLockSettings;
  * @author nick
  */
 public class FocusLock extends ContainerStep {
+    public FocusLock() {
+        super(Consts.Type.PFS);
+    }
     
     @Override
     public SequencerFunction getFunction() {
