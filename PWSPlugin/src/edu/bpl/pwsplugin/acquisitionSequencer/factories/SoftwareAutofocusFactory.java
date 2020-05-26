@@ -5,16 +5,18 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.factories;
 
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
+import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings.EveryNTimesUI;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings.SoftwareAutoFocusUI;
-import edu.bpl.pwsplugin.acquisitionSequencer.settings.EveryNTimesSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.settings.SoftwareAutoFocusSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.EveryNTimes;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.SoftwareAutofocus;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import net.miginfocom.swing.MigLayout;
 
 /**
  *
@@ -54,5 +56,53 @@ public class SoftwareAutofocusFactory extends StepFactory {
     @Override
     public Consts.Type getType() {
         return Consts.Type.AF;
+    }
+}
+
+class SoftwareAutoFocusUI extends BuilderJPanel<SoftwareAutoFocusSettings> {
+    JComboBox<String> afNames = new JComboBox<>();
+    
+    public SoftwareAutoFocusUI() {
+        super(new MigLayout(), SoftwareAutoFocusSettings.class);
+        afNames.setModel(new DefaultComboBoxModel<>(Globals.mm().getAutofocusManager().getAllAutofocusMethods().toArray(new String[0])));
+        
+        this.add(new JLabel("Autofocus Method:"));
+        this.add(afNames);
+    }
+    
+    @Override
+    public SoftwareAutoFocusSettings build() {
+        SoftwareAutoFocusSettings afs = new SoftwareAutoFocusSettings();
+        afs.afPluginName = (String) afNames.getSelectedItem();
+        return afs;
+    }
+    
+    @Override
+    public void populateFields(SoftwareAutoFocusSettings settings) {
+        afNames.setSelectedItem(settings.afPluginName);
+    }
+}
+
+class SoftwareAutoFocusSettings extends SequencerSettings {
+    public String afPluginName = "OughtaFocus";
+}
+
+class SoftwareAutofocus extends EndpointStep {
+         
+    public SoftwareAutofocus() {
+        super(Consts.Type.AF);
+    }
+    
+    @Override
+    public SequencerFunction getFunction() {
+        SoftwareAutoFocusSettings settings = (SoftwareAutoFocusSettings) this.getSettings();
+        return new SequencerFunction() {
+            @Override
+            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
+                Globals.mm().getAutofocusManager().setAutofocusMethodByName(settings.afPluginName);
+                Globals.mm().getAutofocusManager().getAutofocusMethod().fullFocus();
+                return status;
+            } 
+        };
     }
 }

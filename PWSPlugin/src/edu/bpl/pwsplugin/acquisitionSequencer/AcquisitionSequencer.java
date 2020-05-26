@@ -5,31 +5,6 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer;
 
-import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireCellSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquirePositionsSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireTimeSeriesSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.settings.AutoshutterSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireCell;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireFromPositionList;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireTimeSeries;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.AutoShutter;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
-import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
-import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
-import edu.bpl.pwsplugin.settings.DynSettings;
-import edu.bpl.pwsplugin.settings.FluorSettings;
-import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
-import edu.bpl.pwsplugin.settings.PWSSettings;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.swing.JOptionPane;
-
 /**
  *TODO run all acquisitions through this sequencer.
  * @author nick
