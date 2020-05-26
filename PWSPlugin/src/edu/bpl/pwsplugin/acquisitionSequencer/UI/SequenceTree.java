@@ -5,13 +5,16 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
+import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.ContainerStepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyMoveTransferHandler;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeRenderers;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
+import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -26,10 +29,16 @@ class SequenceTree extends TreeDragAndDrop implements KeyListener {
     public SequenceTree() {
         super(new CopyMoveTransferHandler());
         
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Sequence Root");
+        SequencerSettings settings;
+        try {
+            settings = Consts.getFactory(Consts.Type.ROOT).getSettings().newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        ContainerStepNode root = new ContainerStepNode(settings, Consts.Type.ROOT);
         
         model.setRoot(root);
-        tree.setRootVisible(false);
+        tree.setRootVisible(true);
         tree.setShowsRootHandles(true);
         tree.setCellRenderer(new TreeRenderers.SequenceTreeRenderer());
         

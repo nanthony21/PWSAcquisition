@@ -12,6 +12,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.factories.ChangeConfigGroupFactory
 import edu.bpl.pwsplugin.acquisitionSequencer.factories.EveryNTimesFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factories.FocusLockFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factories.PauseFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.factories.RootStepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factories.SoftwareAutofocusFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factories.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
@@ -29,7 +30,8 @@ public class Consts {
         AF,
         CONFIG,
         PAUSE,
-        EVERYN;
+        EVERYN,
+        ROOT;
     }
     
     public enum Category {
@@ -71,6 +73,8 @@ public class Consts {
                 return new PauseFactory();
             case EVERYN:
                 return new EveryNTimesFactory();
+            case ROOT:
+                return new RootStepFactory();
         } 
         throw new RuntimeException("Shouldn't get here.");
     }

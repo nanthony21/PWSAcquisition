@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  *
  * @author nick
  */
-public class ContainerStep extends Step {
+public abstract class ContainerStep extends Step {
     //A `Step` that takes other `Step`s and wraps functionality around them.
     private List<Step> steps;
     
@@ -41,10 +41,5 @@ public class ContainerStep extends Step {
                 return status;   
             }
         };
-    }
-        
-    @Override
-    public SequencerFunction getFunction() { 
-        return getSubstepsFunction();
     }
 }

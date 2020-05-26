@@ -124,12 +124,7 @@ public class SequencerUI extends JPanel {
             for (int i=0; i<parent.getChildCount(); i++) {  
                 l.add(compileSequenceNodes((StepNode) parent.getChildAt(i)));
             } 
-            ContainerStep step;
-            if (!(parent instanceof StepNode)) { ///The only time we should get here is when we compile the root, which is not a step node. Treat it as just a generic container that runs substeps in sequence.
-                step = new ContainerStep();        
-            } else {
-                step = (ContainerStep) ((StepNode) parent).createStepObject();
-            }
+            ContainerStep step = (ContainerStep) ((StepNode) parent).createStepObject();
             step.setSubSteps(l);
             return step;
         } else {
