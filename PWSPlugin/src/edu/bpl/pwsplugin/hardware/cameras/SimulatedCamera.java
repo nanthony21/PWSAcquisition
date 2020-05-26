@@ -9,7 +9,6 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.settings.CamSettings;
 import java.util.ArrayList;
 import java.util.List;
-import org.ejml.simple.UnsupportedOperation;
 import org.micromanager.data.Image;
 
 /**

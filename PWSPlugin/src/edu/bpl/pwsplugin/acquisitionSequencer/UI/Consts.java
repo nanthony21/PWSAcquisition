@@ -9,6 +9,7 @@ import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings.AcquireCellUI;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings.AcquirePostionsUI;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings.ChangeConfigGroupUI;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings.EveryNTimesUI;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings.FocusLockUI;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings.PauseStepUI;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.stepSettings.SoftwareAutoFocusUI;
@@ -17,6 +18,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquirePositionsSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.AcquireTimeSeriesSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.ChangeConfigGroupSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.settings.EveryNTimesSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.FocusLockSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.PauseStepSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
@@ -26,6 +28,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireFromPositionList;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireTimeSeries;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ChangeConfigGroup;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.EveryNTimes;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.FocusLock;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.PauseStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SoftwareAutofocus;
@@ -43,14 +46,16 @@ public class Consts {
         TIME,
         AF,
         CONFIG,
-        PAUSE;
+        PAUSE,
+        EVERYN;
 
     }
     
     public enum Category {
         ACQ,
         SEQ,
-        UTIL;
+        UTIL,
+        LOGIC;
     }
     
     public static String getCategoryName(Category cat) {
@@ -61,6 +66,8 @@ public class Consts {
                 return "Sequencing";
             case UTIL:
                 return "Utility";
+            case LOGIC:
+                return "Logical";
         }
         throw new RuntimeException("Shouldn't get here");
     }
@@ -81,6 +88,8 @@ public class Consts {
                 return "Change Configuration Group";
             case PAUSE:
                 return "Pause";
+            case EVERYN:
+                return "Execute once per `N` iterations";
         }
         throw new RuntimeException("Shouldn't get here");
     }
@@ -101,6 +110,8 @@ public class Consts {
                 return "Change one of the Micro-Manager configuration groups. E.G. you could change the objective, etc.";
             case PAUSE:
                 return "Open a dialog window and pause execution until the dialog is closed.";
+            case EVERYN:
+                return "Execute sub-steps once every `N` iterations of this this step. Offset the cycle by `offset` iterations.";
         }
         throw new RuntimeException("Shouldn't get here");
     }
@@ -117,6 +128,8 @@ public class Consts {
             case CONFIG:
             case PAUSE:
                 return Category.UTIL;
+            case EVERYN:
+                return Category.LOGIC;
         }
         throw new RuntimeException("Shouldn't get here");
     }   
@@ -137,6 +150,8 @@ public class Consts {
                 return ChangeConfigGroup.class;
             case PAUSE:
                 return PauseStep.class;
+            case EVERYN:
+                return EveryNTimes.class;
         }
         throw new RuntimeException(String.format("Shouldn't get here. Type is %s", type.toString()));
     }
@@ -156,6 +171,8 @@ public class Consts {
             return Type.CONFIG;
         } else if (clazz == PauseStep.class) {
             return Type.PAUSE;
+        } else if (clazz == EveryNTimes.class) {
+            return Type.EVERYN;
         }
         throw new RuntimeException(String.format("Shouldn't get here. Class is %s", clazz.getName()));
     }
@@ -176,6 +193,8 @@ public class Consts {
                 return ChangeConfigGroupUI.class;
             case PAUSE:
                 return PauseStepUI.class;
+            case EVERYN:
+                return EveryNTimesUI.class;
         }
         throw new RuntimeException("Shouldn't get here");
     }
@@ -196,6 +215,8 @@ public class Consts {
                 return ChangeConfigGroupSettings.class;
             case PAUSE:
                 return PauseStepSettings.class;
+            case EVERYN:
+                return EveryNTimesSettings.class;
         }
         throw new RuntimeException("Shouldn't get here");
     }

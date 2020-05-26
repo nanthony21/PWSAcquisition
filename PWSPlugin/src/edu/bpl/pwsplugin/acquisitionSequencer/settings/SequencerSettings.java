@@ -22,5 +22,6 @@ public class SequencerSettings extends JsonableParam {
         JsonableParam.registerClass(AcquireCellSettings.class);
         JsonableParam.registerClass(ChangeConfigGroupSettings.class);
         JsonableParam.registerClass(PauseStepSettings.class);
+        JsonableParam.registerClass(EveryNTimesSettings.class);
     }
 }
