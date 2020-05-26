@@ -10,7 +10,7 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.StepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
-import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.Font;

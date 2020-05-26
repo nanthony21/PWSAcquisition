@@ -15,7 +15,7 @@ import edu.bpl.pwsplugin.UI.utils.ListCardUI;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;

@@ -12,7 +12,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.EndpointStepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.StepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeRenderers;
-import edu.bpl.pwsplugin.acquisitionSequencer.settings.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
