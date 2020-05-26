@@ -9,10 +9,11 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerFunction;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -35,8 +36,8 @@ public class PauseFactory extends StepFactory {
     }
     
     @Override
-    public Class<? extends SequencerSettings> getSettings() {
-        return PauseStepSettings.class;
+    public Class<? extends JsonableParam> getSettings() {
+        return SequencerSettings.PauseStepSettings.class;
     }
     
     @Override
@@ -65,11 +66,11 @@ public class PauseFactory extends StepFactory {
     }
 }
 
-class PauseStepUI extends BuilderJPanel<PauseStepSettings>{
+class PauseStepUI extends BuilderJPanel<SequencerSettings.PauseStepSettings>{
     JTextArea message = new JTextArea();
     
     public PauseStepUI() {
-        super(new MigLayout("insets 0 0 0 0, fill"), PauseStepSettings.class);
+        super(new MigLayout("insets 0 0 0 0, fill"), SequencerSettings.PauseStepSettings.class);
         
         //message.setPreferredSize(new Dimension(100, 100));
         message.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -79,20 +80,16 @@ class PauseStepUI extends BuilderJPanel<PauseStepSettings>{
     }
     
     @Override
-    public PauseStepSettings build() {
-        PauseStepSettings settings = new PauseStepSettings();
+    public SequencerSettings.PauseStepSettings build() {
+        SequencerSettings.PauseStepSettings settings = new SequencerSettings.PauseStepSettings();
         settings.message = message.getText();
         return settings;
     }
     
     @Override
-    public void populateFields(PauseStepSettings settings) {
+    public void populateFields(SequencerSettings.PauseStepSettings settings) {
         this.message.setText(settings.message);
     }
-}
-
-class PauseStepSettings extends SequencerSettings {
-    public String message;
 }
 
 class PauseStep extends EndpointStep {
@@ -103,7 +100,7 @@ class PauseStep extends EndpointStep {
     
     @Override
     public SequencerFunction getFunction() {
-        PauseStepSettings settings = (PauseStepSettings) this.getSettings();
+        SequencerSettings.PauseStepSettings settings = (SequencerSettings.PauseStepSettings) this.getSettings();
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {

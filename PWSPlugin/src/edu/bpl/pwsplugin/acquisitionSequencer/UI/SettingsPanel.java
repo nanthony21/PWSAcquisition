@@ -10,7 +10,7 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.StepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
+import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -94,7 +94,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
     
     public void saveSettingsOfLastNode() {
         if (this.lastSelectedNode != null) {
-            SequencerSettings settings = (SequencerSettings) panelTypeMapping.get(this.lastSelectedNode.getType()).build();
+            JsonableParam settings = (JsonableParam) panelTypeMapping.get(this.lastSelectedNode.getType()).build();
             this.lastSelectedNode.setSettings(settings);
         } 
     }

@@ -15,16 +15,15 @@ import edu.bpl.pwsplugin.UI.utils.ListCardUI;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerFunction;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.hardware.HWConfiguration;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
-import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
-import edu.bpl.pwsplugin.settings.PWSSettings;
+import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -48,8 +47,8 @@ public class AcquireCellFactory extends StepFactory {
     }
     
     @Override
-    public Class<? extends SequencerSettings> getSettings() {
-        return AcquireCellSettings.class;
+    public Class<? extends JsonableParam> getSettings() {
+        return SequencerSettings.AcquireCellSettings.class;
     }
     
     @Override
@@ -78,18 +77,7 @@ public class AcquireCellFactory extends StepFactory {
     }
 }
 
-class AcquireCellSettings extends SequencerSettings {
-    public PWSSettings pwsSettings = new PWSSettings();
-    public DynSettings dynSettings = new DynSettings();
-    public List<FluorSettings> fluorSettings = new ArrayList<>();
-    public String directory = "";
-    
-    public AcquireCellSettings() {
-        fluorSettings.add(new FluorSettings());
-    }
-}
-
-class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements PropertyChangeListener {
+class AcquireCellUI extends BuilderJPanel<SequencerSettings.AcquireCellSettings> implements PropertyChangeListener {
     JTextField directory = new JTextField(10);
     PWSPanel pwsSettings = new PWSPanel();
     DynPanel dynSettings = new DynPanel();
@@ -99,7 +87,7 @@ class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements Proper
     CheckBoxPanel fluorCBPanel = new CheckBoxPanel(fluorSettings, "Fluorescence");
 
     public AcquireCellUI() {
-        super(new MigLayout(), AcquireCellSettings.class);
+        super(new MigLayout(), SequencerSettings.AcquireCellSettings.class);
         Globals.addPropertyChangeListener(this);
         
         pwsSettings.setBorder(BorderFactory.createEtchedBorder());
@@ -114,8 +102,8 @@ class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements Proper
     }
     
     @Override
-    public AcquireCellSettings build() {
-        AcquireCellSettings settings = new AcquireCellSettings();
+    public SequencerSettings.AcquireCellSettings build() {
+        SequencerSettings.AcquireCellSettings settings = new SequencerSettings.AcquireCellSettings();
         if (pwsCBPanel.isSelected()) {
             settings.pwsSettings = pwsSettings.build();
         } else {
@@ -136,7 +124,7 @@ class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements Proper
     }
     
     @Override
-    public void populateFields(AcquireCellSettings settings) {
+    public void populateFields(SequencerSettings.AcquireCellSettings settings) {
         if (settings.pwsSettings == null) {
             this.pwsCBPanel.setSelected(false);
         } else {
@@ -211,7 +199,7 @@ class AcquireCell extends EndpointStep {
     
     @Override
     public SequencerFunction getFunction() {
-        AcquireCellSettings settings = (AcquireCellSettings) this.getSettings();
+        SequencerSettings.AcquireCellSettings settings = (SequencerSettings.AcquireCellSettings) this.getSettings();
         AcquisitionManager acqMan = Globals.acqManager();
         return new SequencerFunction() {
             @Override

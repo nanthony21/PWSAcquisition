@@ -13,6 +13,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
@@ -29,8 +30,8 @@ public class RootStepFactory extends StepFactory{
     }
     
     @Override
-    public Class<? extends SequencerSettings> getSettings() {
-        return RootStepSettings.class;
+    public Class<? extends JsonableParam> getSettings() {
+        return SequencerSettings.RootStepSettings.class;
     }
     
     @Override
@@ -66,7 +67,7 @@ class RootStep extends ContainerStep {
     
     @Override
     public SequencerFunction getFunction() { 
-        RootStepSettings settings = (RootStepSettings) this.getSettings();
+        SequencerSettings.RootStepSettings settings = (SequencerSettings.RootStepSettings) this.getSettings();
         SequencerFunction subStepFunc = getSubstepsFunction();
         return new SequencerFunction() {
             @Override
@@ -79,27 +80,23 @@ class RootStep extends ContainerStep {
     }
 }
 
-class RootStepSettings extends SequencerSettings {
-    public String directory;
-}
-
-class RootStepUI extends BuilderJPanel<RootStepSettings> {
+class RootStepUI extends BuilderJPanel<SequencerSettings.RootStepSettings> {
     JTextField directory = new JTextField(30);
     public RootStepUI() {
-        super(new MigLayout("insets 0 0 0 0"), RootStepSettings.class);
+        super(new MigLayout("insets 0 0 0 0"), SequencerSettings.RootStepSettings.class);
         
         this.add(new JLabel("Root Directory:"), "gapleft push");
         this.add(directory);
     }
     
     @Override
-    public void populateFields(RootStepSettings settings) {
+    public void populateFields(SequencerSettings.RootStepSettings settings) {
         directory.setText(settings.directory);
     }
     
     @Override
-    public RootStepSettings build() {
-        RootStepSettings settings = new RootStepSettings();
+    public SequencerSettings.RootStepSettings build() {
+        SequencerSettings.RootStepSettings settings = new SequencerSettings.RootStepSettings();
         settings.directory = this.directory.getText();
         return settings;
     }

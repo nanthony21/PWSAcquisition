@@ -10,14 +10,12 @@ import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.ContainerStepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyMoveTransferHandler;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeRenderers;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
@@ -29,7 +27,7 @@ class SequenceTree extends TreeDragAndDrop implements KeyListener {
     public SequenceTree() {
         super(new CopyMoveTransferHandler());
         
-        SequencerSettings settings;
+        JsonableParam settings;
         try {
             settings = Consts.getFactory(Consts.Type.ROOT).getSettings().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {

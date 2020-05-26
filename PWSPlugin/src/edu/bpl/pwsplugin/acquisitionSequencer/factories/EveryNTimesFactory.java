@@ -8,10 +8,11 @@ package edu.bpl.pwsplugin.acquisitionSequencer.factories;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerFunction;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
@@ -28,8 +29,8 @@ public class EveryNTimesFactory extends StepFactory {
     }
     
     @Override
-    public Class<? extends SequencerSettings> getSettings() {
-        return EveryNTimesSettings.class;
+    public Class<? extends JsonableParam> getSettings() {
+        return SequencerSettings.EveryNTimesSettings.class;
     }
     
     @Override
@@ -58,11 +59,6 @@ public class EveryNTimesFactory extends StepFactory {
     }
 }
 
-class EveryNTimesSettings extends SequencerSettings {
-    public Integer n = 2;
-    public Integer offset = 0;
-}
-
 class EveryNTimes extends ContainerStep {
     int iteration = 0;
     
@@ -73,7 +69,7 @@ class EveryNTimes extends ContainerStep {
     @Override
     public SequencerFunction getFunction() {
         SequencerFunction stepFunction = super.getSubstepsFunction();
-        EveryNTimesSettings settings = (EveryNTimesSettings) this.getSettings();
+        SequencerSettings.EveryNTimesSettings settings = (SequencerSettings.EveryNTimesSettings) this.getSettings();
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
@@ -88,12 +84,12 @@ class EveryNTimes extends ContainerStep {
     }
 }
 
-class EveryNTimesUI extends BuilderJPanel<EveryNTimesSettings> {
+class EveryNTimesUI extends BuilderJPanel<SequencerSettings.EveryNTimesSettings> {
     private JSpinner n;
     private JSpinner offset;
     
     public EveryNTimesUI() {
-        super(new MigLayout("insets 0 0 0 0"), EveryNTimesSettings.class);
+        super(new MigLayout("insets 0 0 0 0"), SequencerSettings.EveryNTimesSettings.class);
         
         n = new JSpinner(new SpinnerNumberModel(2, 1, 1000, 1));
         offset = new JSpinner(new SpinnerNumberModel(0, 0, 1000, 1));
@@ -104,14 +100,14 @@ class EveryNTimesUI extends BuilderJPanel<EveryNTimesSettings> {
         this.add(offset, "wrap");
     }
     
-    public EveryNTimesSettings build() {
-        EveryNTimesSettings settings = new EveryNTimesSettings();
+    public SequencerSettings.EveryNTimesSettings build() {
+        SequencerSettings.EveryNTimesSettings settings = new SequencerSettings.EveryNTimesSettings();
         settings.n = (Integer) this.n.getValue();
         settings.offset = (Integer) this.offset.getValue();
         return settings;
     }
     
-    public void populateFields(EveryNTimesSettings settings) {
+    public void populateFields(SequencerSettings.EveryNTimesSettings settings) {
         this.n.setValue(settings.n);
         this.offset.setValue(settings.offset);
     }

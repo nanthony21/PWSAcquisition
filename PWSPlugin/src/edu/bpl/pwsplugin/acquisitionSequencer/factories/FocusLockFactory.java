@@ -10,10 +10,11 @@ import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerFunction;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JLabel;
@@ -32,8 +33,8 @@ public class FocusLockFactory extends StepFactory {
     }
     
     @Override
-    public Class<? extends SequencerSettings> getSettings() {
-        return FocusLockSettings.class;
+    public Class<? extends JsonableParam> getSettings() {
+        return SequencerSettings.FocusLockSettings.class;
     }
     
     @Override
@@ -62,13 +63,13 @@ public class FocusLockFactory extends StepFactory {
     }
 }
 
-class FocusLockUI extends SingleBuilderJPanel<FocusLockSettings>{
+class FocusLockUI extends SingleBuilderJPanel<SequencerSettings.FocusLockSettings>{
     JSpinner offset;
     JSpinner delay;
     private Map<String,Object> m = new HashMap<>();
     
     public FocusLockUI() {
-        super(new MigLayout(), FocusLockSettings.class);
+        super(new MigLayout(), SequencerSettings.FocusLockSettings.class);
         
         offset = new JSpinner(new SpinnerNumberModel(0, -1e8, 1e8, 1));
         delay = new JSpinner(new SpinnerNumberModel(1.0, 0.0, 30.0, 1.0));
@@ -88,11 +89,6 @@ class FocusLockUI extends SingleBuilderJPanel<FocusLockSettings>{
     }
 }
 
-class FocusLockSettings extends SequencerSettings {
-    public double zOffset = 0;
-    public double preDelay = 1;
-}
-
 class FocusLock extends ContainerStep {
     public FocusLock() {
         super(Consts.Type.PFS);
@@ -101,7 +97,7 @@ class FocusLock extends ContainerStep {
     @Override
     public SequencerFunction getFunction() {
         SequencerFunction stepFunction = super.getSubstepsFunction();
-        FocusLockSettings settings = (FocusLockSettings) this.getSettings();
+        SequencerSettings.FocusLockSettings settings = (SequencerSettings.FocusLockSettings) this.getSettings();
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {

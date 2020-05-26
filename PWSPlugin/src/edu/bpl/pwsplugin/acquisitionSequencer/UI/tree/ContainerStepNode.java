@@ -6,7 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.UI.tree;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
+import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /**
  *
@@ -18,7 +18,7 @@ public class ContainerStepNode extends StepNode {
         this.setAllowsChildren(true);
     }
     
-    public ContainerStepNode(SequencerSettings settings, Consts.Type type) {
+    public ContainerStepNode(JsonableParam settings, Consts.Type type) {
         super(settings, type);
         this.setAllowsChildren(true);
         if (!Consts.isContainer(type)) {

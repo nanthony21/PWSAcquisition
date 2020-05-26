@@ -9,10 +9,11 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerFunction;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.util.concurrent.Callable;
@@ -33,8 +34,8 @@ public class AcquireFromPositionListFactory extends StepFactory {
     }
     
     @Override
-    public Class<? extends SequencerSettings> getSettings() {
-        return AcquirePositionsSettings.class;
+    public Class<? extends JsonableParam> getSettings() {
+        return SequencerSettings.AcquirePositionsSettings.class;
     }
     
     @Override
@@ -63,10 +64,6 @@ public class AcquireFromPositionListFactory extends StepFactory {
     }
 }
 
-class AcquirePositionsSettings extends SequencerSettings {
-    public PositionList posList = new PositionList();
-    
-}
 
 class AcquireFromPositionList extends ContainerStep {
     //Executes `step` at each position in the positionlist and increments the cell number each time.
@@ -76,7 +73,7 @@ class AcquireFromPositionList extends ContainerStep {
     
     @Override
     public SequencerFunction getFunction() {
-        PositionList list = ((AcquirePositionsSettings) this.getSettings()).posList;
+        PositionList list = ((SequencerSettings.AcquirePositionsSettings) this.getSettings()).posList;
         SequencerFunction stepFunction = super.getSubstepsFunction();
         return new SequencerFunction() {
             @Override
@@ -141,11 +138,11 @@ class PFSFuncs {
     }
 }
 
-class AcquirePostionsUI extends BuilderJPanel<AcquirePositionsSettings>{
+class AcquirePostionsUI extends BuilderJPanel<SequencerSettings.AcquirePositionsSettings>{
     PositionListDlg dlg;
     
     public AcquirePostionsUI() {
-        super(new MigLayout("insets 0 0 0 0, fill"), AcquirePositionsSettings.class);    
+        super(new MigLayout("insets 0 0 0 0, fill"), SequencerSettings.AcquirePositionsSettings.class);    
         dlg = new PositionListDlg(Globals.mm(), new PositionList()); 
         Container pane = dlg.getContentPane(); //We create a dialog, then steal in contents and put them in our own window, kind of hacky.
         pane.setPreferredSize(new Dimension(100, pane.getHeight())); //Make it a bit slimmer.
@@ -153,14 +150,14 @@ class AcquirePostionsUI extends BuilderJPanel<AcquirePositionsSettings>{
     }
     
     @Override
-    public AcquirePositionsSettings build() {
-        AcquirePositionsSettings settings = new AcquirePositionsSettings();
+    public SequencerSettings.AcquirePositionsSettings build() {
+        SequencerSettings.AcquirePositionsSettings settings = new SequencerSettings.AcquirePositionsSettings();
         settings.posList = dlg.getPositionList();
         return settings;
     }
     
     @Override
-    public void populateFields(AcquirePositionsSettings settings) {
+    public void populateFields(SequencerSettings.AcquirePositionsSettings settings) {
         dlg.setPositionList(settings.posList);
     }
 }

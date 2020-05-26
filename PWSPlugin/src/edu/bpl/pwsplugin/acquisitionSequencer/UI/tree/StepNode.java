@@ -6,8 +6,8 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.UI.tree;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
@@ -16,9 +16,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
  */
 public abstract class StepNode extends CopyableMutableTreeNode {
     Consts.Type type;
-    SequencerSettings settings;
+    JsonableParam settings;
     
-    public StepNode(SequencerSettings settings, Consts.Type type) {
+    public StepNode(JsonableParam settings, Consts.Type type) {
         this();     
         this.type = type;
         this.settings = settings;
@@ -38,11 +38,11 @@ public abstract class StepNode extends CopyableMutableTreeNode {
         return obj;
     }
     
-    public SequencerSettings getSettings() {
-        return (SequencerSettings) this.settings.copy();
+    public JsonableParam getSettings() {
+        return (JsonableParam) this.settings.copy();
     }
     
-    public void setSettings(SequencerSettings settings) {
+    public void setSettings(JsonableParam settings) {
         if (settings == null) {
             throw new RuntimeException("Setting null settings to step node");
         }
@@ -56,7 +56,7 @@ public abstract class StepNode extends CopyableMutableTreeNode {
         }
         super.copyAttributesFrom(from);
         this.type = ((StepNode)from).type;
-        this.settings = ((SequencerSettings)((StepNode)from).settings.copy());
+        this.settings = ((JsonableParam)((StepNode)from).settings.copy());
     }
     
     @Override

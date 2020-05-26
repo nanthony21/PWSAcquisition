@@ -12,7 +12,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.EndpointStepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.StepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeRenderers;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
+import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +51,7 @@ class NewStepsTree extends TreeDragAndDrop {
         
         for (Consts.Type type : Consts.Type.values()) {
             String name = Consts.getFactory(type).getName();
-            SequencerSettings settings;
+            JsonableParam settings;
             try {
                 settings = Consts.getFactory(type).getSettings().newInstance();
             } catch (InstantiationException | IllegalAccessException e) {

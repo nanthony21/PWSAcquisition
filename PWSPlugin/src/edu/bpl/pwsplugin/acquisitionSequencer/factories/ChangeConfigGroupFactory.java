@@ -10,10 +10,11 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerFunction;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.DefaultComboBoxModel;
@@ -33,8 +34,8 @@ public class ChangeConfigGroupFactory extends StepFactory {
     }
     
     @Override
-    public Class<? extends SequencerSettings> getSettings() {
-        return ChangeConfigGroupSettings.class;
+    public Class<? extends JsonableParam> getSettings() {
+        return SequencerSettings.ChangeConfigGroupSettings.class;
     }
     
     @Override
@@ -63,12 +64,12 @@ public class ChangeConfigGroupFactory extends StepFactory {
     }
 }
 
-class ChangeConfigGroupUI extends BuilderJPanel<ChangeConfigGroupSettings> implements ItemListener {
+class ChangeConfigGroupUI extends BuilderJPanel<SequencerSettings.ChangeConfigGroupSettings> implements ItemListener {
     JComboBox<String> configGroupName = new JComboBox<>();
     JComboBox<String> configValue = new JComboBox<>();
     
     public ChangeConfigGroupUI() {
-        super(new MigLayout(), ChangeConfigGroupSettings.class);
+        super(new MigLayout(), SequencerSettings.ChangeConfigGroupSettings.class);
         
         configGroupName.addItemListener(this);
         
@@ -88,14 +89,14 @@ class ChangeConfigGroupUI extends BuilderJPanel<ChangeConfigGroupSettings> imple
     }
     
     @Override
-    public void populateFields(ChangeConfigGroupSettings settings) {
+    public void populateFields(SequencerSettings.ChangeConfigGroupSettings settings) {
         this.configGroupName.setSelectedItem(settings.configGroupName);
         this.configValue.setSelectedItem(settings.configValue);
     }
     
     @Override
-    public ChangeConfigGroupSettings build() {
-        ChangeConfigGroupSettings settings = new ChangeConfigGroupSettings();
+    public SequencerSettings.ChangeConfigGroupSettings build() {
+        SequencerSettings.ChangeConfigGroupSettings settings = new SequencerSettings.ChangeConfigGroupSettings();
         settings.configGroupName = (String) this.configGroupName.getSelectedItem();
         settings.configValue = (String) this.configValue.getSelectedItem();
         return settings;
@@ -115,11 +116,6 @@ class ChangeConfigGroupUI extends BuilderJPanel<ChangeConfigGroupSettings> imple
     
 }
 
-class ChangeConfigGroupSettings extends SequencerSettings {
-    public String configGroupName;
-    public String configValue;
-}
-
 class ChangeConfigGroup extends ContainerStep {
     public ChangeConfigGroup() {
         super(Consts.Type.CONFIG);
@@ -128,7 +124,7 @@ class ChangeConfigGroup extends ContainerStep {
     @Override
     public SequencerFunction getFunction() {
         SequencerFunction subStepFunc = getSubstepsFunction();
-        ChangeConfigGroupSettings settings = (ChangeConfigGroupSettings) this.getSettings();
+        SequencerSettings.ChangeConfigGroupSettings settings = (SequencerSettings.ChangeConfigGroupSettings) this.getSettings();
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {

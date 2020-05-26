@@ -10,10 +10,11 @@ import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerFunction;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JLabel;
@@ -32,8 +33,8 @@ public class AcquireTimeSeriesFactory extends StepFactory {
     }
     
     @Override
-    public Class<? extends SequencerSettings> getSettings() {
-        return AcquireTimeSeriesSettings.class;
+    public Class<? extends JsonableParam> getSettings() {
+        return SequencerSettings.AcquireTimeSeriesSettings.class;
     }
     
     @Override
@@ -63,12 +64,12 @@ public class AcquireTimeSeriesFactory extends StepFactory {
 }
 
 
-class TimeSeriesUI extends SingleBuilderJPanel<AcquireTimeSeriesSettings> {
+class TimeSeriesUI extends SingleBuilderJPanel<SequencerSettings.AcquireTimeSeriesSettings> {
     JSpinner numFrames;
     JSpinner frameIntervalMinutes;
     
     public TimeSeriesUI() {
-        super(new MigLayout(), AcquireTimeSeriesSettings.class);
+        super(new MigLayout(), SequencerSettings.AcquireTimeSeriesSettings.class);
         
         numFrames = new JSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
         frameIntervalMinutes = new JSpinner(new SpinnerNumberModel(1.0, 0.0, 1000000000.0, 1.0));
@@ -88,12 +89,6 @@ class TimeSeriesUI extends SingleBuilderJPanel<AcquireTimeSeriesSettings> {
     }
 }
 
-class AcquireTimeSeriesSettings extends SequencerSettings {
-    public int numFrames = 1;
-    public double frameIntervalMinutes = 1;
-    
-}
-
 class AcquireTimeSeries extends ContainerStep {
     public AcquireTimeSeries() {
         super(Consts.Type.TIME);
@@ -102,7 +97,7 @@ class AcquireTimeSeries extends ContainerStep {
     @Override 
     public SequencerFunction getFunction() {
         SequencerFunction stepFunction = super.getSubstepsFunction();
-        AcquireTimeSeriesSettings settings = (AcquireTimeSeriesSettings) this.getSettings();
+        SequencerSettings.AcquireTimeSeriesSettings settings = (SequencerSettings.AcquireTimeSeriesSettings) this.getSettings();
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
