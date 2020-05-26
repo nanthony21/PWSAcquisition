@@ -33,7 +33,7 @@ public abstract class StepNode extends CopyableMutableTreeNode {
     }
     
     public Step createStepObject() throws InstantiationException, IllegalAccessException {
-        Step obj = Consts.getFactory(this.getType()).getStep().newInstance();
+        Step obj = Consts.getFactory(this.getType()).createStep();
         obj.setSettings(this.getSettings());
         return obj;
     }

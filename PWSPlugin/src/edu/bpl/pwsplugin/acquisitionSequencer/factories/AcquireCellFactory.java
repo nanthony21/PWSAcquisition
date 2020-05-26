@@ -78,7 +78,6 @@ public class AcquireCellFactory extends StepFactory {
 }
 
 class AcquireCellUI extends BuilderJPanel<SequencerSettings.AcquireCellSettings> implements PropertyChangeListener {
-    JTextField directory = new JTextField(10);
     PWSPanel pwsSettings = new PWSPanel();
     DynPanel dynSettings = new DynPanel();
     ListCardUI<List<FluorSettings>, FluorSettings> fluorSettings= new ListCardUI<>(ArrayList.class, "", new FluorSettings());
@@ -94,8 +93,6 @@ class AcquireCellUI extends BuilderJPanel<SequencerSettings.AcquireCellSettings>
         dynSettings.setBorder(BorderFactory.createEtchedBorder());
         fluorSettings.setBorder(BorderFactory.createEtchedBorder());
 
-        this.add(new JLabel("Directory:"));
-        this.add(directory, "wrap");
         this.add(pwsCBPanel, "wrap, span");
         this.add(dynCBPanel, "wrap, span");
         this.add(fluorCBPanel, "wrap, span");
@@ -119,7 +116,6 @@ class AcquireCellUI extends BuilderJPanel<SequencerSettings.AcquireCellSettings>
         } else {
             settings.fluorSettings = null;
         }
-        settings.directory = directory.getText();
         return settings;
     }
     
@@ -143,7 +139,6 @@ class AcquireCellUI extends BuilderJPanel<SequencerSettings.AcquireCellSettings>
             this.fluorCBPanel.setSelected(true);
             this.fluorSettings.populateFields(settings.fluorSettings);
         }
-        this.directory.setText(settings.directory);
     }
     
     public Map<String, Object> getPropertyFieldMap() {
@@ -151,18 +146,7 @@ class AcquireCellUI extends BuilderJPanel<SequencerSettings.AcquireCellSettings>
         m.put("pwsSettings", pwsSettings);
         m.put("dynSettings", dynSettings);
         m.put("fluorSettings", fluorSettings);
-        m.put("directory", directory);
         return m;
-    }
-    
-    public static void main(String[] args) {
-        JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.add(new AcquireCellUI());
-                
-        f.setSize(400,400);
-        f.setLocation(200,200);
-        f.setVisible(true);
     }
     
     @Override
@@ -205,7 +189,6 @@ class AcquireCell extends EndpointStep {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception{ //TODO need to make the fluorescence not overwrite eachother.
                 acqMan.setCellNum(status.currentCellNum);
-                acqMan.setSavePath(settings.directory);
                 for (FluorSettings flSettings : settings.fluorSettings) {
                     status.allowPauseHere();
                     status.update(String.format("Acquiring %s fluoresence", flSettings.filterConfigName), status.currentCellNum);

@@ -7,7 +7,6 @@ package edu.bpl.pwsplugin.acquisitionSequencer.factories;
 
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.JsonableParam;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
@@ -23,6 +22,14 @@ public abstract class StepFactory {
     public abstract String getName();
     public abstract Consts.Category getCategory();
     public abstract Consts.Type getType();
+    
+    public BuilderJPanel createUI() throws InstantiationException, IllegalAccessException {
+        return getUI().newInstance();
+    }
+    
+    public Step createStep() throws InstantiationException, IllegalAccessException {
+        return getStep().newInstance();
+    }
     
     public void registerGson() {
         JsonableParam.registerClass(getSettings());

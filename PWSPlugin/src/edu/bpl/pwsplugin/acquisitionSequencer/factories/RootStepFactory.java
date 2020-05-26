@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.factories;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
+import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
@@ -26,7 +27,7 @@ public class RootStepFactory extends StepFactory{
     //Should only exist once as the root of each experiment, sets the needed root parameters.
     @Override
     public Class<? extends BuilderJPanel> getUI() {
-        return TimeSeriesUI.class;
+        return RootStepUI.class;
     }
     
     @Override
@@ -73,6 +74,7 @@ class RootStep extends ContainerStep {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 Globals.acqManager().setSavePath(settings.directory);
+                //TODO create the status object here. input should be null.
                 status = subStepFunc.apply(status);
                 return status;
             }
@@ -81,7 +83,8 @@ class RootStep extends ContainerStep {
 }
 
 class RootStepUI extends BuilderJPanel<SequencerSettings.RootStepSettings> {
-    JTextField directory = new JTextField(30);
+    DirectorySelector directory = new DirectorySelector(DirectorySelector.DefaultMMFunctions.MMDataSetDirectory);
+    
     public RootStepUI() {
         super(new MigLayout("insets 0 0 0 0"), SequencerSettings.RootStepSettings.class);
         

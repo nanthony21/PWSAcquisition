@@ -7,8 +7,6 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
-import java.util.Objects;
-import java.util.function.Function;
 
 /**
  *

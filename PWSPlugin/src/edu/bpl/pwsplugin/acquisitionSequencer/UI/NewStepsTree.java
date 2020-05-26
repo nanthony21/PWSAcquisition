@@ -29,18 +29,6 @@ class NewStepsTree extends TreeDragAndDrop {
         this.tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
         
-        /*root.add(new EndpointStepNode(new AcquireCellSettings(), Consts.Type.ACQ));
-        
-        DefaultMutableTreeNode utility = new DefaultMutableTreeNode("Utility");
-        utility.add(new EndpointStepNode(new SoftwareAutoFocusSettings(), Consts.Type.AF));
-        utility.add(new ContainerStepNode(new FocusLockSettings(), Consts.Type.PFS));
-        root.add(utility);
-        
-        DefaultMutableTreeNode sequences = new DefaultMutableTreeNode("Sequences");
-        sequences.add(new ContainerStepNode(new AcquirePositionsSettings(), Consts.Type.POS));
-        sequences.add(new ContainerStepNode(new AcquireTimeSeriesSettings(), Consts.Type.TIME));
-        root.add(sequences);
-        */
         Map<Consts.Category, DefaultMutableTreeNode> categories = new HashMap<>();
         for (Consts.Category cat : Consts.Category.values()) {
             String name = Consts.getCategoryName(cat);
@@ -50,6 +38,7 @@ class NewStepsTree extends TreeDragAndDrop {
         }
         
         for (Consts.Type type : Consts.Type.values()) {
+            if (type == Consts.Type.ROOT) { continue; }//ignore this special case
             String name = Consts.getFactory(type).getName();
             JsonableParam settings;
             try {

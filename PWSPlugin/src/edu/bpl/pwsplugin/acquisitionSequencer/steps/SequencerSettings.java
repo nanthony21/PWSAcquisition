@@ -60,7 +60,6 @@ public class SequencerSettings {
         public PWSSettings pwsSettings = new PWSSettings();
         public DynSettings dynSettings = new DynSettings();
         public List<FluorSettings> fluorSettings = new ArrayList<>();
-        public String directory = "";
 
         public AcquireCellSettings() {
             fluorSettings.add(new FluorSettings());
