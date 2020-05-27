@@ -23,12 +23,20 @@ public abstract class StepFactory {
     public abstract Consts.Category getCategory();
     public abstract Consts.Type getType();
     
-    public BuilderJPanel createUI() throws InstantiationException, IllegalAccessException {
-        return getUI().newInstance();
+    public BuilderJPanel createUI() {
+        try {    
+            return getUI().newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
     
-    public Step createStep() throws InstantiationException, IllegalAccessException {
-        return getStep().newInstance();
+    public Step createStep() {
+        try {
+            return getStep().newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
     
     public void registerGson() {

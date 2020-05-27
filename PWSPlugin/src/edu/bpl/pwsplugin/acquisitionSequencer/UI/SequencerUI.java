@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.ContainerStepNode;
@@ -43,7 +44,7 @@ import org.micromanager.internal.utils.FileDialogs;
  *
  * @author nick
  */
-public class SequencerUI extends JPanel {
+public class SequencerUI extends BuilderJPanel<ContainerStep> {
     SequenceTree seqTree = new SequenceTree();
     NewStepsTree newStepsTree = new NewStepsTree();
     SettingsPanel settingsPanel = new SettingsPanel(seqTree, newStepsTree);
@@ -53,7 +54,7 @@ public class SequencerUI extends JPanel {
     AcquisitionThread acqThread;
     
     public SequencerUI() {
-        super(new MigLayout());
+        super(new MigLayout(), ContainerStep.class);
 
         this.settingsPanel.setBorder(BorderFactory.createEtchedBorder());
         
@@ -71,14 +72,14 @@ public class SequencerUI extends JPanel {
         
         this.saveButton.addActionListener((evt) -> {
             try { 
-                Step rootStep = compileSequenceNodes((DefaultMutableTreeNode) seqTree.model().getRoot());
+                Step rootStep = this.build();
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
                 String path = FileDialogs.save(topFrame, "Save Sequence", Step.FILETYPE).getPath();
                 if(!path.endsWith(".pwsseq")) {
                     path = path + ".pwsseq"; //Make sure the extension is there.
                 }
                 rootStep.toJsonFile(path);
-            } catch (InstantiationException | IllegalAccessException | IOException e) {
+            } catch (IOException e) {
                 Globals.mm().logs().logError(e);
             }
         });
@@ -88,11 +89,7 @@ public class SequencerUI extends JPanel {
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
                 String path = FileDialogs.openFile(topFrame, "Load Sequence", Step.FILETYPE).getPath();
                 ContainerStep rootStep = (ContainerStep) JsonableParam.fromJsonFile(path, Step.class);
-                ContainerStepNode rootNode = new ContainerStepNode(rootStep.getSettings(), rootStep.getType());
-                for (Step subStep : rootStep.getSubSteps()) {
-                    rootNode.add(loadNodeFromStep(subStep));
-                }
-                seqTree.model().setRoot(rootNode);
+                this.populateFields(rootStep);
             } catch (FileNotFoundException e) {
                 Globals.mm().logs().logError(e);
             }
@@ -146,6 +143,24 @@ public class SequencerUI extends JPanel {
             return new EndpointStepNode(rootStep.getSettings(), factory.getType());
         }
         throw new RuntimeException("Should not get here.");
+    }
+    
+    @Override
+    public ContainerStep build() {
+        try {
+            return (ContainerStep) compileSequenceNodes((DefaultMutableTreeNode) seqTree.model().getRoot());
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    @Override
+    public void populateFields(ContainerStep rootStep) {
+        ContainerStepNode rootNode = new ContainerStepNode(rootStep.getSettings(), rootStep.getType());
+        for (Step subStep : rootStep.getSubSteps()) {
+            rootNode.add(loadNodeFromStep(subStep));
+        }
+        seqTree.model().setRoot(rootNode);
     }
     
 }

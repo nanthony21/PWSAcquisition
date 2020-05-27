@@ -166,6 +166,7 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         set.hwConfiguration = this.configDialog.build();
         set.saveDir = this.dirSelect.getText();
         set.cellNum = (int) this.cellNumSpinner.getValue();
+        set.sequenceRoot = this.sequencePanel.build();
         return set;
     }
     
@@ -182,6 +183,7 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         try{ this.configDialog.populateFields(set.hwConfiguration); } catch(Exception e) {ReportingUtils.logError(e); }
         try{ this.dirSelect.setText(set.saveDir); } catch(Exception e) {ReportingUtils.logError(e); }
         try{ this.cellNumSpinner.setValue(set.cellNum); } catch(Exception e) {ReportingUtils.logError(e); }
+        try{ this.sequencePanel.populateFields(set.sequenceRoot); } catch(NullPointerException e) {ReportingUtils.logError(e); }
     }
         
     private void acquire(Runnable f) {

@@ -1,11 +1,9 @@
 
 package edu.bpl.pwsplugin.settings;
 
-import edu.bpl.pwsplugin.hardware.cameras.Camera;
-import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
-import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
+import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.utils.JsonableParam;
-import java.util.List;
 
 
 /**
@@ -19,6 +17,7 @@ public class PWSPluginSettings extends JsonableParam {
     public FluorSettings flSettings = new FluorSettings();
     public DynSettings dynSettings = new DynSettings();
     public PWSSettings pwsSettings = new PWSSettings();
+    public ContainerStep sequenceRoot = (ContainerStep) Consts.getFactory(Consts.Type.ROOT).createStep();
     public String saveDir = "";
     public int cellNum = 1;
 

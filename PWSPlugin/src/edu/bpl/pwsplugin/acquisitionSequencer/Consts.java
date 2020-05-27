@@ -44,7 +44,7 @@ public class Consts {
     public static String getCategoryName(Category cat) {
         switch (cat) {
             case ACQ:
-                return "Acqusitions";
+                return "Acquisitions";
             case SEQ:
                 return "Sequencing";
             case UTIL:

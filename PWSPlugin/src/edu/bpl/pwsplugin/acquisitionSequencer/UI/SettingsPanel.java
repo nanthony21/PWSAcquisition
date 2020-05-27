@@ -55,11 +55,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         }
 
         for (Consts.Type type : Consts.Type.values()) {
-            try {
-                panelTypeMapping.put(type, Consts.getFactory(type).createUI());
-            } catch (InstantiationException | IllegalAccessException e) {
-                Globals.mm().logs().logError(e);
-            }
+            panelTypeMapping.put(type, Consts.getFactory(type).createUI());
         }
         
         int maxH = 0;

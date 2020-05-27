@@ -12,10 +12,8 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class FluorSettings extends JsonableParam {
-    
     public String imConfigName = "";
     public double exposure = 1000;
     public String filterConfigName = "";
     public int tfWavelength = 550;
-    
 }

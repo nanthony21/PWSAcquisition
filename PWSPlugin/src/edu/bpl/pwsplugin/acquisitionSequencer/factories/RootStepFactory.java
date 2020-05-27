@@ -47,7 +47,7 @@ public class RootStepFactory extends StepFactory{
     
     @Override
     public String getName() {
-        return "Root";
+        return "Initialization";
     }
     
     @Override
