@@ -20,13 +20,9 @@ package edu.bpl.pwsplugin;
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-//TODO add z offset for fluorescence, add sequencing, file overwriting.
-//TODO add automatic handling for multiple fluorescence images.
-//TODO test sequencer
+//TODO sequencer check beforehand for file overwriting.
 //TODO test test test
-//TODO make acquistionstatus class instead of passing integers.
 //ZOffset for fluorescence.
-//Pause step
 //Change folder step.
 //Ability to switch objectives. independent of imaging config.
 //Autoexposure for PWS.
