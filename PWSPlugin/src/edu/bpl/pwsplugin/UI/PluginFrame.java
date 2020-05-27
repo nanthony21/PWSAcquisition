@@ -109,10 +109,10 @@ public class PluginFrame extends MMFrame {
     }
     
     public final void populateFields(PWSPluginSettings set) {
-        try{ this.acqPanel.setAcqSettings(set.acquisitionSettings); } catch(Exception e) {ReportingUtils.logError(e); }
-        try{ this.configDialog.populateFields(set.hwConfiguration); } catch(Exception e) {ReportingUtils.logError(e); }
-        try{ this.acqPanel.setDirectory(set.saveDir); } catch(Exception e) {ReportingUtils.logError(e); }
-        try{ this.acqPanel.setCellNumber(set.cellNum); } catch(Exception e) {ReportingUtils.logError(e); }
+        try{ this.acqPanel.setAcqSettings(set.acquisitionSettings); } catch(NullPointerException e) {ReportingUtils.logError(e); } //Sometimes a bit of settings will be missing if the code is changed. Don't let that crash the program.
+        try{ this.configDialog.populateFields(set.hwConfiguration); } catch(NullPointerException e) {ReportingUtils.logError(e); }
+        try{ this.acqPanel.setDirectory(set.saveDir); } catch(NullPointerException e) {ReportingUtils.logError(e); }
+        try{ this.acqPanel.setCellNumber(set.cellNum); } catch(NullPointerException e) {ReportingUtils.logError(e); }
         try{ this.sequencePanel.populateFields(set.sequenceRoot); } catch(NullPointerException e) {ReportingUtils.logError(e); }
     }
 }
@@ -230,7 +230,7 @@ class AcquisitionPanel extends JPanel {
                 acqMan.acquireDynamics(); return null;
             });
         }
-        final Function<Void, Void> F = f;
+        final ThrowingFunction<Void, Void> F = f;
         SwingWorker worker = new SwingWorker() {   //This function will run myFunc in a separate thread. `button` will be disabled while the function is running.
             @Override
             protected Object doInBackground() {

@@ -18,6 +18,12 @@ public abstract class BuilderJPanel<T> extends JPanel{
         this.typeParamClass = clazz;
     }
     
-    public abstract T build();
-    public abstract void populateFields(T t);
+    public abstract T build() throws BuilderPanelException;
+    public abstract void populateFields(T t) throws BuilderPanelException;
+    
+    public static class BuilderPanelException extends Exception {
+        public BuilderPanelException() { super(); }
+        public BuilderPanelException(Throwable cause) { super(cause); }
+        public BuilderPanelException(String msg) { super(msg); }
+    };
 }

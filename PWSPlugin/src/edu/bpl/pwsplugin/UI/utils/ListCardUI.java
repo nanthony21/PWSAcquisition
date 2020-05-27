@@ -134,7 +134,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
     }
     
     @Override
-    public void populateFields(T t) {
+    public void populateFields(T t) throws BuilderPanelException {
         cardPanel.removeAll(); //Make sure to remove the old stuff if this is a refresh.
         combo.removeAllItems();
         components = new ArrayList<BuilderJPanel<S>>();
@@ -161,7 +161,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
     }
     
     @Override
-    public T build() {
+    public T build() throws BuilderPanelException {
         T t;
         try {
             t = this.typeParamClass.newInstance();
@@ -177,7 +177,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         return t;
     } 
     
-    private void duplicateStepAction() {
+    private void duplicateStepAction() throws BuilderPanelException {
         T t = this.build();
         S s;
         if (t.size()>0) {
@@ -188,7 +188,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         this.actuallyAddStepAction(s);
     }
     
-    private void addStepAction() {
+    private void addStepAction() throws BuilderPanelException{
         if (this.defaultStepTypes.length > 1) { //We have multiple subtypes of S that could be added.
             JPopupMenu menu = new JPopupMenu("Menu");
             for (S step : this.defaultStepTypes) {
@@ -210,7 +210,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
 
     }
     
-    private void actuallyAddStepAction(S step) {
+    private void actuallyAddStepAction(S step) throws BuilderPanelException {
         T t = this.build();
         S newS = (S) S.fromJson(step.toJsonString(), step.getClass()); //Create an independent copy of s.
         t.add(newS);
@@ -221,7 +221,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         }
     }
             
-    private void removeStepAction() {
+    private void removeStepAction() throws BuilderPanelException {
         T t = this.build();
         t.remove(this.combo.getSelectedIndex());
         this.populateFields(t);
@@ -230,7 +230,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         }
     }
     
-    private void clearAllAction() {
+    private void clearAllAction() throws BuilderPanelException {
         T t = this.build();
         t.clear();
         this.populateFields(t);

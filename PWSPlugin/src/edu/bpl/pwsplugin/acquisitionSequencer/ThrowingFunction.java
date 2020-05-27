@@ -17,6 +17,8 @@ public interface ThrowingFunction<T, R> extends Function<T, R> {
     default R apply(T t){
         try{
             return applyThrows(t);
+        } catch (RuntimeException rte) { // Just let the runtime exception propagate
+            throw rte;
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
             throw new RuntimeException(ie);
@@ -31,7 +33,9 @@ public interface ThrowingFunction<T, R> extends Function<T, R> {
         Objects.requireNonNull(after);
         try{
              return (T t) -> after.apply(apply(t));
-        }catch (Exception e){
+        } catch (RuntimeException rte) { // Just let the runtime exception propagate
+            throw rte;
+        } catch (Exception e){
             throw new RuntimeException(e);
         }
     }
@@ -40,7 +44,9 @@ public interface ThrowingFunction<T, R> extends Function<T, R> {
         Objects.requireNonNull(before);
         try {
             return (V v) -> apply(before.apply(v));
-        }catch (Exception e){
+        } catch (RuntimeException rte) { // Just let the runtime exception propagate
+            throw rte;
+        } catch (Exception e){
             throw new RuntimeException(e);
         }
     }

@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.UI.settings;
 
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.ListScrollUI;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
@@ -22,6 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import jdk.nashorn.internal.objects.Global;
 import net.miginfocom.swing.MigLayout;
 import org.micromanager.internal.utils.ReportingUtils;
 
@@ -97,13 +99,18 @@ class ImagingConfigDlg extends JDialog {
         
         try {
             this.configs.populateFields(currentConfigs);
-        } catch (Exception e) {
+        } catch (BuilderJPanel.BuilderPanelException e) {
             ReportingUtils.showError(e);
             ReportingUtils.logError(e);
         }
         
         this.acceptButton.addActionListener((evt)->{
-            this.result = configs.build();
+            try {
+                this.result = configs.build();
+            } catch (BuilderJPanel.BuilderPanelException e) {
+                Globals.mm().logs().showError(e);
+                return;
+            }
             this.setVisible(false);
             this.dispose();
         });

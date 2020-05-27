@@ -3,28 +3,21 @@ package edu.bpl.pwsplugin.UI.settings;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
-import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.settings.CamSettings;
-import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.Vector;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.InputVerifier;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
 
@@ -32,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author nick
  */
-public class CamUI extends SingleBuilderJPanel<CamSettings>{
+public class CamUI extends BuilderJPanel<CamSettings>{
     private JComboBox<String> camCombo = new JComboBox<>();
     private JSpinner darkCountsSpinner;
     private DoubleListTextField linEdit = new DoubleListTextField();
@@ -71,13 +64,21 @@ public class CamUI extends SingleBuilderJPanel<CamSettings>{
     }
     
     @Override
-    public Map<String, Object> getPropertyFieldMap() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", camCombo);
-        map.put("camType", camType);
-        map.put("linearityPolynomial", linEdit);
-        map.put("darkCounts", darkCountsSpinner);
-        return map;
+    public void populateFields(CamSettings settings) {
+        camCombo.setSelectedItem(settings.name);
+        camType.setSelectedItem(settings.camType);
+        darkCountsSpinner.setValue(settings.darkCounts);
+        linEdit.populateFields(settings.linearityPolynomial);
+    }
+    
+    @Override
+    public CamSettings build() throws BuilderPanelException {
+        CamSettings settings = new CamSettings();
+        settings.name = (String) camCombo.getSelectedItem();
+        settings.camType = (Camera.Types) camType.getSelectedItem();
+        settings.darkCounts = (Integer) darkCountsSpinner.getValue();
+        settings.linearityPolynomial = linEdit.build(); //This can throw an exception.
+        return settings;
     }
 }
 
@@ -110,7 +111,11 @@ class DoubleListTextField extends BuilderJPanel<List<Double>> {
     }
     
     @Override
-    public List<Double> build() {
+    public List<Double> build() throws BuilderPanelException {
+        if (!this.textField.getInputVerifier().verify(this.textField)) {
+            String msg = String.format("Linearity polynomial input of \"%s\" is not valid.", this.textField.getText());
+            throw new BuilderPanelException(msg);
+        }
         String text = this.textField.getText().trim();
         List<Double> linearityPolynomial;
         if ((text.equals("None")) || (text.equals("null")) || text.equals("")) {
@@ -129,14 +134,19 @@ class DoubleListTextField extends BuilderJPanel<List<Double>> {
     @Override
     public boolean verify(JComponent input) {
         String text = ((JTextField) input).getText().trim();
-        try {
-            Arrays.asList(text.split(","))
-                                .stream()
-                                .map(String::trim)
-                                .mapToDouble(Double::parseDouble); 
+        if ((text.equals("None")) || (text.equals("null")) || text.equals("")) {
             return true;
-        } catch (Exception e) {
-            return false;
+        } else {
+            try {
+                Arrays.asList(text.split(","))
+                                    .stream()
+                                    .map(String::trim)
+                                    .mapToDouble(Double::parseDouble).boxed()
+                                    .collect(Collectors.toList()); 
+                return true;
+            } catch (NumberFormatException nfe) {
+                return false;
+            }
         }
     }
 }

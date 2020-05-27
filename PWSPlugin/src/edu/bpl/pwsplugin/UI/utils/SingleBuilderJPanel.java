@@ -27,7 +27,7 @@ public abstract class SingleBuilderJPanel<T> extends BuilderJPanel<T>{
     protected abstract Map<String, Object> getPropertyFieldMap();
     
     @Override
-    final public T build(){
+    final public T build() throws BuilderPanelException {
         //Construct a new T from the UI components.
         T t = null;
         try {
@@ -53,15 +53,14 @@ public abstract class SingleBuilderJPanel<T> extends BuilderJPanel<T>{
                     throw new UnsupportedOperationException("Build() does not support type: " + field.getClass().getName());
                 }
             } 
-        } catch (Exception e) {
-            ReportingUtils.showError(e);
-            ReportingUtils.logError(e);
+        } catch (InstantiationException | IllegalAccessException | BuilderPanelException | NoSuchFieldException e) {
+            throw new BuilderPanelException(e);
         }
         return t;
     }
     
     @Override
-    public void populateFields(T t) {
+    public void populateFields(T t) throws BuilderPanelException {
         //Fill in the the UI componenents based on the values of the data members
         //of `t`.
         Map<String, Object> m = this.getPropertyFieldMap();
@@ -72,10 +71,10 @@ public abstract class SingleBuilderJPanel<T> extends BuilderJPanel<T>{
                 prop = t.getClass().getField(entry.getKey());
                 property = prop.get(t);
             } catch (IllegalAccessException | NoSuchFieldException e) {
-                throw new RuntimeException(e);
+                throw new BuilderPanelException(e);
             }
             if (property == null) {
-                throw new RuntimeException(String.format("Property %s of %s object is null", prop.getName(), t.toString()));
+                throw new BuilderPanelException(String.format("Property %s of %s object is null", prop.getName(), t.toString()));
             }
             Object field = entry.getValue();
             if (field instanceof JTextField) {
@@ -92,7 +91,7 @@ public abstract class SingleBuilderJPanel<T> extends BuilderJPanel<T>{
                 Object val = property;
                 ((JComboBox) field).setSelectedItem(val);
             }else {
-                throw new UnsupportedOperationException("Build() does not support type: " + field.getClass().getName());
+                throw new BuilderPanelException("Build() does not support type: " + field.getClass().getName());
             }
         }
     }

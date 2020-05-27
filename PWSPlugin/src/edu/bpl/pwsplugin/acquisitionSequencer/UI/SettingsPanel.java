@@ -90,8 +90,14 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
     
     public void saveSettingsOfLastNode() {
         if (this.lastSelectedNode != null) {
-            JsonableParam settings = (JsonableParam) panelTypeMapping.get(this.lastSelectedNode.getType()).build();
-            this.lastSelectedNode.setSettings(settings);
+            JsonableParam settings;
+            try {
+                settings = (JsonableParam) panelTypeMapping.get(this.lastSelectedNode.getType()).build();
+                this.lastSelectedNode.setSettings(settings);
+            } catch (BuilderJPanel.BuilderPanelException e) {
+                Globals.mm().logs().logError(e);
+                Globals.mm().logs().showError(e);
+            }
         } 
     }
     

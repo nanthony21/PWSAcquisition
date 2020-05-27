@@ -49,7 +49,7 @@ public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements
     }
     
     @Override
-    public AcquireCellSettings build() {
+    public AcquireCellSettings build() throws BuilderPanelException {
         AcquireCellSettings settings = new AcquireCellSettings();
         if (pwsCBPanel.isSelected()) {
             settings.pwsSettings = pwsSettings.build();
@@ -70,7 +70,7 @@ public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements
     }
     
     @Override
-    public void populateFields(AcquireCellSettings settings) {
+    public void populateFields(AcquireCellSettings settings) throws BuilderPanelException {
         if (settings.pwsSettings == null) {
             this.pwsCBPanel.setSelected(false);
         } else {
