@@ -64,7 +64,7 @@ public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements
         if (fluorCBPanel.isSelected()) {
             settings.fluorSettings = fluorSettings.build();
         } else {
-            settings.fluorSettings = null;
+            settings.fluorSettings = new ArrayList();
         }
         return settings;
     }
