@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.hardware.cameras;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.settings.CamSettings;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class SimulatedCamera extends Camera {
     }
     
     @Override
-    public void initialize() throws Exception {}
+    public void initialize() {}
     
     @Override
     public boolean supportsExternalTriggering() { return false; }
@@ -34,7 +35,7 @@ public class SimulatedCamera extends Camera {
     public boolean supportsTriggerOutput() { return false; }
     
     @Override
-    public void configureTriggerOutput(boolean enable) throws Exception {
+    public void configureTriggerOutput(boolean enable) {
         throw new UnsupportedOperationException();
     }
     
@@ -44,17 +45,25 @@ public class SimulatedCamera extends Camera {
     }
     
     @Override
-    public void startSequence(int numImages, double delayMs, boolean externalTriggering) throws Exception{
+    public void startSequence(int numImages, double delayMs, boolean externalTriggering) throws MMDeviceException{
         if (externalTriggering) {
             throw new UnsupportedOperationException();
         } else {
-            Globals.core().startSequenceAcquisition(_devName, numImages, delayMs, false);
+            try {
+                Globals.core().startSequenceAcquisition(_devName, numImages, delayMs, false);
+            } catch (Exception e) {
+               throw new MMDeviceException(e);
+            }
         }
     }
     
     @Override
-    public void stopSequence() throws Exception {
-        Globals.core().stopSequenceAcquisition(_devName);
+    public void stopSequence() throws MMDeviceException {
+        try {
+            Globals.core().stopSequenceAcquisition(_devName);
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
     }
     
     @Override
@@ -63,19 +72,31 @@ public class SimulatedCamera extends Camera {
     }
     
     @Override
-    public void setExposure(double exposureMs) throws Exception {
-        Globals.core().setExposure(_devName, exposureMs);
+    public void setExposure(double exposureMs) throws MMDeviceException {
+        try {
+            Globals.core().setExposure(_devName, exposureMs);
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
     }
     
     @Override
-    public double getExposure() throws Exception {
-        return Globals.core().getExposure(_devName);
+    public double getExposure() throws MMDeviceException {
+        try {
+            return Globals.core().getExposure(_devName);
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
     }
     
     @Override
-    public Image snapImage() throws Exception {
-        Globals.core().snapImage();
-        return Globals.mm().data().convertTaggedImage(Globals.core().getTaggedImage());
+    public Image snapImage() throws MMDeviceException {
+        try {
+            Globals.core().snapImage();
+            return Globals.mm().data().convertTaggedImage(Globals.core().getTaggedImage());
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
     }
     
     @Override

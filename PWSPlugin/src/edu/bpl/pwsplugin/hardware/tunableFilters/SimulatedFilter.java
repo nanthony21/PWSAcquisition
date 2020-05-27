@@ -21,11 +21,11 @@ public class SimulatedFilter extends TunableFilter {
         this.settings = settings;
     }
     
-    public void setWavelength(int wavelength) throws Exception {
+    public void setWavelength(int wavelength) {
         wv = wavelength;
     }
     
-    public int getWavelength() throws Exception {
+    public int getWavelength() {
         return wv;
     }
     
@@ -33,27 +33,27 @@ public class SimulatedFilter extends TunableFilter {
         return false;
     }
     
-    public int getMaxSequenceLength() throws Exception {
+    public int getMaxSequenceLength() {
         throw new UnsupportedOperationException();
     }
     
-    public void loadSequence(int[] wavelengthSequence) throws Exception {
+    public void loadSequence(int[] wavelengthSequence) {
         throw new UnsupportedOperationException();
     }
     
-    public void startSequence() throws Exception {
+    public void startSequence() {
         throw new UnsupportedOperationException();
     }
     
-    public void stopSequence() throws Exception {
+    public void stopSequence() {
         throw new UnsupportedOperationException();
     }
     
-    public boolean isBusy() throws Exception {
+    public boolean isBusy() {
         return false;
     }
     
-    public double getDelayMs() throws Exception {
+    public double getDelayMs() {
         return 50;
     }
     

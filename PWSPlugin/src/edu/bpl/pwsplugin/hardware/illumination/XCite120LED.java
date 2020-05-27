@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.hardware.illumination;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.settings.IlluminatorSettings;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +23,12 @@ public class XCite120LED extends Illuminator {
     }
     
     @Override
-    public void setShutter(boolean on) throws Exception {
-        Globals.core().setShutterOpen(this.settings.name, on);
+    public void setShutter(boolean on) throws MMDeviceException {
+        try {
+            Globals.core().setShutterOpen(this.settings.name, on);
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
     }
     
     @Override

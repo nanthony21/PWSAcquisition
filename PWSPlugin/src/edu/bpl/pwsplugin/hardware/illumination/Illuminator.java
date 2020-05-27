@@ -1,5 +1,6 @@
 package edu.bpl.pwsplugin.hardware.illumination;
 
+import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.settings.IlluminatorSettings;
 import java.util.List;
 
@@ -7,9 +8,9 @@ import java.util.List;
 public abstract class Illuminator {
     public abstract List<String> validate(); //Return a list of strings for every error detected in the configuration. return empty list if no errors found.
 
-    public abstract void initialize() throws Exception;
+    public abstract void initialize() throws MMDeviceException;
     
-    public abstract void setShutter(boolean on) throws Exception;
+    public abstract void setShutter(boolean on) throws MMDeviceException;
     
     public static Illuminator getInstance(IlluminatorSettings settings) {
         if (settings.illuminatorType == Types.XCite120LED) {

@@ -2,6 +2,7 @@
 package edu.bpl.pwsplugin.hardware.tunableFilters;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.TunableFilterSettings;
 import mmcorej.StrVector;
@@ -24,52 +25,84 @@ public abstract class DefaultTunableFilter extends TunableFilter{
     }
     
     @Override
-    public void setWavelength(int wavelength) throws Exception {
-        Globals.core().setProperty(devName, wvProp, String.valueOf(wavelength));
+    public void setWavelength(int wavelength) throws MMDeviceException {
+        try {
+            Globals.core().setProperty(devName, wvProp, String.valueOf(wavelength));
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
     }
     
     
     @Override
-    public int getWavelength() throws Exception{ 
-        int wv = (int) Math.round(Double.valueOf(Globals.core().getProperty(devName, wvProp)));
-        return wv;
+    public int getWavelength() throws MMDeviceException{ 
+        try {
+            int wv = (int) Math.round(Double.valueOf(Globals.core().getProperty(devName, wvProp)));
+            return wv;
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
     }
     
     @Override
     public boolean supportsSequencing() { return true; } 
     
     @Override
-    public int getMaxSequenceLength() throws Exception {
-        return Globals.core().getPropertySequenceMaxLength(devName, wvProp);
+    public int getMaxSequenceLength() throws MMDeviceException {
+        try {
+            return Globals.core().getPropertySequenceMaxLength(devName, wvProp);
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
     }
     
     @Override
-    public void loadSequence(int[] wavelengthSequence) throws Exception {
+    public void loadSequence(int[] wavelengthSequence) throws MMDeviceException {
         StrVector strv = new StrVector();
         for (int i = 0; i < wavelengthSequence.length; i++) {   //Convert wv from int to string for sending to the device.
             strv.add(String.valueOf(wavelengthSequence[i]));
         }
-        Globals.mm().core().loadPropertySequence(devName, wvProp, strv);
+        try {
+            Globals.mm().core().loadPropertySequence(devName, wvProp, strv);
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
     }
     
     @Override
-    public void startSequence() throws Exception {
-        Globals.core().startPropertySequence(devName, wvProp);
+    public void startSequence() throws MMDeviceException {
+        try {
+            Globals.core().startPropertySequence(devName, wvProp);
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
     }
     
     @Override
-    public void stopSequence() throws Exception {
-        Globals.core().stopPropertySequence(devName, wvProp);
+    public void stopSequence() throws MMDeviceException {
+        try {
+            Globals.core().stopPropertySequence(devName, wvProp);
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
     }
     
     @Override
-    public boolean isBusy() throws Exception {
-        return Globals.core().deviceBusy(devName);
+    public boolean isBusy() throws MMDeviceException {
+        try {
+            return Globals.core().deviceBusy(devName);
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
     }
     
     @Override
-    public double getDelayMs() throws Exception {
-        return Globals.core().getDeviceDelayMs(devName);
+    public double getDelayMs() throws MMDeviceException {
+        try {
+            return Globals.core().getDeviceDelayMs(devName);
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
     }
     
     @Override

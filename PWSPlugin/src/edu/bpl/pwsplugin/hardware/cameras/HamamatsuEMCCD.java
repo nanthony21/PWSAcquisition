@@ -1,6 +1,7 @@
 package edu.bpl.pwsplugin.hardware.cameras;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.settings.CamSettings;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,21 +44,33 @@ public class HamamatsuEMCCD extends Camera {
     }
     
     @Override
-    public void setExposure(double exposureMs) throws Exception {
-        Globals.core().setExposure(this._settings.name, exposureMs);
+    public void setExposure(double exposureMs) throws MMDeviceException {
+        try {
+            Globals.core().setExposure(this._settings.name, exposureMs);
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
     }
     
     @Override
-    public double getExposure() throws Exception {
-        return Globals.core().getExposure(this._settings.name);
+    public double getExposure() throws MMDeviceException {
+        try {
+            return Globals.core().getExposure(this._settings.name);
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
     }
     
     @Override
-    public Image snapImage() throws Exception {
+    public Image snapImage() throws MMDeviceException {
         //TODO what if we are not set as the core camera at this point.
         //TODO if (Globals.core().getCameraDevice()!=_devName) {Globals.core().setCameraDevice(_devName);}
-        Globals.core().snapImage();
-        return Globals.mm().data().convertTaggedImage(Globals.core().getTaggedImage());
+        try {
+            Globals.core().snapImage();
+            return Globals.mm().data().convertTaggedImage(Globals.core().getTaggedImage());
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
     }
     
     @Override

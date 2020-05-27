@@ -24,6 +24,7 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
+import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.SpectralCamera;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
@@ -77,7 +78,7 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
                     throw new UnsupportedOperationException("The filter device does not support sequencing as many wavelengths as have been specified. Max is " + filter.getMaxSequenceLength());
                 }
                 filter.loadSequence(wv);
-            } catch (Exception e) {
+            } catch (MMDeviceException e) {
                 throw new RuntimeException(e);
             }
         }  
