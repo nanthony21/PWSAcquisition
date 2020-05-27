@@ -25,6 +25,7 @@ import edu.bpl.pwsplugin.PWSPlugin;
 import edu.bpl.pwsplugin.UI.settings.AcquireCellUI;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.SequencerUI;
 import edu.bpl.pwsplugin.UI.settings.HWConfPanel;
+import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
@@ -94,7 +95,12 @@ public class PluginFrame extends MMFrame {
     
     public PWSPluginSettings getSettings() {
         PWSPluginSettings set = new PWSPluginSettings();
-        set.acquisitionSettings = this.acqPanel.getAcqSettings();
+        try {
+            set.acquisitionSettings = this.acqPanel.getAcqSettings();
+        } catch (BuilderJPanel.BuilderPanelException e) {
+            ReportingUtils.logError(e);
+            ReportingUtils.showError("Failed to get acquisition settings from UI. See CoreLog for details.");
+        }
         set.hwConfiguration = this.configDialog.build();
         set.saveDir = this.acqPanel.getDirectory();
         set.cellNum = this.acqPanel.getCellNumber();
@@ -109,7 +115,7 @@ public class PluginFrame extends MMFrame {
     }
     
     public final void populateFields(PWSPluginSettings set) {
-        try{ this.acqPanel.setAcqSettings(set.acquisitionSettings); } catch(NullPointerException e) {ReportingUtils.logError(e); } //Sometimes a bit of settings will be missing if the code is changed. Don't let that crash the program.
+        try{ this.acqPanel.setAcqSettings(set.acquisitionSettings); } catch(NullPointerException | BuilderJPanel.BuilderPanelException e) {ReportingUtils.logError(e); } //Sometimes a bit of settings will be missing if the code is changed. Don't let that crash the program.
         try{ this.configDialog.populateFields(set.hwConfiguration); } catch(NullPointerException e) {ReportingUtils.logError(e); }
         try{ this.acqPanel.setDirectory(set.saveDir); } catch(NullPointerException e) {ReportingUtils.logError(e); }
         try{ this.acqPanel.setCellNumber(set.cellNum); } catch(NullPointerException e) {ReportingUtils.logError(e); }
@@ -158,9 +164,6 @@ class AcquisitionPanel extends JPanel {
     private final DirectorySelector dirSelect = new DirectorySelector(DirectorySelector.DefaultMMFunctions.MMDataSetDirectory);;
     private final JSpinner cellNumSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
     private final AcquireCellUI cellUI = new AcquireCellUI();
-    private PWSSettings lastPWSSettings;
-    private DynSettings lastDynSettings;
-    private FluorSettings lastFluorSettings;
     
     public AcquisitionPanel() {
         super(new MigLayout("insets 0 0 0 0"));
@@ -190,7 +193,7 @@ class AcquisitionPanel extends JPanel {
         return (Integer) cellNumSpinner.getValue();
     }
     
-    public AcquireCellSettings getAcqSettings() {
+    public AcquireCellSettings getAcqSettings() throws BuilderJPanel.BuilderPanelException {
         return this.cellUI.build();
     }
     
@@ -202,7 +205,7 @@ class AcquisitionPanel extends JPanel {
         cellNumSpinner.setValue(num);
     }
     
-    public void setAcqSettings(AcquireCellSettings settings) {
+    public void setAcqSettings(AcquireCellSettings settings) throws BuilderJPanel.BuilderPanelException {
         this.cellUI.populateFields(settings);
     }
     
@@ -210,7 +213,14 @@ class AcquisitionPanel extends JPanel {
         AcquisitionManager acqMan = Globals.acqManager();
         acqMan.setSavePath(this.dirSelect.getText());
         acqMan.setCellNum((Integer) this.cellNumSpinner.getValue());
-        AcquireCellSettings settings = this.cellUI.build();
+        AcquireCellSettings settings;
+        try {
+            settings = this.cellUI.build();
+        } catch (BuilderJPanel.BuilderPanelException e) {
+            ReportingUtils.logError(e);
+            ReportingUtils.showError("Failed to get acquisition settings from UI. See corelog for details.");
+            return;
+        }
         ThrowingFunction<Void, Void> f = (nul)->{return null;};
         for (FluorSettings flSettings : settings.fluorSettings) { //TODO check for file conflicts here
             f = f.andThen((nul)->{
