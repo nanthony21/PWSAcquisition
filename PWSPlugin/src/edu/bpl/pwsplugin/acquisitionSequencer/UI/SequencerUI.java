@@ -54,7 +54,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
     AcquisitionThread acqThread;
     
     public SequencerUI() {
-        super(new MigLayout(), ContainerStep.class);
+        super(new MigLayout("fill"), ContainerStep.class);
 
         this.settingsPanel.setBorder(BorderFactory.createEtchedBorder());
         
@@ -72,7 +72,6 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
             } catch (IllegalStateException | InstantiationException | IllegalAccessException e) {
                 Globals.mm().logs().showError(e);
             }
-            int a = 1; //Debug breakpoint here
         }); //Run starting at cell 1.
         
         this.saveButton.addActionListener((evt) -> {
@@ -102,16 +101,17 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
         
         JLabel l = new JLabel("Sequence");
         l.setFont(new Font("serif", Font.BOLD, 12));
-        this.add(l);
+        this.add(l, "wrap");
+        this.add(seqTree, "growy, pushy, wrap");
         l = new JLabel("Available Step Types");
         l.setFont(new Font("serif", Font.BOLD, 12));
-        this.add(l);
-        this.add(settingsPanel, "wrap, spany 2");
-        this.add(seqTree, "growy");
-        this.add(newStepsTree, "growy, wrap");
-        this.add(runButton);
-        this.add(saveButton);
-        this.add(loadButton);
+        this.add(l, "wrap");
+        this.add(newStepsTree, "growy 20, wrap");
+        this.add(settingsPanel, "cell 1 0 1 4");
+
+        this.add(runButton, "cell 0 5 2 1, align center");
+        this.add(saveButton, "cell 0 5");
+        this.add(loadButton, "cell 0 5");
     }
     
     private Step compileSequenceNodes(DefaultMutableTreeNode parent) throws InstantiationException, IllegalAccessException {

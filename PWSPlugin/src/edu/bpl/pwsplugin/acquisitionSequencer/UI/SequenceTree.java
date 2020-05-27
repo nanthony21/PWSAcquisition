@@ -37,7 +37,7 @@ class SequenceTree extends TreeDragAndDrop implements KeyListener {
         
         model.setRoot(root);
         tree.setRootVisible(true);
-        tree.setShowsRootHandles(true);
+        tree.setShowsRootHandles(false);
         tree.setCellRenderer(new TreeRenderers.SequenceTreeRenderer());
         
         Dimension d = new Dimension(200, 200);

@@ -50,7 +50,7 @@ public class ChangeConfigGroupFactory extends StepFactory {
     
     @Override
     public String getName() {
-        return "Change Configuration Group";
+        return "Configuration Group";
     }
     
     @Override

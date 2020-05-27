@@ -36,6 +36,7 @@ import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.awt.Window;
 import java.util.function.Function;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -69,7 +70,7 @@ public class PluginFrame extends MMFrame {
         this.setLayout(new MigLayout());
         this.setTitle(String.format("%s %s", PWSPlugin.menuName, PWSPlugin.versionNumber));
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        this.setResizable(true);
+        this.setResizable(false);
         
         JMenuBar ma = new JMenuBar();
         JMenu mb = new JMenu("Advanced");
@@ -84,8 +85,8 @@ public class PluginFrame extends MMFrame {
         this.setJMenuBar(ma);
 
         this.add(tabs, "wrap, span, grow");
-        tabs.addTab("Quick Acquire", this.acqPanel);
         tabs.addTab("Sequencing", this.sequencePanel);
+        tabs.addTab("Quick Acquire", this.acqPanel);
         
         this.pack();
         this.setMinimumSize(this.getSize());
@@ -170,10 +171,15 @@ class AcquisitionPanel extends JPanel {
             this.acquire();
         });
         
-        this.add(cellUI, "wrap");
-        this.add(dirSelect, "grow, pushx");
-        this.add(new JLabel("Cell#:"), "shrink");
-        this.add(cellNumSpinner, "wrap");   
+        this.add(cellUI, "spanx, wrap, shrinky, top");
+        JPanel dirPanel = new JPanel(new MigLayout("insets 0 3 5 0"));
+        dirPanel.add(new JLabel("Directory:"), "cell 0 0");
+        dirPanel.add(dirSelect, "cell 0 0");
+        dirPanel.add(acqButton, "cell 0 1");
+        dirPanel.add(new JLabel("Cell#:"), "cell 0 1");
+        dirPanel.add(cellNumSpinner, "cell 0 1"); 
+        dirPanel.setBorder(BorderFactory.createEtchedBorder());
+        this.add(dirPanel, "gapleft 5");
     }
     
     public String getDirectory() {

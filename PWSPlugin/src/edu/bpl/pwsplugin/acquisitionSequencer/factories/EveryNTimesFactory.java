@@ -45,7 +45,7 @@ public class EveryNTimesFactory extends StepFactory {
     
     @Override
     public String getName() {
-        return "Run once per `N` iterations";
+        return "Once per `N` iterations";
     }
     
     @Override
