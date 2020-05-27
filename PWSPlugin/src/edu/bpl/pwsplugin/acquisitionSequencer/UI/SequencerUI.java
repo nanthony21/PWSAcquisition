@@ -83,7 +83,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
                     path = path + ".pwsseq"; //Make sure the extension is there.
                 }
                 rootStep.toJsonFile(path);
-            } catch (IOException e) {
+            } catch (IOException | BuilderPanelException e) {
                 Globals.mm().logs().logError(e);
             }
         });
@@ -165,11 +165,11 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
     }
     
     @Override
-    public ContainerStep build() {
+    public ContainerStep build() throws BuilderPanelException {
         try {
             return (ContainerStep) compileSequenceNodes((DefaultMutableTreeNode) seqTree.model().getRoot());
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new BuilderPanelException(e);
         }
     }
     
