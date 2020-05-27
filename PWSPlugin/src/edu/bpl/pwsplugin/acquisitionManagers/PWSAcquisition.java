@@ -71,10 +71,10 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
         if (hardwareSequence) {
             try {
                 if (!filter.supportsSequencing()) {
-                    throw new RuntimeException("The filter device does not support hardware TTL sequencing.");
+                    throw new UnsupportedOperationException("The filter device does not support hardware TTL sequencing.");
                 }
                 if (filter.getMaxSequenceLength() < wv.length) {
-                    throw new RuntimeException("The filter device does not support sequencing as many wavelengths as have been specified. Max is " + filter.getMaxSequenceLength());
+                    throw new UnsupportedOperationException("The filter device does not support sequencing as many wavelengths as have been specified. Max is " + filter.getMaxSequenceLength());
                 }
                 filter.loadSequence(wv);
             } catch (Exception e) {

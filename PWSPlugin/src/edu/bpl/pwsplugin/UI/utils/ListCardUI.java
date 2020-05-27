@@ -68,7 +68,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         
         try {
             this.actuallyAddStepAction(this.defaultStepTypes[0]); // Add the default step so we at least have something there. Helps to get the initial component sized right.
-        } catch (Exception e) {
+        } catch (BuilderPanelException e) {
             ReportingUtils.logError(e);
         }
         
@@ -85,7 +85,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         addButton.addActionListener(
             (e)->{try{
                 this.addStepAction();
-            }catch(Exception exc){
+            }catch(BuilderPanelException exc){
                 ReportingUtils.showError(exc);
                 ReportingUtils.logError(exc);
             }
@@ -94,7 +94,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         copyItem.addActionListener(
             (e)->{try{
                 this.duplicateStepAction();
-            } catch(Exception exc){
+            } catch(BuilderPanelException exc){
                 ReportingUtils.showError(exc);
                 ReportingUtils.logError(exc);
             }
@@ -103,7 +103,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         clearItem.addActionListener((e)->{
             try {
                 this.clearAllAction();
-            } catch(Exception exc){
+            } catch(BuilderPanelException exc){
                 ReportingUtils.showError(exc);
                 ReportingUtils.logError(exc);
             }
@@ -112,7 +112,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         remButton.addActionListener(
             (e)->{try{
                 this.removeStepAction();
-            }catch(Exception exc){
+            }catch(BuilderPanelException exc){
                 ReportingUtils.showError(exc);
                 ReportingUtils.logError(exc);
             }
@@ -165,10 +165,8 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         T t;
         try {
             t = this.typeParamClass.newInstance();
-        } catch (Exception e) {
-            ReportingUtils.showError("Failed to instantiate new: " + this.typeParamClass);
-            ReportingUtils.logError(e);
-            return null;
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new BuilderPanelException(e);
         }
         for (BuilderJPanel<S> p : components) {
             S s = p.build();
@@ -183,7 +181,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         if (t.size()>0) {
             s = t.get(this.combo.getSelectedIndex());
         } else {
-            throw new RuntimeException("this should never happen");
+            throw new BuilderPanelException("this should never happen");
         }
         this.actuallyAddStepAction(s);
     }
@@ -196,7 +194,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
                 item.addActionListener((evt)->{
                     try{
                         this.actuallyAddStepAction(step);
-                    } catch (Exception e) {
+                    } catch (BuilderPanelException e) {
                         ReportingUtils.logError(e);
                     }
                 });

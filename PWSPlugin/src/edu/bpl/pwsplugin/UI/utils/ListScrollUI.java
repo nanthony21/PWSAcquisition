@@ -67,7 +67,7 @@ public class ListScrollUI<T extends List<S>, S extends JsonableParam> extends Li
         addItem.addActionListener((evt)-> {
             try {
                 this.addStepAction(this.components.size());
-            } catch(Exception exc){
+            } catch(BuilderPanelException exc){
                 ReportingUtils.showError(exc);
                 ReportingUtils.logError(exc);
             }
@@ -113,10 +113,8 @@ public class ListScrollUI<T extends List<S>, S extends JsonableParam> extends Li
         T t;
         try {
             t = this.typeParamClass.newInstance();
-        } catch (Exception e) {
-            ReportingUtils.showError("Failed to instantiate new: " + this.typeParamClass);
-            ReportingUtils.logError(e);
-            return null;
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new BuilderPanelException(e);
         }
         for (BuilderJPanel<S> p : components) {
             S s = p.build();
@@ -126,7 +124,7 @@ public class ListScrollUI<T extends List<S>, S extends JsonableParam> extends Li
     } 
 
     
-    public void addStepAction(int position) throws Exception {
+    public void addStepAction(int position) throws BuilderPanelException {
         if (this.defaultStepTypes.length > 1) { //We have multiple subtypes of S that could be added.
             JPopupMenu menu = new JPopupMenu("Menu");
             for (S step : this.defaultStepTypes) {
@@ -134,7 +132,7 @@ public class ListScrollUI<T extends List<S>, S extends JsonableParam> extends Li
                 item.addActionListener((evtt)->{
                     try{
                         this.addStep(step, position);
-                    } catch (Exception e) {
+                    } catch (BuilderPanelException e) {
                         ReportingUtils.logError(e);
                     }
                 });
@@ -150,23 +148,23 @@ public class ListScrollUI<T extends List<S>, S extends JsonableParam> extends Li
 
     }
     
-    private void addStep(S step) throws Exception {
+    private void addStep(S step) throws BuilderPanelException {
         this.addStep(step, this.components.size());
     }
     
-    public void addStep(S s, int position) throws Exception{
+    public void addStep(S s, int position) throws BuilderPanelException {
         T t = this.build();
         t.add(position, s);
         this.populateFields(t);
     }
     
-    public void removeStep(int position) throws Exception {
+    public void removeStep(int position) throws BuilderPanelException {
         T t = this.build();
         t.remove(position);
         this.populateFields(t);
     }
     
-    public void moveStep(int startPos, int endPos) throws Exception {
+    public void moveStep(int startPos, int endPos) throws BuilderPanelException {
         T t = this.build();
         S step = t.remove(startPos);
         t.add(endPos, step);
@@ -233,7 +231,7 @@ class ListScrollItem<S extends JsonableParam> extends JPanel implements MouseLis
         removeItem.addActionListener((evt)->{
             try {
                 parent.removeStep(this.position);
-            } catch (Exception e) {
+            } catch (BuilderJPanel.BuilderPanelException e) {
                 ReportingUtils.showError(evt);
             }
         });
@@ -241,7 +239,7 @@ class ListScrollItem<S extends JsonableParam> extends JPanel implements MouseLis
         insertAfterItem.addActionListener((evt)->{
             try {
                 parent.addStepAction(this.position+1);
-            } catch (Exception e) {
+            } catch (BuilderJPanel.BuilderPanelException e) {
                 ReportingUtils.showError(evt);
             }
         });
@@ -250,7 +248,7 @@ class ListScrollItem<S extends JsonableParam> extends JPanel implements MouseLis
             try {
                 S s = this.panel.build();
                 parent.addStep(s, this.position+1);
-            } catch (Exception e) {
+            } catch (BuilderJPanel.BuilderPanelException e) {
                 ReportingUtils.showError(evt);
             }
         });
@@ -258,7 +256,7 @@ class ListScrollItem<S extends JsonableParam> extends JPanel implements MouseLis
         moveDownItem.addActionListener((evt)->{
             try {
                 parent.moveStep(this.position, this.position+1);
-            } catch (Exception e) {
+            } catch (BuilderJPanel.BuilderPanelException e) {
                 ReportingUtils.showError(evt);
             }
         });
@@ -266,7 +264,7 @@ class ListScrollItem<S extends JsonableParam> extends JPanel implements MouseLis
         moveUpItem.addActionListener((evt)->{
             try {
                 parent.moveStep(this.position, this.position-1);
-            } catch (Exception e) {
+            } catch (BuilderJPanel.BuilderPanelException e) {
                 ReportingUtils.showError(evt);
             }
         });        
