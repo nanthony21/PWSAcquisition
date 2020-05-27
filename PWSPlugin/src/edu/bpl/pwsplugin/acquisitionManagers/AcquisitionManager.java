@@ -70,11 +70,13 @@ public class AcquisitionManager {
                 imageQueue.clear();
             }
             manager.acquireImages(savePath_, cellNum_, imageQueue, metadata);
-        } catch (Exception ex) {          
-            ReportingUtils.logError("PWSPlugin, in AcqManager: " + ex.toString());
-            ReportingUtils.showError("PWSPlugin, in AcqManager: " + ex.toString());
-            imageQueue.clear();
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(ie);
+        } catch (Exception ex) {  
+            throw new RuntimeException(ex);
         } finally {
+            imageQueue.clear();
             acquisitionRunning_ = false;
         }
     }

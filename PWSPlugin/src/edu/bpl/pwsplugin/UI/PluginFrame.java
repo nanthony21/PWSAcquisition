@@ -212,7 +212,7 @@ class AcquisitionPanel extends JPanel {
         acqMan.setCellNum((Integer) this.cellNumSpinner.getValue());
         AcquireCellSettings settings = this.cellUI.build();
         ThrowingFunction<Void, Void> f = (nul)->{return null;};
-        for (FluorSettings flSettings : settings.fluorSettings) {
+        for (FluorSettings flSettings : settings.fluorSettings) { //TODO check for file conflicts here
             f = f.andThen((nul)->{
                 acqMan.setFluorescenceSettings(flSettings);
                 acqMan.acquireFluorescence(); return null;

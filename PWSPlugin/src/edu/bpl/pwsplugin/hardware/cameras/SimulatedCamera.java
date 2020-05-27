@@ -45,12 +45,16 @@ public class SimulatedCamera extends Camera {
     
     @Override
     public void startSequence(int numImages, double delayMs, boolean externalTriggering) throws Exception{
-        throw new UnsupportedOperationException();
+        if (externalTriggering) {
+            throw new UnsupportedOperationException();
+        } else {
+            Globals.core().startSequenceAcquisition(_devName, numImages, delayMs, false);
+        }
     }
     
     @Override
     public void stopSequence() throws Exception {
-        throw new UnsupportedOperationException();
+        Globals.core().stopSequenceAcquisition(_devName);
     }
     
     @Override
