@@ -65,7 +65,6 @@ import org.micromanager.internal.utils.ReportingUtils;
 public class PluginFrame extends MMFrame implements PropertyChangeListener{
     private final JTabbedPane tabs = new JTabbedPane();
     private final JButton acqButton = new JButton("Acquire Now");
-    private final JButton addToSeqButton = new JButton("Add to Sequence");
     private final DirectorySelector dirSelect;
     private final JSpinner cellNumSpinner;
     private final PWSPanel pwsPanel = new PWSPanel();
@@ -127,7 +126,6 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         bottomPanel.add(cellNumSpinner, "wrap");
         JPanel buttons = new JPanel(new MigLayout());
         buttons.add(acqButton);
-        buttons.add(addToSeqButton);
         bottomPanel.add(buttons, "span, align center");
         this.add(bottomPanel, "dock south");
         
