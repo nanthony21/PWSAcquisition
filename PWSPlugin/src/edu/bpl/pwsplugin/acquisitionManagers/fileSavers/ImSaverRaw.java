@@ -130,7 +130,11 @@ public class ImSaverRaw extends SaverThread {
             if (debug_) {
                 ReportingUtils.logMessage("PWSPlugin: produced image. Saving took:" + itTook + "milliseconds.");
             }
-        } catch (Exception ex) {
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            ReportingUtils.showError(ie);
+            ReportingUtils.logError("Error: PWSPlugin, while producing " + filePrefix_ + " image: "+ ie.toString());
+        } catch (JSONException | IOException ex) {
             ReportingUtils.showError(ex);
             ReportingUtils.logError("Error: PWSPlugin, while producing " + filePrefix_ + " image: "+ ex.toString());
         } 

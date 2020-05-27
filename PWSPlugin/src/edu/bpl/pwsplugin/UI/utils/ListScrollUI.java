@@ -171,7 +171,7 @@ public class ListScrollUI<T extends List<S>, S extends JsonableParam> extends Li
         this.populateFields(t);
     }
 
-    public void clearAllAction() throws Exception {
+    public void clearAllAction() throws BuilderPanelException {
         T t = this.build();
         t.clear();
         this.populateFields(t);
@@ -272,7 +272,7 @@ class ListScrollItem<S extends JsonableParam> extends JPanel implements MouseLis
         clearItem.addActionListener((evt)->{
             try {
                 this.parent.clearAllAction();
-            } catch (Exception e) {
+            } catch (BuilderJPanel.BuilderPanelException e) {
                 ReportingUtils.showError(e);
             }
         });

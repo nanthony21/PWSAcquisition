@@ -107,7 +107,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         BuilderJPanel panel = showPanelForType(n.getType());
         try {
             panel.populateFields(n.getSettings());
-        } catch (Exception exc) {
+        } catch (BuilderJPanel.BuilderPanelException exc) {
             Globals.mm().logs().logError(exc);
         }
     }

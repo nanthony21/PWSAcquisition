@@ -86,8 +86,11 @@ public class MMSaver extends SaverThread {
             
             long itTook = System.currentTimeMillis() - now;
             ReportingUtils.logMessage("PWSPlugin: produced image. Saving took:" + itTook + "milliseconds.");
-            
-        } catch (Exception ex) {
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            ReportingUtils.showError(ie);
+            ReportingUtils.logError("Error: PWSPlugin, while producing averaged img: "+ ie.toString());
+        } catch (IOException | JSONException ex) {
             ReportingUtils.showError(ex);
             ReportingUtils.logError("Error: PWSPlugin, while producing averaged img: "+ ex.toString());
         } 
