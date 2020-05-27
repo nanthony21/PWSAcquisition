@@ -33,6 +33,7 @@ package edu.bpl.pwsplugin;
 
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.settings.CamSettings;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
@@ -76,6 +77,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
             JsonableParam.registerClass(CamSettings.class);
             JsonableParam.registerClass(IlluminatorSettings.class);
             JsonableParam.registerClass(PWSPluginSettings.class);
+            JsonableParam.registerClass(AcquireCellSettings.class);
             Consts.registerGson();
             Globals.init(studio_);       
             initialized_ = true;

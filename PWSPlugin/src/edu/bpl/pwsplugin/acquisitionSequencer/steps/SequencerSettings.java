@@ -56,14 +56,4 @@ public class SequencerSettings {
 
     }
 
-    public static class AcquireCellSettings extends JsonableParam {
-        public PWSSettings pwsSettings = new PWSSettings();
-        public DynSettings dynSettings = new DynSettings();
-        public List<FluorSettings> fluorSettings = new ArrayList<>();
-
-        public AcquireCellSettings() {
-            fluorSettings.add(new FluorSettings());
-        }
-    }
-
 }
