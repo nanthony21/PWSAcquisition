@@ -6,20 +6,19 @@
 package edu.bpl.pwsplugin.UI.settings;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
+import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.FluorSettings;
-import edu.bpl.pwsplugin.settings.PWSPluginSettings;
+import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
@@ -27,7 +26,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author nick
  */
-public class FluorPanel extends SingleBuilderJPanel<FluorSettings>{
+public class FluorPanel extends BuilderJPanel<FluorSettings>{
     private JSpinner wvSpinner;
     private JSpinner exposureSpinner;
     private JComboBox<String> filterCombo = new JComboBox<>();
@@ -40,6 +39,14 @@ public class FluorPanel extends SingleBuilderJPanel<FluorSettings>{
         wvSpinner = new JSpinner(new SpinnerNumberModel(550, 400, 1000, 5));
         exposureSpinner = new JSpinner(new SpinnerNumberModel(1000, 1, 5000, 100));
         filterCombo.setModel(this.getFilterComboModel());
+        
+        try {
+            List<String> confNames = new ArrayList<>();
+            for (ImagingConfigurationSettings setting : Globals.getHardwareConfiguration().getSettings().configs) {
+                confNames.add(setting.name);
+            }
+            imConfName.setModel(new DefaultComboBoxModel<String>(confNames.toArray(new String[confNames.size()])));
+        } catch (NullPointerException e) {} //This will often fail during plugin initialization. that's ok, the PropertyChangeListener should also set this once initialization is completed.
                 
         super.add(new JLabel("Wavelength (nm)"));
         super.add(new JLabel("Exposure (ms)"));
@@ -56,27 +63,28 @@ public class FluorPanel extends SingleBuilderJPanel<FluorSettings>{
         try { // Allow the panel to show up even if we don't have our connection to micromanager working (useful for testing).
             return new DefaultComboBoxModel<>((String[]) Globals.getMMConfigAdapter().getFilters().toArray());
         } catch (NullPointerException e) {
-            return new DefaultComboBoxModel<>();
+            String[] filts = {"None!"};
+            return new DefaultComboBoxModel<>(filts);
         }
-    }
+    }  
     
-    private DefaultComboBoxModel<String> getCameraComboModel() {
-        try { // Allow the panel to show up even if we don't have our connection to micromanager working (useful for testing).
-            return new DefaultComboBoxModel<>((String[]) Globals.getMMConfigAdapter().getConnectedCameras().toArray());
-        } catch (NullPointerException e) {
-            return new DefaultComboBoxModel<>();
-        }
+    @Override
+    public FluorSettings build() {
+        FluorSettings settings = new FluorSettings();
+        settings.exposure = (Double) this.exposureSpinner.getValue();
+        settings.filterConfigName = (String) this.filterCombo.getSelectedItem();
+        settings.tfWavelength = (Integer) this.wvSpinner.getValue();
+        settings.imConfigName = (String) this.imConfName.getSelectedItem();
+        return settings;
     }
     
     @Override
-    public Map<String, Object> getPropertyFieldMap() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("exposure", exposureSpinner);
-        map.put("filterConfigName", filterCombo);
-        map.put("tfWavelength", wvSpinner);
-        map.put("imConfigName", imConfName);
-        return map;
-    }  
+    public void populateFields(FluorSettings settings) {
+        this.exposureSpinner.setValue(settings.exposure);
+        this.filterCombo.setSelectedItem(settings.filterConfigName);
+        this.wvSpinner.setValue(settings.tfWavelength);
+        this.imConfName.setSelectedItem(settings.imConfigName);
+    }
     
     //API
     public boolean setFluorescenceFilter(String filter) { //Returns true if success

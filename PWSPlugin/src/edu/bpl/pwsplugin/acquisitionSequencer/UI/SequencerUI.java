@@ -61,6 +61,11 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
         this.runButton.addActionListener((evt) -> {  
             try {
                 Step rootStep = this.compileSequenceNodes((DefaultMutableTreeNode)seqTree.model().getRoot());
+                List<String> errors = verifySequence(rootStep);
+                if (!errors.isEmpty()) {
+                    Globals.mm().logs().showError(String.join("\n", errors));
+                    return;
+                }
                 SequencerFunction rootFunc = rootStep.getFunction();
                 SequencerRunningDlg dlg = new SequencerRunningDlg(SwingUtilities.getWindowAncestor(this), "Acquisition Sequence Running");
                 acqThread = new AcquisitionThread(rootFunc, 1, dlg); //This opens the dialog and starts the thread.
@@ -114,9 +119,6 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
         //Recursively compile a StepNode and it's children into a step which can be passed to the acquisition engine. 
         settingsPanel.saveSettingsOfLastNode(); //Make sure to update nodes with most recently set paremeters in the settings panel
         if (parent.getAllowsChildren()) {
-            if (parent.getChildCount() == 0) {
-                throw new IllegalStateException(String.format("%s container-node may not be empty", parent.toString()));
-            }
             List<Step> l = new ArrayList<>();
             for (int i=0; i<parent.getChildCount(); i++) {  
                 l.add(compileSequenceNodes((StepNode) parent.getChildAt(i)));
@@ -128,6 +130,23 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
             EndpointStep step = (EndpointStep) ((StepNode) parent).createStepObject();
             return step;
         }
+    }
+    
+    private List<String> verifySequence(Step parent, List<String> errs) {
+        if (parent instanceof ContainerStep) {
+            if (((ContainerStep) parent).getSubSteps().isEmpty()) {
+                errs.add(String.format("%s container-node may not be empty", parent.toString()));
+            }
+            for (Step substep : ((ContainerStep) parent).getSubSteps()) {
+                errs.addAll(verifySequence(substep, new ArrayList<String>()));
+            }
+        } 
+        return errs;
+    }
+    
+    private List<String> verifySequence(Step parent) {
+        List<String> errs = new ArrayList<>();
+        return verifySequence(parent, errs);
     }
     
     private StepNode loadNodeFromStep(Step rootStep) {

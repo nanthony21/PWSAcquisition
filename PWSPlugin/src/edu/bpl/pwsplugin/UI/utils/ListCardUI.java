@@ -177,18 +177,18 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         return t;
     } 
     
-    private void duplicateStepAction() throws Exception {
+    private void duplicateStepAction() {
         T t = this.build();
         S s;
         if (t.size()>0) {
             s = t.get(this.combo.getSelectedIndex());
         } else {
-            return; //this should never happen
+            throw new RuntimeException("this should never happen");
         }
         this.actuallyAddStepAction(s);
     }
     
-    private void addStepAction() throws Exception {
+    private void addStepAction() {
         if (this.defaultStepTypes.length > 1) { //We have multiple subtypes of S that could be added.
             JPopupMenu menu = new JPopupMenu("Menu");
             for (S step : this.defaultStepTypes) {
@@ -210,7 +210,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
 
     }
     
-    private void actuallyAddStepAction(S step) throws Exception {
+    private void actuallyAddStepAction(S step) {
         T t = this.build();
         S newS = (S) S.fromJson(step.toJsonString(), step.getClass()); //Create an independent copy of s.
         t.add(newS);
@@ -221,7 +221,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         }
     }
             
-    private void removeStepAction() throws Exception {
+    private void removeStepAction() {
         T t = this.build();
         t.remove(this.combo.getSelectedIndex());
         this.populateFields(t);
@@ -230,7 +230,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         }
     }
     
-    private void clearAllAction() throws Exception {
+    private void clearAllAction() {
         T t = this.build();
         t.clear();
         this.populateFields(t);
