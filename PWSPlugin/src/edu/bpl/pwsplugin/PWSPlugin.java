@@ -119,61 +119,6 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
       }
    }
     
-
-    
-    //API
-    public void setSavePath(String savepath) {
-        Globals.frame().setSavePath(savepath);
-    }
-    
-    public void setCellNumber(int cellNum) {
-        Globals.frame().setCellNumber(cellNum);
-    }
-    
-    public void setPWSExposure(double exposureMs) {
-        Globals.frame().setPWSExposure(exposureMs);
-    }
-
-    public void acquirePWS() {
-        Globals.frame().acquirePws();
-    }
-    
-    public void acquireDynamics() {
-        Globals.frame().acquireDynamics();
-    }
-    
-    public void acquireFluorescence() {
-        Globals.frame().acquireFluorescence();
-    }
-    
-    public void setDynamicsExposure(double exposureMs) {
-        Globals.frame().setDynamicsExposure(exposureMs);
-    }
-    
-    public void setFluorescenceExposure(double exposureMs) {
-        Globals.frame().setFluorescenceExposure(exposureMs);
-    }
-    
-    public void setFluorescenceFilter(String filterBlockName) {
-        Globals.frame().setFluorescenceFilter(filterBlockName);
-    }
-    
-    public List<String> getFluorescenceFilterNames() {
-        return Globals.frame().getFluorescenceFilterNames();
-    }
-    
-    public boolean isAcquisitionRunning() {
-        return Globals.acqManager().isAcquisitionRunning();
-    }
-    
-    public String getFilterName() {
-        return Globals.frame().getFilterName();
-    }
-    
-    public void setFluorescenceEmissionWavelength(int wv) {
-        Globals.frame().setFluorescenceEmissionWavelength(wv);
-    }
-    
     public void dispose() { //Close the frame.
         Globals.frame().dispose();
     }

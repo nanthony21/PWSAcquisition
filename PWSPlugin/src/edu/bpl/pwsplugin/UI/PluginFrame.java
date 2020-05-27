@@ -21,26 +21,21 @@
 package edu.bpl.pwsplugin.UI;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.hardware.HWConfiguration;
 import edu.bpl.pwsplugin.PWSPlugin;
+import edu.bpl.pwsplugin.UI.settings.AcquireCellUI;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.SequencerUI;
-import edu.bpl.pwsplugin.UI.settings.DynPanel;
-import edu.bpl.pwsplugin.UI.settings.FluorPanel;
 import edu.bpl.pwsplugin.UI.settings.HWConfPanel;
-import edu.bpl.pwsplugin.UI.settings.PWSPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
-import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
+import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
+import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
+import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
-import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.awt.Window;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.function.Function;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -62,20 +57,11 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author Nick Anthony
  */
-public class PluginFrame extends MMFrame implements PropertyChangeListener{
+public class PluginFrame extends MMFrame {
     private final JTabbedPane tabs = new JTabbedPane();
-    private final JButton acqButton = new JButton("Acquire Now");
-    private final DirectorySelector dirSelect;
-    private final JSpinner cellNumSpinner;
-    private final PWSPanel pwsPanel = new PWSPanel();
-    private final FluorPanel flPanel = new FluorPanel();
-    private final DynPanel dynPanel = new DynPanel();
+    private final AcquisitionPanel acqPanel = new AcquisitionPanel();
     private final SequencerUI sequencePanel = new SequencerUI();
     private final ConfDialog configDialog = new ConfDialog(this);
-    
-    private PWSSettings lastPWSSettings;
-    private DynSettings lastDynSettings;
-    private FluorSettings lastFluorSettings;
 
     public PluginFrame() {
         super("PWS Plugin");
@@ -84,8 +70,6 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         this.setTitle(String.format("%s %s", PWSPlugin.menuName, PWSPlugin.versionNumber));
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         this.setResizable(true);
-        
-        Globals.addPropertyChangeListener(this);
         
         JMenuBar ma = new JMenuBar();
         JMenu mb = new JMenu("Advanced");
@@ -98,72 +82,21 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
         });
         
         this.setJMenuBar(ma);
-        
-        dirSelect = new DirectorySelector(DirectorySelector.DefaultMMFunctions.MMDataSetDirectory);
-        cellNumSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
-        ((JSpinner.DefaultEditor)cellNumSpinner.getEditor()).getTextField().setColumns(4);
-        
-        acqButton.addActionListener((e)->{  //Acquire the current tab.
-            JPanel currentPanel = (JPanel) this.tabs.getSelectedComponent();
-            if (currentPanel == this.pwsPanel) {
-                this.acquirePws();
-            } else if (currentPanel == this.dynPanel) {
-                this.acquireDynamics();
-            } else if (currentPanel == this.flPanel) {
-                this.acquireFluorescence();
-            }
-        });
 
         this.add(tabs, "wrap, span, grow");
-        tabs.addTab("PWS", this.pwsPanel);
-        tabs.addTab("Fluorescence", this.flPanel);
-        tabs.addTab("Dynamics", this.dynPanel);
-        tabs.addTab("Sequencer", this.sequencePanel);
-        
-        JPanel bottomPanel = new JPanel(new MigLayout());
-        bottomPanel.add(dirSelect, "grow, pushx");
-        bottomPanel.add(new JLabel("Cell#:"), "shrink");
-        bottomPanel.add(cellNumSpinner, "wrap");
-        JPanel buttons = new JPanel(new MigLayout());
-        buttons.add(acqButton);
-        bottomPanel.add(buttons, "span, align center");
-        this.add(bottomPanel, "dock south");
+        tabs.addTab("Quick Acquire", this.acqPanel);
+        tabs.addTab("Sequencing", this.sequencePanel);
         
         this.pack();
         this.setMinimumSize(this.getSize());
     }
     
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        //We subscribe to the Globals property changes. This gets fired when a change is detected.
-        if (evt.getPropertyName().equals("config")) {
-            HWConfiguration cfg = (HWConfiguration) evt.getNewValue();
-            List<String> normalNames = new ArrayList<>();
-            List<String> spectralNames = new ArrayList<>();
-            for (ImagingConfigurationSettings setting : cfg.getSettings().configs) {
-                if (setting.configType == ImagingConfiguration.Types.StandardCamera) {
-                    normalNames.add(setting.name);
-                } else if (setting.configType == ImagingConfiguration.Types.SpectralCamera) {
-                    spectralNames.add(setting.name);
-                }
-            }
-            this.pwsPanel.setAvailableConfigNames(spectralNames);
-            this.dynPanel.setAvailableConfigNames(spectralNames);
-            List<String> allNames = new ArrayList<>();
-            allNames.addAll(normalNames);
-            allNames.addAll(spectralNames);
-            this.flPanel.setAvailableConfigNames(allNames);            
-        }
-    }
-    
     public PWSPluginSettings getSettings() {
         PWSPluginSettings set = new PWSPluginSettings();
-        set.pwsSettings = this.pwsPanel.build();
-        set.dynSettings = this.dynPanel.build();
-        set.flSettings = this.flPanel.build();
+        set.acquisitionSettings = this.acqPanel.getAcqSettings();
         set.hwConfiguration = this.configDialog.build();
-        set.saveDir = this.dirSelect.getText();
-        set.cellNum = (int) this.cellNumSpinner.getValue();
+        set.saveDir = this.acqPanel.getDirectory();
+        set.cellNum = this.acqPanel.getCellNumber();
         set.sequenceRoot = this.sequencePanel.build();
         return set;
     }
@@ -175,115 +108,11 @@ public class PluginFrame extends MMFrame implements PropertyChangeListener{
     }
     
     public final void populateFields(PWSPluginSettings set) {
-        try{ this.pwsPanel.populateFields(set.pwsSettings); } catch(Exception e) {ReportingUtils.logError(e); }
-        try{ this.dynPanel.populateFields(set.dynSettings); } catch(Exception e) {ReportingUtils.logError(e); }
-        try{ this.flPanel.populateFields(set.flSettings); } catch(Exception e) {ReportingUtils.logError(e); }
+        try{ this.acqPanel.setAcqSettings(set.acquisitionSettings); } catch(Exception e) {ReportingUtils.logError(e); }
         try{ this.configDialog.populateFields(set.hwConfiguration); } catch(Exception e) {ReportingUtils.logError(e); }
-        try{ this.dirSelect.setText(set.saveDir); } catch(Exception e) {ReportingUtils.logError(e); }
-        try{ this.cellNumSpinner.setValue(set.cellNum); } catch(Exception e) {ReportingUtils.logError(e); }
+        try{ this.acqPanel.setDirectory(set.saveDir); } catch(Exception e) {ReportingUtils.logError(e); }
+        try{ this.acqPanel.setCellNumber(set.cellNum); } catch(Exception e) {ReportingUtils.logError(e); }
         try{ this.sequencePanel.populateFields(set.sequenceRoot); } catch(NullPointerException e) {ReportingUtils.logError(e); }
-    }
-        
-    private void acquire(Runnable f) {
-        try {
-            this.configureManager();
-        } catch (Exception e) {
-            Globals.mm().logs().showError(e);
-            return;
-        }
-        SwingWorker worker = new SwingWorker() {   //This function will run myFunc in a separate thread. `button` will be disabled while the function is running.
-            @Override
-            protected Object doInBackground() {
-                try {
-                    f.run();
-                } finally {
-                    SwingUtilities.invokeLater(()->{
-                        acqButton.setEnabled(true);
-                    });
-                } return null; 
-            }
-        };
-        
-        acqButton.setEnabled(false);
-        worker.execute();           
-    }
-    
-    private void configureManager() throws Exception {
-        PWSSettings pwsSettings = this.pwsPanel.build();
-        if (!pwsSettings.equals(this.lastPWSSettings)) {
-            this.lastPWSSettings = pwsSettings;
-            Globals.acqManager().setPWSSettings(pwsSettings);
-        }
-        DynSettings dynSettings = this.dynPanel.build();
-        if (!dynSettings.equals(this.lastDynSettings)) {
-            this.lastDynSettings = dynSettings;
-            Globals.acqManager().setDynamicsSettings(dynSettings);
-        }
-        FluorSettings fluorSettings = flPanel.build();
-        if (!fluorSettings.equals(this.lastFluorSettings)) {
-            this.lastFluorSettings = fluorSettings;
-            Globals.acqManager().setFluorescenceSettings(fluorSettings);
-        }        
-        String savePath = this.dirSelect.getText();
-        //TODO validate path
-        Globals.acqManager().setCellNum((int) this.cellNumSpinner.getValue());
-        Globals.acqManager().setSavePath(savePath);
-    }
-    
-    //Public API
-    public void acquirePws() {
-        acquire(Globals.acqManager()::acquirePWS);
-    }
-    
-    public void acquireDynamics() {
-        acquire(Globals.acqManager()::acquireDynamics);
-    }
-    
-    public void acquireFluorescence() {
-        acquire(Globals.acqManager()::acquireFluorescence);
-    }
-    
-    public void setSavePath(String savepath) {
-        dirSelect.setText(savepath);
-    }
-    
-    public void setCellNumber(int cellNum) {
-        cellNumSpinner.setValue(cellNum);
-    }
-    
-    public String getFilterName() {
-        return this.flPanel.getSelectedFilterName();
-    }
-    
-    public void setPWSExposure(double exposureMs) {
-        this.pwsPanel.setExposure(exposureMs);
-    }
-    
-    public void setDynamicsExposure(double exposureMs) {
-        this.dynPanel.setExposure(exposureMs);
-    }
-    
-    public void setFluorescenceExposure(double exposureMs) {
-        this.flPanel.setExposure(exposureMs);
-    }
-    
-    public void setFluorescenceFilter(String filterBlockName) {
-       if (!this.getFluorescenceFilterNames().contains(filterBlockName)) {
-           Globals.mm().logs().showMessage(filterBlockName + " is not a valid filter block name.");
-       } else {
-           boolean success = this.flPanel.setFluorescenceFilter(filterBlockName);
-           if (!success) {
-               Globals.mm().logs().showMessage("Error settings fluoresence filter via API.");
-           }
-       }
-    }
-    
-    public List<String> getFluorescenceFilterNames() {
-        return this.flPanel.getFluorescenceFilterNames();
-    }
-    
-    public void setFluorescenceEmissionWavelength(int wv) {
-        this.flPanel.setEmissionWavelength(wv);
     }
 }
 
@@ -320,5 +149,99 @@ class ConfDialog extends JDialog {
     public HWConfigurationSettings showDialog() {
         this.setVisible(true);
         return this.build();
+    }
+}
+
+class AcquisitionPanel extends JPanel {
+    private final JButton acqButton = new JButton("Acquire Now");
+    private final DirectorySelector dirSelect = new DirectorySelector(DirectorySelector.DefaultMMFunctions.MMDataSetDirectory);;
+    private final JSpinner cellNumSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
+    private final AcquireCellUI cellUI = new AcquireCellUI();
+    private PWSSettings lastPWSSettings;
+    private DynSettings lastDynSettings;
+    private FluorSettings lastFluorSettings;
+    
+    public AcquisitionPanel() {
+        super(new MigLayout("insets 0 0 0 0"));
+        
+        ((JSpinner.DefaultEditor)cellNumSpinner.getEditor()).getTextField().setColumns(4);
+        
+        acqButton.addActionListener((e)->{
+            this.acquire();
+        });
+        
+        this.add(cellUI, "wrap");
+        this.add(dirSelect, "grow, pushx");
+        this.add(new JLabel("Cell#:"), "shrink");
+        this.add(cellNumSpinner, "wrap");   
+    }
+    
+    public String getDirectory() {
+        return dirSelect.getText();
+    }
+    
+    public Integer getCellNumber() {
+        return (Integer) cellNumSpinner.getValue();
+    }
+    
+    public AcquireCellSettings getAcqSettings() {
+        return this.cellUI.build();
+    }
+    
+    public void setDirectory(String dir) {
+        dirSelect.setText(dir);
+    }
+    
+    public void setCellNumber(Integer num) {
+        cellNumSpinner.setValue(num);
+    }
+    
+    public void setAcqSettings(AcquireCellSettings settings) {
+        this.cellUI.populateFields(settings);
+    }
+    
+    private void acquire() { 
+        AcquisitionManager acqMan = Globals.acqManager();
+        acqMan.setSavePath(this.dirSelect.getText());
+        acqMan.setCellNum((Integer) this.cellNumSpinner.getValue());
+        AcquireCellSettings settings = this.cellUI.build();
+        ThrowingFunction<Void, Void> f = (nul)->{return null;};
+        for (FluorSettings flSettings : settings.fluorSettings) {
+            f = f.andThen((nul)->{
+                acqMan.setFluorescenceSettings(flSettings);
+                acqMan.acquireFluorescence(); return null;
+            });
+        }
+        if (settings.pwsSettings != null) {
+            f = f.andThen((nul)->{
+                acqMan.setPWSSettings(settings.pwsSettings);
+                acqMan.acquirePWS(); return null;
+            });
+        }
+        if (settings.dynSettings != null) {
+            f = f.andThen((nul)->{
+                acqMan.setDynamicsSettings(settings.dynSettings);
+                acqMan.acquireDynamics(); return null;
+            });
+        }
+        final Function<Void, Void> F = f;
+        SwingWorker worker = new SwingWorker() {   //This function will run myFunc in a separate thread. `button` will be disabled while the function is running.
+            @Override
+            protected Object doInBackground() {
+                try {
+                    F.apply(null);
+                } catch (RuntimeException e) {
+                    Globals.mm().logs().logError(e);
+                    Globals.mm().logs().showError(e);
+                } finally {
+                    SwingUtilities.invokeLater(()->{
+                        acqButton.setEnabled(true);
+                    });
+                } return null; 
+            }
+        };
+        
+        acqButton.setEnabled(false);
+        worker.execute();           
     }
 }

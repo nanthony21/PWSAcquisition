@@ -14,9 +14,7 @@ public class PWSPluginSettings extends JsonableParam {
     //This is just a container for all the other settings. this is the main object that gets
     //passed around, saved, loaded, etc.
     public HWConfigurationSettings hwConfiguration = new HWConfigurationSettings();
-    public FluorSettings flSettings = new FluorSettings();
-    public DynSettings dynSettings = new DynSettings();
-    public PWSSettings pwsSettings = new PWSSettings();
+    public AcquireCellSettings acquisitionSettings = new AcquireCellSettings();
     public ContainerStep sequenceRoot = (ContainerStep) Consts.getFactory(Consts.Type.ROOT).createStep();
     public String saveDir = "";
     public int cellNum = 1;
