@@ -24,6 +24,7 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
+import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.SpectralCamera;
@@ -41,6 +42,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import org.micromanager.data.Coords;
 import org.micromanager.data.Pipeline;
 import org.micromanager.data.PipelineErrorException;
@@ -90,6 +92,12 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
         return this.settings;
     }
     
+        
+    @Override
+    public Integer numFrames() {
+        return wv.length;
+    }
+    
     @Override
     public String getFilePrefix() {
         return FileSpecs.getFilePrefix(FileSpecs.Type.PWS);
@@ -105,7 +113,7 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
     }
       
     @Override
-    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) throws Exception {
+    public void acquireImages(SaverThread saver, int cellNum, MetadataBase metadata) throws Exception {
         long configStartTime = System.currentTimeMillis();
         album_.clear();
         int initialWv = 550;
@@ -125,9 +133,8 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
                 WV.add(Double.valueOf(wv[i]));
             }     
             PWSMetadata pmd = new PWSMetadata(metadata, WV, conf.camera().getExposure());  //This must happen after we have set the camera to our desired exposure.
-            MMSaver imSaver_ = new MMSaver(this.getSavePath(savePath, cellNum), imagequeue, wv.length, this.getFilePrefix());
-            imSaver_.setMetadata(pmd.toJson());
-            imSaver_.start();
+            saver.setMetadata(pmd.toJson());
+            saver.start();
             
             long seqEndTime=0;
             long collectionEndTime=0;
@@ -150,7 +157,7 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
                         }
                         if (remaining) {    //Process images
                             Image im = Globals.mm().data().convertTaggedImage(Globals.core().popNextTaggedImage());
-                            addImage(im, i, album_, pipeline, imSaver_.queue);
+                            addImage(im, i, album_, pipeline, saver.getQueue());
                             i++;
                             lastImTime = System.currentTimeMillis();
                             collectionEndTime = System.currentTimeMillis();
@@ -174,16 +181,16 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
             else {  //Software sequenced acquisition
                 for (int i=0; i<wv.length; i++) {
                     Image im = conf.snapImage(wv[i]);
-                    addImage(im, i, album_, pipeline, imSaver_.queue);
+                    addImage(im, i, album_, pipeline, saver.getQueue());
                 }
             }
-            imSaver_.join();
+            saver.join();
         } finally {
             conf.tunableFilter().setWavelength(initialWv); //Set back to initial wavelength
         }
     }
     
-    private void addImage(Image im, int idx, PWSAlbum album, Pipeline pipeline, LinkedBlockingQueue imageQueue) throws IOException, PipelineErrorException{
+    private void addImage(Image im, int idx, PWSAlbum album, Pipeline pipeline, Queue imageQueue) throws IOException, PipelineErrorException{
         Coords newCoords = im.getCoords().copyBuilder().t(idx).build();
         im = im.copyAtCoords(newCoords);
         pipeline.insertImage(im); //Add image to the data pipeline for processing

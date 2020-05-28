@@ -43,10 +43,9 @@ import ij.plugin.ContrastEnhancer;
 import java.util.concurrent.TimeUnit;
 
 
-public class ImSaverRaw extends SaverThread {
+public class ImSaverRaw extends DefaultSaverThread {
     //This isn't currently used. SAves to TIFF using imageJ functions.
     boolean debug_;
-    public LinkedBlockingQueue queue;
     Thread t;
     Studio studio_;
     int expectedFrames_;
@@ -56,8 +55,8 @@ public class ImSaverRaw extends SaverThread {
     String filePrefix_;
 
     public ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue_, int expectedFrames, boolean debug, String filePrefix){
+        super(queue_);
         debug_ = debug;
-        queue = queue_;
         studio_ = studio;
         expectedFrames_ = expectedFrames;
         savePath_ = savePath;
@@ -83,7 +82,7 @@ public class ImSaverRaw extends SaverThread {
             ImageStack stack;
             Image im;
                         
-            im = (Image) queue.poll(5, TimeUnit.SECONDS); //Lets make an array with the queued images.
+            im = (Image) getQueue().poll(5, TimeUnit.SECONDS); //Lets make an array with the queued images.
             if (im == null) {
                 ReportingUtils.showError("ImSaver timed out while waiting for image");
                 return;
@@ -95,7 +94,7 @@ public class ImSaverRaw extends SaverThread {
             stack = new ImageStack(im.getWidth(), im.getHeight());
             stack.addSlice(imJConv.createProcessor(im));
             for (int i=1; i<expectedFrames_; i++) {
-                im = (Image) queue.poll(1, TimeUnit.SECONDS); //Lets make an array with the queued images.
+                im = (Image) getQueue().poll(1, TimeUnit.SECONDS); //Lets make an array with the queued images.
                 if (im == null) {
                     ReportingUtils.showError("ImSaver timed out while waiting for image");
                     return;

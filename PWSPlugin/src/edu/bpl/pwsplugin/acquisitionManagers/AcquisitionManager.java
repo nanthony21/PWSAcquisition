@@ -24,6 +24,8 @@ import edu.bpl.pwsplugin.Globals;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.micromanager.internal.utils.ReportingUtils;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
+import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
+import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.DynSettings;
@@ -69,7 +71,8 @@ public class AcquisitionManager {
                 ReportingUtils.showMessage(String.format("The image queue started a new acquisition with %d images already in it! Your image file is likely corrupted. This can mean that Java has not been allocated enough heap size.", imageQueue.size()));
                 imageQueue.clear();
             }
-            manager.acquireImages(savePath_, cellNum_, imageQueue, metadata);
+            SaverThread imSaver = new MMSaver(manager.getSavePath(savePath_, cellNum_), imageQueue, manager.numFrames() ,manager.getFilePrefix());
+            manager.acquireImages(imSaver, cellNum_, metadata);
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
             throw new RuntimeException(ie);

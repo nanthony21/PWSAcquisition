@@ -23,6 +23,7 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
+import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
@@ -70,7 +71,12 @@ class DynamicsAcquisition implements Acquisition<DynSettings>{
     }
     
     @Override
-    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) throws Exception {
+    public Integer numFrames() {
+        return settings.numFrames;
+    }
+    
+    @Override
+    public void acquireImages(SaverThread imSaver, int cellNum, MetadataBase metadata) throws Exception {
         ImagingConfiguration conf = Globals.getHardwareConfiguration().getImagingConfigurationByName(this.settings.imConfigName);
         if (!conf.isActive()) {
             conf.activateConfiguration();
@@ -84,7 +90,6 @@ class DynamicsAcquisition implements Acquisition<DynSettings>{
         Globals.core().clearCircularBuffer();
         camera.startSequence(numFrames_, 0, false);
         Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
-        MMSaver imSaver = new MMSaver(this.getSavePath(savePath, cellNum), imagequeue, numFrames_, this.getFilePrefix());
         imSaver.start();
         List<Double> times = new ArrayList<>();
         for (int i=0; i<numFrames_; i++) {
@@ -98,7 +103,7 @@ class DynamicsAcquisition implements Acquisition<DynSettings>{
             im = im.copyAtCoords(newCoords);
             pipeline.insertImage(im); //Add image to the data pipeline for processing
             im = pipeline.getDatastore().getImage(newCoords); //Retrieve the processed image.
-            imSaver.queue.put(im);
+            imSaver.getQueue().add(im);
             album_.addImage(im);
         }
         DynamicsMetadata dmd = new DynamicsMetadata(metadata, Double.valueOf(wavelength_), times, camera.getExposure());

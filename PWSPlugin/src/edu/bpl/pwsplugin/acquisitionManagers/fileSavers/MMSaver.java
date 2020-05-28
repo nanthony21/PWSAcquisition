@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import mmcorej.org.json.JSONException;
@@ -22,16 +23,15 @@ import org.micromanager.data.Datastore;
 import org.micromanager.data.Coords;
 import org.micromanager.data.internal.DefaultMetadata;
 
-public class MMSaver extends SaverThread {
+public class MMSaver extends DefaultSaverThread {
     //A thread that saves a tiff file using Micro-Managers `DataStore`. Metadata is saved to a separate json file.
-    public LinkedBlockingQueue queue;
     int expectedFrames_;
     String savePath_;
     JSONObject metadata_;
     String filePrefix_;
 
     public MMSaver(String savePath, LinkedBlockingQueue imageQueue, int expectedFrames, String filePrefix){
-        queue = imageQueue; //The queue to receive images through.
+        super(imageQueue); //The queue to receive images through.
         expectedFrames_ = expectedFrames; // The number of image frames that are expected to be received via queue
         savePath_ = savePath; // The file path to save to
         filePrefix_ = filePrefix; // The prefix to name the image file by. This is used by the analysis software to find images.
@@ -47,7 +47,7 @@ public class MMSaver extends SaverThread {
             Coords.Builder coords;
             JSONObject jmd = null;
             for (int i=0; i<expectedFrames_; i++) {
-                im = (Image) queue.poll(5, TimeUnit.SECONDS); //Wait for an image
+                im = (Image) getQueue().poll(5, TimeUnit.SECONDS); //Wait for an image
                 if (i==0) {
                     Metadata md = im.getMetadata();
                     jmd = new JSONObject(((DefaultMetadata)md).toPropertyMap().toJSON()); //Save the micromanager metadata from the first image.
@@ -100,6 +100,7 @@ public class MMSaver extends SaverThread {
     public void setMetadata(JSONObject md) {
         metadata_ = md;
     }
+    
  
     private void writeMetadata() throws IOException, JSONException {
         FileWriter file = new FileWriter(Paths.get(savePath_).resolve(filePrefix_ + "metadata.json").toString());

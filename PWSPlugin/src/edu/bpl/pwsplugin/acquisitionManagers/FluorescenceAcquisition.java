@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.acquisitionManagers;
 
+import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.FluorSettings;
@@ -37,8 +38,8 @@ abstract class FluorescenceAcquisition implements Acquisition<FluorSettings>{
         return path.toString();
     }
     
-    @Override
-    public abstract void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) throws Exception;
+    //@Override
+    //public abstract void acquireImages(SaverThread saver, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) throws Exception;
     
     @Override
     public void setSettings(FluorSettings settings) {
@@ -48,5 +49,9 @@ abstract class FluorescenceAcquisition implements Acquisition<FluorSettings>{
     @Override
     public FluorSettings getSettings() {
         return this.settings;
+    }
+    
+    @Override public Integer numFrames() {
+        return 1;
     }
 }

@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
+import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.metadata.FluorescenceMetadata;
@@ -35,10 +36,8 @@ class StandardCamFluorescenceAcquisition extends FluorescenceAcquisition{
     }
     
     @Override
-    public void acquireImages(String savePath, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) throws Exception {
-        String fullSavePath;
+    public void acquireImages(SaverThread imSaver, int cellNum, MetadataBase metadata) throws Exception {
         String initialFilter = "";
-        fullSavePath = this.getSavePath(savePath, cellNum); //This also checks if the file already exists, throws error if it does.
         if (Globals.getMMConfigAdapter().autoFilterSwitching) {
             initialFilter = Globals.core().getCurrentConfig("Filter");
             Globals.core().setConfig("Filter", settings.filterConfigName);
@@ -60,11 +59,10 @@ class StandardCamFluorescenceAcquisition extends FluorescenceAcquisition{
             Coords coords = img.getCoords();
             pipeline.insertImage(img); //Add image to the data pipeline for processing
             img = pipeline.getDatastore().getImage(coords); //Retrieve the processed image.                 
-            MMSaver imSaver = new MMSaver(fullSavePath, imagequeue, 1, this.getFilePrefix());
             imSaver.start();
 
             imSaver.setMetadata(md);
-            imSaver.queue.put(img);
+            imSaver.getQueue().add(img);
             imSaver.join();
         } finally {
             if (Globals.getMMConfigAdapter().autoFilterSwitching) {
