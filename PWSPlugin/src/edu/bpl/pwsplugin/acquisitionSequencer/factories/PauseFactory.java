@@ -128,9 +128,9 @@ class PauseDlg extends JDialog {
         this.setLocationRelativeTo(Globals.frame());
         
         messageLabel.setText("<html>" + msg + "</html>");
-        timerLabel.setBorder(BorderFactory.createRaisedBevelBorder());
+        timerLabel.setBorder(BorderFactory.createEtchedBorder());
         
-        JPanel p = new JPanel(new MigLayout("fill, insets 0 0 0 0"));
+        JPanel p = new JPanel(new MigLayout("fill"));
         p.add(messageLabel, "wrap, align center");
         p.add(timerLabel, "wrap, align center");
         p.add(proceedButton, "align center");
@@ -155,7 +155,7 @@ class PauseDlg extends JDialog {
         minutes = minutes % 60;
         seconds = seconds % 60;
         String timeString = String.format("%d:%d:%d", hours, minutes, seconds);
-        timerLabel.setText(String.format("<html>Paused:<br><B>%s</B></html>", timeString));
+        timerLabel.setText(String.format("<html>Paused for:<B>%s</B></html>", timeString));
     }
     
     @Override

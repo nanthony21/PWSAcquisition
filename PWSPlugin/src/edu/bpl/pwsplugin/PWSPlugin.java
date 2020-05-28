@@ -27,6 +27,9 @@ package edu.bpl.pwsplugin;
 //Ability to switch objectives. independent of imaging config.
 //Autoexposure for PWS.
 //Add display album for fluorescence.
+//Paused dialog too tight layout. Use progress bar.
+//Implement builder pattern for settings.
+//Sequencer cancel not working.
 
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;

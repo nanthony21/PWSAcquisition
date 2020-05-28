@@ -192,7 +192,7 @@ class SequencerRunningDlg extends JDialog {
     JProgressBar progress = new JProgressBar();
     
     public SequencerRunningDlg(Window owner, String title) {
-        super(owner, title, Dialog.ModalityType.APPLICATION_MODAL);
+        super(owner, title, Dialog.ModalityType.DOCUMENT_MODAL);
         this.setLocationRelativeTo(owner);
         
         JPanel contentPane = new JPanel(new MigLayout());
