@@ -36,11 +36,15 @@ public class FileSpecs {
             case DYNAMICS:
                 return "Dynamics";
             case FLUORESCENCE:
-                return "Fluorescence";
+                throw new UnsupportedOperationException("Please use `getFluorscneceSubfolderName for fluorescence.");
             case PWS:
                 return "PWS";
         }
         throw new RuntimeException("Programming Error in getSubfolderName"); //If we get this far we forgot to handle a case.
+    }
+    
+    public static String getFluorescenceSubfolderName(Integer i) {
+        return String.format("Fluorescence_%d", i);
     }
     
     public static Path getCellFolderName(Path dir, int cellNum) {

@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.acquisitionManagers;
 
+import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import java.nio.file.FileAlreadyExistsException;
@@ -22,7 +23,7 @@ abstract class FluorescenceAcquisition implements Acquisition<FluorSettings>{
     
     @Override
     public String getFilePrefix() {
-        return "fluor";
+        return FileSpecs.getFilePrefix(FileSpecs.Type.FLUORESCENCE);
     }
     
     @Override
@@ -30,7 +31,7 @@ abstract class FluorescenceAcquisition implements Acquisition<FluorSettings>{
         int i = 0;
         Path path;
         do { //Increment the folder numbering until a nonused folder is found.
-            path = Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).resolve(String.format("Fluorescence_%d", i));
+            path = FileSpecs.getCellFolderName(Paths.get(savePath), cellNum).resolve(FileSpecs.getFluorescenceSubfolderName(i));
             i++;
         } while(Files.isDirectory(path));
         return path.toString();

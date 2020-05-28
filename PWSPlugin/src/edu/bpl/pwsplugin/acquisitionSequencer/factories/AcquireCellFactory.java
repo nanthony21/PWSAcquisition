@@ -71,7 +71,7 @@ class AcquireCell extends EndpointStep {
         AcquisitionManager acqMan = Globals.acqManager();
         return new SequencerFunction() {
             @Override
-            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception{ //TODO need to make the fluorescence not overwrite eachother.
+            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception{
                 acqMan.setCellNum(status.currentCellNum);
                 for (FluorSettings flSettings : settings.fluorSettings) {
                     status.allowPauseHere();

@@ -26,6 +26,7 @@ package edu.bpl.pwsplugin;
 //Change folder step.
 //Ability to switch objectives. independent of imaging config.
 //Autoexposure for PWS.
+//Add display album for fluorescence.
 
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;

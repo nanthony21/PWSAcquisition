@@ -23,6 +23,7 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
+import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
@@ -108,7 +109,7 @@ class DynamicsAcquisition implements Acquisition<DynSettings>{
     
     @Override
     public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException {
-        Path path = Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).resolve("Dynamics");
+        Path path = FileSpecs.getCellFolderName(Paths.get(savePath), cellNum).resolve(FileSpecs.getSubfolderName(FileSpecs.Type.DYNAMICS));
         if (Files.isDirectory(path)){
             throw new FileAlreadyExistsException("Cell " + cellNum + " dynamics already exists.");
         } 
@@ -117,6 +118,6 @@ class DynamicsAcquisition implements Acquisition<DynSettings>{
     
     @Override
     public String getFilePrefix() { //TODO Should be static, handle file spec stuff in a separate class. That way we can refer to the same information from other places (file scanning).
-        return "dyn";
+        return FileSpecs.getFilePrefix(FileSpecs.Type.DYNAMICS);
     }
 }

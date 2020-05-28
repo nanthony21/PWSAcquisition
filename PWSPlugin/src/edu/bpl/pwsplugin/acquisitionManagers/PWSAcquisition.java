@@ -24,6 +24,7 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
+import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.SpectralCamera;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
@@ -91,12 +92,12 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
     
     @Override
     public String getFilePrefix() {
-        return "pws";
+        return FileSpecs.getFilePrefix(FileSpecs.Type.PWS);
     }
     
     @Override
     public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException{
-        Path path = Paths.get(savePath).resolve("Cell" + String.valueOf(cellNum)).resolve("PWS");
+        Path path = FileSpecs.getCellFolderName(Paths.get(savePath), cellNum).resolve(FileSpecs.getSubfolderName(FileSpecs.Type.PWS));
         if (Files.isDirectory(path)){
             throw new FileAlreadyExistsException("Cell " + cellNum + " PWS already exists.");
         } 
