@@ -29,6 +29,8 @@ import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
+import edu.bpl.pwsplugin.acquisitionSequencer.factories.RootStepFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
@@ -104,7 +106,11 @@ public class PluginFrame extends MMFrame {
         set.hwConfiguration = this.configDialog.build();
         set.saveDir = this.acqPanel.getDirectory();
         set.cellNum = this.acqPanel.getCellNumber();
-        set.sequenceRoot = this.sequencePanel.build();
+        try {
+            set.sequenceRoot = this.sequencePanel.build();
+        } catch (BuilderJPanel.BuilderPanelException e) {
+            set.sequenceRoot = (ContainerStep) new RootStepFactory().createStep();
+        }
         return set;
     }
     
@@ -247,16 +253,14 @@ class AcquisitionPanel extends JPanel {
                 try {
                     F.apply(null);
                 } catch (RuntimeException e) {
-                    Globals.mm().logs().logError(e);
-                    Globals.mm().logs().showError(e);
+                    Globals.mm().logs().showError(e); //This also logs the error.
                 } finally {
                     SwingUtilities.invokeLater(()->{
                         acqButton.setEnabled(true);
                     });
                 } return null; 
             }
-        };
-        
+        };   
         acqButton.setEnabled(false);
         worker.execute();           
     }
