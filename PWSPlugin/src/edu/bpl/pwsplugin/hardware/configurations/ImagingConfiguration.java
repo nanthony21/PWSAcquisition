@@ -5,6 +5,8 @@
  */
 package edu.bpl.pwsplugin.hardware.configurations;
 
+import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
@@ -32,13 +34,39 @@ public abstract class ImagingConfiguration {
     public abstract Illuminator illuminator();
     public abstract List<String> validate();
     
+    public void activateConfiguration() throws MMDeviceException { //Actually configure the hardware to use this configuration.
+        try {
+            Globals.core().setConfig(settings.configurationGroup, settings.configurationName);
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            throw new MMDeviceException(ie);
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
+    }
+    
+    public boolean isActive() throws MMDeviceException {
+        try {
+            boolean active = Globals.core().getCurrentConfig(settings.configurationGroup).equals(settings.configurationName);
+            return active;
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            throw new MMDeviceException(ie);
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
+    }
+    
     public static ImagingConfiguration getInstance(ImagingConfigurationSettings settings) {
-        if (settings.configType == Types.SpectralCamera) {
-            return new SpectralCamera(settings);
-        } else if (settings.configType == Types.StandardCamera) {
-            return new StandardCamera(settings);
-        } else {
+        if (null == settings.configType) {
             return null; //This shouldn't ever happen.
+        } else switch (settings.configType) {
+            case SpectralCamera:
+                return new SpectralCamera(settings);
+            case StandardCamera:
+                return new StandardCamera(settings);
+            default:
+                return null; //This shouldn't ever happen.
         }
     }
     

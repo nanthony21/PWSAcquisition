@@ -25,11 +25,12 @@ import org.micromanager.internal.utils.ReportingUtils;
  */
 class StandardCamFluorescenceAcquisition extends FluorescenceAcquisition{
     Camera camera;
+    ImagingConfiguration imConf;
     
     @Override
     public void setSettings(FluorSettings settings) {
         super.setSettings(settings);
-        ImagingConfiguration imConf = Globals.getHardwareConfiguration().getImagingConfigurationByName(this.settings.imConfigName);
+        imConf = Globals.getHardwareConfiguration().getImagingConfigurationByName(this.settings.imConfigName);
         this.camera = imConf.camera();
     }
     
@@ -46,14 +47,15 @@ class StandardCamFluorescenceAcquisition extends FluorescenceAcquisition{
             ReportingUtils.showMessage("Set the correct fluorescence filter and click `OK`.");
         }
         try {
-            String origCam = Globals.core().getCurrentConfig("Camera");
+            if (!imConf.isActive()) {
+                imConf.activateConfiguration();
+            }
             camera.setExposure(settings.exposure);
             Globals.core().clearCircularBuffer();
             Image img = camera.snapImage();
             FluorescenceMetadata flmd = new FluorescenceMetadata(metadata, settings.filterConfigName, camera.getExposure()); //This must happen after we have set our exposure.
             JSONObject md = flmd.toJson();
             md.put("altCameraTransform", camera.getSettings().affineTransform); //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera.
-            Globals.core().setConfig("Camera", origCam);
             Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
             Coords coords = img.getCoords();
             pipeline.insertImage(img); //Add image to the data pipeline for processing

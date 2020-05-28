@@ -37,7 +37,7 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
         super(new MigLayout(), FluorSettings.class);
         
         wvSpinner = new JSpinner(new SpinnerNumberModel(550, 400, 1000, 5));
-        exposureSpinner = new JSpinner(new SpinnerNumberModel(1000, 1, 5000, 100));
+        exposureSpinner = new JSpinner(new SpinnerNumberModel(1000.0, 1.0, 5000.0, 100.0));
         filterCombo.setModel(this.getFilterComboModel());
         
         try {

@@ -18,4 +18,6 @@ public class ImagingConfigurationSettings extends JsonableParam {
     public CamSettings camSettings = new CamSettings();
     public TunableFilterSettings filtSettings = new TunableFilterSettings();
     public IlluminatorSettings illuminatorSettings = new IlluminatorSettings();
+    public String configurationGroup = "";
+    public String configurationName = "";
 }

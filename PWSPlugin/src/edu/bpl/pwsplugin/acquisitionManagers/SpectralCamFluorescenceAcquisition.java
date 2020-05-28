@@ -23,11 +23,12 @@ import org.micromanager.internal.utils.ReportingUtils;
 class SpectralCamFluorescenceAcquisition extends FluorescenceAcquisition{
     Camera camera;
     TunableFilter tunableFilter;
+    ImagingConfiguration imConf;
     
     @Override
     public void setSettings(FluorSettings settings) {
         super.setSettings(settings);
-        ImagingConfiguration imConf = Globals.getHardwareConfiguration().getImagingConfigurationByName(settings.imConfigName);
+        imConf = Globals.getHardwareConfiguration().getImagingConfigurationByName(settings.imConfigName);
         this.camera = imConf.camera();
         this.tunableFilter = imConf.tunableFilter();
     }
@@ -45,6 +46,9 @@ class SpectralCamFluorescenceAcquisition extends FluorescenceAcquisition{
             ReportingUtils.showMessage("Set the correct fluorescence filter and click `OK`.");
         }
         try {
+            if (!imConf.isActive()) {
+                imConf.activateConfiguration();
+            }
             this.tunableFilter.setWavelength(settings.tfWavelength);
             this.camera.setExposure(settings.exposure);
             Globals.core().clearCircularBuffer();
