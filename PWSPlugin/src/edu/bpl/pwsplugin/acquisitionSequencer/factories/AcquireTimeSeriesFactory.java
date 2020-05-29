@@ -22,6 +22,8 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
+//TODO use the status only. get rid of alerts in MM.
+
 /**
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>

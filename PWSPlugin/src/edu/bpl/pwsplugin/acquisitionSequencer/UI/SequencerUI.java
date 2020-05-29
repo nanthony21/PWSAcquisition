@@ -51,7 +51,6 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
     JButton runButton = new JButton("Run");
     JButton saveButton = new JButton("Save");
     JButton loadButton = new JButton("Load");
-    AcquisitionThread acqThread;
     
     public SequencerUI() {
         super(new MigLayout("fill"), ContainerStep.class);
@@ -67,8 +66,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
                     return;
                 }
                 SequencerFunction rootFunc = rootStep.getFunction();
-                SequencerRunningDlg dlg = new SequencerRunningDlg(SwingUtilities.getWindowAncestor(this), "Acquisition Sequence Running");
-                acqThread = new AcquisitionThread(rootFunc, 1, dlg); //This opens the dialog and starts the thread.
+                SequencerRunningDlg dlg = new SequencerRunningDlg(SwingUtilities.getWindowAncestor(this), "Acquisition Sequence Running", rootFunc);
             } catch (IllegalStateException | InstantiationException | IllegalAccessException e) {
                 Globals.mm().logs().showError(e);
             }
@@ -190,11 +188,12 @@ class SequencerRunningDlg extends JDialog {
     PauseButton pauseButton = new PauseButton(true);
     JButton cancelButton = new JButton("Cancel");
     JProgressBar progress = new JProgressBar();
+    AcquisitionThread acqThread;
     
-    public SequencerRunningDlg(Window owner, String title) {
+    public SequencerRunningDlg(Window owner, String title, SequencerFunction rootFunc) {
         super(owner, title, Dialog.ModalityType.DOCUMENT_MODAL);
         this.setLocationRelativeTo(owner);
-        
+
         JPanel contentPane = new JPanel(new MigLayout());
         this.setContentPane(contentPane);
         contentPane.add(new JLabel("Status: "));
@@ -205,52 +204,75 @@ class SequencerRunningDlg extends JDialog {
         contentPane.add(pauseButton);
         contentPane.add(cancelButton);
         this.pack();
-    }
-}
-
-class AcquisitionThread extends SwingWorker<AcquisitionStatus, AcquisitionStatus> {
-    SequencerFunction rootFunc;
-    private final AcquisitionStatus startingStatus;
-    private AcquisitionStatus currentStatus;
-    private SequencerRunningDlg dlg;
-    
-    
-    public AcquisitionThread(SequencerFunction rootFunc, Integer startingCellNum, SequencerRunningDlg dlg) {
-        this.rootFunc = rootFunc;  
-        ThrowingFunction<AcquisitionStatus, Void> publishCallback = (status) -> { this.publish(status); return null; };
-        ThrowingFunction<Void, Void> pauseCallback = (nullInput) -> { dlg.pauseButton.pausePoint(); return nullInput; };
-        startingStatus = new AcquisitionStatus(publishCallback, pauseCallback);
-        startingStatus.currentCellNum = startingCellNum;
-        currentStatus = startingStatus;
-        this.dlg = dlg;
-        this.execute();
-        dlg.setVisible(true);
-    }
-    
-    @Override
-    public AcquisitionStatus doInBackground() {
-        try {
-            AcquisitionStatus status = rootFunc.apply(this.startingStatus);
-            this.currentStatus = status;
-        } catch (Exception ie) {
-            Globals.mm().logs().logError(ie);
-            Globals.mm().logs().showError(String.format("Error in sequencer. See core log file. %s", ie.getMessage()));
-        }
-        SwingUtilities.invokeLater(() -> {
-            finished();
+        
+        acqThread = new AcquisitionThread(rootFunc, 1); //This starts the thread.
+        
+        cancelButton.addActionListener((evt)->{
+            //The acquisition engine doesn't deal well with InterruptedException. Manually cancel any acquisitions before trying to cancel the thread.
+            if (Globals.mm().acquisitions().isAcquisitionRunning()) {
+                Globals.mm().acquisitions().haltAcquisition();
+                do {
+                    try {
+                        Thread.sleep(100); // Wait for the acquisition to stop.
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt(); // reset the interrupt flag.
+                    }
+                } while (Globals.mm().acquisitions().isAcquisitionRunning()) ;
+            }
+            acqThread.cancel(true);
         });
-        return this.currentStatus;
+        
+        this.setVisible(true); // this blocks.
     }
     
-    public void finished() {
-        dlg.dispose();
+    public void setMessage(String msg) {
+        this.statusMsg.setText(msg);
     }
-    
-    @Override
-    protected void process(List<AcquisitionStatus> chunks) {
-        currentStatus = chunks.get(chunks.size() - 1);
-        //setProgress(
+
+    class AcquisitionThread extends SwingWorker<AcquisitionStatus, AcquisitionStatus> { //TODO maybe this hsould be inner to dialog.
+        SequencerFunction rootFunc;
+        private final AcquisitionStatus startingStatus;
+        private AcquisitionStatus currentStatus;
+        //private SequencerRunningDlg dlg;
+
+
+        public AcquisitionThread(SequencerFunction rootFunc, Integer startingCellNum) {
+            this.rootFunc = rootFunc;  
+            ThrowingFunction<AcquisitionStatus, Void> publishCallback = (status) -> { this.publish(status); return null; };
+            ThrowingFunction<Void, Void> pauseCallback = (nullInput) -> { SequencerRunningDlg.this.pauseButton.pausePoint(); return nullInput; };
+            startingStatus = new AcquisitionStatus(publishCallback, pauseCallback);
+            startingStatus.currentCellNum = startingCellNum;
+            currentStatus = startingStatus;
+            //this.dlg = dlg;
+            this.execute();
+        }
+
+        @Override
+        public AcquisitionStatus doInBackground() {
+            try {
+                AcquisitionStatus status = rootFunc.apply(this.startingStatus);
+                this.currentStatus = status;
+            } catch (Exception ie) {
+                Globals.mm().logs().logError(ie);
+                Globals.mm().logs().showError(String.format("Error in sequencer. See core log file. %s", ie.getMessage()));
+            }
+            SwingUtilities.invokeLater(() -> {
+                finished();
+            });
+            return this.currentStatus;
+        }
+
+        public void finished() {
+            SequencerRunningDlg.this.dispose();
+        }
+
+        @Override
+        protected void process(List<AcquisitionStatus> chunks) {
+            currentStatus = chunks.get(chunks.size() - 1);
+            SequencerRunningDlg.this.setMessage(currentStatus.statusMsg);
+            //setProgress(
+        }
+
+        //public void done() This method has a bug where it can run before the thread actually exits. Use invokelater instead.
     }
-    
-    //public void done() This method has a bug where it can run before the thread actually exits. Use invokelater instead.
 }
