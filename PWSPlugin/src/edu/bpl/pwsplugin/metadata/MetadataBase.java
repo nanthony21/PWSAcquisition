@@ -42,10 +42,7 @@ public class MetadataBase {
         try {
             JSONObject md = new JSONObject();
             if (this.linearityPoly.size() > 0) {
-                JSONArray linPoly = new JSONArray();
-                for (int i=0; i<this.linearityPoly.size(); i++) {
-                    linPoly.put(this.linearityPoly.get(i));
-                }
+                JSONArray linPoly = new JSONArray(this.linearityPoly);
                 md.put("linearityPoly", linPoly);
             } else{
                 md.put("linearityPoly", JSONObject.NULL);

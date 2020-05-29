@@ -26,7 +26,6 @@ import org.micromanager.internal.utils.ReportingUtils;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
-import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
@@ -41,12 +40,11 @@ public class AcquisitionManager {
     */
     private final PWSAcquisition pwsManager_ = new PWSAcquisition(new PWSAlbum("PWS"));
     private final DynamicsAcquisition dynManager_ = new DynamicsAcquisition(new PWSAlbum("Dynamics"));
-    private FluorescenceAcquisition flManager_ = new FluorescenceAcquisition(new PWSAlbum("Fluorescence"));
+    private final FluorescenceAcquisition flManager_ = new FluorescenceAcquisition(new PWSAlbum("Fluorescence"));
     private final LinkedBlockingQueue imageQueue = new LinkedBlockingQueue();; //This queue is used to pass images from one of the acquisition managers to the ImSaver which saves the file concurrently.
     private volatile boolean acquisitionRunning_ = false;
     private int cellNum_;
     private String savePath_;
-    private HWConfigurationSettings config;
     
     private void run(Acquisition manager) {
         if (acquisitionRunning_) {

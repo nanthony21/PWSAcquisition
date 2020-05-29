@@ -19,6 +19,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import mmcorej.org.json.JSONArray;
 import mmcorej.org.json.JSONObject;
 import org.micromanager.data.Coords;
 import org.micromanager.data.Image;
@@ -61,7 +62,11 @@ public class FluorescenceAcquisition implements Acquisition<FluorSettings>{
         this.settings = settings;
         this.imConf = Globals.getHardwareConfiguration().getImagingConfigurationByName(settings.imConfigName);
         this.camera = imConf.camera();
-        this.tunableFilter = imConf.tunableFilter();
+        if (imConf.hasTunableFilter()) {
+            this.tunableFilter = imConf.tunableFilter();
+        } else {
+            this.tunableFilter = null;
+        }
     }
     
     @Override
@@ -77,7 +82,7 @@ public class FluorescenceAcquisition implements Acquisition<FluorSettings>{
     @Override
     public void acquireImages(SaverThread imSaver, MetadataBase metadata) throws Exception {
         String initialFilter = ""; 
-        boolean spectralMode = imConf.settings().configType == ImagingConfiguration.Types.StandardCamera;
+        boolean spectralMode = imConf.hasTunableFilter();
         if (Globals.getMMConfigAdapter().autoFilterSwitching) {
             initialFilter = Globals.core().getCurrentConfig("Filter");
             Globals.core().setConfig("Filter", this.settings.filterConfigName);
@@ -101,14 +106,14 @@ public class FluorescenceAcquisition implements Acquisition<FluorSettings>{
             if (spectralMode) {
                 md.put("wavelength", settings.tfWavelength);
             } else {
-                md.put("altCameraTransform", camera.getSettings().affineTransform); //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera.  
+                md.put("altCameraTransform", new JSONArray(camera.getSettings().affineTransform)); //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera.  
             }
-
             Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
             Coords coords = img.getCoords();
             pipeline.insertImage(img); //Add image to the data pipeline for processing
             img = pipeline.getDatastore().getImage(coords); //Retrieve the processed image. 
             imSaver.setMetadata(md);
+            album.clear(); //One day it would be nice to show multiple fluorescence images at once.
             album.addImage(img);
             imSaver.getQueue().add(img);
             imSaver.join();
