@@ -21,7 +21,6 @@ public class Globals {
     private MMConfigAdapter mmAdapter;
     private PluginFrame frame;
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    private UpdatableAlert statusAlert_;
     
     private Globals() {}
     
@@ -44,7 +43,6 @@ public class Globals {
         if (settings != null) {
             Globals.setHardwareConfigurationSettings(settings.hwConfiguration);
         }
-        instance().statusAlert_ = studio.alerts().postUpdatableAlert("PWS Status", " ");
     }
     
     public static void saveSettings(PWSPluginSettings settings) {
@@ -102,7 +100,4 @@ public class Globals {
         return instance().mmAdapter;
     }
     
-    public static UpdatableAlert statusAlert() {
-        return instance().statusAlert_;
-    }
 }
