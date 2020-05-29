@@ -5,21 +5,40 @@
  */
 package edu.bpl.pwsplugin.acquisitionManagers;
 
+import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
+import edu.bpl.pwsplugin.hardware.cameras.Camera;
+import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
+import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
+import edu.bpl.pwsplugin.metadata.FluorescenceMetadata;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import mmcorej.org.json.JSONObject;
+import org.micromanager.data.Coords;
+import org.micromanager.data.Image;
+import org.micromanager.data.Pipeline;
+import org.micromanager.internal.utils.ReportingUtils;
 
 /**
  *
  * @author LCPWS3
  */
-abstract class FluorescenceAcquisition implements Acquisition<FluorSettings>{
+public class FluorescenceAcquisition implements Acquisition<FluorSettings>{
     protected FluorSettings settings;
+    Camera camera;
+    TunableFilter tunableFilter;
+    ImagingConfiguration imConf;
+    PWSAlbum album;
+    
+    public FluorescenceAcquisition(PWSAlbum display) {
+        album = display;
+    }
     
     @Override
     public String getFilePrefix() {
@@ -37,12 +56,12 @@ abstract class FluorescenceAcquisition implements Acquisition<FluorSettings>{
         return path.toString();
     }
     
-    //@Override
-    //public abstract void acquireImages(SaverThread saver, int cellNum, LinkedBlockingQueue imagequeue, MetadataBase metadata) throws Exception;
-    
     @Override
     public void setSettings(FluorSettings settings) {
         this.settings = settings;
+        this.imConf = Globals.getHardwareConfiguration().getImagingConfigurationByName(settings.imConfigName);
+        this.camera = imConf.camera();
+        this.tunableFilter = imConf.tunableFilter();
     }
     
     @Override
@@ -50,7 +69,56 @@ abstract class FluorescenceAcquisition implements Acquisition<FluorSettings>{
         return this.settings;
     }
     
-    @Override public Integer numFrames() {
+    @Override
+    public Integer numFrames() {
         return 1;
+    }
+    
+    @Override
+    public void acquireImages(SaverThread imSaver, MetadataBase metadata) throws Exception {
+        String initialFilter = ""; 
+        boolean spectralMode = imConf.settings().configType == ImagingConfiguration.Types.StandardCamera;
+        if (Globals.getMMConfigAdapter().autoFilterSwitching) {
+            initialFilter = Globals.core().getCurrentConfig("Filter");
+            Globals.core().setConfig("Filter", this.settings.filterConfigName);
+            Globals.core().waitForConfig("Filter", this.settings.filterConfigName); // Wait for the device to be ready.
+        } else {
+            ReportingUtils.showMessage("Set the correct fluorescence filter and click `OK`.");
+        }
+        try {
+            if (!imConf.isActive()) {
+                imConf.activateConfiguration();
+            }
+            if (spectralMode) { 
+                this.tunableFilter.setWavelength(settings.tfWavelength);
+            }
+            imSaver.start();
+            this.camera.setExposure(settings.exposure);
+            Globals.core().clearCircularBuffer();
+            Image img = this.camera.snapImage();
+            FluorescenceMetadata flmd = new FluorescenceMetadata(metadata, settings.filterConfigName, camera.getExposure()); //This must happen after we have set our exposure.
+            JSONObject md = flmd.toJson();
+            if (spectralMode) {
+                md.put("wavelength", settings.tfWavelength);
+            } else {
+                md.put("altCameraTransform", camera.getSettings().affineTransform); //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera.  
+            }
+
+            Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
+            Coords coords = img.getCoords();
+            pipeline.insertImage(img); //Add image to the data pipeline for processing
+            img = pipeline.getDatastore().getImage(coords); //Retrieve the processed image. 
+            imSaver.setMetadata(md);
+            album.addImage(img);
+            imSaver.getQueue().add(img);
+            imSaver.join();
+        } finally {
+            if (Globals.getMMConfigAdapter().autoFilterSwitching) {
+                Globals.core().setConfig("Filter", initialFilter);
+                Globals.core().waitForConfig("Filter", initialFilter); // Wait for the device to be ready.
+            } else {
+                ReportingUtils.showMessage("Return to the PWS filter block and click `OK`.");
+            }
+        }
     }
 }

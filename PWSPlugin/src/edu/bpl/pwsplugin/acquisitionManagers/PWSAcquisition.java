@@ -113,7 +113,7 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
     }
       
     @Override
-    public void acquireImages(SaverThread saver, int cellNum, MetadataBase metadata) throws Exception {
+    public void acquireImages(SaverThread saver, MetadataBase metadata) throws Exception {
         long configStartTime = System.currentTimeMillis();
         album_.clear();
         int initialWv = 550;
@@ -157,7 +157,7 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
                         }
                         if (remaining) {    //Process images
                             Image im = Globals.mm().data().convertTaggedImage(Globals.core().popNextTaggedImage());
-                            addImage(im, i, album_, pipeline, saver.getQueue());
+                            addImage(im, i, pipeline, saver.getQueue());
                             i++;
                             lastImTime = System.currentTimeMillis();
                             collectionEndTime = System.currentTimeMillis();
@@ -181,7 +181,7 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
             else {  //Software sequenced acquisition
                 for (int i=0; i<wv.length; i++) {
                     Image im = conf.snapImage(wv[i]);
-                    addImage(im, i, album_, pipeline, saver.getQueue());
+                    addImage(im, i, pipeline, saver.getQueue());
                 }
             }
             saver.join();
@@ -190,12 +190,12 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
         }
     }
     
-    private void addImage(Image im, int idx, PWSAlbum album, Pipeline pipeline, Queue imageQueue) throws IOException, PipelineErrorException{
+    private void addImage(Image im, int idx, Pipeline pipeline, Queue imageQueue) throws IOException, PipelineErrorException{
         Coords newCoords = im.getCoords().copyBuilder().t(idx).build();
         im = im.copyAtCoords(newCoords);
         pipeline.insertImage(im); //Add image to the data pipeline for processing
         im = pipeline.getDatastore().getImage(newCoords); //Retrieve the processed image.
-        album.addImage(im); //Add the image to the album for display
+        album_.addImage(im); //Add the image to the album for display
         imageQueue.add(im); //Add the image to a queue for multithreaded saving.
     }
 }

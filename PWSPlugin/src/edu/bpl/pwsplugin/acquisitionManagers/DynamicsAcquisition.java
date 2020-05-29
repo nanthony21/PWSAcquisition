@@ -76,7 +76,7 @@ class DynamicsAcquisition implements Acquisition<DynSettings>{
     }
     
     @Override
-    public void acquireImages(SaverThread imSaver, int cellNum, MetadataBase metadata) throws Exception {
+    public void acquireImages(SaverThread imSaver, MetadataBase metadata) throws Exception {
         ImagingConfiguration conf = Globals.getHardwareConfiguration().getImagingConfigurationByName(this.settings.imConfigName);
         if (!conf.isActive()) {
             conf.activateConfiguration();

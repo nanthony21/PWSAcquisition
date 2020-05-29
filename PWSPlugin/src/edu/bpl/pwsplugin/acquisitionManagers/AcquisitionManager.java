@@ -41,7 +41,7 @@ public class AcquisitionManager {
     */
     private final PWSAcquisition pwsManager_ = new PWSAcquisition(new PWSAlbum("PWS"));
     private final DynamicsAcquisition dynManager_ = new DynamicsAcquisition(new PWSAlbum("Dynamics"));
-    private FluorescenceAcquisition flManager_ = null;
+    private FluorescenceAcquisition flManager_ = new FluorescenceAcquisition(new PWSAlbum("Fluorescence"));
     private final LinkedBlockingQueue imageQueue = new LinkedBlockingQueue();; //This queue is used to pass images from one of the acquisition managers to the ImSaver which saves the file concurrently.
     private volatile boolean acquisitionRunning_ = false;
     private int cellNum_;
@@ -72,7 +72,7 @@ public class AcquisitionManager {
                 imageQueue.clear();
             }
             SaverThread imSaver = new MMSaver(manager.getSavePath(savePath_, cellNum_), imageQueue, manager.numFrames() ,manager.getFilePrefix());
-            manager.acquireImages(imSaver, cellNum_, metadata);
+            manager.acquireImages(imSaver, metadata);
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
             throw new RuntimeException(ie);
@@ -84,16 +84,7 @@ public class AcquisitionManager {
         }
     }
     
-    public void setFluorescenceSettings(FluorSettings settings) {
-        if (Globals.getHardwareConfiguration().getImagingConfigurationByName(settings.imConfigName).settings().configType == ImagingConfiguration.Types.StandardCamera) {
-            //Acquire fluorescence with another camera so you don't have to go through the LCTF.
-            flManager_ = new StandardCamFluorescenceAcquisition();
-        } else {
-            //Acquire fluorescence through the LCTF filter using the same camera.
-            flManager_ = new SpectralCamFluorescenceAcquisition();
-        }
-        flManager_.setSettings(settings);
-    }
+    public void setFluorescenceSettings(FluorSettings settings) { flManager_.setSettings(settings); }
     
     public void setCellNum(int num) { cellNum_ = num; }
     

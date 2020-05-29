@@ -24,11 +24,10 @@ import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.nio.file.FileAlreadyExistsException;
-import java.util.concurrent.LinkedBlockingQueue;
 
 
 interface Acquisition <S extends JsonableParam> {
-    public void acquireImages(SaverThread saver, int cellNum, MetadataBase metadata) throws Exception; //Begin the acquisition process.
+    public void acquireImages(SaverThread saver, MetadataBase metadata) throws Exception; //Begin the acquisition process.
     public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException; // given a parent directory and a cell number, return the full path to save to.
     public String getFilePrefix(); //Return the prefix that the saved files should have.
     public void setSettings(S settings);
