@@ -31,14 +31,17 @@ import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.factories.RootStepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
+import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
-import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
-import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.awt.Window;
-import java.util.function.Function;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -46,6 +49,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
@@ -54,6 +58,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import net.miginfocom.swing.MigLayout;
+import org.apache.commons.io.FileUtils;
 import org.micromanager.internal.utils.MMFrame;
 import org.micromanager.internal.utils.ReportingUtils;
 
@@ -217,6 +222,20 @@ class AcquisitionPanel extends JPanel {
     
     private void acquire() { 
         AcquisitionManager acqMan = Globals.acqManager();
+        Path savePath = FileSpecs.getCellFolderName(Paths.get(this.dirSelect.getText()), (Integer) this.cellNumSpinner.getValue());
+        if (Files.exists(savePath)) {
+            int option = JOptionPane.showConfirmDialog(Globals.frame(), "File already exists. Replace?", "Overwrite?", JOptionPane.YES_NO_OPTION);
+            if (option == JOptionPane.YES_OPTION) {
+                try {
+                    FileUtils.deleteDirectory(savePath.toFile());
+                } catch (IOException e) {
+                    Globals.mm().logs().logError(e);
+                    return;
+                }
+            } else {
+                return;
+            }
+        }
         acqMan.setSavePath(this.dirSelect.getText());
         acqMan.setCellNum((Integer) this.cellNumSpinner.getValue());
         AcquireCellSettings settings;

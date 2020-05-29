@@ -42,7 +42,6 @@ import edu.bpl.pwsplugin.settings.IlluminatorSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
-import java.util.List;
 import org.micromanager.Studio;
 import org.micromanager.MenuPlugin;
 import org.micromanager.events.ShutdownCommencingEvent;
