@@ -129,11 +129,11 @@ class ChangeConfigGroup extends ContainerStep {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 String origConfValue = Globals.core().getCurrentConfig(settings.configGroupName);
-                status.update(String.format("Changing %s config group to %s", settings.configGroupName, settings.configValue), status.currentCellNum);
+                status.newStatusMessage(String.format("Changing %s config group to %s", settings.configGroupName, settings.configValue));
                 Globals.core().setConfig(settings.configGroupName, settings.configValue);
                 status = subStepFunc.apply(status);
                 Globals.core().setConfig(settings.configGroupName, origConfValue);
-                status.update(String.format("Changing %s config group back to original setting, %s", settings.configGroupName, origConfValue), status.currentCellNum);
+                status.newStatusMessage(String.format("Changing %s config group back to original setting, %s", settings.configGroupName, origConfValue));
                 return status;
             }
         };

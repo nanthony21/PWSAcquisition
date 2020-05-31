@@ -105,8 +105,10 @@ class PauseStep extends EndpointStep {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 SwingUtilities.invokeAndWait(() -> {
+                    status.newStatusMessage("Pausing.");
                     PauseDlg dlg = new PauseDlg(settings.message);
                     dlg.setVisible(true); //This should block until the dialog is closed.
+                    status.newStatusMessage("Resuming.");
                 });
                 return status;
             }

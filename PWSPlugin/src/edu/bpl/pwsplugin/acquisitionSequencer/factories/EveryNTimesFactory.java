@@ -74,7 +74,7 @@ class EveryNTimes extends ContainerStep {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 if (((iteration + settings.offset) % settings.n) == 0) {
-                    status.update(String.format("EveryNTimes: Running substep on iteration %d", iteration), status.currentCellNum);
+                    status.newStatusMessage(String.format("EveryNTimes: Running substep on iteration %d", iteration));
                     status = stepFunction.apply(status);
                 }
                 iteration++;

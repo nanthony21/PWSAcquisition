@@ -5,6 +5,8 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -14,7 +16,7 @@ import java.util.function.Function;
 public class AcquisitionStatus { //TODO make this thread safe.
     //This object acts as a go-between between the UI and the acquisition thread.
     public Integer currentCellNum; //The folder number we are currently acquiring.
-    public String statusMsg; //A string describing what is currently happening.
+    public List<String> statusMsg = new ArrayList<>(); //A string describing what is currently happening.
     private final Function<AcquisitionStatus, Void> publishCallBack; //This callback should link to the `publish` method of the swingworker running the acquisition thread.
     private final Function<Void, Void> pauseCallBack; // This callback should link to the `pausepoint` method of a pause button.
     
@@ -33,13 +35,23 @@ public class AcquisitionStatus { //TODO make this thread safe.
     }
     
     private void publish() {
-        //Send a copy of this object back to the swingworker so it can be accessed from the `process` method.
+        //Send a copy of this object back to the swingworker so it can be accessed from the `process` method. //TODO is this necesary, can't we just maintain a reference to a single object?
         publishCallBack.apply(this);
     }
     
-    public void update(String message, Integer cellNumber) {
+    public Integer newStatusMessage(String message) {
+        this.statusMsg.add(message);
+        this.publish();
+        return this.statusMsg.size()-1; //This can be used as a pointer to update the message later.
+    }
+    
+    public void updateStatusMessage(Integer idx, String msg) { //Idx is the number that was returned by `newStatusMessage`
+        this.statusMsg.set(idx, msg);
+        this.publish();
+    }
+    
+    public void updateCellNumber(Integer cellNumber) {
         this.currentCellNum = cellNumber;
-        this.statusMsg = message;
         this.publish();
     }
     

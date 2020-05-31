@@ -109,21 +109,22 @@ class AcquireTimeSeries extends ContainerStep {
                 double lastAcqTime = 0;
                 for (int k=0; k<settings.numFrames; k++) {
                     // wait for the specified frame interval before proceeding to next frame
+                    Integer msgId = status.newStatusMessage(""); //This will be updated below.
                     if (k!=0) { //No pause for the first iteration
                         int count = 0;
                         while ((System.currentTimeMillis() - lastAcqTime)/60000 < settings.frameIntervalMinutes) {
                             String msg = String.format("Waiting %.1f seconds before acquiring next frame", settings.frameIntervalMinutes - (System.currentTimeMillis() - lastAcqTime)/60000);
-                            Globals.statusAlert().setText(msg);
+                            status.updateStatusMessage(msgId, msg);
                             count++;
                             Thread.sleep(500);
                         }   
                         if (count == 0) {
-                            Globals.statusAlert().setText(String.format("Acquistion took %.1f seconds. Longer than the frame interval.", (System.currentTimeMillis() - lastAcqTime)/1000));
+                            status.newStatusMessage(String.format("Acquistion took %.1f seconds. Longer than the frame interval.", (System.currentTimeMillis() - lastAcqTime)/1000));
                         }
                     }
                     lastAcqTime = System.currentTimeMillis(); //Save the current time so we can figure out when to start the next acquisition.
                     status = stepFunction.apply(status);
-                    status.update(String.format("Finished time set %d of %d", k, settings.numFrames), status.currentCellNum);
+                    status.newStatusMessage(String.format("Finished time step %d of %d", k, settings.numFrames));
                 }
                 return status;
             }

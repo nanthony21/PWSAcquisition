@@ -82,7 +82,7 @@ class AcquireFromPositionList extends ContainerStep {
                 for (int posNum=0; posNum < list.getNumberOfPositions(); posNum++) {
                     MultiStagePosition pos = list.getPosition(posNum);
                     String label = pos.getLabel();
-                    status.update(String.format("Moving to position %s", label), status.currentCellNum);
+                    status.newStatusMessage(String.format("Moving to position %s", label));
                     Callable<Void> preMoveRoutine = ()->{return null;};
                     Callable<Void> postMoveRoutine = ()->{return null;};
                     //TODO do we want to keep this undocumented naming stuff? How about we document it? duh

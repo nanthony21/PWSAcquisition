@@ -33,6 +33,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -183,26 +186,49 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
 }
 
 class SequencerRunningDlg extends JDialog {
-    JLabel statusMsg = new JLabel();
-    JLabel cellNum = new JLabel();
+    JTextArea statusMsg = new JTextArea();
+    JLabel cellNum = new JLabel("Acquire Cell:");
     PauseButton pauseButton = new PauseButton(true);
     JButton cancelButton = new JButton("Cancel");
     JProgressBar progress = new JProgressBar();
     AcquisitionThread acqThread;
     
+    public static void main(String[] args) {
+        SequencerRunningDlg dlg;
+        dlg = new SequencerRunningDlg(null, "test", 
+                new SequencerFunction() {
+                    @Override
+                    public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
+                        Integer id = status.newStatusMessage("Remember:");
+                        for  (int i=0; i<1000; i++) {
+                            Thread.sleep(1000);
+                            status.updateCellNumber(i);
+                            long j =  Math.round(Math.random() * 10);
+                            String s = "Forget it.";
+                            status.newStatusMessage(new String(new char[(int)j]).replace("\0", s));
+                            status.updateStatusMessage(id, String.format("Remember:%d", i));
+                        }
+                        return status;
+                    }
+                }
+        );
+    }
+    
     public SequencerRunningDlg(Window owner, String title, SequencerFunction rootFunc) {
         super(owner, title, Dialog.ModalityType.DOCUMENT_MODAL);
         this.setLocationRelativeTo(owner);
 
-        JPanel contentPane = new JPanel(new MigLayout());
+        statusMsg.setEditable(false);
+        JScrollPane textScroll = new JScrollPane(statusMsg);
+        
+        JPanel contentPane = new JPanel(new MigLayout("fill"));
         this.setContentPane(contentPane);
-        contentPane.add(new JLabel("Status: "));
-        contentPane.add(statusMsg, "wrap");
-        contentPane.add(new JLabel("Acquiring: Cell"));
+        contentPane.add(new JLabel("Status: "), "wrap, spanx");
+        contentPane.add(textScroll, "height 20sp, width 20sp, wrap, spanx");
         contentPane.add(cellNum, "wrap");
-        contentPane.add(progress, "wrap");
-        contentPane.add(pauseButton);
-        contentPane.add(cancelButton);
+        contentPane.add(progress, "span, wrap");
+        contentPane.add(pauseButton, "gapleft push");
+        contentPane.add(cancelButton, "gapright push");
         this.pack();
         
         acqThread = new AcquisitionThread(rootFunc, 1); //This starts the thread.
@@ -225,16 +251,15 @@ class SequencerRunningDlg extends JDialog {
         this.setVisible(true); // this blocks.
     }
     
-    public void setMessage(String msg) {
-        this.statusMsg.setText(msg);
+    public void updateStatus(AcquisitionStatus status) {
+        this.cellNum.setText(String.format("Acquiring Cell: %d", status.currentCellNum));
+        this.statusMsg.setText(String.join("\n", status.statusMsg));
     }
 
     class AcquisitionThread extends SwingWorker<AcquisitionStatus, AcquisitionStatus> { //TODO maybe this hsould be inner to dialog.
         SequencerFunction rootFunc;
         private final AcquisitionStatus startingStatus;
         private AcquisitionStatus currentStatus;
-        //private SequencerRunningDlg dlg;
-
 
         public AcquisitionThread(SequencerFunction rootFunc, Integer startingCellNum) {
             this.rootFunc = rootFunc;  
@@ -243,7 +268,6 @@ class SequencerRunningDlg extends JDialog {
             startingStatus = new AcquisitionStatus(publishCallback, pauseCallback);
             startingStatus.currentCellNum = startingCellNum;
             currentStatus = startingStatus;
-            //this.dlg = dlg;
             this.execute();
         }
 
@@ -269,7 +293,7 @@ class SequencerRunningDlg extends JDialog {
         @Override
         protected void process(List<AcquisitionStatus> chunks) {
             currentStatus = chunks.get(chunks.size() - 1);
-            SequencerRunningDlg.this.setMessage(currentStatus.statusMsg);
+            SequencerRunningDlg.this.updateStatus(currentStatus);
             //setProgress(
         }
 
