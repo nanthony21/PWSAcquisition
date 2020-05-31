@@ -17,13 +17,18 @@ import edu.bpl.pwsplugin.acquisitionSequencer.factories.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.Dialog;
 import java.awt.Font;
 import java.awt.Window;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -46,6 +51,7 @@ import org.micromanager.internal.utils.FileDialogs;
 /**
  *
  * @author nick
+ * //TODO this should be split into a file for UI-only functionality and the core functionality of the sequencer.
  */
 public class SequencerUI extends BuilderJPanel<ContainerStep> {
     SequenceTree seqTree = new SequenceTree();
@@ -62,15 +68,16 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
         
         this.runButton.addActionListener((evt) -> {  
             try {
-                Step rootStep = this.compileSequenceNodes((DefaultMutableTreeNode)seqTree.model().getRoot());
+                Step rootStep = this.build();
                 List<String> errors = verifySequence(rootStep);
+                resolveFileConflicts(rootStep);
                 if (!errors.isEmpty()) {
                     Globals.mm().logs().showError(String.join("\n", errors));
                     return;
                 }
                 SequencerFunction rootFunc = rootStep.getFunction();
                 SequencerRunningDlg dlg = new SequencerRunningDlg(SwingUtilities.getWindowAncestor(this), "Acquisition Sequence Running", rootFunc);
-            } catch (IllegalStateException | InstantiationException | IllegalAccessException e) {
+            } catch (IllegalStateException  | BuilderPanelException e) {
                 Globals.mm().logs().showError(e);
             }
         }); //Run starting at cell 1.
@@ -130,6 +137,19 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
         } else {
             EndpointStep step = (EndpointStep) ((StepNode) parent).createStepObject();
             return step;
+        }
+    }
+    
+    private resolveFileConflicts(Step step) {
+        //TODO Don't assume starting at cell 1
+        //TODO doesn't account for planned ability to change subdir.
+        String dir = ((SequencerSettings.RootStepSettings) step.getSettings()).directory;
+        Integer numberAcqsExpected = step.numberNewAcqs();
+        for (int i=0; i<numberAcqsExpected; i++) {
+            File cellFolder = FileSpecs.getCellFolderName(Paths.get(dir), i+1).toFile();
+            if (cellFolder.exists()) {
+                
+            }
         }
     }
     
