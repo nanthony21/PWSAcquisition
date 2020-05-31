@@ -114,6 +114,11 @@ class PauseStep extends EndpointStep {
             }
         };
     }
+    
+    @Override
+    public Integer numberNewAcqs() {
+        return 0;
+    }
 }
 
 class PauseDlg extends JDialog {

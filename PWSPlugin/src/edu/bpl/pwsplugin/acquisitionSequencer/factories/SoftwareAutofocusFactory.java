@@ -102,4 +102,9 @@ class SoftwareAutofocus extends EndpointStep {
             } 
         };
     }
+    
+    @Override
+    public Integer numberNewAcqs() {
+        return 0;
+    }
 }

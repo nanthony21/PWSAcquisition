@@ -66,7 +66,7 @@ class AcquireCell extends EndpointStep {
     }
     
     @Override
-    public SequencerFunction getFunction() {
+    public SequencerFunction getFunction() { //TODO save sequencer metadata (time step, position name, etc.)
         AcquireCellSettings settings = (AcquireCellSettings) this.getSettings();
         AcquisitionManager acqMan = Globals.acqManager();
         return new SequencerFunction() {
@@ -96,6 +96,11 @@ class AcquireCell extends EndpointStep {
                 return status;
             }
         };
+    }
+    
+    @Override
+    public Integer numberNewAcqs() {
+        return 1;
     }
 }
 

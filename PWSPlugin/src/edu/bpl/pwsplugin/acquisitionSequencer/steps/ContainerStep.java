@@ -43,4 +43,12 @@ public abstract class ContainerStep extends Step {
             }
         };
     }
+    
+    public Integer numberNewAcqs() {
+        Integer newAcqs = 0;
+        for (Step substep : this.getSubSteps()) {
+            newAcqs += substep.numberNewAcqs();
+        }
+        return newAcqs;
+    }
 }
