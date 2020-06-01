@@ -38,7 +38,7 @@ public abstract class Step extends JsonableParam {
     
     public static final FileDialogs.FileType FILETYPE = new FileDialogs.FileType("PWS Acquisition Sequence", "Sequence (.pwsseq)", "newAcqSequence.pwsseq", true, "pwsseq");
     
-    public abstract Integer numberNewAcqs(); //Return the number of new cell folders expected to be created within this step.
+    public abstract Double numberNewAcqs(); //Return the number of new cell folders expected to be created within this step.
     
     public final SequencerFunction getFunction() {
         return new SequencerFunction() {

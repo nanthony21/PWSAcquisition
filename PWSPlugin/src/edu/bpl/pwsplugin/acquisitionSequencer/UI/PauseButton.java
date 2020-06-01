@@ -8,7 +8,7 @@ import org.micromanager.internal.utils.ReportingUtils;
 
 public class PauseButton extends JButton{
     static String PAUSE = "Pause";
-    static String WAIT = "Waiting...";
+    static String WAIT = "Pausing...";
     static String RESUME = "Resume";
     FutureTask resumeFutureTask_;
 

@@ -113,7 +113,7 @@ class AcquireTimeSeries extends ContainerStep {
                     if (k!=0) { //No pause for the first iteration
                         int count = 0;
                         while ((System.currentTimeMillis() - lastAcqTime)/60000 < settings.frameIntervalMinutes) {
-                            String msg = String.format("Waiting %.1f seconds before acquiring next frame", settings.frameIntervalMinutes - (System.currentTimeMillis() - lastAcqTime)/60000);
+                            String msg = String.format("Waiting %.1f minutes before acquiring next frame", settings.frameIntervalMinutes - (System.currentTimeMillis() - lastAcqTime)/60000);
                             status.updateStatusMessage(msgId, msg);
                             count++;
                             Thread.sleep(500);
@@ -124,10 +124,17 @@ class AcquireTimeSeries extends ContainerStep {
                     }
                     lastAcqTime = System.currentTimeMillis(); //Save the current time so we can figure out when to start the next acquisition.
                     status = stepFunction.apply(status);
-                    status.newStatusMessage(String.format("Finished time step %d of %d", k, settings.numFrames));
+                    status.newStatusMessage(String.format("Finished time step %d of %d", k+1, settings.numFrames));
                 }
                 return status;
             }
         };
-    }  
+    }
+    
+    @Override
+    public Double numberNewAcqs() {
+        Double acqsPerIteration = super.numberNewAcqsOneIteration();
+        Double acqs = acqsPerIteration * ((SequencerSettings.AcquireTimeSeriesSettings) this.getSettings()).numFrames;
+        return acqs;
+    }
 }

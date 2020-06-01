@@ -106,7 +106,11 @@ class AcquireFromPositionList extends ContainerStep {
         };
     }
 
-    
+    @Override
+    public Double numberNewAcqs() {
+        Double acqPerIteration = super.numberNewAcqsOneIteration();
+        return acqPerIteration * ((SequencerSettings.AcquirePositionsSettings) this.getSettings()).posList.getNumberOfPositions();
+    }
 }
 
 

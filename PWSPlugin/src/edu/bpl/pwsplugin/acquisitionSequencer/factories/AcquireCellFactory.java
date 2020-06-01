@@ -99,8 +99,8 @@ class AcquireCell extends EndpointStep {
     }
     
     @Override
-    public Integer numberNewAcqs() {
-        return 1;
+    public Double numberNewAcqs() {
+        return 1.0;
     }
 }
 
