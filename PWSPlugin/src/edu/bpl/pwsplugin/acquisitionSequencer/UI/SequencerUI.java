@@ -152,13 +152,13 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
         //TODO Don't assume starting at cell 1
         //TODO doesn't account for planned ability to change subdir.
         //returns true if it is ok ot proceed, false if cancel.
-        String dir = ((SequencerSettings.RootStepSettings) step.getSettings()).directory;
+        Path dir = ((SequencerSettings.RootStepSettings) step.getSettings()).directory;
         Integer numberAcqsExpected = (int) Math.ceil(step.numberNewAcqs()); //This can possible be fractional due to the `EveryNTimes` step. always round up to be safe.
         List<Path> conflict = new ArrayList<>();
         for (int i=0; i<numberAcqsExpected; i++) {
-            File cellFolder = FileSpecs.getCellFolderName(Paths.get(dir), i+1).toFile();
+            File cellFolder = FileSpecs.getCellFolderName(dir, i+1).toFile();
             if (cellFolder.exists()) {
-                conflict.add(Paths.get(dir).relativize(cellFolder.toPath()));
+                conflict.add(dir.relativize(cellFolder.toPath()));
             }
         }
         boolean overwrite = (new JDialog() { //OPen a dialog asking to overwrite, if true then go ahead.
@@ -215,7 +215,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
             boolean err = false;
             for (Path p : conflict) {
                 try {
-                    FileUtils.deleteDirectory(Paths.get(dir).resolve(p).toFile());
+                    FileUtils.deleteDirectory(dir.resolve(p).toFile());
                 } catch (IOException e) {
                     Globals.mm().logs().logError(e);
                     err = true;

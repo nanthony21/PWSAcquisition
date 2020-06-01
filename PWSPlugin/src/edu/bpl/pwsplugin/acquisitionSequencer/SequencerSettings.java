@@ -9,6 +9,8 @@ import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import org.micromanager.PositionList;
@@ -23,7 +25,7 @@ public class SequencerSettings {
     }
 
     public static class RootStepSettings extends JsonableParam {
-        public String directory;
+        public Path directory;
     }
 
     public static class PauseStepSettings extends JsonableParam {

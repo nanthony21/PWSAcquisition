@@ -15,6 +15,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
+import java.nio.file.Paths;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
@@ -73,7 +74,7 @@ class RootStep extends ContainerStep {
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-                Globals.acqManager().setSavePath(settings.directory);
+                Globals.acqManager().setSavePath(settings.directory.toString());
                 //TODO create the status object here. input should be null.
                 status = subStepFunc.apply(status);
                 return status;
@@ -97,13 +98,13 @@ class RootStepUI extends BuilderJPanel<SequencerSettings.RootStepSettings> {
     
     @Override
     public void populateFields(SequencerSettings.RootStepSettings settings) {
-        directory.setText(settings.directory);
+        directory.setText(settings.directory.toString());
     }
     
     @Override
     public SequencerSettings.RootStepSettings build() {
         SequencerSettings.RootStepSettings settings = new SequencerSettings.RootStepSettings();
-        settings.directory = this.directory.getText();
+        settings.directory = Paths.get(this.directory.getText());
         return settings;
     }
 }
