@@ -80,6 +80,9 @@ class RootStep extends ContainerStep {
             }
         };    
     }
+    
+    @Override
+    public Double numberNewAcqs() { return this.numberNewAcqsOneIteration(); }
 }
 
 class RootStepUI extends BuilderJPanel<SequencerSettings.RootStepSettings> {

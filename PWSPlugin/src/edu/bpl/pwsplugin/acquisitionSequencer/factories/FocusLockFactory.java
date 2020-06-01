@@ -116,4 +116,7 @@ class FocusLock extends ContainerStep {
             } 
         };
     }
+    
+    @Override
+    public Double numberNewAcqs() { return this.numberNewAcqsOneIteration(); }
 }

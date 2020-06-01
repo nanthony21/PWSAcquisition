@@ -104,7 +104,7 @@ class SoftwareAutofocus extends EndpointStep {
     }
     
     @Override
-    public Integer numberNewAcqs() {
-        return 0;
+    public Double numberNewAcqs() {
+        return 0.;
     }
 }

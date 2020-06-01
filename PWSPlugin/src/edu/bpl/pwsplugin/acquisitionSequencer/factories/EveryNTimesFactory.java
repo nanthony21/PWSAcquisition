@@ -82,6 +82,13 @@ class EveryNTimes extends ContainerStep {
             } 
         };
     }
+    
+    @Override
+    public Double numberNewAcqs() { //This is fractional since on some iterations nothing will happen
+        Double oneIter = this.numberNewAcqsOneIteration();
+        SequencerSettings.EveryNTimesSettings settings = (SequencerSettings.EveryNTimesSettings) this.getSettings();
+        return oneIter / settings.n;
+    }
 }
 
 class EveryNTimesUI extends BuilderJPanel<SequencerSettings.EveryNTimesSettings> {

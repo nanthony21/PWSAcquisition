@@ -138,4 +138,7 @@ class ChangeConfigGroup extends ContainerStep {
             }
         };
     }  
+    
+    @Override
+    public Double numberNewAcqs() { return this.numberNewAcqsOneIteration(); }
 }

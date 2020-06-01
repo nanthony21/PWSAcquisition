@@ -31,11 +31,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -45,6 +47,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.miginfocom.swing.MigLayout;
+import org.apache.commons.io.FileUtils;
 import org.micromanager.internal.utils.FileDialogs;
         
 
@@ -70,7 +73,8 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
             try {
                 Step rootStep = this.build();
                 List<String> errors = verifySequence(rootStep);
-                resolveFileConflicts(rootStep);
+                boolean success = resolveFileConflicts(rootStep);
+                if (!success) { return; }
                 if (!errors.isEmpty()) {
                     Globals.mm().logs().showError(String.join("\n", errors));
                     return;
@@ -140,17 +144,85 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
         }
     }
     
-    private resolveFileConflicts(Step step) {
+    private boolean resolveFileConflicts(Step step) {
         //TODO Don't assume starting at cell 1
         //TODO doesn't account for planned ability to change subdir.
+        //returns true if it is ok ot proceed, false if cancel.
         String dir = ((SequencerSettings.RootStepSettings) step.getSettings()).directory;
-        Integer numberAcqsExpected = step.numberNewAcqs();
+        Integer numberAcqsExpected = (int) Math.ceil(step.numberNewAcqs()); //This can possible be fractional due to the `EveryNTimes` step. always round up to be safe.
+        List<Path> conflict = new ArrayList<>();
         for (int i=0; i<numberAcqsExpected; i++) {
             File cellFolder = FileSpecs.getCellFolderName(Paths.get(dir), i+1).toFile();
             if (cellFolder.exists()) {
-                
+                conflict.add(Paths.get(dir).relativize(cellFolder.toPath()));
             }
         }
+        boolean overwrite = (new JDialog() { //OPen a dialog asking to overwrite, if true then go ahead.
+            private boolean result;
+            public void setVisible(boolean vis) {
+                if (vis) {
+                    this.setTitle("File Conflict!");
+                    //this.setResizable(false);
+                    this.setModal(true);
+                    this.setLocationRelativeTo(this.getOwner());
+                    
+                    JPanel cont = new JPanel(new MigLayout("insets 0 0 0 0, fill"));
+                    JTextArea textTop = new JTextArea(String.format("The following files already exist at %s:", dir));
+                    textTop.setWrapStyleWord(true);
+                    textTop.setLineWrap(true);
+                    textTop.setOpaque(false);
+                    textTop.setEditable(false);
+                    textTop.setFocusable(false);
+                    cont.add(textTop, "wrap, growx, span");
+                    JTextArea text = new JTextArea();
+                    text.setText(String.join("\n", conflict.stream().map(Object::toString).collect(Collectors.toList())));
+                    text.setWrapStyleWord(true);
+                    text.setLineWrap(true);
+                    text.setOpaque(false);
+                    text.setEditable(false);
+                    JScrollPane scroll = new JScrollPane(text);
+                    cont.add(scroll, "wrap, grow, span, width 15sp, height 15sp");
+                    JButton okButton = new JButton("Overwrite");
+                    okButton.addActionListener((evt)->{
+                        result=true;
+                        this.setVisible(false);
+                    });
+                    cont.add(okButton);
+                    JButton cancelButton = new JButton("Cancel");
+                    cancelButton.addActionListener((evt)->{
+                        result=false;
+                        this.setVisible(false);
+                    });
+                    cont.add(cancelButton);
+                    this.setContentPane(cont);
+                    this.pack();
+                    this.setMinimumSize(this.getSize());
+                }
+                super.setVisible(vis);
+            }
+            public boolean getResult() {
+                this.setVisible(true);
+                return this.result;
+            }
+        }).getResult();
+        
+        boolean success = overwrite;
+        if (overwrite) {
+            boolean err = false;
+            for (Path p : conflict) {
+                try {
+                    FileUtils.deleteDirectory(Paths.get(dir).resolve(p).toFile());
+                } catch (IOException e) {
+                    Globals.mm().logs().logError(e);
+                    err = true;
+                }
+            }
+            if (err) {
+                Globals.mm().logs().showMessage("A file exception was detected. Please check the CoreLog for more information.");
+                success = false;
+            }
+        }
+        return success;
     }
     
     private List<String> verifySequence(Step parent, List<String> errs) {
