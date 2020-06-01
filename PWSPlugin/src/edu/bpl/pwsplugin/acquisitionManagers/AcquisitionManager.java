@@ -89,6 +89,8 @@ public class AcquisitionManager {
     
     public void setSavePath(String savePath) { savePath_ = savePath;}
     
+    public String getSavePath() { return savePath_; }
+    
     public void setPWSSettings(PWSSettings settings) throws Exception { pwsManager_.setSettings(settings); }
     
     public void setDynamicsSettings(DynSettings settings) { dynManager_.setSettings(settings); }

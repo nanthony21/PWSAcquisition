@@ -55,7 +55,10 @@ public class SequencerSettings {
 
     public static class AcquirePositionsSettings extends JsonableParam {
         public PositionList posList = new PositionList();
-
+    }
+    
+    public static class EnterSubfolderSettings extends JsonableParam {
+        public Path relativePath = Paths.get("");
     }
 
 }

@@ -9,6 +9,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.factories.AcquireCellFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factories.AcquireFromPositionListFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factories.AcquireTimeSeriesFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factories.ChangeConfigGroupFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.factories.EnterSubfolderFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factories.EveryNTimesFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factories.FocusLockFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factories.PauseFactory;
@@ -31,7 +32,8 @@ public class Consts {
         CONFIG,
         PAUSE,
         EVERYN,
-        ROOT;
+        ROOT,
+        SUBFOLDER;
     }
     
     public enum Category {
@@ -75,6 +77,8 @@ public class Consts {
                 return new EveryNTimesFactory();
             case ROOT:
                 return new RootStepFactory();
+            case SUBFOLDER:
+                return new EnterSubfolderFactory();
         } 
         throw new RuntimeException("Shouldn't get here.");
     }
