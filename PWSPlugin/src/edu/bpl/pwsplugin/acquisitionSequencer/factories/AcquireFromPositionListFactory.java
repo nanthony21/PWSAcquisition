@@ -72,7 +72,7 @@ class AcquireFromPositionList extends ContainerStep {
     }
     
     @Override
-    public SequencerFunction getFunction() {
+    public SequencerFunction stepFunc() {
         PositionList list = ((SequencerSettings.AcquirePositionsSettings) this.getSettings()).posList;
         SequencerFunction stepFunction = super.getSubstepsFunction();
         return new SequencerFunction() {

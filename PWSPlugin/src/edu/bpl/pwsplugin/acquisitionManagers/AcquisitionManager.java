@@ -46,7 +46,7 @@ public class AcquisitionManager {
     private int cellNum_;
     private String savePath_;
     
-    private void run(Acquisition manager) {
+    private void run(Acquisition manager) throws InterruptedException {
         if (acquisitionRunning_) {
             throw new RuntimeException("Attempting to start acquisition when acquisition is already running.");
         }
@@ -73,7 +73,8 @@ public class AcquisitionManager {
             manager.acquireImages(imSaver, metadata);
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException(ie);
+            throw ie;
+            //throw new RuntimeException(ie);
         } catch (Exception ex) {  
             throw new RuntimeException(ex);
         } finally {
@@ -96,11 +97,11 @@ public class AcquisitionManager {
     public DynSettings getDynSettings() { return dynManager_.getSettings(); }
     public FluorSettings getFluorescenceSettings() { return flManager_.getSettings(); }
     
-    public void acquirePWS() { run(pwsManager_); }
+    public void acquirePWS() throws InterruptedException { run(pwsManager_); }
     
-    public void acquireDynamics() { run(dynManager_); }
+    public void acquireDynamics() throws InterruptedException { run(dynManager_); }
     
-    public void acquireFluorescence() { run(flManager_); }
+    public void acquireFluorescence() throws InterruptedException { run(flManager_); }
     
     public boolean isAcquisitionRunning() { return acquisitionRunning_; }
 }

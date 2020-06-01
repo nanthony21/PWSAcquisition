@@ -95,7 +95,7 @@ class FocusLock extends ContainerStep {
     }
     
     @Override
-    public SequencerFunction getFunction() {
+    public SequencerFunction stepFunc() {
         SequencerFunction stepFunction = super.getSubstepsFunction();
         SequencerSettings.FocusLockSettings settings = (SequencerSettings.FocusLockSettings) this.getSettings();
         return new SequencerFunction() {

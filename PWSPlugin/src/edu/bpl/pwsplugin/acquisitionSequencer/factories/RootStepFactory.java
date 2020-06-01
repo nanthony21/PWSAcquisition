@@ -67,7 +67,7 @@ class RootStep extends ContainerStep {
     }
     
     @Override
-    public SequencerFunction getFunction() { 
+    public SequencerFunction stepFunc() { 
         SequencerSettings.RootStepSettings settings = (SequencerSettings.RootStepSettings) this.getSettings();
         SequencerFunction subStepFunc = getSubstepsFunction();
         return new SequencerFunction() {

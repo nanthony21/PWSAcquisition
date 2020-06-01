@@ -99,7 +99,7 @@ class PauseStep extends EndpointStep {
     }
     
     @Override
-    public SequencerFunction getFunction() {
+    public SequencerFunction stepFunc() {
         SequencerSettings.PauseStepSettings settings = (SequencerSettings.PauseStepSettings) this.getSettings();
         return new SequencerFunction() {
             @Override
@@ -133,6 +133,7 @@ class PauseDlg extends JDialog {
         this.setModal(true);
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.setLocationRelativeTo(Globals.frame());
+        this.setResizable(false);
         
         messageLabel.setText("<html>" + msg + "</html>");
         timerLabel.setBorder(BorderFactory.createEtchedBorder());

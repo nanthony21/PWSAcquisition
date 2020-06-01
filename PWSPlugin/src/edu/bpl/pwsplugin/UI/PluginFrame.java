@@ -75,7 +75,7 @@ public class PluginFrame extends MMFrame {
     public PluginFrame() {
         super("PWS Plugin");
         this.loadAndRestorePosition(100, 100);
-        this.setLayout(new MigLayout());
+        this.setLayout(new MigLayout("insets 2 2 2 2"));
         this.setTitle(String.format("%s %s", PWSPlugin.menuName, PWSPlugin.versionNumber));
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         this.setResizable(false);

@@ -32,6 +32,11 @@ public abstract class ContainerStep extends Step {
     }
     
     public final SequencerFunction getSubstepsFunction() { // Execute each substep in sequence
+        for (Step substep : this.getSubSteps()) { //Pass callbacks on to child steps.
+            for (SequencerFunction cb : this.callbacks) {
+                substep.addCallback(cb);
+            }
+        }
         List<SequencerFunction> stepFunctions = this.getSubSteps().stream().map(Step::getFunction).collect(Collectors.toList());
         return new SequencerFunction() {
             @Override

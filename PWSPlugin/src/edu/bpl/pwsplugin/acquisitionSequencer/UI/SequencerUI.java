@@ -68,6 +68,10 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
                     Globals.mm().logs().showError(String.join("\n", errors));
                     return;
                 }
+                rootStep.addCallback((status) ->{
+                    status.newStatusMessage("Root callback");
+                    return status;
+                });
                 SequencerFunction rootFunc = rootStep.getFunction();
                 SequencerRunningDlg dlg = new SequencerRunningDlg(SwingUtilities.getWindowAncestor(this), "Acquisition Sequence Running", rootFunc);
             } catch (IllegalStateException | InstantiationException | IllegalAccessException e) {
@@ -287,7 +291,10 @@ class SequencerRunningDlg extends JDialog {
         }
 
         public void finished() {
-            SequencerRunningDlg.this.dispose();
+            //SequencerRunningDlg.this.dispose();
+            SequencerRunningDlg.this.statusMsg.setText(statusMsg.getText() + "\nDone.");
+            SequencerRunningDlg.this.cancelButton.setEnabled(false);
+            SequencerRunningDlg.this.pauseButton.setEnabled(false);
         }
 
         @Override

@@ -22,14 +22,17 @@ package edu.bpl.pwsplugin;
 
 //TODO sequencer check beforehand for file overwriting.
 //TODO test test test
+//TODO XYZ grid (can be used for z-stacks)
 //ZOffset for fluorescence.
 //Change folder step.
 //Ability to switch objectives. independent of imaging config.
 //Autoexposure for PWS.
-//Add display album for fluorescence.
-//Paused dialog too tight layout. Use progress bar.
+//Add display album for fluorescence. Make fluorescence acq engine support multiple channels.
+//Paused dialog  Use progress bar.
 //Implement builder pattern for settings.
-//Sequencer cancel not working.
+//Add sequence "treepath" to the status class.
+//Allow passing of callbacks down to substeps. (for purpose of auto software AF after pfs loss.)
+
 
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
