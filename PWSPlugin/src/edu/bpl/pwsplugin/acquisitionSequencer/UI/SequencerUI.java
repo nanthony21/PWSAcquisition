@@ -286,7 +286,6 @@ class SequencerRunningDlg extends JDialog {
     JLabel cellNum = new JLabel("Acquire Cell:");
     PauseButton pauseButton = new PauseButton(true);
     JButton cancelButton = new JButton("Cancel");
-    JProgressBar progress = new JProgressBar();
     AcquisitionThread acqThread;
     
     public static void main(String[] args) {
@@ -322,7 +321,6 @@ class SequencerRunningDlg extends JDialog {
         contentPane.add(new JLabel("Status: "), "wrap, spanx");
         contentPane.add(textScroll, "height 20sp, width 20sp, wrap, spanx");
         contentPane.add(cellNum, "wrap");
-        contentPane.add(progress, "span, wrap");
         contentPane.add(pauseButton, "gapleft push");
         contentPane.add(cancelButton, "gapright push");
         this.pack();

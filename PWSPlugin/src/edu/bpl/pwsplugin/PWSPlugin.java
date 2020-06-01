@@ -28,7 +28,6 @@ package edu.bpl.pwsplugin;
 //Ability to switch objectives. independent of imaging config.
 //Autoexposure for PWS.
 //Add display album for fluorescence. Make fluorescence acq engine support multiple channels.
-//Paused dialog  Use progress bar.
 //Implement builder pattern for settings.
 //Add sequence "treepath" to the status class.
 //Allow passing of callbacks down to substeps. (for purpose of auto software AF after pfs loss.)
