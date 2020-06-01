@@ -72,10 +72,12 @@ class FocusLockUI extends SingleBuilderJPanel<SequencerSettings.FocusLockSetting
         
         offset = new JSpinner(new SpinnerNumberModel(0, -1e8, 1e8, 1));
         delay = new JSpinner(new SpinnerNumberModel(1.0, 0.0, 30.0, 1.0));
+        ((JSpinner.DefaultEditor) offset.getEditor()).getTextField().setColumns(4);
+        ((JSpinner.DefaultEditor) delay.getEditor()).getTextField().setColumns(4);
         
-        this.add(new JLabel("Z Offset"));
+        this.add(new JLabel("Z Offset:"), "gapleft push");
         this.add(offset, "wrap");
-        this.add(new JLabel("Delay (s)"));
+        this.add(new JLabel("Delay (s):"), "gapleft push");
         this.add(delay);
     }
     

@@ -42,7 +42,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         super(new MigLayout());
         
         nameLabel.setFont(new Font("serif", Font.BOLD, 12));
-        descriptionLabel.setFont(new Font("serif", Font.ITALIC, 9));
+        descriptionLabel.setFont(new Font("serif", Font.ITALIC, 10));
         
         this.add(nameLabel, "wrap");
         this.add(descriptionLabel, "wrap");

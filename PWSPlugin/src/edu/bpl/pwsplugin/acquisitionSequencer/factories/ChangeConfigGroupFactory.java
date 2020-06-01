@@ -75,9 +75,9 @@ class ChangeConfigGroupUI extends BuilderJPanel<SequencerSettings.ChangeConfigGr
         
         updateConfigGroupComboBox();
         
-        this.add(new JLabel("Group Name:"));
+        this.add(new JLabel("Group Name:"), "gapleft push");
         this.add(configGroupName, "wrap");
-        this.add(new JLabel("Setting:"));
+        this.add(new JLabel("Setting:"), "gapleft push");
         this.add(configValue);
         
         Globals.mm().events().registerForEvents(this);

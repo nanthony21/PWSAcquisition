@@ -14,12 +14,9 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.swing.JLabel;
-import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -98,11 +95,12 @@ class EnterSubfolderUI extends BuilderJPanel<SequencerSettings.EnterSubfolderSet
         
         
         this.add(new JLabel("Subfolder:"));
-        this.add(relPath, "wrap");
+        this.add(relPath, "wrap, pushx, growx");
     }
     
     public SequencerSettings.EnterSubfolderSettings build() {
-        Path p = Paths.get(this.relPath.getText());
+        //TODO validate path
+        String p = this.relPath.getText();
         SequencerSettings.EnterSubfolderSettings settings = new SequencerSettings.EnterSubfolderSettings();
         settings.relativePath = p;
         return settings;

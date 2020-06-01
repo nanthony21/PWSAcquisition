@@ -101,9 +101,9 @@ class EveryNTimesUI extends BuilderJPanel<SequencerSettings.EveryNTimesSettings>
         n = new JSpinner(new SpinnerNumberModel(2, 1, 1000, 1));
         offset = new JSpinner(new SpinnerNumberModel(0, 0, 1000, 1));
         
-        this.add(new JLabel("N:"));
+        this.add(new JLabel("N:"), "gapleft push");
         this.add(n, "wrap");
-        this.add(new JLabel("Offset:"));
+        this.add(new JLabel("Offset:"), "gapleft push");
         this.add(offset, "wrap");
     }
     

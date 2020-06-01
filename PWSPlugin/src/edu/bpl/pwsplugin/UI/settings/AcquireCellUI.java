@@ -36,7 +36,7 @@ public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements
     CheckBoxPanel fluorCBPanel = new CheckBoxPanel(fluorSettings, "Fluorescence");
 
     public AcquireCellUI() {
-        super(new MigLayout(), AcquireCellSettings.class);
+        super(new MigLayout("insets 0 0 0 0"), AcquireCellSettings.class);
         Globals.addPropertyChangeListener(this);
         
         pwsSettings.setBorder(BorderFactory.createEtchedBorder());

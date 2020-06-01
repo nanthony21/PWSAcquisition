@@ -22,7 +22,6 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
-//TODO use the status only. get rid of alerts in MM.
 
 /**
  *
@@ -71,14 +70,18 @@ class TimeSeriesUI extends SingleBuilderJPanel<SequencerSettings.AcquireTimeSeri
     JSpinner frameIntervalMinutes;
     
     public TimeSeriesUI() {
-        super(new MigLayout(), SequencerSettings.AcquireTimeSeriesSettings.class);
+        super(new MigLayout("insets 5 0 0 0"), SequencerSettings.AcquireTimeSeriesSettings.class);
         
         numFrames = new JSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
         frameIntervalMinutes = new JSpinner(new SpinnerNumberModel(1.0, 0.0, 1000000000.0, 1.0));
+        ((JSpinner.DefaultEditor) numFrames.getEditor()).getTextField().setColumns(6);
+        ((JSpinner.DefaultEditor) frameIntervalMinutes.getEditor()).getTextField().setColumns(6);
+
+                
         
-        this.add(new JLabel("Number of time frames:"));
+        this.add(new JLabel("Number of time frames:"), "gapleft push");
         this.add(numFrames, "wrap");
-        this.add(new JLabel("Frame Interval (minutes):"));
+        this.add(new JLabel("Frame Interval (minutes):"), "gapleft push");
         this.add(frameIntervalMinutes);
     }
     
