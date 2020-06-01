@@ -52,7 +52,7 @@ public abstract class Step extends JsonableParam {
         };
     }
     
-    public final void addCallback(SequencerFunction cb) { //TODO make substeps inherit callbacks.
+    public final void addCallback(SequencerFunction cb) { 
         callbacks.add(cb);
     }
 }

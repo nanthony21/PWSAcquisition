@@ -66,7 +66,6 @@ public class FocusLockFactory extends StepFactory {
 class FocusLockUI extends SingleBuilderJPanel<SequencerSettings.FocusLockSettings>{
     JSpinner offset;
     JSpinner delay;
-    private Map<String,Object> m = new HashMap<>();
     
     public FocusLockUI() {
         super(new MigLayout(), SequencerSettings.FocusLockSettings.class);
@@ -78,13 +77,13 @@ class FocusLockUI extends SingleBuilderJPanel<SequencerSettings.FocusLockSetting
         this.add(offset, "wrap");
         this.add(new JLabel("Delay (s)"));
         this.add(delay);
-        
-        m.put("zOffset", offset);
-        m.put("preDelay", delay);
     }
     
     @Override
-    public Map<String, Object> getPropertyFieldMap() {        
+    public Map<String, Object> getPropertyFieldMap() {
+        Map<String,Object> m = new HashMap<>();
+        m.put("zOffset", offset);
+        m.put("preDelay", delay);        
         return m;
     }
 }
@@ -96,6 +95,16 @@ class FocusLock extends ContainerStep {
     
     @Override
     public SequencerFunction stepFunc() {
+        this.addCallbackToSubsteps((status)->{
+            if (!Globals.core().isContinuousFocusLocked()) { //Check if focused. and log. later we will add refocusing.
+                Globals.mm().logs().logMessage("Focus is unlocked");
+                Globals.core().fullFocus();
+                Globals.core().enableContinuousFocus(true);
+            } else {
+                Globals.mm().logs().logMessage("Focus is locked");
+            }
+            return status;
+        });
         SequencerFunction stepFunction = super.getSubstepsFunction();
         SequencerSettings.FocusLockSettings settings = (SequencerSettings.FocusLockSettings) this.getSettings();
         return new SequencerFunction() {

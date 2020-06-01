@@ -56,4 +56,11 @@ public abstract class ContainerStep extends Step {
         }
         return newAcqs;
     }
+    
+        
+    public final void addCallbackToSubsteps(SequencerFunction cb) { 
+        for (Step step : this.getSubSteps()) {
+            step.addCallback(cb);
+        }
+    }
 }
