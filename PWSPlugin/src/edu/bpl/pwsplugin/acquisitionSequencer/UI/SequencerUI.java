@@ -297,7 +297,7 @@ class SequencerRunningDlg extends JDialog {
                         Integer id = status.newStatusMessage("Remember:");
                         for  (int i=0; i<1000; i++) {
                             Thread.sleep(1000);
-                            status.updateCellNumber(i);
+                            status.setCellNum(i);
                             long j =  Math.round(Math.random() * 10);
                             String s = "Forget it.";
                             status.newStatusMessage(new String(new char[(int)j]).replace("\0", s));
@@ -346,7 +346,7 @@ class SequencerRunningDlg extends JDialog {
     }
     
     public void updateStatus(AcquisitionStatus status) {
-        this.cellNum.setText(String.format("Acquiring Cell: %d", status.currentCellNum));
+        this.cellNum.setText(String.format("Acquiring Cell: %d", status.getCellNum()));
         this.statusMsg.setText(String.join("\n", status.statusMsg));
     }
 
@@ -360,7 +360,7 @@ class SequencerRunningDlg extends JDialog {
             ThrowingFunction<AcquisitionStatus, Void> publishCallback = (status) -> { this.publish(status); return null; };
             ThrowingFunction<Void, Void> pauseCallback = (nullInput) -> { SequencerRunningDlg.this.pauseButton.pausePoint(); return nullInput; };
             startingStatus = new AcquisitionStatus(publishCallback, pauseCallback);
-            startingStatus.currentCellNum = startingCellNum;
+            startingStatus.setCellNum(startingCellNum);
             currentStatus = startingStatus;
             this.execute();
         }

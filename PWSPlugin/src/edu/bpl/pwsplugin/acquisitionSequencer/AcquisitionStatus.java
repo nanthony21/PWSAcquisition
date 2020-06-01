@@ -5,6 +5,8 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer;
 
+import edu.bpl.pwsplugin.Globals;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -15,7 +17,8 @@ import java.util.function.Function;
  */
 public class AcquisitionStatus { //TODO make this thread safe.
     //This object acts as a go-between between the UI and the acquisition thread.
-    public Integer currentCellNum; //The folder number we are currently acquiring.
+    private String currentPath;
+    protected Integer currentCellNum; //The folder number we are currently acquiring.
     public List<String> statusMsg = new ArrayList<>(); //A string describing what is currently happening.
     private final Function<AcquisitionStatus, Void> publishCallBack; //This callback should link to the `publish` method of the swingworker running the acquisition thread.
     private final Function<Void, Void> pauseCallBack; // This callback should link to the `pausepoint` method of a pause button.
@@ -28,6 +31,7 @@ public class AcquisitionStatus { //TODO make this thread safe.
     
     public AcquisitionStatus(AcquisitionStatus status) {
         //Copy an existing status object to a new object, avoids issues with this being a mutable object.
+        currentPath = status.currentPath;
         currentCellNum = status.currentCellNum;
         statusMsg = status.statusMsg;
         publishCallBack = status.publishCallBack;
@@ -50,13 +54,27 @@ public class AcquisitionStatus { //TODO make this thread safe.
         this.publish();
     }
     
-    public void updateCellNumber(Integer cellNumber) {
-        this.currentCellNum = cellNumber;
-        this.publish();
-    }
-    
     public void allowPauseHere() {
         //If the pause button was armed then block this thread until it is disarmed.
         pauseCallBack.apply(null);
+    }
+    
+    public String getSavePath() {
+       return currentPath; 
+    }
+    
+    public void setSavePath(String path) {
+        Globals.acqManager().setSavePath(path);
+        currentPath = path;
+    }
+    
+    public void setCellNum(Integer num) {
+        currentCellNum = num;
+        Globals.acqManager().setCellNum(num);
+        this.publish();
+    }
+    
+    public Integer getCellNum() {
+        return currentCellNum;
     }
 }

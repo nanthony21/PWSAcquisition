@@ -25,11 +25,11 @@ public class SequencerSettings {
     }
 
     public static class RootStepSettings extends JsonableParam {
-        public String directory;
+        public String directory = "";
     }
 
     public static class PauseStepSettings extends JsonableParam {
-        public String message;
+        public String message = "Paused";
     }
 
     public static class FocusLockSettings extends JsonableParam {

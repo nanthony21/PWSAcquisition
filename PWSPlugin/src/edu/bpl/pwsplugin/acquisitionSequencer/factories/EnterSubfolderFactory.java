@@ -14,6 +14,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
+import java.io.File;
 import java.nio.file.Paths;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -73,11 +74,11 @@ class EnterSubfolderStep extends ContainerStep {
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-                String origPath = Globals.acqManager().getSavePath();
-                status.newStatusMessage(String.format("Moving to subfolder: %s", settings.relativePath.toString()));
-                Globals.acqManager().setSavePath(Paths.get(origPath).resolve(settings.relativePath).toString());
+                String origPath = status.getSavePath();
+                status.newStatusMessage(String.format("Moving to subfolder: %s", settings.relativePath));
+                status.setSavePath(Paths.get(origPath).resolve(settings.relativePath).toString());
                 status = stepFunction.apply(status);
-                Globals.acqManager().setSavePath(origPath);
+                status.setSavePath(origPath);
                 return status;
             } 
         };
@@ -99,8 +100,8 @@ class EnterSubfolderUI extends BuilderJPanel<SequencerSettings.EnterSubfolderSet
     }
     
     public SequencerSettings.EnterSubfolderSettings build() {
-        //TODO validate path
         String p = this.relPath.getText();
+        File f = new File(p);
         SequencerSettings.EnterSubfolderSettings settings = new SequencerSettings.EnterSubfolderSettings();
         settings.relativePath = p;
         return settings;

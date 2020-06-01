@@ -44,7 +44,7 @@ public class FocusLockFactory extends StepFactory {
     
     @Override
     public String getDescription() {
-        return "Engage continuous hardware autofocus";
+        return "Engage continuous hardware autofocus. Focus lock will be checked before execution of each substep.";
     }
     
     @Override

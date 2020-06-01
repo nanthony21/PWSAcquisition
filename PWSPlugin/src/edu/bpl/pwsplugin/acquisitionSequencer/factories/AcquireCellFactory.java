@@ -72,7 +72,6 @@ class AcquireCell extends EndpointStep {
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception{
-                acqMan.setCellNum(status.currentCellNum);
                 for (FluorSettings flSettings : settings.fluorSettings) {
                     status.allowPauseHere();
                     status.newStatusMessage(String.format("Acquiring %s fluoresence", flSettings.filterConfigName));
@@ -92,7 +91,7 @@ class AcquireCell extends EndpointStep {
                     acqMan.acquireDynamics();
                 }
                 status.allowPauseHere();
-                status.updateCellNumber(status.currentCellNum + 1);
+                status.setCellNum(status.getCellNum()+1);
                 return status;
             }
         };

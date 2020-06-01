@@ -63,4 +63,6 @@ public abstract class ContainerStep extends Step {
             step.addCallback(cb);
         }
     }
+    
+    public abstract List<String> getEnclosedSavePaths();
 }
