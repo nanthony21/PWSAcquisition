@@ -20,17 +20,17 @@ package edu.bpl.pwsplugin;
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-//TODO sequencer check beforehand for file overwriting.
+//Must Do:
 //TODO test test test
-//TODO XYZ grid (can be used for z-stacks)
 //ZOffset for fluorescence.
 //Change folder step.
 //Ability to switch objectives. independent of imaging config.
 //Autoexposure for PWS.
+//Optional:
 //Add display album for fluorescence. Make fluorescence acq engine support multiple channels.
+//TODO XYZ grid (can be used for z-stacks)
 //Implement builder pattern for settings.
 //Add sequence "treepath" to the status class.
-//Allow passing of callbacks down to substeps. (for purpose of auto software AF after pfs loss.)
 
 
 import com.google.common.eventbus.Subscribe;
