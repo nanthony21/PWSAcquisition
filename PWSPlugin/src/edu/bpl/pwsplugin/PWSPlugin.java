@@ -21,10 +21,12 @@ package edu.bpl.pwsplugin;
 //
 
 //Must Do:
+//Generate camera affine transform
 //TODO test test test
-//Autoexposure for PWS.
 //Optional:
 //Add display album for fluorescence. Make fluorescence acq engine support multiple channels.
+//Step types:
+//GoTo step
 //TODO XYZ grid (can be used for z-stacks)
 //Implement builder pattern for settings.
 //Add sequence "treepath" to the status class.
