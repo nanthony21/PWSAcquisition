@@ -44,6 +44,7 @@ public class PluginFrame extends MMFrame {
     private final JTabbedPane tabs = new JTabbedPane();
     private final AcquisitionPanel acqPanel = new AcquisitionPanel();
     private final SequencerUI sequencePanel = new SequencerUI();
+    private final UtilityPanel utilityPanel = new UtilityPanel();
     private final ConfigurationDialog configDialog = new ConfigurationDialog(this);
 
     public PluginFrame() {
@@ -69,6 +70,7 @@ public class PluginFrame extends MMFrame {
         this.add(tabs, "wrap, span, grow");
         tabs.addTab("Sequencing", this.sequencePanel);
         tabs.addTab("Quick Acquire", this.acqPanel);
+        tabs.add("Utility", this.utilityPanel);
         
         this.pack();
         this.setMinimumSize(this.getSize());
