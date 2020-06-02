@@ -24,10 +24,10 @@ import net.miginfocom.swing.MigLayout;
  * @author nick
  */
 public class DynPanel extends SingleBuilderJPanel<DynSettings>{
-    private JSpinner wvSpinner = new JSpinner();
-    private JSpinner framesSpinner = new JSpinner();
-    private JSpinner exposureSpinner = new JSpinner();
-    private JComboBox<String> imConfName = new JComboBox<>();
+    private final JSpinner wvSpinner = new JSpinner();
+    private final JSpinner framesSpinner = new JSpinner();
+    private final JSpinner exposureSpinner = new JSpinner();
+    private final JComboBox<String> imConfName = new JComboBox<>();
 
     
     public DynPanel() {
@@ -37,11 +37,11 @@ public class DynPanel extends SingleBuilderJPanel<DynSettings>{
         exposureSpinner.setModel(new SpinnerNumberModel(50, 1, 500, 5));
         
         
-        super.add(new JLabel("Wavelength (nm)"));
+        super.add(new JLabel("Wavelength (nm)"), "gapleft push");
         super.add(wvSpinner, "wrap");
-        super.add(new JLabel("Exposure (ms)"));
+        super.add(new JLabel("Exposure (ms)"), "gapleft push");
         super.add(exposureSpinner, "wrap, growx");
-        super.add(new JLabel("# of Frames"));
+        super.add(new JLabel("# of Frames"), "gapleft push");
         super.add(framesSpinner, "wrap");
         super.add(new JLabel("Imaging Configuration"), "span");
         super.add(imConfName, "span");
