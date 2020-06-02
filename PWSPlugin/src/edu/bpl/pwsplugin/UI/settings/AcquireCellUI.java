@@ -83,7 +83,7 @@ public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements
             this.dynCBPanel.setSelected(true);
             this.dynSettings.populateFields(settings.dynSettings);
         }         
-        if (settings.fluorSettings == null) {
+        if (settings.fluorSettings.isEmpty()) {
             this.fluorCBPanel.setSelected(false);
         } else {
             this.fluorCBPanel.setSelected(true);

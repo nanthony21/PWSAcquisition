@@ -6,6 +6,8 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -17,5 +19,9 @@ public abstract class EndpointStep extends Step {
     //TODO maybe this isn't needed
     public EndpointStep(Consts.Type type) {
         super(type);
+    }
+    
+    public List<String> requiredRelativePaths(Integer startingCellNum) {
+        return new ArrayList<>(); //Most endpoints don't save a cell folder.
     }
 }

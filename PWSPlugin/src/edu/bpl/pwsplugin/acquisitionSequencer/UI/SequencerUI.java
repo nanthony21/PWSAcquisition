@@ -79,10 +79,10 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
                     Globals.mm().logs().showError(String.join("\n", errors));
                     return;
                 }
-                rootStep.addCallback((status) ->{
+                /*rootStep.addCallback((status) ->{
                     status.newStatusMessage("Root callback");
                     return status;
-                });
+                });*/
                 SequencerFunction rootFunc = rootStep.getFunction();
                 SequencerRunningDlg dlg = new SequencerRunningDlg(SwingUtilities.getWindowAncestor(this), "Acquisition Sequence Running", rootFunc);
             } catch (IllegalStateException  | BuilderPanelException e) {
@@ -149,17 +149,20 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
     }
     
     private boolean resolveFileConflicts(Step step) {
-        //TODO Don't assume starting at cell 1
         //TODO doesn't account for planned ability to change subdir.
-        //returns true if it is ok ot proceed, false if cancel.
+        //returns true if it is ok to proceed, false if cancel.
         String dir = ((SequencerSettings.RootStepSettings) step.getSettings()).directory;
-        Integer numberAcqsExpected = (int) Math.ceil(step.numberNewAcqs()); //This can possible be fractional due to the `EveryNTimes` step. always round up to be safe.
+        //Integer numberAcqsExpected = (int) Math.ceil(step.numberNewAcqs()); //This can possible be fractional due to the `EveryNTimes` step. always round up to be safe.
+        List<String> relativePaths = step.requiredRelativePaths(1);
         List<Path> conflict = new ArrayList<>();
-        for (int i=0; i<numberAcqsExpected; i++) {
-            File cellFolder = FileSpecs.getCellFolderName(Paths.get(dir), i+1).toFile();
+        for (String relPath : relativePaths) {
+            File cellFolder = Paths.get(dir).resolve(relPath).toFile();
             if (cellFolder.exists()) {
                 conflict.add(Paths.get(dir).relativize(cellFolder.toPath()));
             }
+        }
+        if (conflict.isEmpty()) {
+            return true;
         }
         boolean overwrite = (new JDialog() { //OPen a dialog asking to overwrite, if true then go ahead.
             private boolean result;
@@ -170,7 +173,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
                     this.setModal(true);
                     this.setLocationRelativeTo(this.getOwner());
                     
-                    JPanel cont = new JPanel(new MigLayout("insets 0 0 0 0, fill"));
+                    JPanel cont = new JPanel(new MigLayout("fill"));
                     JTextArea textTop = new JTextArea(String.format("The following files already exist at %s:", dir));
                     textTop.setWrapStyleWord(true);
                     textTop.setLineWrap(true);
@@ -319,11 +322,12 @@ class SequencerRunningDlg extends JDialog {
         JPanel contentPane = new JPanel(new MigLayout("fill"));
         this.setContentPane(contentPane);
         contentPane.add(new JLabel("Status: "), "wrap, spanx");
-        contentPane.add(textScroll, "height 20sp, width 20sp, wrap, spanx");
+        contentPane.add(textScroll, "height 20sp, width 15sp, wrap, spanx");
         contentPane.add(cellNum, "wrap");
         contentPane.add(pauseButton, "gapleft push");
         contentPane.add(cancelButton, "gapright push");
         this.pack();
+        this.setResizable(false);
         
         acqThread = new AcquisitionThread(rootFunc, 1); //This starts the thread.
         
@@ -350,26 +354,22 @@ class SequencerRunningDlg extends JDialog {
         this.statusMsg.setText(String.join("\n", status.statusMsg));
     }
 
-    class AcquisitionThread extends SwingWorker<AcquisitionStatus, AcquisitionStatus> { //TODO maybe this hsould be inner to dialog.
+    class AcquisitionThread extends SwingWorker<Void, AcquisitionStatus> { //TODO maybe this hsould be inner to dialog.
         SequencerFunction rootFunc;
         private final AcquisitionStatus startingStatus;
-        private AcquisitionStatus currentStatus;
 
         public AcquisitionThread(SequencerFunction rootFunc, Integer startingCellNum) {
             this.rootFunc = rootFunc;  
             ThrowingFunction<AcquisitionStatus, Void> publishCallback = (status) -> { this.publish(status); return null; };
             ThrowingFunction<Void, Void> pauseCallback = (nullInput) -> { SequencerRunningDlg.this.pauseButton.pausePoint(); return nullInput; };
             startingStatus = new AcquisitionStatus(publishCallback, pauseCallback);
-            startingStatus.setCellNum(startingCellNum);
-            currentStatus = startingStatus;
             this.execute();
         }
 
         @Override
-        public AcquisitionStatus doInBackground() {
+        public Void doInBackground() {
             try {
                 AcquisitionStatus status = rootFunc.apply(this.startingStatus);
-                this.currentStatus = status;
             } catch (Exception ie) {
                 Globals.mm().logs().logError(ie);
                 Globals.mm().logs().showError(String.format("Error in sequencer. See core log file. %s", ie.getMessage()));
@@ -377,7 +377,7 @@ class SequencerRunningDlg extends JDialog {
             SwingUtilities.invokeLater(() -> {
                 finished();
             });
-            return this.currentStatus;
+            return null;
         }
 
         public void finished() {
@@ -389,7 +389,7 @@ class SequencerRunningDlg extends JDialog {
 
         @Override
         protected void process(List<AcquisitionStatus> chunks) {
-            currentStatus = chunks.get(chunks.size() - 1);
+            AcquisitionStatus currentStatus = chunks.get(chunks.size() - 1);
             SequencerRunningDlg.this.updateStatus(currentStatus);
             //setProgress(
         }

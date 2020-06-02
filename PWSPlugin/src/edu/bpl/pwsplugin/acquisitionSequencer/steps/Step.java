@@ -55,4 +55,7 @@ public abstract class Step extends JsonableParam {
     public final void addCallback(SequencerFunction cb) { 
         callbacks.add(cb);
     }
+    
+    public abstract List<String> requiredRelativePaths(Integer startingCellNum);
+    
 }

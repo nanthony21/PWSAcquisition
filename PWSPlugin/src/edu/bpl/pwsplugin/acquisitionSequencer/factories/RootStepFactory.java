@@ -16,7 +16,6 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -73,8 +72,8 @@ class RootStep extends ContainerStep {
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-                Globals.acqManager().setSavePath(settings.directory);
-                //TODO create the status object here. input should be null.
+                status.setCellNum(1);
+                status.setSavePath(settings.directory);
                 status = subStepFunc.apply(status);
                 return status;
             }

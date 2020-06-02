@@ -8,6 +8,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,5 +65,17 @@ public abstract class ContainerStep extends Step {
         }
     }
     
-    public abstract List<String> getEnclosedSavePaths();
+    //public abstract List<String> getEnclosedSavePaths();
+    
+    @Override
+    public List<String> requiredRelativePaths(Integer startingCellNum) {
+        Integer cellNum = startingCellNum;
+        List<String> paths = new ArrayList<>();
+        for (Step step : this.getSubSteps()) {
+            paths.addAll(step.requiredRelativePaths(cellNum));
+            cellNum += (int) Math.round(step.numberNewAcqs());
+        }
+        return paths;
+    }
+    
 }
