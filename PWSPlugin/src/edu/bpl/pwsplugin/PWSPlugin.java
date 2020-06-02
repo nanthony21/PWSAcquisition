@@ -22,9 +22,6 @@ package edu.bpl.pwsplugin;
 
 //Must Do:
 //TODO test test test
-//ZOffset for fluorescence.
-//Change folder step.
-//Ability to switch objectives. independent of imaging config.
 //Autoexposure for PWS.
 //Optional:
 //Add display album for fluorescence. Make fluorescence acq engine support multiple channels.

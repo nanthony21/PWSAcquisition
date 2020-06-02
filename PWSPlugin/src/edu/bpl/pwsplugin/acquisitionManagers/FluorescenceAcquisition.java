@@ -97,6 +97,8 @@ public class FluorescenceAcquisition implements Acquisition<FluorSettings>{
             if (spectralMode) { 
                 this.tunableFilter.setWavelength(settings.tfWavelength);
             }
+            double origZ = Globals.core().getPosition(); //TODO will this work with PFS on?
+            Globals.core().setPosition(origZ + settings.focusOffset);
             imSaver.start();
             this.camera.setExposure(settings.exposure);
             Globals.core().clearCircularBuffer();
@@ -116,6 +118,7 @@ public class FluorescenceAcquisition implements Acquisition<FluorSettings>{
             album.clear(); //One day it would be nice to show multiple fluorescence images at once.
             album.addImage(img);
             imSaver.getQueue().add(img);
+            Globals.core().setPosition(origZ);
             imSaver.join();
         } finally {
             if (Globals.getMMConfigAdapter().autoFilterSwitching) {

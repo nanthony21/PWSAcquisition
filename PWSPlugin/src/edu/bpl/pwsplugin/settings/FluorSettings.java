@@ -16,4 +16,5 @@ public class FluorSettings extends JsonableParam {
     public double exposure = 1000;
     public String filterConfigName = "";
     public int tfWavelength = 550;
+    public long focusOffset = 0;
 }

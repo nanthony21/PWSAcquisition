@@ -25,6 +25,7 @@ import net.miginfocom.swing.MigLayout;
 public class FluorPanel extends BuilderJPanel<FluorSettings>{
     private JSpinner wvSpinner;
     private JSpinner exposureSpinner;
+    private JSpinner focusOffsetSpinner;
     private JComboBox<String> filterCombo = new JComboBox<>();
     private JComboBox<String> imConfName = new JComboBox<>();
 
@@ -34,6 +35,7 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
         
         wvSpinner = new JSpinner(new SpinnerNumberModel(550, 400, 1000, 5));
         exposureSpinner = new JSpinner(new SpinnerNumberModel(1000.0, 1.0, 5000.0, 100.0));
+        focusOffsetSpinner = new JSpinner(new SpinnerNumberModel(0, -10000, 10000, 100));
         filterCombo.setModel(this.getFilterComboModel());
         
         try {
@@ -50,7 +52,9 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
         super.add(wvSpinner);
         super.add(exposureSpinner);
         super.add(filterCombo, "wrap");
-        super.add(new JLabel("Imaging Configuration"), "span");
+        super.add(new JLabel("Focus Offset"));
+        super.add(new JLabel("Imaging Configuration"), "span, wrap");
+        super.add(focusOffsetSpinner);
         super.add(imConfName, "span");
     }
     
@@ -69,6 +73,7 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
         FluorSettings settings = new FluorSettings();
         settings.exposure = (Double) this.exposureSpinner.getValue();
         settings.filterConfigName = (String) this.filterCombo.getSelectedItem();
+        settings.focusOffset = (Long) this.focusOffsetSpinner.getValue();
         settings.tfWavelength = (Integer) this.wvSpinner.getValue();
         settings.imConfigName = (String) this.imConfName.getSelectedItem();
         return settings;
@@ -80,6 +85,7 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
         this.filterCombo.setSelectedItem(settings.filterConfigName);
         this.wvSpinner.setValue(settings.tfWavelength);
         this.imConfName.setSelectedItem(settings.imConfigName);
+        this.focusOffsetSpinner.setValue(settings.focusOffset);
     }
     
     //API
