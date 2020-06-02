@@ -108,8 +108,9 @@ public class FluorescenceAcquisition implements Acquisition<FluorSettings>{
             if (spectralMode) {
                 md.put("wavelength", settings.tfWavelength);
             } else {
-                md.put("altCameraTransform", new JSONArray(camera.getSettings().affineTransform)); //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera.  
+                md.put("wavelength", JSONObject.NULL);
             }
+            md.put("cameraTransform", new JSONArray(camera.getSettings().affineTransform)); //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera.  
             Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
             Coords coords = img.getCoords();
             pipeline.insertImage(img); //Add image to the data pipeline for processing

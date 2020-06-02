@@ -30,6 +30,7 @@ package edu.bpl.pwsplugin;
 //TODO XYZ grid (can be used for z-stacks)
 //Implement builder pattern for settings.
 //Add sequence "treepath" to the status class.
+//Expand usage of metadata class.
 
 
 import com.google.common.eventbus.Subscribe;

@@ -29,7 +29,7 @@ public class AcquisitionStatus { //TODO make this thread safe.
         this.pauseCallBack = pauseCallBack;
     }
     
-    public AcquisitionStatus(AcquisitionStatus status) {
+    public AcquisitionStatus(AcquisitionStatus status) { //This isn't used and maybe thats a good thing, maybe a single sequence should just have a single status object that is completely mutable.
         //Copy an existing status object to a new object, avoids issues with this being a mutable object.
         currentPath = status.currentPath;
         currentCellNum = status.currentCellNum;
