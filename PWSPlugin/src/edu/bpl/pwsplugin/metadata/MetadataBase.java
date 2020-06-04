@@ -11,15 +11,17 @@ import org.micromanager.internal.utils.ReportingUtils;
 
 
 public class MetadataBase {
-    List<Double> linearityPoly;
-    String system;
-    Integer darkCounts;
-    String time;
+    private final List<Double> linearityPoly;
+    private final String system;
+    private final Integer darkCounts;
+    private final String time;
+    private final List<Double> affineTransform;
                     
-    public MetadataBase(List<Double> linearityPoly, String systemName, Integer darkCounts) {
+    private MetadataBase(List<Double> linearityPoly, String systemName, Integer darkCounts, List<Double> afTransform) {
         this.linearityPoly = linearityPoly;
         this.system = systemName;
         this.darkCounts = darkCounts;
+        this.affineTransform = afTransform;
         this.time =  LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
 
         if (this.system.equals("")) {
@@ -35,6 +37,7 @@ public class MetadataBase {
         this.linearityPoly = base.linearityPoly;
         this.system = base.system;
         this.darkCounts = base.darkCounts;
+        this.affineTransform = base.affineTransform;
         this.time = base.time;
     }
             
@@ -54,5 +57,40 @@ public class MetadataBase {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    public static class Builder {
+        private List<Double> linearityPoly;
+        private String systemName;
+        private Integer darkCounts;
+        private List<Double> affineTransform;
+
+        public Builder() {
+        }
+
+        public Builder linearityPoly(List<Double> linearityPoly) {
+            this.linearityPoly = linearityPoly;
+            return this;
+        }
+
+        public Builder systemName(String systemName) {
+            this.systemName = systemName;
+            return this;
+        }
+
+        public Builder darkCounts(Integer darkCounts) {
+            this.darkCounts = darkCounts;
+            return this;
+        }
+        
+        public Builder affineTransform(List<Double> trans) {
+            this.affineTransform = trans;
+            return this;
+        }
+
+        public MetadataBase build() { //TODO make each field required.
+            return new MetadataBase(linearityPoly, systemName, darkCounts, affineTransform);
+        }
+
     }
 }
