@@ -19,6 +19,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import mmcorej.DoubleVector;
 import mmcorej.org.json.JSONArray;
 import mmcorej.org.json.JSONObject;
 import org.micromanager.data.Coords;
@@ -110,7 +111,12 @@ public class FluorescenceAcquisition implements Acquisition<FluorSettings>{
             } else {
                 md.put("wavelength", JSONObject.NULL);
             }
-            md.put("cameraTransform", new JSONArray(camera.getSettings().affineTransform)); //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera.  
+            DoubleVector aff = Globals.core().getPixelSizeAffine();
+            JSONArray arr = new JSONArray();
+            for (int i=0; i<aff.size(); i++) {
+                arr.put(aff.get(i));
+            }
+            md.put("cameraTransform", arr); //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera.  
             Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
             Coords coords = img.getCoords();
             pipeline.insertImage(img); //Add image to the data pipeline for processing
