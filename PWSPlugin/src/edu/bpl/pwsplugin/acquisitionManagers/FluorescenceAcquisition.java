@@ -92,9 +92,6 @@ public class FluorescenceAcquisition implements Acquisition<FluorSettings>{
             ReportingUtils.showMessage("Set the correct fluorescence filter and click `OK`.");
         }
         try {
-            if (!imConf.isActive()) {
-                imConf.activateConfiguration();
-            }
             if (spectralMode) { 
                 this.tunableFilter.setWavelength(settings.tfWavelength);
             }
@@ -111,12 +108,6 @@ public class FluorescenceAcquisition implements Acquisition<FluorSettings>{
             } else {
                 md.put("wavelength", JSONObject.NULL);
             }
-            DoubleVector aff = Globals.core().getPixelSizeAffine();
-            JSONArray arr = new JSONArray();
-            for (int i=0; i<aff.size(); i++) {
-                arr.put(aff.get(i));
-            }
-            md.put("cameraTransform", arr); //A 2x3 affine transformation matrix specifying how coordinates in one camera translate to coordinates in another camera.  
             Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
             Coords coords = img.getCoords();
             pipeline.insertImage(img); //Add image to the data pipeline for processing

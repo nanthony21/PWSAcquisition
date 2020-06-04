@@ -26,12 +26,17 @@ import org.micromanager.internal.utils.ReportingUtils;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
+import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
+import java.util.ArrayList;
+import java.util.List;
+import mmcorej.DoubleVector;
+import mmcorej.org.json.JSONArray;
 
 public class AcquisitionManager { 
     /* A parent acquisition manager that can direct commands down to more specific acquisition managers.
@@ -55,11 +60,20 @@ public class AcquisitionManager {
         if (Globals.core().getPixelSizeUm() == 0.0) { //TODO bundle this into the `Metadata`
             ReportingUtils.showMessage("It is highly recommended that you provide MicroManager with a pixel size setting for the current setup. Having this information is useful for analysis.");
         }
-        ImagingConfigurationSettings imConf = Globals.getHardwareConfiguration().getSettings().configs.get(0);
-  
-        MetadataBase metadata = new MetadataBase(imConf.camSettings.linearityPolynomial,
-            Globals.getHardwareConfiguration().getSettings().systemName,
-            imConf.camSettings.darkCounts);
+        ImagingConfiguration imConf = Globals.getHardwareConfiguration().getImagingConfigurationByName(); //TODO Urgent.get the actually selected config. maybe manager.getImagingConfig?
+        if (!imConf.isActive()) {
+            imConf.activateConfiguration();
+        }
+        DoubleVector aff = Globals.core().getPixelSizeAffine();
+        List<Double> trans = new ArrayList<>();
+        for (int i=0; i<aff.size(); i++) {
+            trans.add(aff.get(i));
+        }            
+        MetadataBase.Builder metadata = new MetadataBase.Builder()
+                .linearityPoly(imConf.camera().getSettings().linearityPolynomial)
+                .systemName(Globals.getHardwareConfiguration().getSettings().systemName)
+                .darkCounts(imConf.camera().getSettings().darkCounts)
+                .affineTransform(trans);
         
         try {
             if (Globals.mm().live().getIsLiveModeOn()) {

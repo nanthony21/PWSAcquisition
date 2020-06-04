@@ -119,9 +119,6 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
         int initialWv = 550;
 
         try {    
-            if (!conf.isActive()) {
-                conf.activateConfiguration();
-            }
             initialWv = conf.tunableFilter().getWavelength(); //Get initial wavelength
             Globals.core().clearCircularBuffer();     
             conf.camera().setExposure(exposure_);
