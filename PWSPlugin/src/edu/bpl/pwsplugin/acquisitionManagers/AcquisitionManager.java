@@ -30,13 +30,11 @@ import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
-import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
-import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.util.ArrayList;
 import java.util.List;
 import mmcorej.DoubleVector;
-import mmcorej.org.json.JSONArray;
+
 
 public class AcquisitionManager { 
     /* A parent acquisition manager that can direct commands down to more specific acquisition managers.
@@ -53,7 +51,7 @@ public class AcquisitionManager {
     
     private void run(Acquisition manager) throws InterruptedException { //All acquisitions should be run with this.
         if (acquisitionRunning_) {
-            throw new RuntimeException("Attempting to start acquisition when acquisition is already running.");
+            throw new IllegalStateException("Attempting to start acquisition when acquisition is already running.");
         }
         acquisitionRunning_ = true;
 

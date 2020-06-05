@@ -28,10 +28,8 @@ package edu.bpl.pwsplugin;
 //Step types:
 //GoTo step
 //TODO XYZ grid (can be used for z-stacks)
-//Implement builder pattern for settings.
 //Add sequence "treepath" to the status class.
-//Expand usage of metadata class.
-
+//Add sequence logging.
 
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;

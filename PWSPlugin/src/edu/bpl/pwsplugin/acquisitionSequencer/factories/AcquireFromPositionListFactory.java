@@ -45,7 +45,7 @@ public class AcquireFromPositionListFactory extends StepFactory {
     
     @Override
     public String getDescription() {
-        return "Perform enclosed steps at each position in the list.";
+        return "Perform enclosed steps at each position in the list. Position names starting with: \"ZPFS\": Disable PFS for this position then reenable. \"APFS\": Software autofocus followed by enabling PFS. \"PFS\": Enable PFS and then disable.";
     }
     
     @Override
@@ -85,12 +85,12 @@ class AcquireFromPositionList extends ContainerStep {
                     status.newStatusMessage(String.format("Moving to position %s", label));
                     Callable<Void> preMoveRoutine = ()->{return null;};
                     Callable<Void> postMoveRoutine = ()->{return null;};
-                    //TODO do we want to keep this undocumented naming stuff? How about we document it? duh
+                    //TODO do we want to keep this undocumented naming stuff? Replace it with a more formalized Hook functionality
                     if (label.contains("APFS")) { //Turn off pfs before moving. after moving run autofocus to get back i the right range. then enable pfs again.
-                        preMoveRoutine = ()->{ Globals.core().setProperty("TIPFSStatus", "State", "Off"); return null; };
+                        preMoveRoutine = ()->{ Globals.core().enableContinuousFocus(false); return null; };
                         postMoveRoutine = ()->{ PFSFuncs.autoFocusThenPFS(); return null; };     
                     } else if (label.contains("ZPFS")) { //Turn off pfs, move, reenable pfs. make sure to set a coordinate for z-nonpfs for this to work.
-                        preMoveRoutine = ()->{ Globals.core().setProperty("TIPFSStatus", "State", "Off"); return null; };     
+                        preMoveRoutine = ()->{ Globals.core().enableContinuousFocus(false);  return null; };     
                         postMoveRoutine = ()->{ PFSFuncs.pauseThenPFS(); return null; };
                     } else if (label.contains("PFS")) { //If the position name has PFS then turn on pfs for this acquisition and then turn off.
                         postMoveRoutine = ()->{ PFSFuncs.alignPFS(); return null; };
@@ -100,7 +100,6 @@ class AcquireFromPositionList extends ContainerStep {
                     postMoveRoutine.call();
                     status = stepFunction.apply(status);
                 }
-                list.getPosition(0).goToPosition(list.getPosition(0), Globals.core());
                 return status;
             }
         };
@@ -116,28 +115,24 @@ class AcquireFromPositionList extends ContainerStep {
 
 class PFSFuncs {
     static void alignPFS() throws Exception {
-        //ALIGNPFS Turns on the pfs for a few seconds and then turns it off. If it's
-        //already on then just proceed.
-        if (Globals.core().getProperty("TIPFSStatus", "State").equals("Off")) {
-            Globals.core().setProperty("TIPFSStatus", "State", "On");
+        if (Globals.core().isContinuousFocusEnabled()) {
+            Globals.core().enableContinuousFocus(true); 
             Thread.sleep(3000);
-            Globals.core().setProperty("TIPFSStatus", "State", "Off");
+            Globals.core().enableContinuousFocus(false); 
         }
     }
     
     static void autoFocusThenPFS() throws Exception {
-        //AUTOFOCUSTHENPFS Summary of this function goes here
-        //   Detailed explanation goes here
         AutofocusPlugin afPlugin = Globals.mm().getAutofocusManager().getAutofocusMethod();
         afPlugin.fullFocus(); //This blocks until the focus is done
+        Thread.sleep(2000);
+        Globals.core().enableContinuousFocus(true); 
         Thread.sleep(3000);
-        Globals.core().setProperty("TIPFSStatus", "State", "On");
-        Thread.sleep(5000);
     }
     
     static void pauseThenPFS() throws Exception {
         Thread.sleep(1000);
-        Globals.core().setProperty("TIPFSStatus", "State", "On");
+        Globals.core().enableContinuousFocus(true); 
         Thread.sleep(3000);
     }
 }
