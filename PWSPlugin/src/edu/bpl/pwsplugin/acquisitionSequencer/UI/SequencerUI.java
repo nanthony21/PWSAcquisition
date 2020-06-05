@@ -100,7 +100,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
                 }
                 rootStep.toJsonFile(path);
             } catch (IOException | BuilderPanelException e) {
-                Globals.mm().logs().logError(e);
+                Globals.mm().logs().showError(e);
             }
         });
         
@@ -110,8 +110,8 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
                 String path = FileDialogs.openFile(topFrame, "Load Sequence", Step.FILETYPE).getPath();
                 ContainerStep rootStep = (ContainerStep) JsonableParam.fromJsonFile(path, Step.class);
                 this.populateFields(rootStep);
-            } catch (FileNotFoundException e) {
-                Globals.mm().logs().logError(e);
+            } catch (FileNotFoundException | NullPointerException e) {
+                Globals.mm().logs().showError(e);
             }
         });
         

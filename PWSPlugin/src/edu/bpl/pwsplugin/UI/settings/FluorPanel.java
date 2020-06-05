@@ -73,7 +73,7 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
         FluorSettings settings = new FluorSettings();
         settings.exposure = (Double) this.exposureSpinner.getValue();
         settings.filterConfigName = (String) this.filterCombo.getSelectedItem();
-        settings.focusOffset = (Integer) this.focusOffsetSpinner.getValue();
+        settings.focusOffset = (Long) this.focusOffsetSpinner.getValue();
         settings.tfWavelength = (Integer) this.wvSpinner.getValue();
         settings.imConfigName = (String) this.imConfName.getSelectedItem();
         return settings;
