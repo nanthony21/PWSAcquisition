@@ -20,6 +20,7 @@
 //
 package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
+import edu.bpl.pwsplugin.metadata.MetadataBase;
 import java.nio.file.Paths;
 import java.io.File;
 import java.io.FileWriter;
@@ -66,8 +67,8 @@ public class ImSaverRaw extends DefaultSaverThread {
     }
     
     @Override
-    public void setMetadata(JSONObject md) {
-        metadata_ = md;
+    public void setMetadata(MetadataBase md) {
+        metadata_ = md.toJson();
     }
     
     @Override

@@ -15,11 +15,13 @@ import mmcorej.org.json.JSONObject;
 public class FluorescenceMetadata extends MetadataBase {
     private final String filterBlock;
     private final Double exposure;
+    private final Integer wavelength;
     
-    public FluorescenceMetadata(MetadataBase base, String filterBlock, Double exposure) {
+    public FluorescenceMetadata(MetadataBase base, String filterBlock, Double exposure, Integer wavelength) {
         super(base);
         this.filterBlock = filterBlock;
         this.exposure = exposure;
+        this.wavelength = wavelength;
     }
     
     @Override
@@ -28,38 +30,11 @@ public class FluorescenceMetadata extends MetadataBase {
         try {
             md.put("filterBlock", filterBlock);
             md.put("exposure", exposure);
+            if (wavelength == null) { md.put("wavelength", JSONObject.NULL); 
+            } else { md.put("wavelength", wavelength); }
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
         return md;
-    }
-    
-    public static class Builder {
-        private MetadataBase base;
-        private String filterBlock;
-        private Double exposure;
-
-        public Builder() {
-        }
-
-        public Builder base(MetadataBase base) {
-            this.base = base;
-            return this;
-        }
-
-        public Builder filterBlock(String filterBlock) {
-            this.filterBlock = filterBlock;
-            return this;
-        }
-
-        public Builder exposure(Double exposure) {
-            this.exposure = exposure;
-            return this;
-        }
-
-        public FluorescenceMetadata build() {
-            return new FluorescenceMetadata(base, filterBlock, exposure);
-        }
-
     }
 }

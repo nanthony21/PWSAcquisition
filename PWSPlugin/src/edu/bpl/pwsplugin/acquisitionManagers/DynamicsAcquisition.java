@@ -76,6 +76,11 @@ class DynamicsAcquisition implements Acquisition<DynSettings>{
     }
     
     @Override
+    public ImagingConfiguration getImgConfig() {
+        return Globals.getHardwareConfiguration().getImagingConfigurationByName(getSettings().imConfigName);
+    }
+    
+    @Override
     public void acquireImages(SaverThread imSaver, MetadataBase metadata) throws Exception {
         ImagingConfiguration conf = Globals.getHardwareConfiguration().getImagingConfigurationByName(this.settings.imConfigName);
         Camera camera = conf.camera();
@@ -105,7 +110,7 @@ class DynamicsAcquisition implements Acquisition<DynSettings>{
         }
         DynamicsMetadata dmd = new DynamicsMetadata(metadata, Double.valueOf(wavelength_), times, camera.getExposure());
 
-        imSaver.setMetadata(dmd.toJson());
+        imSaver.setMetadata(dmd);
         imSaver.join();
     }
     

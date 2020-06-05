@@ -51,7 +51,7 @@ public class AcquisitionManager {
     private int cellNum_;
     private String savePath_;
     
-    private void run(Acquisition manager) throws InterruptedException {
+    private void run(Acquisition manager) throws InterruptedException { //All acquisitions should be run with this.
         if (acquisitionRunning_) {
             throw new RuntimeException("Attempting to start acquisition when acquisition is already running.");
         }
@@ -60,22 +60,23 @@ public class AcquisitionManager {
         if (Globals.core().getPixelSizeUm() == 0.0) { //TODO bundle this into the `Metadata`
             ReportingUtils.showMessage("It is highly recommended that you provide MicroManager with a pixel size setting for the current setup. Having this information is useful for analysis.");
         }
-        ImagingConfiguration imConf = Globals.getHardwareConfiguration().getImagingConfigurationByName(); //TODO Urgent.get the actually selected config. maybe manager.getImagingConfig?
-        if (!imConf.isActive()) {
-            imConf.activateConfiguration();
-        }
-        DoubleVector aff = Globals.core().getPixelSizeAffine();
-        List<Double> trans = new ArrayList<>();
-        for (int i=0; i<aff.size(); i++) {
-            trans.add(aff.get(i));
-        }            
-        MetadataBase.Builder metadata = new MetadataBase.Builder()
-                .linearityPoly(imConf.camera().getSettings().linearityPolynomial)
-                .systemName(Globals.getHardwareConfiguration().getSettings().systemName)
-                .darkCounts(imConf.camera().getSettings().darkCounts)
-                .affineTransform(trans);
-        
         try {
+            ImagingConfiguration imConf = manager.getImgConfig(); 
+            if (!imConf.isActive()) { //It's important that the configuration is activated before we try pulling metadata like the affine transform
+                imConf.activateConfiguration();
+            }
+            DoubleVector aff = Globals.core().getPixelSizeAffine();
+            List<Double> trans = new ArrayList<>();
+            for (int i=0; i<aff.size(); i++) {
+                trans.add(aff.get(i));
+            }            
+     
+            MetadataBase metadata = new MetadataBase(
+                    imConf.camera().getSettings().linearityPolynomial,
+                    Globals.getHardwareConfiguration().getSettings().systemName,
+                    imConf.camera().getSettings().darkCounts,
+                    trans);
+        
             if (Globals.mm().live().getIsLiveModeOn()) {
                 Globals.mm().live().setLiveMode(false);
             }

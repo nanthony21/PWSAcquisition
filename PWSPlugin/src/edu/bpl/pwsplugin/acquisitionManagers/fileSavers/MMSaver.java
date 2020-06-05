@@ -2,6 +2,7 @@
 package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.metadata.MetadataBase;
 import ij.ImagePlus;
 import ij.io.FileInfo;
 import ij.io.FileSaver;
@@ -97,8 +98,8 @@ public class MMSaver extends DefaultSaverThread {
     }
         
     @Override
-    public void setMetadata(JSONObject md) {
-        metadata_ = md;
+    public void setMetadata(MetadataBase md) {
+        metadata_ = md.toJson();
     }
     
  

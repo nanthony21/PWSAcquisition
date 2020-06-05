@@ -27,6 +27,7 @@ import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
+import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.configurations.SpectralCamera;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
@@ -99,6 +100,11 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
     }
     
     @Override
+    public ImagingConfiguration getImgConfig() {
+        return Globals.getHardwareConfiguration().getImagingConfigurationByName(getSettings().imConfigName);
+    }
+    
+    @Override
     public String getFilePrefix() {
         return FileSpecs.getFilePrefix(FileSpecs.Type.PWS);
     }
@@ -130,7 +136,7 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
                 WV.add(Double.valueOf(wv[i]));
             }     
             PWSMetadata pmd = new PWSMetadata(metadata, WV, conf.camera().getExposure());  //This must happen after we have set the camera to our desired exposure.
-            saver.setMetadata(pmd.toJson());
+            saver.setMetadata(pmd);
             saver.start();
             
             long seqEndTime=0;

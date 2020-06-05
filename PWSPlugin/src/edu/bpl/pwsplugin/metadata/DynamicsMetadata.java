@@ -15,9 +15,9 @@ import mmcorej.org.json.JSONException;
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class DynamicsMetadata extends MetadataBase{
-    private Double wavelength;
-    private List<Double> times;
-    private Double exposure;
+    private final Double wavelength;
+    private final List<Double> times;
+    private final Double exposure;
     
     public DynamicsMetadata(MetadataBase base, Double wavelength, List<Double> times, Double exposure) {
         super(base);

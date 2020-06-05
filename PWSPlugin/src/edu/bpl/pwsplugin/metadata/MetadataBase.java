@@ -10,14 +10,14 @@ import mmcorej.org.json.JSONObject;
 import org.micromanager.internal.utils.ReportingUtils;
 
 
-public class MetadataBase {
+public class MetadataBase { //All images should have this metadata.
     private final List<Double> linearityPoly;
     private final String system;
     private final Integer darkCounts;
     private final String time;
     private final List<Double> affineTransform;
                     
-    private MetadataBase(List<Double> linearityPoly, String systemName, Integer darkCounts, List<Double> afTransform) {
+    public MetadataBase(List<Double> linearityPoly, String systemName, Integer darkCounts, List<Double> afTransform) {
         this.linearityPoly = linearityPoly;
         this.system = systemName;
         this.darkCounts = darkCounts;
@@ -33,14 +33,18 @@ public class MetadataBase {
         
     }
     
-    public MetadataBase(MetadataBase base) {
+    protected MetadataBase(MetadataBase base) {
         this.linearityPoly = base.linearityPoly;
         this.system = base.system;
         this.darkCounts = base.darkCounts;
         this.affineTransform = base.affineTransform;
         this.time = base.time;
     }
-            
+    
+    /*public final List<Double> linearityPoly() { return linearityPoly; }
+    public final String systemName() { return system; }
+    public final Integer darkCounts() { return darkCounts; }*/
+                
     public JSONObject toJson() {
         try {
             JSONObject md = new JSONObject();
@@ -53,44 +57,10 @@ public class MetadataBase {
             md.put("system", this.system);
             md.put("darkCounts", this.darkCounts);
             md.put("time", this.time);
+            md.put("cameraTransform", new JSONArray(this.affineTransform));
             return md;
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e); //This shouldn't happen.
         }
-    }
-    
-    public static class Builder {
-        private List<Double> linearityPoly;
-        private String systemName;
-        private Integer darkCounts;
-        private List<Double> affineTransform;
-
-        public Builder() {
-        }
-
-        public Builder linearityPoly(List<Double> linearityPoly) {
-            this.linearityPoly = linearityPoly;
-            return this;
-        }
-
-        public Builder systemName(String systemName) {
-            this.systemName = systemName;
-            return this;
-        }
-
-        public Builder darkCounts(Integer darkCounts) {
-            this.darkCounts = darkCounts;
-            return this;
-        }
-        
-        public Builder affineTransform(List<Double> trans) {
-            this.affineTransform = trans;
-            return this;
-        }
-
-        public MetadataBase build() { //TODO make each field required.
-            return new MetadataBase(linearityPoly, systemName, darkCounts, affineTransform);
-        }
-
     }
 }

@@ -81,6 +81,11 @@ public class FluorescenceAcquisition implements Acquisition<FluorSettings>{
     }
     
     @Override
+    public ImagingConfiguration getImgConfig() {
+        return Globals.getHardwareConfiguration().getImagingConfigurationByName(getSettings().imConfigName);
+    }
+    
+    @Override
     public void acquireImages(SaverThread imSaver, MetadataBase metadata) throws Exception {
         String initialFilter = ""; 
         boolean spectralMode = imConf.hasTunableFilter();
@@ -101,18 +106,14 @@ public class FluorescenceAcquisition implements Acquisition<FluorSettings>{
             this.camera.setExposure(settings.exposure);
             Globals.core().clearCircularBuffer();
             Image img = this.camera.snapImage();
-            FluorescenceMetadata flmd = new FluorescenceMetadata(metadata, settings.filterConfigName, camera.getExposure()); //This must happen after we have set our exposure.
-            JSONObject md = flmd.toJson();
-            if (spectralMode) {
-                md.put("wavelength", settings.tfWavelength);
-            } else {
-                md.put("wavelength", JSONObject.NULL);
-            }
+            Integer wv;
+            if (spectralMode) { wv = settings.tfWavelength; } else { wv = null; }
+            FluorescenceMetadata flmd = new FluorescenceMetadata(metadata, settings.filterConfigName, camera.getExposure(), wv); //This must happen after we have set our exposure.
             Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
             Coords coords = img.getCoords();
             pipeline.insertImage(img); //Add image to the data pipeline for processing
             img = pipeline.getDatastore().getImage(coords); //Retrieve the processed image. 
-            imSaver.setMetadata(md);
+            imSaver.setMetadata(flmd);
             album.clear(); //One day it would be nice to show multiple fluorescence images at once.
             album.addImage(img);
             imSaver.getQueue().add(img);

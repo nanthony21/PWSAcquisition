@@ -21,6 +21,7 @@
 package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
+import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.nio.file.FileAlreadyExistsException;
@@ -32,5 +33,6 @@ interface Acquisition <S extends JsonableParam> {
     public String getFilePrefix(); //Return the prefix that the saved files should have.
     public void setSettings(S settings);
     public S getSettings();
+    public ImagingConfiguration getImgConfig();
     public Integer numFrames();
 }

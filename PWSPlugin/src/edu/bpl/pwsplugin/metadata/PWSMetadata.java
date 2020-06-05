@@ -15,8 +15,8 @@ import mmcorej.org.json.JSONObject;
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class PWSMetadata extends MetadataBase{
-    private List<Double> wavelengths;
-    private Double exposure;
+    private final List<Double> wavelengths;
+    private final Double exposure;
     
     public PWSMetadata(MetadataBase base, List<Double> wavelengths, Double exposure) {
         super(base);
