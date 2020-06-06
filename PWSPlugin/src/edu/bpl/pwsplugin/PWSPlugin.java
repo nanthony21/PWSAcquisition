@@ -29,7 +29,9 @@ package edu.bpl.pwsplugin;
 //GoTo step
 //TODO XYZ grid (can be used for z-stacks)
 //Add sequence "treepath" to the status class. Allow callbacks to know what step they are being called from, that way for example you can make a callback that only runs for an acquisition step.
+//Actually have a single `Tree` which is used by the UI as well as the runtime experiment to keep track of location.
 //Add sequence logging.
+//Transmission imaging
 
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
