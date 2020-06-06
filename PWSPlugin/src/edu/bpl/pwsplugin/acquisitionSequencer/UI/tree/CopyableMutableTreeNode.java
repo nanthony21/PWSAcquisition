@@ -5,6 +5,8 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.UI.tree;
 
+import com.google.gson.Gson;
+import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -27,27 +29,17 @@ public abstract class CopyableMutableTreeNode extends DefaultMutableTreeNode {
     }
     
     public CopyableMutableTreeNode copy() {
-        CopyableMutableTreeNode n = create(this);
-        return n;
+        return CopyableMutableTreeNode.fromJson(this.toJson(), this.getClass());
     }
     
-    public static CopyableMutableTreeNode create(CopyableMutableTreeNode node) {
-        //Subclasses of CopyableMutableTreeNode can be created with this. If a node is not an instance or subclass of CopyableTreeNode it will be converted to CopyableTreeNode
-        CopyableMutableTreeNode n;
-        try {
-            Class<? extends CopyableMutableTreeNode> c;
-            if (CopyableMutableTreeNode.class.isAssignableFrom(node.getClass())) {
-                c = (Class<? extends CopyableMutableTreeNode>) node.getClass();
-            } else {
-                c = CopyableMutableTreeNode.class;
-            }
-            n = c.getDeclaredConstructor(c).newInstance(node);
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-        for(int iChildren=node.getChildCount(), i=0; i<iChildren; i++) {
-            n.add(create((CopyableMutableTreeNode) node.getChildAt(i)));
-        }
-        return n;
+    public String toJson() {
+        Gson gson = GsonUtils.getGson();
+        return gson.toJson(this);
     }
+    
+    public static CopyableMutableTreeNode fromJson(String s, Class clazz) {
+        Gson gson = GsonUtils.getGson();
+        return (CopyableMutableTreeNode) gson.fromJson(s, clazz);
+    }
+    
 }

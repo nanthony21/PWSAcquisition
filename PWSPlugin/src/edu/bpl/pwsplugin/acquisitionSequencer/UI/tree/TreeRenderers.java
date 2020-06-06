@@ -5,6 +5,8 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.UI.tree;
 
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.ImageIcon;
@@ -25,8 +27,8 @@ public class TreeRenderers {
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean isLeaf, int row, boolean focused) {
             JLabel comp = (JLabel) super.getTreeCellRendererComponent(tree, value, selected, expanded, isLeaf, row, focused);
-            if (value instanceof ContainerStepNode) {
-                ContainerStepNode node = (ContainerStepNode) value;
+            if (value instanceof ContainerStep) {
+                ContainerStep node = (ContainerStep) value;
                 if (node.getChildCount() == 0) { //The container step is empty, set the icon to draw attention to this issue.
                     ImageIcon image = new ImageIcon(getClass().getResource("/edu/bpl/pwsplugin/icons/emptyContainerNode.png"));
                     if (image == null) {
@@ -43,7 +45,7 @@ public class TreeRenderers {
                     comp.setIcon(image);
                     return comp;
                 }
-            } else if (value instanceof EndpointStepNode) {
+            } else if (value instanceof EndpointStep) {
                 ImageIcon image = new ImageIcon(getClass().getResource("/edu/bpl/pwsplugin/icons/endpointNode.png"));
                 if (image == null) {
                     throw new RuntimeException("Icon failed to load");
@@ -65,14 +67,14 @@ public class TreeRenderers {
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean isLeaf, int row, boolean focused) {
             JLabel comp = (JLabel) super.getTreeCellRendererComponent(tree, value, selected, expanded, isLeaf, row, focused);
-            if (value instanceof ContainerStepNode) {
+            if (value instanceof ContainerStep) {
                 ImageIcon image = new ImageIcon(getClass().getResource("/edu/bpl/pwsplugin/icons/containerNode.png"));
                 if (image == null) {
                     throw new RuntimeException("Icon failed to load");
                 }
                 comp.setIcon(image);
                 return comp;
-            } else if (value instanceof EndpointStepNode) {
+            } else if (value instanceof EndpointStep) {
                 ImageIcon image = new ImageIcon(getClass().getResource("/edu/bpl/pwsplugin/icons/endpointNode.png"));
                 if (image == null) {
                     throw new RuntimeException("Icon failed to load");

@@ -41,6 +41,5 @@ public abstract class StepFactory {
     
     public void registerGson() {
         JsonableParam.registerClass(getSettings());
-        JsonableParam.registerClass(getStep());
     }
 }

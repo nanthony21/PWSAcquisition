@@ -54,7 +54,7 @@ public class Globals {
         PWSPluginSettings set = null;
         try {
             set = PWSPluginSettings.fromJsonString(settingsStr);
-        } catch (com.google.gson.JsonParseException e) {
+        } catch (RuntimeException e) {
             ReportingUtils.logError(e); //Sometimes when we change the code we are unable to load old settings. Don't let that prevent things from starting up.
         }
         if (set==null) {

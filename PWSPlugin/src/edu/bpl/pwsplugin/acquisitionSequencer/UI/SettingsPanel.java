@@ -8,8 +8,8 @@ package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.StepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -33,7 +33,7 @@ import net.miginfocom.swing.MigLayout;
  */
 class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListener {
     Map<Consts.Type, BuilderJPanel> panelTypeMapping = new HashMap<>();
-    StepNode lastSelectedNode = null;
+    Step lastSelectedNode = null;
     JPanel cardPanel = new JPanel(new CardLayout());
     JLabel nameLabel = new JLabel();
     JLabel descriptionLabel = new JLabel();
@@ -82,9 +82,9 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
     @Override
     public void valueChanged(TreeSelectionEvent e) { //When a new node is selected in a tree, show the settings for the node.
         Object node = e.getPath().getLastPathComponent();
-        if (node instanceof StepNode) { // Some nodes may be default nodes used as folders. We don't want to respond to those selections.
+        if (node instanceof Step) { // Some nodes may be default nodes used as folders. We don't want to respond to those selections.
             saveSettingsOfLastNode();
-            updateSettingsFromNewNode((StepNode) node);
+            updateSettingsFromNewNode((Step) node);
         }
     }
     
@@ -101,8 +101,8 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         } 
     }
     
-    private void updateSettingsFromNewNode(StepNode node) { 
-        StepNode n = (StepNode) node;
+    private void updateSettingsFromNewNode(Step node) { 
+        Step n = (Step) node;
         this.lastSelectedNode = n;
         BuilderJPanel panel = showPanelForType(n.getType());
         try {
@@ -125,8 +125,8 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         TreePath path = ((JTree) evt.getComponent()).getSelectionPath();
         if (path == null) { return; }
         DefaultMutableTreeNode node = ((DefaultMutableTreeNode)path.getLastPathComponent());
-        if (node instanceof StepNode) {
-            updateSettingsFromNewNode((StepNode) node);
+        if (node instanceof Step) {
+            updateSettingsFromNewNode((Step) node);
         }
     }
     

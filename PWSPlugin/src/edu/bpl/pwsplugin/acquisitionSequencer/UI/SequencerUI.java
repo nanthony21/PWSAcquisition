@@ -5,27 +5,26 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
+import com.google.gson.Gson;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.ContainerStepNode;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.EndpointStepNode;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.StepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.factories.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
-import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
-import edu.bpl.pwsplugin.utils.JsonableParam;
+import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.awt.Dialog;
 import java.awt.Font;
 import java.awt.Window;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,12 +36,9 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -99,7 +95,12 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
                 if(!path.endsWith(".pwsseq")) {
                     path = path + ".pwsseq"; //Make sure the extension is there.
                 }
-                rootStep.toJsonFile(path);
+                try (FileWriter writer = new FileWriter(path)) { //Writer is automatically closed at the end of this statement.
+                    Gson gson = GsonUtils.getGson();
+                    String json = gson.toJson(rootStep);
+                    writer.write(json);
+                }
+        
             } catch (IOException | BuilderPanelException e) {
                 Globals.mm().logs().showError(e);
             }
@@ -109,7 +110,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
             try {
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
                 String path = FileDialogs.openFile(topFrame, "Load Sequence", Step.FILETYPE).getPath();
-                ContainerStep rootStep = (ContainerStep) JsonableParam.fromJsonFile(path, Step.class);
+                ContainerStep rootStep = GsonUtils.getGson().fromJson(new FileReader(path), ContainerStep.class);
                 this.populateFields(rootStep);
             } catch (FileNotFoundException | NullPointerException e) {
                 Globals.mm().logs().showError(e);
@@ -234,55 +235,15 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
         return verifySequence(parent, errs);
     }
     
-    private StepNode loadNodeFromStep(Step rootStep) {
-        StepFactory factory = Consts.getFactory(rootStep.getType());
-        if (rootStep instanceof ContainerStep) {
-            ContainerStepNode node = new ContainerStepNode(rootStep.getSettings(), factory.getType());            
-            for (Step subStep : ((ContainerStep) rootStep).getSubSteps()) {
-                StepNode subNode = (StepNode) loadNodeFromStep(subStep);
-                node.add(subNode);
-            }
-            return node;
-        } else if (rootStep instanceof EndpointStep) {
-            return new EndpointStepNode(rootStep.getSettings(), factory.getType());
-        }
-        throw new RuntimeException("Should not get here.");
-    }
-    
     @Override
     public ContainerStep build() throws BuilderPanelException {
-        try {
-            return (ContainerStep) compileSequenceNodes((DefaultMutableTreeNode) seqTree.tree().getModel().getRoot());
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new BuilderPanelException(e);
-        }
+        return (ContainerStep) seqTree.tree().getModel().getRoot();
     }
     
-    private Step compileSequenceNodes(DefaultMutableTreeNode parent) throws InstantiationException, IllegalAccessException {
-        //Only the Root can be DefaultMutableTreeNode, the rest better be StepNodes
-        //Recursively compile a StepNode and it's children into a step which can be passed to the acquisition engine. 
-        settingsPanel.saveSettingsOfLastNode(); //Make sure to update nodes with most recently set paremeters in the settings panel
-        if (parent.getAllowsChildren()) {
-            List<Step> l = new ArrayList<>();
-            for (int i=0; i<parent.getChildCount(); i++) {  
-                l.add(compileSequenceNodes((StepNode) parent.getChildAt(i)));
-            } 
-            ContainerStep step = (ContainerStep) ((StepNode) parent).getStepObject();
-            step.setSubSteps(l);
-            return step;
-        } else {
-            EndpointStep step = (EndpointStep) ((StepNode) parent).getStepObject();
-            return step;
-        }
-    }
-    
+
     @Override
     public void populateFields(ContainerStep rootStep) {
-        ContainerStepNode rootNode = new ContainerStepNode(rootStep.getSettings(), rootStep.getType());
-        for (Step subStep : rootStep.getSubSteps()) {
-            rootNode.add(loadNodeFromStep(subStep));
-        }
-        ((DefaultTreeModel) seqTree.tree().getModel()).setRoot(rootNode);
+        ((DefaultTreeModel) seqTree.tree().getModel()).setRoot(rootStep);
     }
     
 }

@@ -6,12 +6,12 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.ContainerStepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyOnlyTransferHandler;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.EndpointStepNode;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.StepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeRenderers;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.Dimension;
 import java.util.HashMap;
@@ -40,19 +40,14 @@ class NewStepsTree extends TreeDragAndDrop {
         
         for (Consts.Type type : Consts.Type.values()) {
             if (type == Consts.Type.ROOT) { continue; }//ignore this special case
-            String name = Consts.getFactory(type).getName();
             JsonableParam settings;
             try {
                 settings = Consts.getFactory(type).getSettings().newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
-            StepNode node;
-            if (Consts.isContainer(type)) {
-                node = new ContainerStepNode(settings, type);
-            } else {
-                node = new EndpointStepNode(settings, type);
-            }
+            Step node = Consts.getFactory(type).createStep();
+            node.setSettings(settings);
             categories.get(Consts.getFactory(type).getCategory()).add(node);
         } 
         

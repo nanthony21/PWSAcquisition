@@ -5,11 +5,12 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
+import clojure.lang.Cons;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.ContainerStepNode;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyMoveTransferHandler;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeRenderers;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
@@ -36,7 +37,8 @@ class SequenceTree extends TreeDragAndDrop implements KeyListener {
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        ContainerStepNode root = new ContainerStepNode(settings, Consts.Type.ROOT);
+        
+        ContainerStep root = ((ContainerStep) Consts.getFactory(Consts.Type.ROOT).createStep());
         
         model.setRoot(root);
         tree.setRootVisible(true);

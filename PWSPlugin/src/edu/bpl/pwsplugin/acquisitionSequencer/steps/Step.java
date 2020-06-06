@@ -8,22 +8,36 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyableMutableTreeNode;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.tree.DefaultMutableTreeNode;
 import org.micromanager.internal.utils.FileDialogs;
 
 /**
  *
  * @author nick
  */
-public abstract class Step extends JsonableParam {
+public abstract class Step extends CopyableMutableTreeNode {
     private JsonableParam settings; 
     private final Consts.Type stepType;
     protected final List<SequencerFunction> callbacks = new ArrayList<>();
     
     public Step(Consts.Type type) {
+        super();
         stepType = type;
+    }
+    
+    public Step(JsonableParam settings, Consts.Type type) {
+        this(type);
+        this.setSettings(settings);
+    }
+    
+    public Step(Step step) { //copy constructor
+        this(step.stepType);
+        setSettings(step.settings.copy());
+        
     }
     
     public final Consts.Type getType() {
@@ -57,5 +71,10 @@ public abstract class Step extends JsonableParam {
     }
     
     public abstract List<String> requiredRelativePaths(Integer startingCellNum);
+    
+    @Override
+    public String toString() { //this determines how its labeled in a JTree
+        return Consts.getFactory(this.getType()).getName();
+    }
     
 }
