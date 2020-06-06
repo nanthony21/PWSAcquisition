@@ -139,11 +139,11 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
             for (int i=0; i<parent.getChildCount(); i++) {  
                 l.add(compileSequenceNodes((StepNode) parent.getChildAt(i)));
             } 
-            ContainerStep step = (ContainerStep) ((StepNode) parent).createStepObject();
+            ContainerStep step = (ContainerStep) ((StepNode) parent).getStepObject();
             step.setSubSteps(l);
             return step;
         } else {
-            EndpointStep step = (EndpointStep) ((StepNode) parent).createStepObject();
+            EndpointStep step = (EndpointStep) ((StepNode) parent).getStepObject();
             return step;
         }
     }

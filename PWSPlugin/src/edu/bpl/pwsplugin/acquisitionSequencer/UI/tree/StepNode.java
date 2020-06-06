@@ -31,22 +31,22 @@ public abstract class StepNode extends CopyableMutableTreeNode {
     }
     
     public JsonableParam getSettings() {
-        return this.createStepObject().getSettings();
+        return this.getStepObject().getSettings();
     }
     
     public void setSettings(JsonableParam settings) {
         if (settings == null) {
             throw new RuntimeException("Setting null settings to step node");
         }
-        this.createStepObject().setSettings(settings);
+        this.getStepObject().setSettings(settings);
     }
     
-    public Step createStepObject() {
+    public Step getStepObject() {
         return (Step) this.getUserObject();
     }
     
     @Override
-    public String toString() { //this selects how its labeled in a JTree
+    public String toString() { //this determines how its labeled in a JTree
         return Consts.getFactory(this.getType()).getName();
     }
 }
