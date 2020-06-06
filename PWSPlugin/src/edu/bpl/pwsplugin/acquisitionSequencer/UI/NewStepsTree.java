@@ -25,7 +25,8 @@ import javax.swing.tree.TreeSelectionModel;
  */
 class NewStepsTree extends TreeDragAndDrop {
     public NewStepsTree() {
-        super(new CopyOnlyTransferHandler());
+        super();
+        tree.setTransferHandler(new CopyOnlyTransferHandler());
         this.tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
         

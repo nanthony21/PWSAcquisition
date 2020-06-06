@@ -18,6 +18,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 /**
  *
@@ -25,8 +26,10 @@ import javax.swing.tree.TreePath;
  */
 class SequenceTree extends TreeDragAndDrop implements KeyListener {
     public SequenceTree() {
-        super(new CopyMoveTransferHandler());
-        
+        super();
+        tree.setTransferHandler(new CopyMoveTransferHandler());
+        tree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);        
+
         JsonableParam settings;
         try {
             settings = Consts.getFactory(Consts.Type.ROOT).getSettings().newInstance();
