@@ -5,17 +5,24 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.UI.tree;
 
+import java.lang.reflect.InvocationTargetException;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  *
  * @author nick
  */
-public class CopyableMutableTreeNode extends DefaultMutableTreeNode {
+public abstract class CopyableMutableTreeNode extends DefaultMutableTreeNode {
     //Creates a copy of a tree node and compares as equal to it's parent or another copy with the same parent.
-    //Subclasses must also implement a default constructor
+    //Subclasses must implement a copy constructor.
     
-    protected CopyableMutableTreeNode() {
+    /*protected CopyableMutableTreeNode(CopyableMutableTreeNode node) {
+        this();
+        this.setUserObject(node.getUserObject()); //TODO do we need to deepcopy here? Yes
+        this.setAllowsChildren(node.getAllowsChildren());
+    }*/
+    
+    public CopyableMutableTreeNode() {
         super();
     }
     
@@ -24,7 +31,7 @@ public class CopyableMutableTreeNode extends DefaultMutableTreeNode {
         return n;
     }
     
-    public static CopyableMutableTreeNode create(DefaultMutableTreeNode node) {
+    public static CopyableMutableTreeNode create(CopyableMutableTreeNode node) {
         //Subclasses of CopyableMutableTreeNode can be created with this. If a node is not an instance or subclass of CopyableTreeNode it will be converted to CopyableTreeNode
         CopyableMutableTreeNode n;
         try {
@@ -34,26 +41,13 @@ public class CopyableMutableTreeNode extends DefaultMutableTreeNode {
             } else {
                 c = CopyableMutableTreeNode.class;
             }
-            n = c.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            n = c.getDeclaredConstructor(c).newInstance(node);
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-        n.copyAttributesFrom(node);
         for(int iChildren=node.getChildCount(), i=0; i<iChildren; i++) {
-            n.add(create((DefaultMutableTreeNode) node.getChildAt(i)));
+            n.add(create((CopyableMutableTreeNode) node.getChildAt(i)));
         }
         return n;
     }
-    
-    protected void copyAttributesFrom(DefaultMutableTreeNode from) {
-        CopyableMutableTreeNode.copyDefaultAttributes(from, this);
-    }
-    
-    private static void copyDefaultAttributes(DefaultMutableTreeNode from, DefaultMutableTreeNode to) {
-        //Subclasses should override this to copy any additional information.
-        to.setUserObject(from.getUserObject()); //TODO do we need to deepcopy here?
-        to.setAllowsChildren(from.getAllowsChildren());
-    }
-
-
 }

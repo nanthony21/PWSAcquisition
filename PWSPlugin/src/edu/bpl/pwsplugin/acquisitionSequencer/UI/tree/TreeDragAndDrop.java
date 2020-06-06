@@ -23,8 +23,7 @@ public class TreeDragAndDrop extends JScrollPane{
     public TreeDragAndDrop(TransferHandler handler) {
         super();
         
-        CopyableMutableTreeNode root = CopyableMutableTreeNode.create((DefaultMutableTreeNode) model.getRoot());
-        model.setRoot(root);
+        //model.setRoot(new CopyableMutableTreeNode());
         
         tree.setDragEnabled(true);
         tree.setDropMode(DropMode.ON_OR_INSERT);

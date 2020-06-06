@@ -13,9 +13,8 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
  * @author nick
  */
 public class EndpointStepNode extends StepNode {
-    public EndpointStepNode() {
-        super();
-        this.setAllowsChildren(false);
+    public EndpointStepNode(EndpointStepNode node) { //copy constructor
+        super(node);
     }
     
     public EndpointStepNode(JsonableParam settings, Consts.Type type) {

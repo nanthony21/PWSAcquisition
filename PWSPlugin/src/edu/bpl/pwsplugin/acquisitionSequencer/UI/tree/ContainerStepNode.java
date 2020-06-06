@@ -13,10 +13,10 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
  * @author nick
  */
 public class ContainerStepNode extends StepNode {
-    public ContainerStepNode() { //TODO get rid of this constructor somehow. Why?
-        super();
-        this.setAllowsChildren(true);
+    public ContainerStepNode(ContainerStepNode node) { //copy constructor
+        super(node);
     }
+    
     
     public ContainerStepNode(JsonableParam settings, Consts.Type type) {
         super(settings, type);

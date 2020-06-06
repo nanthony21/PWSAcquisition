@@ -15,15 +15,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
  * @author nick
  */
 public abstract class StepNode extends CopyableMutableTreeNode {
-    
-    public StepNode(JsonableParam settings, Consts.Type type) {
-        this();     
-        this.type = type;
-        this.settings = settings;
+    public StepNode(StepNode node) { //copy constructor
+        this(node.getSettings().copy(), node.getType());
     }
     
-    protected StepNode() {
-        super();
+    public StepNode(JsonableParam settings, Consts.Type type) {
+        super();     
         Step obj = Consts.getFactory(type).createStep();
         obj.setSettings(settings);
         this.setUserObject(obj);
@@ -46,14 +43,6 @@ public abstract class StepNode extends CopyableMutableTreeNode {
     
     public Step createStepObject() {
         return (Step) this.getUserObject();
-    }
-    
-    @Override
-    protected void copyAttributesFrom(DefaultMutableTreeNode from) {
-        if (!(from instanceof StepNode)) {
-            throw new RuntimeException("Type error");
-        }
-        super.copyAttributesFrom(from);
     }
     
     @Override
