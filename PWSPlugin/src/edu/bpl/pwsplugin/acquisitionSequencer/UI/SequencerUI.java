@@ -46,6 +46,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.io.FileUtils;
 import org.micromanager.internal.utils.FileDialogs;
@@ -130,23 +131,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
         this.add(loadButton, "cell 0 5");
     }
     
-    private Step compileSequenceNodes(DefaultMutableTreeNode parent) throws InstantiationException, IllegalAccessException {
-        //Only the Root can be DefaultMutableTreeNode, the rest better be StepNodes
-        //Recursively compile a StepNode and it's children into a step which can be passed to the acquisition engine. 
-        settingsPanel.saveSettingsOfLastNode(); //Make sure to update nodes with most recently set paremeters in the settings panel
-        if (parent.getAllowsChildren()) {
-            List<Step> l = new ArrayList<>();
-            for (int i=0; i<parent.getChildCount(); i++) {  
-                l.add(compileSequenceNodes((StepNode) parent.getChildAt(i)));
-            } 
-            ContainerStep step = (ContainerStep) ((StepNode) parent).getStepObject();
-            step.setSubSteps(l);
-            return step;
-        } else {
-            EndpointStep step = (EndpointStep) ((StepNode) parent).getStepObject();
-            return step;
-        }
-    }
+
     
     private boolean resolveFileConflicts(Step step) {
         //TODO doesn't account for planned ability to change subdir.
@@ -267,9 +252,27 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
     @Override
     public ContainerStep build() throws BuilderPanelException {
         try {
-            return (ContainerStep) compileSequenceNodes((DefaultMutableTreeNode) seqTree.model().getRoot());
+            return (ContainerStep) compileSequenceNodes((DefaultMutableTreeNode) seqTree.tree().getModel().getRoot());
         } catch (InstantiationException | IllegalAccessException e) {
             throw new BuilderPanelException(e);
+        }
+    }
+    
+    private Step compileSequenceNodes(DefaultMutableTreeNode parent) throws InstantiationException, IllegalAccessException {
+        //Only the Root can be DefaultMutableTreeNode, the rest better be StepNodes
+        //Recursively compile a StepNode and it's children into a step which can be passed to the acquisition engine. 
+        settingsPanel.saveSettingsOfLastNode(); //Make sure to update nodes with most recently set paremeters in the settings panel
+        if (parent.getAllowsChildren()) {
+            List<Step> l = new ArrayList<>();
+            for (int i=0; i<parent.getChildCount(); i++) {  
+                l.add(compileSequenceNodes((StepNode) parent.getChildAt(i)));
+            } 
+            ContainerStep step = (ContainerStep) ((StepNode) parent).getStepObject();
+            step.setSubSteps(l);
+            return step;
+        } else {
+            EndpointStep step = (EndpointStep) ((StepNode) parent).getStepObject();
+            return step;
         }
     }
     
@@ -279,7 +282,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
         for (Step subStep : rootStep.getSubSteps()) {
             rootNode.add(loadNodeFromStep(subStep));
         }
-        seqTree.model().setRoot(rootNode);
+        ((DefaultTreeModel) seqTree.tree().getModel()).setRoot(rootNode);
     }
     
 }
