@@ -15,8 +15,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
  * @author nick
  */
 public abstract class StepNode extends CopyableMutableTreeNode {
-    Consts.Type type;
-    JsonableParam settings;
     
     public StepNode(JsonableParam settings, Consts.Type type) {
         this();     
@@ -26,27 +24,28 @@ public abstract class StepNode extends CopyableMutableTreeNode {
     
     protected StepNode() {
         super();
+        Step obj = Consts.getFactory(type).createStep();
+        obj.setSettings(settings);
+        this.setUserObject(obj);
     }
     
     public Consts.Type getType() {
-        return type;
-    }
-    
-    public Step createStepObject() throws InstantiationException, IllegalAccessException {
-        Step obj = Consts.getFactory(this.getType()).createStep();
-        obj.setSettings(this.getSettings());
-        return obj;
+        return ((Step) this.getUserObject()).getType();
     }
     
     public JsonableParam getSettings() {
-        return (JsonableParam) this.settings.copy();
+        return this.createStepObject().getSettings();
     }
     
     public void setSettings(JsonableParam settings) {
         if (settings == null) {
             throw new RuntimeException("Setting null settings to step node");
         }
-        this.settings = settings;
+        this.createStepObject().setSettings(settings);
+    }
+    
+    public Step createStepObject() {
+        return (Step) this.getUserObject();
     }
     
     @Override
@@ -55,12 +54,10 @@ public abstract class StepNode extends CopyableMutableTreeNode {
             throw new RuntimeException("Type error");
         }
         super.copyAttributesFrom(from);
-        this.type = ((StepNode)from).type;
-        this.settings = ((JsonableParam)((StepNode)from).settings.copy());
     }
     
     @Override
-    public String toString() {
+    public String toString() { //this selects how its labeled in a JTree
         return Consts.getFactory(this.getType()).getName();
     }
 }

@@ -13,7 +13,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
  */
 public class CopyableMutableTreeNode extends DefaultMutableTreeNode {
     //Creates a copy of a tree node and compares as equal to it's parent or another copy with the same parent.
-    //Subclasses must 
+    //Subclasses must also implement a default constructor
     
     protected CopyableMutableTreeNode() {
         super();
@@ -51,7 +51,7 @@ public class CopyableMutableTreeNode extends DefaultMutableTreeNode {
     
     private static void copyDefaultAttributes(DefaultMutableTreeNode from, DefaultMutableTreeNode to) {
         //Subclasses should override this to copy any additional information.
-        to.setUserObject(from.getUserObject());
+        to.setUserObject(from.getUserObject()); //TODO do we need to deepcopy here?
         to.setAllowsChildren(from.getAllowsChildren());
     }
 
