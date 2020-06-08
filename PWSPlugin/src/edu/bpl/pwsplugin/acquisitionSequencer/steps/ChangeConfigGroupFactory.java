@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.acquisitionSequencer.factories;
+package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.Globals;

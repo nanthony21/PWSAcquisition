@@ -5,17 +5,17 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.factories.AcquireCellFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.factories.AcquireFromPositionListFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.factories.AcquireTimeSeriesFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.factories.ChangeConfigGroupFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.factories.EnterSubfolderFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.factories.EveryNTimesFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.factories.FocusLockFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.factories.PauseFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.factories.RootStepFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.factories.SoftwareAutofocusFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.factories.StepFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireCellFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireFromPositionListFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireTimeSeriesFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ChangeConfigGroupFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.EnterSubfolderFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.EveryNTimesFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.FocusLockFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.PauseFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStepFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.SoftwareAutofocusFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 
 /**

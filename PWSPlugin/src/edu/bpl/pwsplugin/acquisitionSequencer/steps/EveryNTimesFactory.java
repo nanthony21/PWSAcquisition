@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.acquisitionSequencer.factories;
+package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;

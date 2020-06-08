@@ -17,7 +17,6 @@ import java.util.List;
  */
 public abstract class EndpointStep extends Step {
     //A `Step` which is an endpoint (does not support containing any substeps
-    //TODO maybe this isn't needed
     public EndpointStep(Consts.Type type) {
         super(type);
         this.setAllowsChildren(false);

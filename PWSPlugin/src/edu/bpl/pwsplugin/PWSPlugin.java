@@ -35,6 +35,7 @@ package edu.bpl.pwsplugin;
 
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.settings.CamSettings;
 import edu.bpl.pwsplugin.settings.DynSettings;
@@ -80,6 +81,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
             JsonableParam.registerClass(PWSPluginSettings.class);
             JsonableParam.registerClass(AcquireCellSettings.class);
             Consts.registerGson();
+            Step.registerGsonType();
             Globals.init(studio_);       
             initialized_ = true;
         }
