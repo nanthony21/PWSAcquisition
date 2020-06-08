@@ -53,5 +53,9 @@ public class SequencerSettings {
     public static class EnterSubfolderSettings extends JsonableParam {
         public String relativePath = "";
     }
-
+    
+    public static class ZStackSettings extends JsonableParam {
+        public double intervalUm = 1.0;
+        public int numStacks = 1;
+    }
 }

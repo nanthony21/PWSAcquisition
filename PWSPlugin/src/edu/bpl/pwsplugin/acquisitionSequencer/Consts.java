@@ -17,6 +17,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SoftwareAutofocusFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ZStackFactory;
 
 /**
  *
@@ -33,7 +34,8 @@ public class Consts {
         PAUSE,
         EVERYN,
         ROOT,
-        SUBFOLDER;
+        SUBFOLDER,
+        ZSTACK;
     }
     
     public enum Category {
@@ -79,6 +81,8 @@ public class Consts {
                 return new RootStepFactory();
             case SUBFOLDER:
                 return new EnterSubfolderFactory();
+            case ZSTACK:
+                return new ZStackFactory();
         } 
         throw new RuntimeException("Shouldn't get here.");
     }
