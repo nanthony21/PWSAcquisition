@@ -19,9 +19,11 @@ import edu.bpl.pwsplugin.utils.GsonUtils;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import org.micromanager.internal.utils.FileDialogs;
 
 /**
@@ -63,7 +65,8 @@ public abstract class Step extends CopyableMutableTreeNode {
     public abstract Double numberNewAcqs(); //Return the number of new cell folders expected to be created within this step.
     
     public final SequencerFunction getFunction() {
-        Step[] treePath = (Step[]) this.getPath();
+        TreeNode[] path = this.getPath();
+        Step[] treePath = Arrays.copyOf(path, path.length, Step[].class); //cast to Step[].
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
