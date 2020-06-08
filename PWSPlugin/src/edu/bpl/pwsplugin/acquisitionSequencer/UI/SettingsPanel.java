@@ -16,6 +16,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JLabel;
@@ -31,7 +33,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListener {
+class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListener, MouseListener {
     Map<Consts.Type, BuilderJPanel> panelTypeMapping = new HashMap<>();
     Step lastSelectedNode = null;
     JPanel cardPanel = new JPanel(new CardLayout());
@@ -49,6 +51,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         this.add(cardPanel);
         
         //Register as a listener for the trees that we want to display settings for.
+        this.addMouseListener(this);
         for (int i=0; i<trees.length; i++) {
             trees[i].tree().addTreeSelectionListener(this);
             trees[i].tree().addFocusListener(this);
@@ -134,5 +137,19 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
     public void focusLost(FocusEvent evt) {  //When the user clicks on any other component than one of the Trees make sure to save settings.
         saveSettingsOfLastNode();
     } 
+    
+    @Override
+    public void mouseExited(MouseEvent e) { //The focus listeners still sometimes miss an event where we need to save settings.
+        saveSettingsOfLastNode();
+    }
+    
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+    @Override
+    public void mouseClicked(MouseEvent e) {}
+    @Override
+    public void mousePressed(MouseEvent e) {}
+    @Override
+    public void mouseReleased(MouseEvent e) {}
 }
 

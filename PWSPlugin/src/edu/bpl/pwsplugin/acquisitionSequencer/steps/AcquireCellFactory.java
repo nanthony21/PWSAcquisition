@@ -74,22 +74,23 @@ class AcquireCell extends EndpointStep {
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception{
+                status.newStatusMessage(String.format("Acquiring Cell %d", status.getCellNum()));
                 for (FluorSettings flSettings : settings.fluorSettings) {
                     status.allowPauseHere();
-                    status.newStatusMessage(String.format("Acquiring %s fluoresence", flSettings.filterConfigName));
+                    //status.newStatusMessage(String.format("Acquiring %s fluoresence", flSettings.filterConfigName));
                     acqMan.setFluorescenceSettings(flSettings);
                     acqMan.acquireFluorescence();
                 }
                 if (settings.pwsSettings != null) {
                     status.allowPauseHere();
                     status.newStatusMessage("Acquiring PWS");
-                    acqMan.setPWSSettings(settings.pwsSettings);
+                    //acqMan.setPWSSettings(settings.pwsSettings);
                     acqMan.acquirePWS();
                 }
                 if (settings.dynSettings != null) {
                     status.allowPauseHere();
                     status.newStatusMessage("Acquiring Dynamics");
-                    acqMan.setDynamicsSettings(settings.dynSettings);
+                    //acqMan.setDynamicsSettings(settings.dynSettings);
                     acqMan.acquireDynamics();
                 }
                 status.allowPauseHere();
