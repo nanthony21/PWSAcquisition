@@ -48,14 +48,18 @@ public abstract class Step extends CopyableMutableTreeNode {
         return stepType;
     }
 
-    public final JsonableParam getSettings() { return (JsonableParam) settings.copy(); }
+    @Override
+    public Step copy() { //Use json to safely copy the object
+        Gson gson = GsonUtils.getGson();
+        return (Step) gson.fromJson(gson.toJson(this), this.getClass());
+    }
+    
+    public final JsonableParam getSettings() { return settings.copy(); }
     
     public final void setSettings(JsonableParam settings) { this.settings = settings; }
     
-    protected abstract SequencerFunction stepFunc();
-    
-    public static final FileDialogs.FileType FILETYPE = new FileDialogs.FileType("PWS Acquisition Sequence", "Sequence (.pwsseq)", "newAcqSequence.pwsseq", true, "pwsseq");
-    
+    protected abstract SequencerFunction stepFunc(); //A function to run for this step during execution.
+        
     public abstract Double numberNewAcqs(); //Return the number of new cell folders expected to be created within this step.
     
     public final SequencerFunction getFunction() {

@@ -60,6 +60,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
     JButton runButton = new JButton("Run");
     JButton saveButton = new JButton("Save");
     JButton loadButton = new JButton("Load");
+    private static final FileDialogs.FileType STEPFILETYPE = new FileDialogs.FileType("PWS Acquisition Sequence", "Sequence (.pwsseq)", "newAcqSequence.pwsseq", true, "pwsseq"); // The specification for how to save a Step to a file.
     
     public SequencerUI() {
         super(new MigLayout("fill"), ContainerStep.class);
@@ -91,7 +92,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
             try { 
                 Step rootStep = this.build();
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-                String path = FileDialogs.save(topFrame, "Save Sequence", Step.FILETYPE).getPath();
+                String path = FileDialogs.save(topFrame, "Save Sequence", STEPFILETYPE).getPath();
                 if(!path.endsWith(".pwsseq")) {
                     path = path + ".pwsseq"; //Make sure the extension is there.
                 }
@@ -109,7 +110,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
         this.loadButton.addActionListener((evt) -> {
             try {
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-                String path = FileDialogs.openFile(topFrame, "Load Sequence", Step.FILETYPE).getPath();
+                String path = FileDialogs.openFile(topFrame, "Load Sequence", STEPFILETYPE).getPath();
                 ContainerStep rootStep = GsonUtils.getGson().fromJson(new FileReader(path), ContainerStep.class);
                 this.populateFields(rootStep);
             } catch (FileNotFoundException | NullPointerException e) {

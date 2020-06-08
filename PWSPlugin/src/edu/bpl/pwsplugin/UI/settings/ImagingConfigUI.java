@@ -11,7 +11,6 @@ import edu.bpl.pwsplugin.UI.utils.disablePanel.DisabledPanel;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -62,6 +61,8 @@ public class ImagingConfigUI extends SingleBuilderJPanel<ImagingConfigurationSet
         });
         
         this.configGroup.setModel(new DefaultComboBoxModel<>(Globals.core().getAvailableConfigGroups().toArray()));
+        this.configGroup.getItemListeners()[0].itemStateChanged(null); // trigger the itemlistener to initialize
+        
         
         this.add(new JLabel("Name:"), "gapleft push");
         this.add(this.name, "wrap");
