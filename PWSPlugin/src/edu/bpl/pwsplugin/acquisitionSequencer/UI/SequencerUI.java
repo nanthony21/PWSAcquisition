@@ -132,7 +132,6 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
 
     
     private boolean resolveFileConflicts(Step step) {
-        //TODO doesn't account for planned ability to change subdir.
         //returns true if it is ok to proceed, false if cancel.
         String dir = ((SequencerSettings.RootStepSettings) step.getSettings()).directory;
         //Integer numberAcqsExpected = (int) Math.ceil(step.numberNewAcqs()); //This can possible be fractional due to the `EveryNTimes` step. always round up to be safe.

@@ -49,7 +49,7 @@ class SequencerRunningDlg extends JDialog {
         JPanel contentPane = new JPanel(new MigLayout("fill"));
         this.setContentPane(contentPane);
         contentPane.add(new JLabel("Status: "), "cell 0 0");
-        contentPane.add(textScroll, "cell 0 1, height 20sp, width 15sp");
+        contentPane.add(textScroll, "cell 0 1, height 20sp, width 20sp");
         contentPane.add(cellNum, "cell 0 2");
         contentPane.add(tree, "cell 1 0 1 3, growy");
         contentPane.add(pauseButton, "cell 0 3, gapleft push, align center");

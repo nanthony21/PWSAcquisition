@@ -16,6 +16,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import net.miginfocom.swing.MigLayout;
@@ -110,6 +111,18 @@ class AcquireFromPositionList extends ContainerStep {
     public Double numberNewAcqs() {
         Double acqPerIteration = super.numberNewAcqsOneIteration();
         return acqPerIteration * ((SequencerSettings.AcquirePositionsSettings) this.getSettings()).posList.getNumberOfPositions();
+    }
+    
+    @Override
+    public List<String> requiredRelativePaths(Integer startingCellNum) {
+        List<String> paths = new ArrayList<>();
+        int numIterations = ((SequencerSettings.AcquirePositionsSettings) this.getSettings()).posList.getNumberOfPositions();
+        Integer cellNum = startingCellNum;
+        for (int i=0; i<numIterations; i++) {
+            paths.addAll(super.requiredRelativePaths(cellNum));
+            cellNum += new Double(Math.floor(this.numberNewAcqsOneIteration())).intValue();
+        }
+        return paths;
     }
     
     @Override
