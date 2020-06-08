@@ -10,6 +10,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,6 @@ import java.util.stream.Collectors;
  */
 public abstract class ContainerStep extends Step {
     //A `Step` that takes other `Step`s and wraps functionality around them.
-    private List<Step> steps;
     
     public ContainerStep(Consts.Type type) {
         super(type);
@@ -36,11 +36,7 @@ public abstract class ContainerStep extends Step {
     
     
     public final List<Step> getSubSteps() {
-        return this.steps;
-    }
-    
-    public final void setSubSteps(List<Step> steps) {
-        this.steps = steps;
+        return Collections.list(this.children());
     }
     
     public final SequencerFunction getSubstepsFunction() { // Execute each substep in sequence

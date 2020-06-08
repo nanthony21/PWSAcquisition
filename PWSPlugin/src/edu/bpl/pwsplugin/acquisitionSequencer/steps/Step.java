@@ -117,7 +117,7 @@ class StepTypeAdapter extends TypeAdapter<Step> {
         out.value(step.getType().name());
         out.name("settings");
         gson.toJson(step.getSettings(), Consts.getFactory(step.getType()).getSettings(), out);
-        if (step.getChildCount() > 0) {
+        if (step.getAllowsChildren()) {
             out.name("children");
             gson.toJson(Collections.list(step.children()), List.class, out); // recursion!
         }
@@ -135,7 +135,7 @@ class StepTypeAdapter extends TypeAdapter<Step> {
             if (!in.nextName().equals("settings")) { throw new RuntimeException(); }
             JsonableParam settings = gson.fromJson(in, Consts.getFactory(stepType).getSettings());
             step.setSettings(settings);
-            if (Consts.isContainer(stepType)) {
+            if (step.getAllowsChildren()) {
                 if (!in.nextName().equals("children")) { throw new RuntimeException(); }
                 in.beginArray();
                 while (in.hasNext()) {

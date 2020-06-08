@@ -10,7 +10,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import mmcorej.CMMCore;
 import org.micromanager.Studio;
-import org.micromanager.alerts.UpdatableAlert;
 import org.micromanager.internal.utils.ReportingUtils;
 
 public class Globals {

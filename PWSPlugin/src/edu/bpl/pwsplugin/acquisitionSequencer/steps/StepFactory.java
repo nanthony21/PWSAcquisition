@@ -33,7 +33,9 @@ public abstract class StepFactory {
     
     public Step createStep() {
         try {
-            return getStep().newInstance();
+            Step step = getStep().newInstance();
+            step.setSettings(this.getSettings().newInstance()); //Make sure not to leave settings as null
+            return step;
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
