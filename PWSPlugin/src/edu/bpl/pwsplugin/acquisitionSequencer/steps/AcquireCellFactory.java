@@ -81,14 +81,14 @@ class AcquireCell extends EndpointStep {
                 }
                 if (settings.pwsSettings != null) {
                     status.allowPauseHere();
-                    status.newStatusMessage("Acquiring PWS");
-                    //acqMan.setPWSSettings(settings.pwsSettings);
+                    //status.newStatusMessage("Acquiring PWS");
+                    acqMan.setPWSSettings(settings.pwsSettings);
                     acqMan.acquirePWS();
                 }
                 if (settings.dynSettings != null) {
                     status.allowPauseHere();
-                    status.newStatusMessage("Acquiring Dynamics");
-                    //acqMan.setDynamicsSettings(settings.dynSettings);
+                    //status.newStatusMessage("Acquiring Dynamics");
+                    acqMan.setDynamicsSettings(settings.dynSettings);
                     acqMan.acquireDynamics();
                 }
                 status.allowPauseHere();

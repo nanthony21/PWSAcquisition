@@ -6,12 +6,15 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.UI.utils.disablePanel.DisabledPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeRenderers;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Window;
 import java.awt.event.ActionListener;
@@ -24,6 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import net.miginfocom.swing.MigLayout;
 
@@ -77,7 +81,7 @@ class SequencerRunningDlg extends JDialog {
     public void updateStatus(AcquisitionStatus status) {
         this.cellNum.setText(String.format("Acquiring Cell: %d", status.getCellNum()));
         this.statusMsg.setText(String.join("\n", status.statusMsg));
-        this.tree.tree().setSelectionPath(new TreePath(status.getTreePath()));
+        this.tree.setSelectionPath(new TreePath(status.getTreePath()));
     }
 
     class AcquisitionThread extends SwingWorker<Void, AcquisitionStatus> {
@@ -134,12 +138,22 @@ class SequencerRunningDlg extends JDialog {
 }
 
 
-class DisplayTree extends TreeDragAndDrop {
-    //This tree is used to display the current status of the sequence, it is not user interactive.
+class DisplayTree extends JPanel {
+    TreeDragAndDrop tree = new TreeDragAndDrop(); //This tree is used to display the current status of the sequence, it is not user interactive.
+    DisabledPanel disPan = new DisabledPanel(tree, new Color(1, 1, 1, 1)); // Disabled panel with a transparent glass pane to block interaction.
+    
     public DisplayTree(Step rootStep) {
-        super();
-        model.setRoot(rootStep);
-        super.expandTree();
-        tree.setCellRenderer(new TreeRenderers.SequenceTreeRenderer() );
+        super(new BorderLayout());
+        super.add(disPan);
+        
+        disPan.setEnabled(false); //Disable mouse interaction with the tree.
+        
+        ((DefaultTreeModel) tree.tree().getModel()).setRoot(rootStep);
+        tree.expandTree();
+        tree.tree().setCellRenderer(new TreeRenderers.SequenceTreeRenderer() );
+    }
+    
+    public void setSelectionPath(TreePath path) {
+        tree.tree().setSelectionPath(path);
     }
 }
