@@ -99,7 +99,7 @@ class PauseStep extends EndpointStep {
     }
     
     @Override
-    public SequencerFunction stepFunc() {
+    public SequencerFunction getStepFunction() {
         SequencerSettings.PauseStepSettings settings = (SequencerSettings.PauseStepSettings) this.getSettings();
         return new SequencerFunction() {
             @Override

@@ -91,7 +91,7 @@ class SoftwareAutofocus extends EndpointStep {
     }
     
     @Override
-    public SequencerFunction stepFunc() {
+    public SequencerFunction getStepFunction() {
         SequencerSettings.SoftwareAutoFocusSettings settings = (SequencerSettings.SoftwareAutoFocusSettings) this.getSettings();
         return new SequencerFunction() {
             @Override

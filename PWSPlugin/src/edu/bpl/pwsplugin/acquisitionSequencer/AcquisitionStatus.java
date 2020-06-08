@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ public class AcquisitionStatus { //TODO make this thread safe.
     public List<String> statusMsg = new ArrayList<>(); //A string describing what is currently happening.
     private final Function<AcquisitionStatus, Void> publishCallBack; //This callback should link to the `publish` method of the swingworker running the acquisition thread.
     private final Function<Void, Void> pauseCallBack; // This callback should link to the `pausepoint` method of a pause button.
+    private Step[] treePath; //This keeps track of where in the sequence we are. Callbacks can use this to determine where they are being called from.
     
     public AcquisitionStatus(Function<AcquisitionStatus, Void> publishCallBack, Function<Void, Void> pauseCallBack) {
         //Create a new status object 
@@ -76,5 +78,14 @@ public class AcquisitionStatus { //TODO make this thread safe.
     
     public Integer getCellNum() {
         return currentCellNum;
+    }
+    
+    public void setTreePath(Step[] treePath) {
+        this.treePath = treePath;
+        this.publish();
+    }
+    
+    public Step[] getTreePath() {
+        return treePath;
     }
 }

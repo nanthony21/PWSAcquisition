@@ -101,7 +101,7 @@ class AcquireTimeSeries extends ContainerStep {
     }
     
     @Override 
-    public SequencerFunction stepFunc() {
+    public SequencerFunction getStepFunction() {
         SequencerFunction stepFunction = super.getSubstepsFunction();
         SequencerSettings.AcquireTimeSeriesSettings settings = (SequencerSettings.AcquireTimeSeriesSettings) this.getSettings();
         return new SequencerFunction() {

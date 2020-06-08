@@ -122,7 +122,7 @@ class ChangeConfigGroup extends ContainerStep {
     }
 
     @Override
-    public SequencerFunction stepFunc() {
+    public SequencerFunction getStepFunction() {
         SequencerFunction subStepFunc = getSubstepsFunction();
         SequencerSettings.ChangeConfigGroupSettings settings = (SequencerSettings.ChangeConfigGroupSettings) this.getSettings();
         return new SequencerFunction() {

@@ -143,6 +143,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         saveSettingsOfLastNode();
     }
     
+    //Unused methods required by mouselistener interface
     @Override
     public void mouseEntered(MouseEvent e) {}
     @Override

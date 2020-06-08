@@ -67,7 +67,7 @@ class EveryNTimes extends ContainerStep {
     }
     
     @Override
-    public SequencerFunction stepFunc() {
+    public SequencerFunction getStepFunction() {
         SequencerFunction stepFunction = super.getSubstepsFunction();
         SequencerSettings.EveryNTimesSettings settings = (SequencerSettings.EveryNTimesSettings) this.getSettings();
         return new SequencerFunction() {

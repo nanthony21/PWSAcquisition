@@ -71,7 +71,7 @@ class EnterSubfolderStep extends ContainerStep {
     }
     
     @Override
-    public SequencerFunction stepFunc() {
+    public SequencerFunction getStepFunction() {
         SequencerFunction stepFunction = super.getSubstepsFunction();
         SequencerSettings.EnterSubfolderSettings settings = (SequencerSettings.EnterSubfolderSettings) this.getSettings();
         return new SequencerFunction() {

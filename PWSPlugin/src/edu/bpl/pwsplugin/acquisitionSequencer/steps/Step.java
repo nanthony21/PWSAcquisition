@@ -58,18 +58,23 @@ public abstract class Step extends CopyableMutableTreeNode {
     
     public final void setSettings(JsonableParam settings) { this.settings = settings; }
     
-    protected abstract SequencerFunction stepFunc(); //A function to run for this step during execution.
+    protected abstract SequencerFunction getStepFunction(); //Return  function to run for this step during execution. Does not include callbacks and mandatory changes to the status object which are handled automatically by `getFunction`.
         
     public abstract Double numberNewAcqs(); //Return the number of new cell folders expected to be created within this step.
     
     public final SequencerFunction getFunction() {
+        Step[] treePath = (Step[]) this.getPath();
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
+                //Update the status object with information about the current step.
+                status.setTreePath(treePath);
+                //Run any callbacks that have been set for this step.
                 for (SequencerFunction func : callbacks) {
                     status = func.apply(status);
                 } 
-                return stepFunc().apply(status);
+                //Run the function for this step
+                return getStepFunction().apply(status);
             }
         };
     }
@@ -85,7 +90,7 @@ public abstract class Step extends CopyableMutableTreeNode {
         return Consts.getFactory(this.getType()).getName();
     }
     
-    public static void registerGsonType() {
+    public static void registerGsonType() { //This must be called for GSON loading/saving to work.
         GsonUtils.registerType(StepTypeAdapter.FACTORY);
     }
 }

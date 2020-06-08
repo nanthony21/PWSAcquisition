@@ -6,14 +6,11 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
 import com.google.gson.Gson;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
@@ -41,7 +38,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.io.FileUtils;
@@ -354,7 +350,7 @@ class SequencerRunningDlg extends JDialog {
 
         @Override
         protected void process(List<AcquisitionStatus> chunks) {
-            AcquisitionStatus currentStatus = chunks.get(chunks.size() - 1);
+            AcquisitionStatus currentStatus = chunks.get(chunks.size() - 1); //Use only the most recently published status
             SequencerRunningDlg.this.updateStatus(currentStatus);
             //setProgress(
         }

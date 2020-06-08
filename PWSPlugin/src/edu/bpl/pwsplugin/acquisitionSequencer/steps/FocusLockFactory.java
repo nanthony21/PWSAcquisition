@@ -44,7 +44,7 @@ public class FocusLockFactory extends StepFactory {
     
     @Override
     public String getDescription() {
-        return "Engage continuous hardware autofocus. Focus lock will be checked before execution of each substep.";
+        return "Engage continuous hardware autofocus. Focus lock will be checked before execution of each Acquisition within this.";
     }
     
     @Override
@@ -96,14 +96,16 @@ class FocusLock extends ContainerStep {
     }
     
     @Override
-    public SequencerFunction stepFunc() {
+    public SequencerFunction getStepFunction() {
         this.addCallbackToSubsteps((status)->{
-            if (!Globals.core().isContinuousFocusLocked()) { //Check if focused. and log. later we will add refocusing.
-                Globals.mm().logs().logMessage("Focus is unlocked");
-                Globals.core().fullFocus();
-                Globals.core().enableContinuousFocus(true);
-            } else {
-                Globals.mm().logs().logMessage("Focus is locked");
+            if (status.getTreePath()[status.getTreePath().length-1].getType() == Consts.Type.ACQ) { //If the current  step is an acquisition then check for refocus.
+                if (!Globals.core().isContinuousFocusLocked()) { //Check if focused. and log. later we will add refocusing.
+                    Globals.mm().logs().logMessage("Focus is unlocked");
+                    Globals.core().fullFocus();
+                    Globals.core().enableContinuousFocus(true);
+                } else {
+                    Globals.mm().logs().logMessage("Focus is locked");
+                }
             }
             return status;
         });

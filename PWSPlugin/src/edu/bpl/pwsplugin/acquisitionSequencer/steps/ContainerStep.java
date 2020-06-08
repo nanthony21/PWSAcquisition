@@ -33,6 +33,13 @@ public abstract class ContainerStep extends Step {
         return Collections.list(this.children());
     }
     
+    protected final void addCallbackToSubsteps(SequencerFunction cb) { 
+        //Add a callback for all the substeps of this step. Due to the implementation of `getSubstepsFunction` the callback will propagate all the way down.
+        for (Step step : this.getSubSteps()) {
+            step.addCallback(cb);
+        }
+    }
+    
     public final SequencerFunction getSubstepsFunction() { // Execute each substep in sequence
         for (Step substep : this.getSubSteps()) { //Pass callbacks on to child steps.
             for (SequencerFunction cb : this.callbacks) {
@@ -58,16 +65,7 @@ public abstract class ContainerStep extends Step {
         }
         return newAcqs;
     }
-    
         
-    public final void addCallbackToSubsteps(SequencerFunction cb) { 
-        for (Step step : this.getSubSteps()) {
-            step.addCallback(cb);
-        }
-    }
-    
-    //public abstract List<String> getEnclosedSavePaths();
-    
     @Override
     public List<String> requiredRelativePaths(Integer startingCellNum) {
         Integer cellNum = startingCellNum;
