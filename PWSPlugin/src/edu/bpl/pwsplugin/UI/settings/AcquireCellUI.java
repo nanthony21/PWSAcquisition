@@ -30,7 +30,7 @@ import net.miginfocom.swing.MigLayout;
 public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements PropertyChangeListener {
     PWSPanel pwsSettings = new PWSPanel();
     DynPanel dynSettings = new DynPanel();
-    ListCardUI<List<FluorSettings>, FluorSettings> fluorSettings= new ListCardUI<>(ArrayList.class, "", new FluorSettings());
+    ListCardUI<List<FluorSettings>, FluorSettings> fluorSettings= new ListCardUI(ArrayList.class, "", new FluorSettings());
     CheckBoxPanel pwsCBPanel = new CheckBoxPanel(pwsSettings, "PWS");
     CheckBoxPanel dynCBPanel = new CheckBoxPanel(dynSettings, "Dynamics");
     CheckBoxPanel fluorCBPanel = new CheckBoxPanel(fluorSettings, "Fluorescence");
