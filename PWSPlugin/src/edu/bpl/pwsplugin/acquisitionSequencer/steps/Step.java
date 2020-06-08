@@ -32,21 +32,16 @@ public abstract class Step extends CopyableMutableTreeNode {
     private JsonableParam settings; 
     private final Consts.Type stepType;
     protected final List<SequencerFunction> callbacks = new ArrayList<>();
-    
-    public Step(Consts.Type type) {
-        super();
-        stepType = type;
-    }
+
     
     public Step(JsonableParam settings, Consts.Type type) {
-        this(type);
+        super();
+        this.stepType = type;
         this.setSettings(settings);
     }
     
     public Step(Step step) { //copy constructor
-        this(step.stepType);
-        setSettings(step.settings.copy());
-        
+        this(step.settings.copy(), step.stepType);        
     }
     
     public final Consts.Type getType() {

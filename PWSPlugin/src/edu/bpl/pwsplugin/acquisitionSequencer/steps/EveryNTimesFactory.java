@@ -63,7 +63,7 @@ class EveryNTimes extends ContainerStep {
     int iteration = 0;
     
     public EveryNTimes() {
-        super(Consts.Type.EVERYN);
+        super(new SequencerSettings.EveryNTimesSettings(), Consts.Type.EVERYN);
     }
     
     @Override

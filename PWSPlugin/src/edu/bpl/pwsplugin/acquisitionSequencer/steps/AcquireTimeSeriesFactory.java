@@ -14,6 +14,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.HashMap;
 import java.util.Map;
@@ -96,7 +97,7 @@ class TimeSeriesUI extends SingleBuilderJPanel<SequencerSettings.AcquireTimeSeri
 
 class AcquireTimeSeries extends ContainerStep {
     public AcquireTimeSeries() {
-        super(Consts.Type.TIME);
+        super(new AcquireCellSettings(), Consts.Type.TIME);
     }
     
     @Override 

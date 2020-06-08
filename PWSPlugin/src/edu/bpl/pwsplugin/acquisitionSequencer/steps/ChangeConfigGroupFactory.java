@@ -118,7 +118,7 @@ class ChangeConfigGroupUI extends BuilderJPanel<SequencerSettings.ChangeConfigGr
 
 class ChangeConfigGroup extends ContainerStep {
     public ChangeConfigGroup() {
-        super(Consts.Type.CONFIG);
+        super(new SequencerSettings.ChangeConfigGroupSettings(), Consts.Type.CONFIG);
     }
 
     @Override

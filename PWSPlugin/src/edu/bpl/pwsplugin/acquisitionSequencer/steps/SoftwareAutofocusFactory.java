@@ -87,7 +87,7 @@ class SoftwareAutoFocusUI extends BuilderJPanel<SequencerSettings.SoftwareAutoFo
 class SoftwareAutofocus extends EndpointStep {
          
     public SoftwareAutofocus() {
-        super(Consts.Type.AF);
+        super(new SequencerSettings.SoftwareAutoFocusSettings(), Consts.Type.AF);
     }
     
     @Override

@@ -68,7 +68,7 @@ public class AcquireFromPositionListFactory extends StepFactory {
 class AcquireFromPositionList extends ContainerStep {
     //Executes `step` at each position in the positionlist and increments the cell number each time.
     public AcquireFromPositionList() {
-        super(Consts.Type.POS);
+        super(new SequencerSettings.AcquirePositionsSettings(), Consts.Type.POS);
     }
     
     @Override

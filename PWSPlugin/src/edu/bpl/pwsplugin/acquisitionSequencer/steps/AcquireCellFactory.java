@@ -64,7 +64,7 @@ public class AcquireCellFactory extends StepFactory {
 class AcquireCell extends EndpointStep {
     //Represents the acquisition of a single "CellXXX" folder, it can contain multiple PWS, Dynamics, and Fluorescence acquisitions.
     public AcquireCell() {
-        super(Consts.Type.ACQ);
+        super(new AcquireCellSettings(), Consts.Type.ACQ);
     }
     
     @Override

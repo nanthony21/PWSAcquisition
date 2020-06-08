@@ -67,7 +67,7 @@ public class EnterSubfolderFactory extends StepFactory {
 class EnterSubfolderStep extends ContainerStep {
     
     public EnterSubfolderStep() {
-        super(Consts.Type.SUBFOLDER);
+        super(new SequencerSettings.EnterSubfolderSettings(), Consts.Type.SUBFOLDER);
     }
     
     @Override

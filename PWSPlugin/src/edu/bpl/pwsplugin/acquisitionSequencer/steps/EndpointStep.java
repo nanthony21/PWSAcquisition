@@ -17,19 +17,14 @@ import java.util.List;
  */
 public abstract class EndpointStep extends Step {
     //A `Step` which is an endpoint (does not support containing any substeps
-    public EndpointStep(Consts.Type type) {
-        super(type);
+    public EndpointStep(JsonableParam settings, Consts.Type type) {
+        super(settings, type);
         this.setAllowsChildren(false);
     }
     
     public EndpointStep(EndpointStep step) {
         super(step);
         this.setAllowsChildren(false);
-    }
-    
-    public EndpointStep(JsonableParam settings, Consts.Type type) {
-        this(type);
-        this.setSettings(settings);
     }
     
     @Override

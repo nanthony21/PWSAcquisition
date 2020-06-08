@@ -7,7 +7,6 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /**
@@ -34,7 +33,6 @@ public abstract class StepFactory {
     public Step createStep() {
         try {
             Step step = getStep().newInstance();
-            step.setSettings(this.getSettings().newInstance()); //Make sure not to leave settings as null
             return step;
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);

@@ -21,19 +21,13 @@ import java.util.stream.Collectors;
 public abstract class ContainerStep extends Step {
     //A `Step` that takes other `Step`s and wraps functionality around them.
     
-    public ContainerStep(Consts.Type type) {
-        super(type);
+    public ContainerStep(JsonableParam settings, Consts.Type type) {
+        super(settings, type);
     }
     
     public ContainerStep(ContainerStep step) {
         super(step);
-    }
-    
-    public ContainerStep(JsonableParam settings, Consts.Type type) {
-        this(type);
-        this.setSettings(settings);
-    }
-    
+    }    
     
     public final List<Step> getSubSteps() {
         return Collections.list(this.children());

@@ -92,7 +92,7 @@ class FocusLockUI extends SingleBuilderJPanel<SequencerSettings.FocusLockSetting
 
 class FocusLock extends ContainerStep {
     public FocusLock() {
-        super(Consts.Type.PFS);
+        super(new SequencerSettings.FocusLockSettings(), Consts.Type.PFS);
     }
     
     @Override

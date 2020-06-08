@@ -62,7 +62,7 @@ public class RootStepFactory extends StepFactory{
 
 class RootStep extends ContainerStep {
     public RootStep() {
-        super(Consts.Type.ROOT);
+        super(new SequencerSettings.RootStepSettings(), Consts.Type.ROOT);
     }
     
     @Override

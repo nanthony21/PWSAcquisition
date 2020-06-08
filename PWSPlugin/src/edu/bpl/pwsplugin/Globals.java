@@ -37,15 +37,15 @@ public class Globals {
         instance().acqMan_ = new AcquisitionManager();
         instance().frame = new PluginFrame();
         //Load settings
-        try {
+        //try {
             PWSPluginSettings settings = Globals.loadSettings();
             instance().frame.populateFields(settings);
             if (settings != null) {
                 Globals.setHardwareConfigurationSettings(settings.hwConfiguration);
             }
-        } catch (Exception e) {
-            studio.logs().logError("Failed to load PWSPlugin settings.");
-        }
+        //} catch (Exception e) {
+         //   studio.logs().logError("Failed to load PWSPlugin settings.");
+        //}
     }
     
     public static void saveSettings(PWSPluginSettings settings) {
