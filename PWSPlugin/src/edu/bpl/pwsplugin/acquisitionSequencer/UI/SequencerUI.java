@@ -67,18 +67,18 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
             try {
                 Step rootStep = this.build();
                 List<String> errors = verifySequence(rootStep);
-                boolean success = resolveFileConflicts(rootStep);
-                if (!success) { return; }
                 if (!errors.isEmpty()) {
                     Globals.mm().logs().showError(String.join("\n", errors));
                     return;
                 }
+                boolean success = resolveFileConflicts(rootStep);
+                if (!success) { return; }
+ 
                 /*rootStep.addCallback((status) ->{
                     status.newStatusMessage("Root callback");
                     return status;
                 });*/
-                SequencerFunction rootFunc = rootStep.getFunction();
-                SequencerRunningDlg dlg = new SequencerRunningDlg(SwingUtilities.getWindowAncestor(this), "Acquisition Sequence Running", rootFunc);
+                SequencerRunningDlg dlg = new SequencerRunningDlg(SwingUtilities.getWindowAncestor(this), "Acquisition Sequence Running", rootStep);
             } catch (BuilderPanelException | RuntimeException e) {
                 Globals.mm().logs().showError(e);
             }

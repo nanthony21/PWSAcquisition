@@ -10,6 +10,8 @@ import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
+import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeRenderers;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import java.awt.Dialog;
 import java.awt.Window;
 import java.awt.event.ActionListener;
@@ -22,6 +24,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.tree.TreePath;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -34,24 +37,26 @@ class SequencerRunningDlg extends JDialog {
     JLabel cellNum = new JLabel("Acquire Cell:");
     PauseButton pauseButton = new PauseButton(true);
     JButton cancelButton = new JButton("Cancel");
-    TreeDragAndDrop tree = new TreeDragAndDrop();
+    DisplayTree tree;
     AcquisitionThread acqThread;
 
-    public SequencerRunningDlg(Window owner, String title, SequencerFunction rootFunc) {
+    public SequencerRunningDlg(Window owner, String title, Step rootStep) {
         super(owner, title, Dialog.ModalityType.DOCUMENT_MODAL);
         this.setLocationRelativeTo(owner);
         statusMsg.setEditable(false);
         JScrollPane textScroll = new JScrollPane(statusMsg);
+        tree = new DisplayTree(rootStep);
         JPanel contentPane = new JPanel(new MigLayout("fill"));
         this.setContentPane(contentPane);
-        contentPane.add(new JLabel("Status: "), "wrap, spanx");
-        contentPane.add(textScroll, "height 20sp, width 15sp, wrap, spanx");
-        contentPane.add(cellNum, "wrap");
-        contentPane.add(pauseButton, "gapleft push");
-        contentPane.add(cancelButton, "gapright push");
+        contentPane.add(new JLabel("Status: "), "cell 0 0");
+        contentPane.add(textScroll, "cell 0 1, height 20sp, width 15sp");
+        contentPane.add(cellNum, "cell 0 2");
+        contentPane.add(tree, "cell 1 0 1 3, growy");
+        contentPane.add(pauseButton, "cell 0 3, gapleft push, align center");
+        contentPane.add(cancelButton, "cell 0 3, gapright push, align center");
         this.pack();
         this.setResizable(false);
-        acqThread = new AcquisitionThread(rootFunc, 1); //This starts the thread.
+        acqThread = new AcquisitionThread(rootStep.getFunction(), 1); //This starts the thread.
         cancelButton.addActionListener((evt) -> {
             //The acquisition engine doesn't deal well with InterruptedException. Manually cancel any acquisitions before trying to cancel the thread.
             if (Globals.mm().acquisitions().isAcquisitionRunning()) {
@@ -72,6 +77,7 @@ class SequencerRunningDlg extends JDialog {
     public void updateStatus(AcquisitionStatus status) {
         this.cellNum.setText(String.format("Acquiring Cell: %d", status.getCellNum()));
         this.statusMsg.setText(String.join("\n", status.statusMsg));
+        this.tree.tree().setSelectionPath(new TreePath(status.getTreePath()));
     }
 
     class AcquisitionThread extends SwingWorker<Void, AcquisitionStatus> {
@@ -124,6 +130,16 @@ class SequencerRunningDlg extends JDialog {
             SequencerRunningDlg.this.updateStatus(currentStatus);
         }
         //public void done() This method has a bug where it can run before the thread actually exits. Use invokelater instead.
+    } 
+}
+
+
+class DisplayTree extends TreeDragAndDrop {
+    //This tree is used to display the current status of the sequence, it is not user interactive.
+    public DisplayTree(Step rootStep) {
+        super();
+        model.setRoot(rootStep);
+        super.expandTree();
+        tree.setCellRenderer(new TreeRenderers.SequenceTreeRenderer() );
     }
-    
 }

@@ -123,7 +123,7 @@ class AcquireTimeSeries extends ContainerStep {
                             Thread.sleep(500);
                         }   
                         if (count == 0) {
-                            status.newStatusMessage(String.format("Acquistion took %.1f seconds. Longer than the frame interval.", (System.currentTimeMillis() - lastAcqTime)/1000));
+                            status.updateStatusMessage(msgId, String.format("Acquisition took %.1f seconds. Longer than the frame interval.", (System.currentTimeMillis() - lastAcqTime)/1000));
                         }
                     }
                     lastAcqTime = System.currentTimeMillis(); //Save the current time so we can figure out when to start the next acquisition.
