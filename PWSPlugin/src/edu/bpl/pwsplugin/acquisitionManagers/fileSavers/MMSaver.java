@@ -42,31 +42,34 @@ public class MMSaver extends DefaultSaverThread {
     public void run(){
         try {
             long now = System.currentTimeMillis(); 
-            Datastore ds = Globals.mm().data().createMultipageTIFFDatastore(savePath_, false, true);
-            ds.setName("PWSPluginSaver");
-            Image im;
-            Coords.Builder coords;
             JSONObject jmd = null;
-            for (int i=0; i<expectedFrames_; i++) {
-                im = (Image) getQueue().poll(5, TimeUnit.SECONDS); //Wait for an image
-                if (i==0) {
-                    Metadata md = im.getMetadata();
-                    jmd = new JSONObject(((DefaultMetadata)md).toPropertyMap().toJSON()); //Save the micromanager metadata from the first image.
+            Datastore ds = Globals.mm().data().createMultipageTIFFDatastore(savePath_, false, true);
+            try {
+                ds.setName("PWSPluginSaver");
+                Image im;
+                Coords.Builder coords;
+                for (int i=0; i<expectedFrames_; i++) {
+                    im = (Image) getQueue().poll(5, TimeUnit.SECONDS); //Wait for an image
+                    if (i==0) {
+                        Metadata md = im.getMetadata();
+                        jmd = new JSONObject(((DefaultMetadata)md).toPropertyMap().toJSON()); //Save the micromanager metadata from the first image.
+                    }
+                    if (im == null) {
+                        ReportingUtils.showError("ImSaver timed out while waiting for image");
+                        return;
+                    }
+                    coords = im.getCoords().copyBuilder();
+                    coords.timePoint(i);
+                    ds.putImage(im.copyAtCoords(coords.build()));
+
+                    if (i == expectedFrames_/2) {
+                        saveImBd(im); //Save the image from halfway through the sequence.
+                    }
                 }
-                if (im == null) {
-                    ReportingUtils.showError("ImSaver timed out while waiting for image");
-                    return;
-                }
-                coords = im.getCoords().copyBuilder();
-                coords.timePoint(i);
-                ds.putImage(im.copyAtCoords(coords.build()));
-                
-                if (i == expectedFrames_/2) {
-                    saveImBd(im); //Save the image from halfway through the sequence.
-                }
+            } finally { //If something goes wrong we still want to make sure to close the file.
+                ds.freeze(); //This must be called prior to closing or the file will be corrupted.
+                ds.close();
             }
-            ds.freeze(); //This must be called prior to closing or the file will be corrupted.
-            ds.close();
 
             File oldFile = new File(savePath_).listFiles((dir, name) -> name.endsWith(".ome.tif") && name.contains("MMStack"))[0];
             File newFile = new File(Paths.get(savePath_).resolve(filePrefix_ + ".tif").toString());
