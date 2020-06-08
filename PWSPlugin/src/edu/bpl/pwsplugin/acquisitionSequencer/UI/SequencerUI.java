@@ -217,9 +217,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
     
     private List<String> verifySequence(Step parent, List<String> errs) {
         if (parent instanceof ContainerStep) {
-            if (((ContainerStep) parent).getSubSteps().isEmpty()) {
-                errs.add(String.format("%s container-node may not be empty", parent.toString()));
-            }
+            errs.addAll(parent.validate());
             for (Step substep : ((ContainerStep) parent).getSubSteps()) {
                 errs.addAll(verifySequence(substep, new ArrayList<String>()));
             }

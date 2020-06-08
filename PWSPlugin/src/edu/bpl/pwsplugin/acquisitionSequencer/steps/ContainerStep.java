@@ -33,6 +33,15 @@ public abstract class ContainerStep extends Step {
         return Collections.list(this.children());
     }
     
+    @Override
+    public List<String> validate() {
+        List<String> errs = new ArrayList<>();
+        if (this.getSubSteps().isEmpty()) {
+            errs.add(String.format("%s container-node may not be empty", this.toString()));
+        }
+        return errs;
+    }
+    
     protected final void addCallbackToSubsteps(SequencerFunction cb) { 
         //Add a callback for all the substeps of this step. Due to the implementation of `getSubstepsFunction` the callback will propagate all the way down.
         for (Step step : this.getSubSteps()) {

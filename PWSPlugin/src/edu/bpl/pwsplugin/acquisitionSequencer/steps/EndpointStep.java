@@ -31,4 +31,9 @@ public abstract class EndpointStep extends Step {
     public List<String> requiredRelativePaths(Integer startingCellNum) {
         return new ArrayList<>(); //Most endpoints don't save a cell folder.
     }
+    
+    @Override
+    public List<String> validate() {
+        return new ArrayList<String>(); //Assume that the endpoint steps are always valid. this can always be overridenn if this is not the case.
+    }
 }

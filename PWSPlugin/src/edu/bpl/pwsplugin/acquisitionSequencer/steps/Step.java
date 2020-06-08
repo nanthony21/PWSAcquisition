@@ -93,6 +93,8 @@ public abstract class Step extends CopyableMutableTreeNode {
         return Consts.getFactory(this.getType()).getName();
     }
     
+    public abstract List<String> validate(); //Return a list of any errors for this step.
+    
     public static void registerGsonType() { //This must be called for GSON loading/saving to work.
         GsonUtils.registerType(StepTypeAdapter.FACTORY);
     }
@@ -116,7 +118,7 @@ class StepTypeAdapter extends TypeAdapter<Step> {
     private StepTypeAdapter(Gson gson) {
         this.gson = gson;
     }
-
+    
     @Override
     public void write(JsonWriter out, Step step) throws IOException {
         out.beginObject();

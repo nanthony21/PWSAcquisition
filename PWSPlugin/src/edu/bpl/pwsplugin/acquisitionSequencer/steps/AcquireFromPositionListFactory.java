@@ -16,6 +16,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.util.List;
 import java.util.concurrent.Callable;
 import net.miginfocom.swing.MigLayout;
 import org.micromanager.AutofocusPlugin;
@@ -109,6 +110,15 @@ class AcquireFromPositionList extends ContainerStep {
     public Double numberNewAcqs() {
         Double acqPerIteration = super.numberNewAcqsOneIteration();
         return acqPerIteration * ((SequencerSettings.AcquirePositionsSettings) this.getSettings()).posList.getNumberOfPositions();
+    }
+    
+    @Override
+    public List<String> validate() {
+        List<String> errs = super.validate();
+        if (((SequencerSettings.AcquirePositionsSettings) this.getSettings()).posList.getNumberOfPositions() == 0) {
+            errs.add(String.format("Position list for \"%s\" is empty.", this.toString()));
+        }
+        return errs;
     }
 }
 
