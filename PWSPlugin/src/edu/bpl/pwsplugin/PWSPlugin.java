@@ -26,10 +26,7 @@ package edu.bpl.pwsplugin;
 //Optional:
 //Add display album for fluorescence. Make fluorescence acq engine support multiple channels.
 //Step types:
-//GoTo step
-//TODO XYZ grid (can be used for z-stacks)
-//Add sequence "treepath" to the status class. Allow callbacks to know what step they are being called from, that way for example you can make a callback that only runs for an acquisition step.
-//Actually have a single `Tree` which is used by the UI as well as the runtime experiment to keep track of location.
+//TODO Z stack
 //Add sequence logging.
 //Transmission imaging
 
