@@ -72,7 +72,7 @@ class RootStep extends ContainerStep {
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-                status.setCellNum(1);
+                status.setCellNum(0);
                 status.setSavePath(settings.directory);
                 status = subStepFunc.apply(status);
                 return status;
