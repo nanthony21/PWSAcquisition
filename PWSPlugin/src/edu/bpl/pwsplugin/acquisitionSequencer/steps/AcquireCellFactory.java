@@ -72,8 +72,8 @@ class AcquireCell extends EndpointStep {
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception{
-                status.newStatusMessage(String.format("Acquiring Cell %d", status.getCellNum()));
                 status.setCellNum(status.getCellNum()+1);
+                status.newStatusMessage(String.format("Acquiring Cell %d", status.getCellNum()));
                 for (FluorSettings flSettings : settings.fluorSettings) {
                     status.allowPauseHere();
                     //status.newStatusMessage(String.format("Acquiring %s fluoresence", flSettings.filterConfigName));

@@ -162,7 +162,7 @@ class MyDocumentFilter extends DocumentFilter {
     public void insertString(DocumentFilter.FilterBypass fb, int offset,
             String text, AttributeSet attr) throws BadLocationException {
         StringBuilder buffer = new StringBuilder(text.length());
-        for (int i = text.length() - 1; i >= 0; i--) {
+        for (int i=0; i<text.length(); i++) {
             char ch = text.charAt(i);
             if (disallowedChars.indexOf(ch) == -1) { //Don't allow disallowed characters.
                 buffer.append(ch);
