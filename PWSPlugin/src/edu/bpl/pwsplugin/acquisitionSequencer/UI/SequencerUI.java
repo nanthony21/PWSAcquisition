@@ -8,14 +8,10 @@ package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 import com.google.gson.Gson;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.GsonUtils;
-import java.awt.Dialog;
 import java.awt.Font;
 import java.awt.Window;
 import java.io.File;
@@ -23,7 +19,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +35,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.swing.tree.DefaultTreeModel;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.io.FileUtils;
@@ -73,11 +70,6 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
                 }
                 boolean success = resolveFileConflicts(rootStep);
                 if (!success) { return; }
- 
-                /*rootStep.addCallback((status) ->{
-                    status.newStatusMessage("Root callback");
-                    return status;
-                });*/
                 SequencerRunningDlg dlg = new SequencerRunningDlg(SwingUtilities.getWindowAncestor(this), "Acquisition Sequence Running", rootStep);
             } catch (BuilderPanelException | RuntimeException e) {
                 Globals.mm().logs().showError(e);
@@ -89,15 +81,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
                 Step rootStep = this.build();
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
                 String path = FileDialogs.save(topFrame, "Save Sequence", STEPFILETYPE).getPath();
-                if(!path.endsWith(".pwsseq")) {
-                    path = path + ".pwsseq"; //Make sure the extension is there.
-                }
-                try (FileWriter writer = new FileWriter(path)) { //Writer is automatically closed at the end of this statement.
-                    Gson gson = GsonUtils.getGson();
-                    String json = gson.toJson(rootStep);
-                    writer.write(json);
-                }
-        
+                rootStep.saveToJson(path); 
             } catch (IOException | BuilderPanelException e) {
                 Globals.mm().logs().showError(e);
             }
@@ -129,8 +113,6 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
         this.add(loadButton, "cell 0 5");
     }
     
-
-    
     private boolean resolveFileConflicts(Step step) {
         //returns true if it is ok to proceed, false if cancel.
         String dir = ((SequencerSettings.RootStepSettings) step.getSettings()).directory;
@@ -146,54 +128,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
         if (conflict.isEmpty()) {
             return true;
         }
-        boolean overwrite = (new JDialog() { //OPen a dialog asking to overwrite, if true then go ahead.
-            private boolean result;
-            public void setVisible(boolean vis) {
-                if (vis) {
-                    this.setTitle("File Conflict!");
-                    //this.setResizable(false);
-                    this.setModal(true);
-                    this.setLocationRelativeTo(this.getOwner());
-                    
-                    JPanel cont = new JPanel(new MigLayout("fill"));
-                    JTextArea textTop = new JTextArea(String.format("The following files already exist at %s:", dir));
-                    textTop.setWrapStyleWord(true);
-                    textTop.setLineWrap(true);
-                    textTop.setOpaque(false);
-                    textTop.setEditable(false);
-                    textTop.setFocusable(false);
-                    cont.add(textTop, "wrap, growx, span");
-                    JTextArea text = new JTextArea();
-                    text.setText(String.join("\n", conflict.stream().map(Object::toString).collect(Collectors.toList())));
-                    text.setWrapStyleWord(true);
-                    text.setLineWrap(true);
-                    text.setOpaque(false);
-                    text.setEditable(false);
-                    JScrollPane scroll = new JScrollPane(text);
-                    cont.add(scroll, "wrap, grow, span, width 15sp, height 15sp");
-                    JButton okButton = new JButton("Overwrite");
-                    okButton.addActionListener((evt)->{
-                        result=true;
-                        this.setVisible(false);
-                    });
-                    cont.add(okButton);
-                    JButton cancelButton = new JButton("Cancel");
-                    cancelButton.addActionListener((evt)->{
-                        result=false;
-                        this.setVisible(false);
-                    });
-                    cont.add(cancelButton);
-                    this.setContentPane(cont);
-                    this.pack();
-                    this.setMinimumSize(this.getSize());
-                }
-                super.setVisible(vis);
-            }
-            public boolean getResult() {
-                this.setVisible(true);
-                return this.result;
-            }
-        }).getResult();
+        boolean overwrite = new FileConflictDlg(SwingUtilities.getWindowAncestor(this), dir, conflict).getResult();  //Open a dialog asking to overwrite, if true then go ahead.
         
         boolean success = overwrite;
         if (overwrite) {
@@ -242,3 +177,53 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
     
 }
 
+class FileConflictDlg extends JDialog {
+    //A dialog that displays all the conflicting files detected and asks for permission to overwrite.
+    //Use the getresult method to get a boolean for if it is ok to overwrite the files.
+    private boolean result;
+    
+    public FileConflictDlg(Window owner, String dir, List<Path> conflicts) {
+        super(owner);
+        this.setTitle("File Conflict!");
+        this.setModal(true);
+        this.setLocationRelativeTo(this.getOwner());
+
+        JPanel cont = new JPanel(new MigLayout("fill"));
+        JTextArea textTop = new JTextArea(String.format("The following files already exist at %s:", dir));
+        textTop.setWrapStyleWord(true);
+        textTop.setLineWrap(true);
+        textTop.setOpaque(false);
+        textTop.setEditable(false);
+        textTop.setFocusable(false);
+        cont.add(textTop, "wrap, growx, span");
+        JTextArea text = new JTextArea();
+        text.setText(String.join("\n", conflicts.stream().map(Object::toString).collect(Collectors.toList())));
+        text.setWrapStyleWord(true);
+        text.setLineWrap(true);
+        text.setOpaque(false);
+        text.setEditable(false);
+        JScrollPane scroll = new JScrollPane(text);
+        cont.add(scroll, "wrap, grow, span, width 15sp, height 15sp");
+        JButton okButton = new JButton("Overwrite");
+        okButton.addActionListener((evt)->{
+            result=true;
+            this.setVisible(false);
+        });
+        cont.add(okButton);
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener((evt)->{
+            result=false;
+            this.setVisible(false);
+        });
+        cont.add(cancelButton);
+        this.setContentPane(cont);
+        this.pack();
+        this.setMinimumSize(this.getSize());
+    }
+    
+    public boolean getResult() {
+        //Make visible which will block until the user performs an action that hides the dialog, then return the result.
+        this.setVisible(true);
+        return this.result;
+    }
+}

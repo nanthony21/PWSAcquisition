@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
+import com.google.gson.Gson;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
@@ -14,7 +15,10 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.utils.GsonUtils;
 import edu.bpl.pwsplugin.utils.JsonableParam;
+import java.io.FileWriter;
+import java.nio.file.Paths;
 import javax.swing.JLabel;
 import net.miginfocom.swing.MigLayout;
 
@@ -74,6 +78,7 @@ class RootStep extends ContainerStep {
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 status.setCellNum(0);
                 status.setSavePath(settings.directory);
+                RootStep.this.saveToJson(Paths.get(settings.directory, "sequence.pwsseq").toString()); //Save the sequence to file for retrospect.
                 status = subStepFunc.apply(status);
                 return status;
             }

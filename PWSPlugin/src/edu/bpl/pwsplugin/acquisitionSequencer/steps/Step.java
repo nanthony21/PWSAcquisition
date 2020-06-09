@@ -17,6 +17,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyableMutableTreeNode;
 import edu.bpl.pwsplugin.utils.GsonUtils;
 import edu.bpl.pwsplugin.utils.JsonableParam;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,6 +65,8 @@ public abstract class Step extends CopyableMutableTreeNode {
         
     public abstract Double numberNewAcqs(); //Return the number of new cell folders expected to be created within this step.
     
+    public abstract List<String> requiredRelativePaths(Integer startingCellNum);
+    
     public final SequencerFunction getFunction() {
         TreeNode[] path = this.getPath();
         Step[] treePath = Arrays.copyOf(path, path.length, Step[].class); //cast to Step[].
@@ -85,9 +88,7 @@ public abstract class Step extends CopyableMutableTreeNode {
     public final void addCallback(SequencerFunction cb) { 
         callbacks.add(cb);
     }
-    
-    public abstract List<String> requiredRelativePaths(Integer startingCellNum);
-    
+        
     @Override
     public String toString() { //this determines how its labeled in a JTree
         return Consts.getFactory(this.getType()).getName();
@@ -97,6 +98,17 @@ public abstract class Step extends CopyableMutableTreeNode {
     
     public static void registerGsonType() { //This must be called for GSON loading/saving to work.
         GsonUtils.registerType(StepTypeAdapter.FACTORY);
+    }
+    
+    public void saveToJson(String savePath) throws IOException {
+        if(!savePath.endsWith(".pwsseq")) {
+            savePath = savePath + ".pwsseq"; //Make sure the extension is there.
+        }
+        try (FileWriter writer = new FileWriter(savePath)) { //Writer is automatically closed at the end of this statement.
+            Gson gson = GsonUtils.getGson();
+            String json = gson.toJson(this);
+            writer.write(json);
+        }
     }
 }
 
