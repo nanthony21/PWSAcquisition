@@ -2,7 +2,7 @@
 package edu.bpl.pwsplugin.settings;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStep;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
 
@@ -15,7 +15,7 @@ public class PWSPluginSettings extends JsonableParam {
     //passed around, saved, loaded, etc.
     public HWConfigurationSettings hwConfiguration = new HWConfigurationSettings();
     public AcquireCellSettings acquisitionSettings = new AcquireCellSettings();
-    public ContainerStep sequenceRoot = (ContainerStep) Consts.getFactory(Consts.Type.ROOT).createStep();
+    public RootStep sequenceRoot = (RootStep) Consts.getFactory(Consts.Type.ROOT).createStep();
     public String saveDir = "";
     public int cellNum = 1;
 

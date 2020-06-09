@@ -10,6 +10,7 @@ import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.awt.Font;
@@ -41,9 +42,8 @@ import org.micromanager.internal.utils.FileDialogs;
 /**
  *
  * @author nick
- * //TODO this should be split into a file for UI-only functionality and the core functionality of the sequencer.
  */
-public class SequencerUI extends BuilderJPanel<ContainerStep> {
+public class SequencerUI extends BuilderJPanel<RootStep> {
     SequenceTree seqTree = new SequenceTree();
     NewStepsTree newStepsTree = new NewStepsTree();
     SettingsPanel settingsPanel = new SettingsPanel(seqTree, newStepsTree);
@@ -53,13 +53,13 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
     private static final FileDialogs.FileType STEPFILETYPE = new FileDialogs.FileType("PWS Acquisition Sequence", "Sequence (.pwsseq)", "newAcqSequence.pwsseq", true, "pwsseq"); // The specification for how to save a Step to a file.
     
     public SequencerUI() {
-        super(new MigLayout("fill"), ContainerStep.class);
+        super(new MigLayout("fill"), RootStep.class);
 
         this.settingsPanel.setBorder(BorderFactory.createEtchedBorder());
         
         this.runButton.addActionListener((evt) -> {  
             try {
-                Step rootStep = this.build();
+                RootStep rootStep = this.build();
                 List<String> errors = verifySequence(rootStep);
                 if (!errors.isEmpty()) {
                     Globals.mm().logs().showError(String.join("\n", errors));
@@ -88,7 +88,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
             try {
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
                 String path = FileDialogs.openFile(topFrame, "Load Sequence", STEPFILETYPE).getPath(); //TODO check if dialog was cancelled. Path will be null
-                ContainerStep rootStep = GsonUtils.getGson().fromJson(new FileReader(path), ContainerStep.class);
+                RootStep rootStep = GsonUtils.getGson().fromJson(new FileReader(path), RootStep.class);
                 this.populateFields(rootStep);
             } catch (FileNotFoundException | NullPointerException e) {
                 Globals.mm().logs().showError(e);
@@ -110,10 +110,9 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
         this.add(loadButton, "cell 0 5");
     }
     
-    private boolean resolveFileConflicts(Step step) {
+    private boolean resolveFileConflicts(RootStep step) {
         //returns true if it is ok to proceed, false if cancel.
-        String dir = ((SequencerSettings.RootStepSettings) step.getSettings()).directory;
-        //Integer numberAcqsExpected = (int) Math.ceil(step.numberNewAcqs()); //This can possible be fractional due to the `EveryNTimes` step. always round up to be safe.
+        String dir = step.getSettings().directory;
         List<String> relativePaths = step.getRequiredPaths(); //step.requiredRelativePaths(1);
         List<Path> conflict = new ArrayList<>();
         for (String relPath : relativePaths) {
@@ -149,26 +148,26 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
     private List<String> verifySequence(Step parent, List<String> errs) {
         if (parent instanceof ContainerStep) {
             errs.addAll(parent.validate());
-            for (Step substep : ((ContainerStep) parent).getSubSteps()) {
-                errs.addAll(verifySequence(substep, new ArrayList<String>()));
+            for (Step substep : ((ContainerStep<?>) parent).getSubSteps()) {
+                errs.addAll(verifySequence(substep, new ArrayList<>()));
             }
         } 
         return errs;
     }
     
-    private List<String> verifySequence(Step parent) {
+    private List<String> verifySequence(RootStep parent) {
         List<String> errs = new ArrayList<>();
         return verifySequence(parent, errs);
     }
     
     @Override
-    public ContainerStep build() throws BuilderPanelException {
-        return (ContainerStep) seqTree.tree().getModel().getRoot();
+    public RootStep build() throws BuilderPanelException {
+        return (RootStep) seqTree.tree().getModel().getRoot();
     }
     
 
     @Override
-    public void populateFields(ContainerStep rootStep) {
+    public void populateFields(RootStep rootStep) {
         ((DefaultTreeModel) seqTree.tree().getModel()).setRoot(rootStep);
     }
     

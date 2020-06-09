@@ -26,6 +26,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.UI.SequencerUI;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStep;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import javax.swing.JMenu;
@@ -90,7 +91,7 @@ public class PluginFrame extends MMFrame {
         try {
             set.sequenceRoot = this.sequencePanel.build();
         } catch (BuilderJPanel.BuilderPanelException e) {
-            set.sequenceRoot = (ContainerStep) new RootStepFactory().createStep();
+            set.sequenceRoot = (RootStep) new RootStepFactory().createStep();
         }
         return set;
     }
