@@ -80,7 +80,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
             try { 
                 Step rootStep = this.build();
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-                String path = FileDialogs.save(topFrame, "Save Sequence", STEPFILETYPE).getPath();
+                String path = FileDialogs.save(topFrame, "Save Sequence", STEPFILETYPE).getPath(); //TODO check if dialog was cancelled. Path will be null
                 rootStep.saveToJson(path); 
             } catch (IOException | BuilderPanelException e) {
                 Globals.mm().logs().showError(e);
@@ -90,7 +90,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
         this.loadButton.addActionListener((evt) -> {
             try {
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-                String path = FileDialogs.openFile(topFrame, "Load Sequence", STEPFILETYPE).getPath();
+                String path = FileDialogs.openFile(topFrame, "Load Sequence", STEPFILETYPE).getPath(); //TODO check if dialog was cancelled. Path will be null
                 ContainerStep rootStep = GsonUtils.getGson().fromJson(new FileReader(path), ContainerStep.class);
                 this.populateFields(rootStep);
             } catch (FileNotFoundException | NullPointerException e) {
