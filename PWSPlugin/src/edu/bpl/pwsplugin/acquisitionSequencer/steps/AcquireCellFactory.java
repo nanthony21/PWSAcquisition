@@ -15,6 +15,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,17 +98,12 @@ class AcquireCell extends EndpointStep {
             }
         };
     }
-    
+
     @Override
-    public Double numberNewAcqs() {
-        return 1.0;
-    }
-    
-    @Override
-   public List<String> requiredRelativePaths(Integer startingCellNum) {
-        List<String> l = new ArrayList<>();
-        l.add(String.format("Cell%d", startingCellNum));
-        return l;
+    protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
+        status.requiredPaths.add(Paths.get(status.workingDirectory, String.format("Cell%d", status.cellNum)).toString());
+        status.cellNum++;
+        return status;
     }
 }
 

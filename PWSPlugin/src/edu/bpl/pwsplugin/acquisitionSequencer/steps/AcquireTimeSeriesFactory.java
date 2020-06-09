@@ -5,20 +5,15 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
-import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
@@ -138,21 +133,13 @@ class AcquireTimeSeries extends ContainerStep {
     }
     
     @Override
-    public Double numberNewAcqs() {
-        Double acqsPerIteration = super.numberNewAcqsOneIteration();
-        Double acqs = acqsPerIteration * ((SequencerSettings.AcquireTimeSeriesSettings) this.getSettings()).numFrames;
-        return acqs;
-    }
-    
-    @Override
-    public List<String> requiredRelativePaths(Integer startingCellNum) {
-        List<String> paths = new ArrayList<>();
-        int numIterations = ((SequencerSettings.AcquireTimeSeriesSettings) this.getSettings()).numFrames;
-        Integer cellNum = startingCellNum;
-        for (int i=0; i<numIterations; i++) {
-            paths.addAll(super.requiredRelativePaths(cellNum));
-            cellNum += new Double(Math.floor(this.numberNewAcqsOneIteration())).intValue();
+    protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
+        int iterations = ((SequencerSettings.AcquireTimeSeriesSettings) this.settings).numFrames;
+        for (int i=0; i<iterations; i++) {
+            for (Step step : this.getSubSteps()) {
+                status = step.simulateRun(status);
+            }
         }
-        return paths;
+        return status;
     }
 }

@@ -14,6 +14,8 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -116,8 +118,8 @@ class PauseStep extends EndpointStep {
     }
     
     @Override
-    public Double numberNewAcqs() {
-        return 0.0;
+    protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
+        return status;
     }
 }
 

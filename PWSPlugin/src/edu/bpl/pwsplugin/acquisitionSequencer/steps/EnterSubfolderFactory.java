@@ -10,26 +10,20 @@ import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.io.File;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
-import javax.swing.text.InternationalFormatter;
-import javax.swing.text.MaskFormatter;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -97,20 +91,15 @@ class EnterSubfolderStep extends ContainerStep {
     }
     
     @Override
-    public Double numberNewAcqs() { return this.numberNewAcqsOneIteration(); }
-    
-    @Override
-    public List<String> requiredRelativePaths(Integer startingCellNum) {
-        List<String> l = new ArrayList<>();
-        String path = ((SequencerSettings.EnterSubfolderSettings) this.getSettings()).relativePath;
-        Integer cellNum = startingCellNum;
+    protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
+        String path = ((SequencerSettings.EnterSubfolderSettings) this.settings).relativePath;
+        String origDir = status.workingDirectory;
+        status.workingDirectory = Paths.get(status.workingDirectory, path).toString();
         for (Step step : this.getSubSteps()) {
-            List<String> subPaths = step.requiredRelativePaths(cellNum);
-            Function<String, String> f = (subPath) -> {return Paths.get(path).resolve(subPath).toString(); };
-            l.addAll(subPaths.stream().map(f).collect(Collectors.toList()));
-            cellNum += (int) Math.round(step.numberNewAcqs());
+            status = step.simulateRun(status);
         }
-        return l;
+        status.workingDirectory = origDir;
+        return status;
     }
     
     @Override

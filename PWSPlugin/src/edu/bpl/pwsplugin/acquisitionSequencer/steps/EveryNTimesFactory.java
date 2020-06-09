@@ -61,6 +61,7 @@ public class EveryNTimesFactory extends StepFactory {
 
 class EveryNTimes extends ContainerStep {
     int iteration = 0;
+    int simulatedIteration = 0;
     
     public EveryNTimes() {
         super(new SequencerSettings.EveryNTimesSettings(), Consts.Type.EVERYN);
@@ -84,10 +85,21 @@ class EveryNTimes extends ContainerStep {
     }
     
     @Override
-    public Double numberNewAcqs() { //This is fractional since on some iterations nothing will happen
-        Double oneIter = this.numberNewAcqsOneIteration();
+    protected void initializeSimulatedRun() {
+        simulatedIteration = 0;
+        super.initializeSimulatedRun();
+    }
+    
+    @Override
+    protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
         SequencerSettings.EveryNTimesSettings settings = (SequencerSettings.EveryNTimesSettings) this.getSettings();
-        return oneIter / settings.n;
+        if (((simulatedIteration + settings.offset) % settings.n) == 0) {
+            for (Step step : this.getSubSteps()) {
+                status = step.simulateRun(status);
+            }
+        }
+        simulatedIteration++;
+        return status;
     }
 }
 

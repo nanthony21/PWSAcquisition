@@ -88,9 +88,14 @@ class ZStackStep extends ContainerStep {
     }
     
     @Override
-    public Double numberNewAcqs() { 
-        int iterations = ((SequencerSettings.ZStackSettings) this.getSettings()).numStacks;
-        return this.numberNewAcqsOneIteration() * iterations;
+    protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
+        int iterations = ((SequencerSettings.ZStackSettings) this.settings).numStacks;
+        for (int i=0; i<iterations; i++) {
+            for (Step step : this.getSubSteps()) {
+                status = step.simulateRun(status);
+            }
+        }
+        return status;
     }
 }
 

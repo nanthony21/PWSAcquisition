@@ -5,9 +5,9 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
-import com.google.gson.Gson;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
+import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
@@ -17,11 +17,8 @@ import java.awt.Window;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -117,7 +114,7 @@ public class SequencerUI extends BuilderJPanel<ContainerStep> {
         //returns true if it is ok to proceed, false if cancel.
         String dir = ((SequencerSettings.RootStepSettings) step.getSettings()).directory;
         //Integer numberAcqsExpected = (int) Math.ceil(step.numberNewAcqs()); //This can possible be fractional due to the `EveryNTimes` step. always round up to be safe.
-        List<String> relativePaths = step.requiredRelativePaths(1);
+        List<String> relativePaths = step.getRequiredPaths(); //step.requiredRelativePaths(1);
         List<Path> conflict = new ArrayList<>();
         for (String relPath : relativePaths) {
             File cellFolder = Paths.get(dir).resolve(relPath).toFile();

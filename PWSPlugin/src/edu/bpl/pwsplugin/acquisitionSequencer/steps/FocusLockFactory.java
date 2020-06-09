@@ -136,5 +136,10 @@ class FocusLock extends ContainerStep {
     }
     
     @Override
-    public Double numberNewAcqs() { return this.numberNewAcqsOneIteration(); }
+    protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
+        for (Step step : this.getSubSteps()) {
+            status = step.simulateRun(status);
+        }
+        return status;
+    }
 }

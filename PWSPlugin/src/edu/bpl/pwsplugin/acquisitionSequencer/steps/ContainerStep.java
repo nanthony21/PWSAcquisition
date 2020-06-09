@@ -66,24 +66,12 @@ public abstract class ContainerStep extends Step {
             }
         };
     }
-        
-    protected final Double numberNewAcqsOneIteration() { //The number of new acquisitions recursively from the substeps. Useful to reference from numberNewAcqs
-        Double newAcqs = 0.0;
-        for (Step substep : this.getSubSteps()) {
-            newAcqs += substep.numberNewAcqs();
-        }
-        return newAcqs;
-    }
-        
-    @Override
-    public List<String> requiredRelativePaths(Integer startingCellNum) {
-        Integer cellNum = startingCellNum;
-        List<String> paths = new ArrayList<>();
-        for (Step step : this.getSubSteps()) {
-            paths.addAll(step.requiredRelativePaths(cellNum));
-            cellNum += (int) Math.round(step.numberNewAcqs());
-        }
-        return paths;
-    }
     
+    @Override
+    protected void initializeSimulatedRun() {
+        //initialize all substeps;
+        for (Step step : this.getSubSteps()) {
+            step.initializeSimulatedRun();
+        }
+    }
 }

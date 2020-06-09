@@ -62,10 +62,16 @@ public abstract class Step extends CopyableMutableTreeNode {
     public final void setSettings(JsonableParam settings) { this.settings = settings; }
     
     protected abstract SequencerFunction getStepFunction(); //Return  function to run for this step during execution. Does not include callbacks and mandatory changes to the status object which are handled automatically by `getFunction`.
-        
-    public abstract Double numberNewAcqs(); //Return the number of new cell folders expected to be created within this step.
+          
+    protected abstract void initializeSimulatedRun(); //Some steps need to keep track of context to properly do simulateRun. this reinitializes the context.
     
-    public abstract List<String> requiredRelativePaths(Integer startingCellNum);
+    protected abstract SimulatedStatus simulateRun(SimulatedStatus status); //return the filePaths that will be used by running this step.
+    
+    protected class SimulatedStatus {
+        public Integer cellNum = 1;
+        public List<String> requiredPaths = new ArrayList<>();
+        public String workingDirectory = "";
+    }
     
     public final SequencerFunction getFunction() {
         TreeNode[] path = this.getPath();

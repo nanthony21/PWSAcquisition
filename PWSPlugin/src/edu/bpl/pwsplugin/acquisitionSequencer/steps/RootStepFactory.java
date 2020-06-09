@@ -5,8 +5,6 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
-import com.google.gson.Gson;
-import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
@@ -15,10 +13,9 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
-import edu.bpl.pwsplugin.utils.GsonUtils;
 import edu.bpl.pwsplugin.utils.JsonableParam;
-import java.io.FileWriter;
 import java.nio.file.Paths;
+import java.util.List;
 import javax.swing.JLabel;
 import net.miginfocom.swing.MigLayout;
 
@@ -85,8 +82,21 @@ class RootStep extends ContainerStep {
         };    
     }
     
+    public List<String> getRequiredPaths() {
+        this.initializeSimulatedRun();
+        SimulatedStatus status = new SimulatedStatus();
+        status.cellNum = 1;
+        status.workingDirectory = ((SequencerSettings.RootStepSettings) this.settings).directory;
+        return this.simulateRun(status).requiredPaths;
+    }
+    
     @Override
-    public Double numberNewAcqs() { return this.numberNewAcqsOneIteration(); }
+    protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
+        for (Step step : this.getSubSteps()) {
+            status = step.simulateRun(status);
+        }
+        return status;
+    }
 }
 
 class RootStepUI extends BuilderJPanel<SequencerSettings.RootStepSettings> {
