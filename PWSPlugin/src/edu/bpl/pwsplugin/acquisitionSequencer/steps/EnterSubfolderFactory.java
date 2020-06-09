@@ -16,12 +16,20 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.io.File;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
+import javax.swing.text.InternationalFormatter;
+import javax.swing.text.MaskFormatter;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -109,6 +117,9 @@ class EnterSubfolderStep extends ContainerStep {
     public List<String> validate() {
         List<String> errs = super.validate();
         String path = ((SequencerSettings.EnterSubfolderSettings) this.settings).relativePath;
+        if (path.contains(".")) {
+            errs.add("The `.` character is not allowed the in `EnterSubFolder` step.");
+        }
         try {
             Paths.get(path);
         } catch (InvalidPathException e) {
@@ -120,11 +131,12 @@ class EnterSubfolderStep extends ContainerStep {
 
 
 class EnterSubfolderUI extends BuilderJPanel<SequencerSettings.EnterSubfolderSettings> {
-    private JTextField relPath = new JTextField();
+    private final JTextField relPath = new JTextField();
     
     public EnterSubfolderUI() {
         super(new MigLayout("insets 0 0 0 0"), SequencerSettings.EnterSubfolderSettings.class);
         
+        ((AbstractDocument) relPath.getDocument()).setDocumentFilter(new MyDocumentFilter()); //Disallow certain characters.
         
         this.add(new JLabel("Subfolder:"));
         this.add(relPath, "wrap, pushx, growx");
@@ -141,5 +153,30 @@ class EnterSubfolderUI extends BuilderJPanel<SequencerSettings.EnterSubfolderSet
     @Override
     public void populateFields(SequencerSettings.EnterSubfolderSettings settings) {
         this.relPath.setText(settings.relativePath.toString());
+    }
+}
+
+class MyDocumentFilter extends DocumentFilter {
+    private static final String disallowedChars = ".,\\';`";
+    @Override
+    public void insertString(DocumentFilter.FilterBypass fb, int offset,
+            String text, AttributeSet attr) throws BadLocationException {
+        StringBuilder buffer = new StringBuilder(text.length());
+        for (int i = text.length() - 1; i >= 0; i--) {
+            char ch = text.charAt(i);
+            if (disallowedChars.indexOf(ch) == -1) { //Don't allow disallowed characters.
+                buffer.append(ch);
+            }
+        }
+        super.insertString(fb, offset, buffer.toString(), attr);
+    }
+
+    @Override
+    public void replace(DocumentFilter.FilterBypass fb,
+            int offset, int length, String string, AttributeSet attr) throws BadLocationException {
+        if (length > 0) {
+            fb.remove(offset, length);
+        }
+        insertString(fb, offset, string, attr);
     }
 }
