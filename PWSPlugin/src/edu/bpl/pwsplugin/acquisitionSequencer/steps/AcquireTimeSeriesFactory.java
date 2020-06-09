@@ -92,15 +92,15 @@ class TimeSeriesUI extends SingleBuilderJPanel<SequencerSettings.AcquireTimeSeri
     }
 }
 
-class AcquireTimeSeries extends ContainerStep {
+class AcquireTimeSeries extends ContainerStep<SequencerSettings.AcquireTimeSeriesSettings> {
     public AcquireTimeSeries() {
-        super(new AcquireCellSettings(), Consts.Type.TIME);
+        super(new SequencerSettings.AcquireTimeSeriesSettings(), Consts.Type.TIME);
     }
     
     @Override 
     public SequencerFunction getStepFunction() {
         SequencerFunction stepFunction = super.getSubstepsFunction();
-        SequencerSettings.AcquireTimeSeriesSettings settings = (SequencerSettings.AcquireTimeSeriesSettings) this.getSettings();
+        SequencerSettings.AcquireTimeSeriesSettings settings = this.settings;
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
@@ -134,7 +134,7 @@ class AcquireTimeSeries extends ContainerStep {
     
     @Override
     protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
-        int iterations = ((SequencerSettings.AcquireTimeSeriesSettings) this.settings).numFrames;
+        int iterations = this.settings.numFrames;
         for (int i=0; i<iterations; i++) {
             for (Step step : this.getSubSteps()) {
                 status = step.simulateRun(status);

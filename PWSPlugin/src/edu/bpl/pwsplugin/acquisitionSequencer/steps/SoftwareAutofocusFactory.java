@@ -86,7 +86,7 @@ class SoftwareAutoFocusUI extends BuilderJPanel<SequencerSettings.SoftwareAutoFo
     }
 }
 
-class SoftwareAutofocus extends EndpointStep {
+class SoftwareAutofocus extends EndpointStep<SequencerSettings.SoftwareAutoFocusSettings> {
          
     public SoftwareAutofocus() {
         super(new SequencerSettings.SoftwareAutoFocusSettings(), Consts.Type.AF);
@@ -94,7 +94,7 @@ class SoftwareAutofocus extends EndpointStep {
     
     @Override
     public SequencerFunction getStepFunction() {
-        SequencerSettings.SoftwareAutoFocusSettings settings = (SequencerSettings.SoftwareAutoFocusSettings) this.getSettings();
+        SequencerSettings.SoftwareAutoFocusSettings settings = this.settings;
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {

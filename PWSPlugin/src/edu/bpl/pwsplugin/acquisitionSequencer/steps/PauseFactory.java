@@ -94,7 +94,7 @@ class PauseStepUI extends BuilderJPanel<SequencerSettings.PauseStepSettings>{
     }
 }
 
-class PauseStep extends EndpointStep {
+class PauseStep extends EndpointStep<SequencerSettings.PauseStepSettings> {
     
     public PauseStep() {
         super(new SequencerSettings.PauseStepSettings(), Consts.Type.PAUSE);
@@ -102,7 +102,7 @@ class PauseStep extends EndpointStep {
     
     @Override
     public SequencerFunction getStepFunction() {
-        SequencerSettings.PauseStepSettings settings = (SequencerSettings.PauseStepSettings) this.getSettings();
+        SequencerSettings.PauseStepSettings settings = this.settings;
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {

@@ -118,7 +118,7 @@ class ChangeConfigGroupUI extends BuilderJPanel<SequencerSettings.ChangeConfigGr
     
 }
 
-class ChangeConfigGroup extends ContainerStep {
+class ChangeConfigGroup extends ContainerStep<SequencerSettings.ChangeConfigGroupSettings> {
     public ChangeConfigGroup() {
         super(new SequencerSettings.ChangeConfigGroupSettings(), Consts.Type.CONFIG);
     }
@@ -126,7 +126,7 @@ class ChangeConfigGroup extends ContainerStep {
     @Override
     public SequencerFunction getStepFunction() {
         SequencerFunction subStepFunc = getSubstepsFunction();
-        SequencerSettings.ChangeConfigGroupSettings settings = (SequencerSettings.ChangeConfigGroupSettings) this.getSettings();
+        SequencerSettings.ChangeConfigGroupSettings settings = this.settings;
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {

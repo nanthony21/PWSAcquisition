@@ -67,7 +67,7 @@ public class EnterSubfolderFactory extends StepFactory {
     }
 }
 
-class EnterSubfolderStep extends ContainerStep {
+class EnterSubfolderStep extends ContainerStep<SequencerSettings.EnterSubfolderSettings> {
     
     public EnterSubfolderStep() {
         super(new SequencerSettings.EnterSubfolderSettings(), Consts.Type.SUBFOLDER);
@@ -76,7 +76,7 @@ class EnterSubfolderStep extends ContainerStep {
     @Override
     public SequencerFunction getStepFunction() {
         SequencerFunction stepFunction = super.getSubstepsFunction();
-        SequencerSettings.EnterSubfolderSettings settings = (SequencerSettings.EnterSubfolderSettings) this.getSettings();
+        SequencerSettings.EnterSubfolderSettings settings = this.settings;
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
@@ -92,7 +92,7 @@ class EnterSubfolderStep extends ContainerStep {
     
     @Override
     protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
-        String path = ((SequencerSettings.EnterSubfolderSettings) this.settings).relativePath;
+        String path = this.settings.relativePath;
         String origDir = status.workingDirectory;
         status.workingDirectory = Paths.get(status.workingDirectory, path).toString();
         for (Step step : this.getSubSteps()) {
@@ -105,7 +105,7 @@ class EnterSubfolderStep extends ContainerStep {
     @Override
     public List<String> validate() {
         List<String> errs = super.validate();
-        String path = ((SequencerSettings.EnterSubfolderSettings) this.settings).relativePath;
+        String path = this.settings.relativePath;
         if (path.contains(".")) {
             errs.add("The `.` character is not allowed the in `EnterSubFolder` step.");
         }

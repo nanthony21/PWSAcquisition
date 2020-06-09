@@ -31,20 +31,20 @@ import org.micromanager.internal.utils.FileDialogs;
  *
  * @author nick
  */
-public abstract class Step extends CopyableMutableTreeNode {
-    protected JsonableParam settings; 
+public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeNode {
+    protected T settings; 
     private final Consts.Type stepType;
     protected final List<SequencerFunction> callbacks = new ArrayList<>();
 
     
-    public Step(JsonableParam settings, Consts.Type type) {
+    public Step(T settings, Consts.Type type) {
         super();
         this.stepType = type;
         this.setSettings(settings);
     }
     
     public Step(Step step) { //copy constructor
-        this(step.settings.copy(), step.stepType);        
+        this((T) step.settings.copy(), step.stepType);        
     }
     
     public final Consts.Type getType() {
@@ -57,9 +57,9 @@ public abstract class Step extends CopyableMutableTreeNode {
         return (Step) gson.fromJson(gson.toJson(this), this.getClass());
     }
     
-    public final JsonableParam getSettings() { return settings.copy(); }
+    public final T getSettings() { return (T) settings.copy(); }
     
-    public final void setSettings(JsonableParam settings) { this.settings = settings; }
+    public final void setSettings(T settings) { this.settings = settings; }
     
     protected abstract SequencerFunction getStepFunction(); //Return  function to run for this step during execution. Does not include callbacks and mandatory changes to the status object which are handled automatically by `getFunction`.
           

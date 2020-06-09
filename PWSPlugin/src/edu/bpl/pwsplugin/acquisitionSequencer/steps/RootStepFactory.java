@@ -61,14 +61,14 @@ public class RootStepFactory extends StepFactory{
     }
 }
 
-class RootStep extends ContainerStep {
+class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> {
     public RootStep() {
         super(new SequencerSettings.RootStepSettings(), Consts.Type.ROOT);
     }
     
     @Override
     public SequencerFunction getStepFunction() { 
-        SequencerSettings.RootStepSettings settings = (SequencerSettings.RootStepSettings) this.getSettings();
+        SequencerSettings.RootStepSettings settings = this.getSettings();
         SequencerFunction subStepFunc = getSubstepsFunction();
         return new SequencerFunction() {
             @Override
@@ -86,7 +86,7 @@ class RootStep extends ContainerStep {
         this.initializeSimulatedRun();
         SimulatedStatus status = new SimulatedStatus();
         status.cellNum = 1;
-        status.workingDirectory = ((SequencerSettings.RootStepSettings) this.settings).directory;
+        status.workingDirectory = this.settings.directory;
         return this.simulateRun(status).requiredPaths;
     }
     

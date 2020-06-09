@@ -62,14 +62,14 @@ public class ZStackFactory extends StepFactory {
     }
 }
     
-class ZStackStep extends ContainerStep {
+class ZStackStep extends ContainerStep<SequencerSettings.ZStackSettings> {
     public ZStackStep() {
         super(new SequencerSettings.ZStackSettings(), Consts.Type.ZSTACK);
     }
     
     @Override
     public SequencerFunction getStepFunction() { 
-        SequencerSettings.ZStackSettings settings = (SequencerSettings.ZStackSettings) this.getSettings();
+        SequencerSettings.ZStackSettings settings = this.getSettings();
         SequencerFunction subStepFunc = getSubstepsFunction();
         return new SequencerFunction() {
             @Override
@@ -89,7 +89,7 @@ class ZStackStep extends ContainerStep {
     
     @Override
     protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
-        int iterations = ((SequencerSettings.ZStackSettings) this.settings).numStacks;
+        int iterations = this.settings.numStacks;
         for (int i=0; i<iterations; i++) {
             for (Step step : this.getSubSteps()) {
                 status = step.simulateRun(status);

@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
  *
  * @author nick
  */
-public abstract class ContainerStep extends Step {
+public abstract class ContainerStep<T extends JsonableParam> extends Step<T> {
     //A `Step` that takes other `Step`s and wraps functionality around them.
     
-    public ContainerStep(JsonableParam settings, Consts.Type type) {
+    public ContainerStep(T settings, Consts.Type type) {
         super(settings, type);
     }
     

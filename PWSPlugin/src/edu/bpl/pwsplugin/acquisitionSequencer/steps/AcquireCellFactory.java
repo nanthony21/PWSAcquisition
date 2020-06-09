@@ -60,7 +60,7 @@ public class AcquireCellFactory extends StepFactory {
     }
 }
 
-class AcquireCell extends EndpointStep {
+class AcquireCell extends EndpointStep<AcquireCellSettings> {
     //Represents the acquisition of a single "CellXXX" folder, it can contain multiple PWS, Dynamics, and Fluorescence acquisitions.
     public AcquireCell() {
         super(new AcquireCellSettings(), Consts.Type.ACQ);
@@ -68,7 +68,7 @@ class AcquireCell extends EndpointStep {
     
     @Override
     public SequencerFunction getStepFunction() { //TODO save sequencer metadata (time step, position name, etc.)
-        AcquireCellSettings settings = (AcquireCellSettings) this.getSettings();
+        AcquireCellSettings settings = this.getSettings();
         AcquisitionManager acqMan = Globals.acqManager();
         return new SequencerFunction() {
             @Override

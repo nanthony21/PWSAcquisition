@@ -90,7 +90,7 @@ class FocusLockUI extends SingleBuilderJPanel<SequencerSettings.FocusLockSetting
     }
 }
 
-class FocusLock extends ContainerStep {
+class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings> {
     public FocusLock() {
         super(new SequencerSettings.FocusLockSettings(), Consts.Type.PFS);
     }
@@ -115,7 +115,7 @@ class FocusLock extends ContainerStep {
     public SequencerFunction getStepFunction() {
         this.addCallbackToSubsteps(getCallback());
         SequencerFunction stepFunction = super.getSubstepsFunction();
-        SequencerSettings.FocusLockSettings settings = (SequencerSettings.FocusLockSettings) this.getSettings();
+        SequencerSettings.FocusLockSettings settings = this.getSettings();
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {

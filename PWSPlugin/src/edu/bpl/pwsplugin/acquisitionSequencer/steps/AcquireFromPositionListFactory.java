@@ -66,7 +66,7 @@ public class AcquireFromPositionListFactory extends StepFactory {
 }
 
 
-class AcquireFromPositionList extends ContainerStep {
+class AcquireFromPositionList extends ContainerStep<SequencerSettings.AcquirePositionsSettings> {
     //Executes `step` at each position in the positionlist and increments the cell number each time.
     public AcquireFromPositionList() {
         super(new SequencerSettings.AcquirePositionsSettings(), Consts.Type.POS);
@@ -74,7 +74,7 @@ class AcquireFromPositionList extends ContainerStep {
     
     @Override
     public SequencerFunction getStepFunction() {
-        PositionList list = ((SequencerSettings.AcquirePositionsSettings) this.getSettings()).posList;
+        PositionList list = this.getSettings().posList;
         SequencerFunction stepFunction = super.getSubstepsFunction();
         return new SequencerFunction() {
             @Override
@@ -108,7 +108,7 @@ class AcquireFromPositionList extends ContainerStep {
     
     @Override
     protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
-        int iterations = ((SequencerSettings.AcquirePositionsSettings) this.settings).posList.getNumberOfPositions();
+        int iterations = this.settings.posList.getNumberOfPositions();
         for (int i=0; i<iterations; i++) {
             for (Step step : this.getSubSteps()) {
                 status = step.simulateRun(status);
@@ -120,7 +120,7 @@ class AcquireFromPositionList extends ContainerStep {
     @Override
     public List<String> validate() {
         List<String> errs = super.validate();
-        if (((SequencerSettings.AcquirePositionsSettings) this.getSettings()).posList.getNumberOfPositions() == 0) {
+        if ( this.getSettings().posList.getNumberOfPositions() == 0) {
             errs.add(String.format("Position list for \"%s\" is empty.", this.toString()));
         }
         return errs;
