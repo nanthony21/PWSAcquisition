@@ -95,9 +95,8 @@ class FocusLock extends ContainerStep {
         super(new SequencerSettings.FocusLockSettings(), Consts.Type.PFS);
     }
     
-    @Override
-    public SequencerFunction getStepFunction() {
-        this.addCallbackToSubsteps((status)->{
+    private SequencerFunction getCallback() {
+        return (status)->{
             if (status.getTreePath()[status.getTreePath().length-1].getType() == Consts.Type.ACQ) { //If the current  step is an acquisition then check for refocus.
                 if (!Globals.core().isContinuousFocusLocked()) { //Check if focused. and log. later we will add refocusing.
                     Globals.mm().logs().logMessage("Focus is unlocked");
@@ -108,7 +107,13 @@ class FocusLock extends ContainerStep {
                 }
             }
             return status;
-        });
+        };
+                
+    }
+    
+    @Override
+    public SequencerFunction getStepFunction() {
+        this.addCallbackToSubsteps(getCallback());
         SequencerFunction stepFunction = super.getSubstepsFunction();
         SequencerSettings.FocusLockSettings settings = (SequencerSettings.FocusLockSettings) this.getSettings();
         return new SequencerFunction() {

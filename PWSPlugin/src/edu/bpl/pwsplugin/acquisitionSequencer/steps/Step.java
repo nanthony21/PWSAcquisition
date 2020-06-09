@@ -31,7 +31,7 @@ import org.micromanager.internal.utils.FileDialogs;
  * @author nick
  */
 public abstract class Step extends CopyableMutableTreeNode {
-    private JsonableParam settings; 
+    protected JsonableParam settings; 
     private final Consts.Type stepType;
     protected final List<SequencerFunction> callbacks = new ArrayList<>();
 

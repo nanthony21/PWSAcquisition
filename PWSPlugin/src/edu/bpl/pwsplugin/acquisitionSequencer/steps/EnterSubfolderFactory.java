@@ -14,6 +14,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.io.File;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,7 @@ public class EnterSubfolderFactory extends StepFactory {
     
     @Override
     public String getDescription() {
-        return "Change the folder that acquisitions are saved to.";
+        return "Change the folder that enclosed acquisitions are saved to.";
     }
     
     @Override
@@ -102,6 +103,18 @@ class EnterSubfolderStep extends ContainerStep {
             cellNum += (int) Math.round(step.numberNewAcqs());
         }
         return l;
+    }
+    
+    @Override
+    public List<String> validate() {
+        List<String> errs = super.validate();
+        String path = ((SequencerSettings.EnterSubfolderSettings) this.settings).relativePath;
+        try {
+            Paths.get(path);
+        } catch (InvalidPathException e) {
+            errs.add(String.format("Relative path %s is invalid", path));
+        }
+        return errs;
     }
 }
 

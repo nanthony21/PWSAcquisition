@@ -45,7 +45,9 @@ public class ChangeConfigGroupFactory extends StepFactory {
     
     @Override
     public String getDescription() {
-        return "Change one of the Micro-Manager configuration groups. E.G. you could change the objective, etc.";
+        return "Change one of the Micro-Manager configuration groups and then "
+                + "change back to the original setting at the end."
+                + " This could be used to change the objective, etc.";
     }
     
     @Override
