@@ -56,6 +56,9 @@ public class SequencerSettings {
     
     public static class ZStackSettings extends JsonableParam {
         public double intervalUm = 1.0;
-        public int numStacks = 1;
+        public int numStacks = 2;
+        public boolean absolute = false;
+        public double startingPosition = 0; //Only used if absolute is true
+        public String deviceName = "";
     }
 }
