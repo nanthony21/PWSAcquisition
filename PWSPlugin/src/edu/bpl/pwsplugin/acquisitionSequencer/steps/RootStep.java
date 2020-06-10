@@ -12,7 +12,11 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
+import javax.swing.tree.TreeNode;
 
 
 
@@ -62,5 +66,46 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
             status = subStepSimFn.apply(status);
             return status;
         };
+    }
+    
+    @Override
+    public List<String> validate() {
+        List<String> errs = super.validate();
+        errs.addAll(this.validateSubfolderSteps());
+        return errs;
+    }
+    
+    private List<String> validateSubfolderSteps() {
+        //Make sure that we don't have multiple "EnterSubFolderSteps" for the same subfolder.
+        List<String> errs = new ArrayList<>();
+        //Collect all subfolder steps.
+        List<Step> subfolderSteps = new ArrayList<>();
+        Enumeration<Step> en = this.breadthFirstEnumeration();
+        while (en.hasMoreElements()) {
+            Step step = en.nextElement();
+            if (step.getType().equals(Consts.Type.SUBFOLDER)) {
+                subfolderSteps.add(step);
+            }
+        }
+        
+        //Build a list of all paths relative to the root.
+        List<String> usedPaths = new ArrayList<>();
+        for (Step endPointStep : subfolderSteps) {
+            TreeNode[] path = endPointStep.getPath(); //The path from the step up to the root
+            Step[] treePath = Arrays.copyOf(path, path.length, Step[].class); //cast to Step[].
+            List<String> subfoldersAlongPath = new ArrayList<>();
+            for (Step step : treePath) {
+                if (step.getType().equals(Consts.Type.SUBFOLDER)) {
+                    String relPath = ((SequencerSettings.EnterSubfolderSettings) step.getSettings()).relativePath;
+                    subfoldersAlongPath.add(relPath);
+                }
+            }
+            String fullPath = Paths.get("", subfoldersAlongPath.toArray(new String[subfoldersAlongPath.size()])).toString();
+            if (usedPaths.contains(fullPath)) {
+                errs.add(String.format("Multiple `SubFolder` steps use path: %s", fullPath));
+            }
+            usedPaths.add(fullPath);
+        }
+        return errs;
     }
 }
