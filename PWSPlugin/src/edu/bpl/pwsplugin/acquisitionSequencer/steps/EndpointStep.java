@@ -31,7 +31,4 @@ public abstract class EndpointStep<T extends JsonableParam> extends Step<T> {
     public List<String> validate() {
         return new ArrayList<>(); //Assume that the endpoint steps are always valid. this can always be overridenn if this is not the case.
     }
-    
-    @Override
-    protected void initializeSimulatedRun() {} //Most steps don't need to do anything.
 }
