@@ -9,8 +9,6 @@ import com.cureos.numerics.Calcfc;
 import com.cureos.numerics.Cobyla;
 import com.cureos.numerics.CobylaExitStatus;
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.UI.settings.FluorPanel;
-import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.hardware.HWConfiguration;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
@@ -22,7 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -54,7 +51,7 @@ class UtilityPanel extends JPanel {
 
 class ExposurePanel extends JPanel implements PropertyChangeListener {
     JSpinner wv = new JSpinner(new SpinnerNumberModel(550, 400, 1000, 10));
-    JSpinner targetCounts = new JSpinner(new SpinnerNumberModel(60000, 0, 65535, 10000));
+    JSpinner targetIntensity = new JSpinner(new SpinnerNumberModel(90, 0, 100, 10)); //Expressed as a percentage of max range of the camera.
     JComboBox<String> config = new JComboBox<>();
     JButton runBtn = new JButton("Run");
     JTextField exposureText = new JTextField();
@@ -70,8 +67,8 @@ class ExposurePanel extends JPanel implements PropertyChangeListener {
         this.add(config, "wrap, growx");
         this.add(new JLabel("Wavelength:"), "gapleft push");
         this.add(wv, "wrap, growx");
-        this.add(new JLabel("Target Counts:"), "gapleft push");
-        this.add(targetCounts, "wrap, growx");
+        this.add(new JLabel("Target Intensity (%):"), "gapleft push");
+        this.add(targetIntensity, "wrap, growx");
         this.add(runBtn, "wrap, span, align center, growx");
         this.add(new JLabel("Exposure (ms):"), "gapleft push");
         this.add(exposureText, "growx");
@@ -86,7 +83,7 @@ class ExposurePanel extends JPanel implements PropertyChangeListener {
             try {
                 display.clear();
                 AutoExposeController aec = new AutoExposeController(conf, (Integer) wv.getValue());
-                Double exposure = aec.run((Integer) targetCounts.getValue());
+                Double exposure = aec.run((Integer) targetIntensity.getValue());
                 exposureText.setText(String.format("%.2f", exposure));
             } catch (MMDeviceException | IOException e) {
                 Globals.mm().logs().showError(e);
@@ -117,7 +114,16 @@ class ExposurePanel extends JPanel implements PropertyChangeListener {
             }
         }
 
-        public Double run(Integer targetCounts) {
+        public Double run(Integer targetIntensityPercent) throws MMDeviceException {
+            String origCamDevice = Globals.core().getCameraDevice();
+            try {
+                Globals.core().setCameraDevice(this.config.camera().getName()); //We need our camera to be "The Camera" for the next part to work.
+            } catch (Exception e) {
+                throw new MMDeviceException(e);
+            }
+            Integer maxCounts = ((int) Math.round(Math.pow(2, Globals.core().getImageBitDepth()))) - 1; //This should be the count when the image is saturated.        
+            Integer targetCounts = (int) Math.round(maxCounts * (targetIntensityPercent / 100.0)); //Calculate target counts from percentage based on camera information.
+            
             Calcfc opt = new Calcfc() { //This class is what we provide to the COBYLA optimizer to execute the optimization.
                 @Override
                 public double Compute(int n, int m, double[] x, double[] con) {
@@ -152,6 +158,11 @@ class ExposurePanel extends JPanel implements PropertyChangeListener {
             double rhoEnd = 2; //The tuning sensitivity at the end to finalize.
             CobylaExitStatus status = Cobyla.FindMinimum(opt, 1, 2, exposure, rhoBegin, rhoEnd, 0, 100);
             Globals.mm().logs().logMessage(String.format("AutoExposure: Finished with status: %s", status.toString()));
+            try {
+                Globals.core().setCameraDevice(origCamDevice); // Set things back the way they were.
+            } catch (Exception e) {
+                throw new MMDeviceException(e);
+            }
             return exposure[0]; //laserPower now contains the optimal value.  
         }
 
