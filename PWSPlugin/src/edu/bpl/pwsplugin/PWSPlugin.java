@@ -23,15 +23,12 @@ package edu.bpl.pwsplugin;
 //Must Do:
 //Generate camera affine transform
 //TODO test test test
-//Start numbering at 1 in each new folder. Use simulated run to check that we don't have the same file name twice.
 //Optional:
 //Add display album for fluorescence. Make fluorescence acq engine support multiple channels.
 //Step types:
-//TODO Z stack
 //Add sequence logging.
 //Transmission imaging
-//Root step validate for: same subfolder not being used by multiple subfolder steps.
-//Allow subfolder naming by position and timepoint
+//Allow subfolder naming by position and timepoint. Do this with dedicated step types (namebyPosition,
 //Add coordinate metadata for z-stack, position, time etc.
 
 import com.google.common.eventbus.Subscribe;
