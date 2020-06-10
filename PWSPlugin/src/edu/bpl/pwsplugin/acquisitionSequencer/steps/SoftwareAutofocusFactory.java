@@ -9,13 +9,9 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -106,7 +102,9 @@ class SoftwareAutofocus extends EndpointStep<SequencerSettings.SoftwareAutoFocus
     }
     
     @Override
-    protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
-        return status;
+    protected SimFn getSimulatedFunction() {
+        return (Step.SimulatedStatus status) -> {
+            return status;
+        };
     }
 }

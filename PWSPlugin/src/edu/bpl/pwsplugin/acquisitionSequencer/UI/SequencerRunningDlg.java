@@ -59,7 +59,7 @@ class SequencerRunningDlg extends JDialog {
         contentPane.add(pauseButton, "cell 0 3, gapleft push, align center");
         contentPane.add(cancelButton, "cell 0 3, gapright push, align center");
         this.pack();
-        this.setResizable(false);
+        this.setResizable(true);
         acqThread = new AcquisitionThread(rootStep.getFunction(), 1); //This starts the thread.
         cancelButton.addActionListener((evt) -> {
             //The acquisition engine doesn't deal well with InterruptedException. Manually cancel any acquisitions before trying to cancel the thread.

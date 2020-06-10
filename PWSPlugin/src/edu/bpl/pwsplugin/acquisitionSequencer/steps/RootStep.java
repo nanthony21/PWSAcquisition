@@ -9,6 +9,8 @@ import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -30,6 +32,13 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
+                File startingDir = Paths.get(settings.directory).toFile();
+                if (!startingDir.exists()) {
+                    boolean success = startingDir.mkdirs();
+                    if (!success) {
+                        throw new IOException("Failed to create initial directory.");
+                    }
+                }
                 status.setCellNum(0);
                 status.setSavePath(settings.directory);
                 RootStep.this.saveToJson(Paths.get(settings.directory, "sequence.pwsseq").toString()); //Save the sequence to file for retrospect.
@@ -40,18 +49,18 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
     }
     
     public List<String> getRequiredPaths() {
-        this.initializeSimulatedRun();
         Step.SimulatedStatus status = new Step.SimulatedStatus();
-        status.cellNum = 1;
+        status.cellNum = 0; //This number is incremented before acquisition so Cell1 is always the first one.
         status.workingDirectory = this.settings.directory;
-        return this.simulateRun(status).requiredPaths;
+        return this.getSimulatedFunction().apply(status).requiredPaths;
     }
     
     @Override
-    protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
-        for (Step step : this.getSubSteps()) {
-            status = step.simulateRun(status);
-        }
-        return status;
+    protected SimFn getSimulatedFunction() {
+        SimFn subStepSimFn = this.getSubStepSimFunction();
+        return (Step.SimulatedStatus status) -> {
+            status = subStepSimFn.apply(status);
+            return status;
+        };
     }
 }

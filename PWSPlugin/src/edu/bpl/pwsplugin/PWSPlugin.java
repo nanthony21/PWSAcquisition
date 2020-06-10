@@ -31,6 +31,8 @@ package edu.bpl.pwsplugin;
 //Add sequence logging.
 //Transmission imaging
 //Root step validate for: same subfolder not being used by multiple subfolder steps.
+//Allow subfolder naming by position and timepoint
+//Add coordinate metadata for z-stack, position, time etc.
 
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;

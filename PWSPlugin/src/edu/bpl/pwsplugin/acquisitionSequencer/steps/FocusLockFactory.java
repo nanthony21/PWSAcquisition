@@ -136,10 +136,11 @@ class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings> {
     }
     
     @Override
-    protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
-        for (Step step : this.getSubSteps()) {
-            status = step.simulateRun(status);
-        }
-        return status;
+    protected SimFn getSimulatedFunction() {
+        SimFn subStepSimFn = this.getSubStepSimFunction();
+        return (Step.SimulatedStatus status) -> {
+            status = subStepSimFn.apply(status);
+            return status;
+        };
     }
 }

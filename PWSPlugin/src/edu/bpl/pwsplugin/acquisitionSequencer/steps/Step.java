@@ -23,9 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.tree.DefaultMutableTreeNode;
+import java.util.function.Function;
 import javax.swing.tree.TreeNode;
-import org.micromanager.internal.utils.FileDialogs;
 
 /**
  *
@@ -61,17 +60,18 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
     
     public final void setSettings(T settings) { this.settings = settings; }
     
-    protected abstract SequencerFunction getStepFunction(); //Return  function to run for this step during execution. Does not include callbacks and mandatory changes to the status object which are handled automatically by `getFunction`.
+    protected abstract SequencerFunction getStepFunction(); //Return  function to run for this step during execution. Does not include callbacks and mandatory changes to the status object which are handled automatically by `getFunction`. This should initialize any variables that are used for context during runtime.
           
-    protected abstract void initializeSimulatedRun(); //Some steps need to keep track of context to properly do simulateRun. this reinitializes the context.
+    protected abstract SimFn getSimulatedFunction(); //return a function that simulates how folder usage and cell number changes through the run.
     
-    protected abstract SimulatedStatus simulateRun(SimulatedStatus status); //return the filePaths that will be used by running this step.
-    
-    protected class SimulatedStatus {
+    protected static class SimulatedStatus {
         public Integer cellNum = 1;
         public List<String> requiredPaths = new ArrayList<>();
         public String workingDirectory = "";
     }
+    
+    @FunctionalInterface
+    protected static interface SimFn extends Function<SimulatedStatus, SimulatedStatus> {} 
     
     public final SequencerFunction getFunction() {
         TreeNode[] path = this.getPath();

@@ -14,10 +14,7 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.io.File;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
@@ -68,6 +65,8 @@ public class EnterSubfolderFactory extends StepFactory {
 }
 
 class EnterSubfolderStep extends ContainerStep<SequencerSettings.EnterSubfolderSettings> {
+    private Integer cellNum = 0;
+    private Integer simCellNum = 0;
     
     public EnterSubfolderStep() {
         super(new SequencerSettings.EnterSubfolderSettings(), Consts.Type.SUBFOLDER);
@@ -76,30 +75,39 @@ class EnterSubfolderStep extends ContainerStep<SequencerSettings.EnterSubfolderS
     @Override
     public SequencerFunction getStepFunction() {
         SequencerFunction stepFunction = super.getSubstepsFunction();
+        cellNum = 0; //initialize cell num
         SequencerSettings.EnterSubfolderSettings settings = this.settings;
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 String origPath = status.getSavePath();
+                Integer origCellNum = status.getCellNum();
                 status.newStatusMessage(String.format("Moving to subfolder: %s", settings.relativePath));
                 status.setSavePath(Paths.get(origPath).resolve(settings.relativePath).toString());
+                status.setCellNum(cellNum); // Even if we exit and enter this subfolder multiple times we should still remember which cell num we're on.
                 status = stepFunction.apply(status);
                 status.setSavePath(origPath);
+                status.setCellNum(origCellNum);
                 return status;
             } 
         };
     }
     
     @Override
-    protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
-        String path = this.settings.relativePath;
-        String origDir = status.workingDirectory;
-        status.workingDirectory = Paths.get(status.workingDirectory, path).toString();
-        for (Step step : this.getSubSteps()) {
-            status = step.simulateRun(status);
-        }
-        status.workingDirectory = origDir;
-        return status;
+    protected SimFn getSimulatedFunction() {
+        SimFn subStepSimFn = this.getSubStepSimFunction();
+        simCellNum = 0; //Initialize cell number.
+        return (Step.SimulatedStatus status) -> {
+            String path = this.settings.relativePath;
+            Integer origCellNum = status.cellNum;
+            String origDir = status.workingDirectory;
+            status.cellNum = simCellNum; // Even if we exit and enter this subfolder multiple times we should still remember which cell num we're on.
+            status.workingDirectory = Paths.get(status.workingDirectory, path).toString();
+            status = subStepSimFn.apply(status);
+            status.workingDirectory = origDir;
+            status.cellNum = origCellNum;
+            return status;
+        };
     }
     
     @Override

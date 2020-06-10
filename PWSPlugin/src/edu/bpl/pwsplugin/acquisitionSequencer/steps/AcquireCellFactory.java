@@ -16,8 +16,6 @@ import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -98,12 +96,14 @@ class AcquireCell extends EndpointStep<AcquireCellSettings> {
             }
         };
     }
-
+    
     @Override
-    protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
-        status.requiredPaths.add(Paths.get(status.workingDirectory, String.format("Cell%d", status.cellNum)).toString());
-        status.cellNum++;
-        return status;
+    protected SimFn getSimulatedFunction() {
+        return (Step.SimulatedStatus status) -> {
+            status.cellNum++;
+            status.requiredPaths.add(Paths.get(status.workingDirectory, String.format("Cell%d", status.cellNum)).toString());
+            return status;
+        };
     }
 }
 

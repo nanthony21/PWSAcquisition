@@ -89,14 +89,15 @@ class ZStackStep extends ContainerStep<SequencerSettings.ZStackSettings> {
     }
     
     @Override
-    protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
-        int iterations = this.settings.numStacks;
-        for (int i=0; i<iterations; i++) {
-            for (Step step : this.getSubSteps()) {
-                status = step.simulateRun(status);
+    protected SimFn getSimulatedFunction() {
+        SimFn subStepSimFn = this.getSubStepSimFunction();
+        return (Step.SimulatedStatus status) -> {
+            int iterations = this.settings.numStacks;
+            for (int i=0; i<iterations; i++) {
+                status = subStepSimFn.apply(status);
             }
-        }
-        return status;
+            return status;
+        };
     }
 }
 

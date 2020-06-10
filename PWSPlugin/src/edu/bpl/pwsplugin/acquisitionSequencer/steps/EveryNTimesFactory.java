@@ -85,21 +85,16 @@ class EveryNTimes extends ContainerStep<SequencerSettings.EveryNTimesSettings> {
     }
     
     @Override
-    protected void initializeSimulatedRun() {
-        simulatedIteration = 0;
-        super.initializeSimulatedRun();
-    }
-    
-    @Override
-    protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
-        SequencerSettings.EveryNTimesSettings settings = this.settings;
-        if (((simulatedIteration + settings.offset) % settings.n) == 0) {
-            for (Step step : this.getSubSteps()) {
-                status = step.simulateRun(status);
+    protected SimFn getSimulatedFunction() {
+        SimFn subStepSimFn = this.getSubStepSimFunction();
+        simulatedIteration = 0; //Initialize
+        return (Step.SimulatedStatus status) -> {
+            if (((simulatedIteration + this.settings.offset) % this.settings.n) == 0) {
+                status = subStepSimFn.apply(status);
             }
-        }
-        simulatedIteration++;
-        return status;
+            simulatedIteration++;
+            return status;
+        };
     }
 }
 

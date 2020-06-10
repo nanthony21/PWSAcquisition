@@ -67,11 +67,13 @@ public abstract class ContainerStep<T extends JsonableParam> extends Step<T> {
         };
     }
     
-    @Override
-    protected void initializeSimulatedRun() {
-        //initialize all substeps;
-        for (Step step : this.getSubSteps()) {
-            step.initializeSimulatedRun();
-        }
+    protected SimFn getSubStepSimFunction() {
+        List<SimFn> stepFunctions = this.getSubSteps().stream().map(Step::getSimulatedFunction).collect(Collectors.toList());
+        return (status) -> {
+            for (SimFn fn : stepFunctions) {
+                status = fn.apply(status);
+            }
+            return status;
+        };
     }
 }

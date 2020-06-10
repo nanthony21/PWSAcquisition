@@ -118,8 +118,10 @@ class PauseStep extends EndpointStep<SequencerSettings.PauseStepSettings> {
     }
     
     @Override
-    protected Step.SimulatedStatus simulateRun(Step.SimulatedStatus status) {
-        return status;
+    protected SimFn getSimulatedFunction() {
+        return (Step.SimulatedStatus status) -> {
+            return status;
+        };
     }
 }
 
