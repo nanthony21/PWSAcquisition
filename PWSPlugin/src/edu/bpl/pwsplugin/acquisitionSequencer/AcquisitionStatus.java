@@ -7,10 +7,10 @@ package edu.bpl.pwsplugin.acquisitionSequencer;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -46,13 +46,19 @@ public class AcquisitionStatus { //TODO make this thread safe.
     }
     
     public Integer newStatusMessage(String message) {
-        this.statusMsg.add(message);
+        Integer indentation = treePath.length - 2; //The length of the treepath controls the indentation of messages for more readable log. The rootstep doesn't log anything so a 2 length treepath should have no indentation.
+        String indent = StringUtils.repeat("  ", indentation);
+        this.statusMsg.add(indent + message);
         this.publish();
         return this.statusMsg.size()-1; //This can be used as a pointer to update the message later.
     }
     
     public void updateStatusMessage(Integer idx, String msg) { //Idx is the number that was returned by `newStatusMessage`
-        this.statusMsg.set(idx, msg);
+        //Find the original indentation so we can replicate it.
+        String oldMsg = this.statusMsg.get(idx);
+        int index = oldMsg.indexOf(oldMsg.trim());
+        String indent = StringUtils.repeat(" ", index);
+        this.statusMsg.set(idx, indent + msg);
         this.publish();
     }
     

@@ -81,13 +81,16 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 //Update the status object with information about the current step.
+                Step[] origPath = status.getTreePath();
                 status.setTreePath(treePath);
                 //Run any callbacks that have been set for this step.
                 for (SequencerFunction func : callbacks) {
                     status = func.apply(status);
                 } 
                 //Run the function for this step
-                return stepFunc.apply(status);
+                status = stepFunc.apply(status);
+                status.setTreePath(origPath); //Set the path back to where it was
+                return status;
             }
         };
     }
