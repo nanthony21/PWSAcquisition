@@ -74,6 +74,7 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
     protected static interface SimFn extends Function<SimulatedStatus, SimulatedStatus> {} 
     
     public final SequencerFunction getFunction() {
+        SequencerFunction stepFunc = this.getStepFunction();
         TreeNode[] path = this.getPath();
         Step[] treePath = Arrays.copyOf(path, path.length, Step[].class); //cast to Step[].
         return new SequencerFunction() {
@@ -86,7 +87,7 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
                     status = func.apply(status);
                 } 
                 //Run the function for this step
-                return getStepFunction().apply(status);
+                return stepFunc.apply(status);
             }
         };
     }

@@ -70,11 +70,12 @@ class EveryNTimes extends ContainerStep<SequencerSettings.EveryNTimesSettings> {
     @Override
     public SequencerFunction getStepFunction() {
         SequencerFunction stepFunction = super.getSubstepsFunction();
+        iteration = 0; //initialize
         SequencerSettings.EveryNTimesSettings settings = this.settings;
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-                if (((iteration + settings.offset) % settings.n) == 0) {
+                if (((iteration - settings.offset) % settings.n) == 0) {
                     status.newStatusMessage(String.format("EveryNTimes: Running substep on iteration %d", iteration));
                     status = stepFunction.apply(status);
                 }
@@ -89,7 +90,7 @@ class EveryNTimes extends ContainerStep<SequencerSettings.EveryNTimesSettings> {
         SimFn subStepSimFn = this.getSubStepSimFunction();
         simulatedIteration = 0; //Initialize
         return (Step.SimulatedStatus status) -> {
-            if (((simulatedIteration + this.settings.offset) % this.settings.n) == 0) {
+            if (((simulatedIteration - this.settings.offset) % this.settings.n) == 0) {
                 status = subStepSimFn.apply(status);
             }
             simulatedIteration++;
