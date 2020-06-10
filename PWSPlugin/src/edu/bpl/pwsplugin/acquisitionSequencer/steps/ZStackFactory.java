@@ -79,6 +79,7 @@ class ZStackStep extends ContainerStep<SequencerSettings.ZStackSettings> {
                 }
                 double initialPos = Globals.core().getPosition(settings.deviceName);
                 for (int i=0; i<settings.numStacks; i++) {
+                    status.newStatusMessage(String.format("Moving to z-slice %d of %d", i+1, settings.numStacks));
                     Globals.core().setPosition(settings.deviceName, initialPos + (settings.intervalUm * i));
                     status = subStepFunc.apply(status);
                 }
