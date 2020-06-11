@@ -10,7 +10,6 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 //Make sure that everything here that extends jsonableparam gets registered on startup in the plugin class.
 
 public class PWSSettings extends JsonableParam {
-
     public String imConfigName = "";
     public int wvStart = 500;
     public int wvStop = 700;

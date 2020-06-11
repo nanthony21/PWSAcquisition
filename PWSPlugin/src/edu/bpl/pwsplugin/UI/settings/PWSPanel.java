@@ -5,7 +5,9 @@
  */
 package edu.bpl.pwsplugin.UI.settings;
 
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
+import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +69,7 @@ public class PWSPanel extends SingleBuilderJPanel<PWSSettings>{
         super.add(ttlTriggerCheckbox, "wrap, span");
         super.add(externalTriggerCheckBox, "wrap, span");
         super.add(new JLabel("Imaging Configuration"), "span");
-        super.add(imConfName, "span");
+        super.add(imConfName, "span");        
     }
     
     
@@ -92,8 +94,12 @@ public class PWSPanel extends SingleBuilderJPanel<PWSSettings>{
     
     public void setAvailableConfigNames(List<String> names) {
         this.imConfName.removeAllItems();
-        for (String name : names) {
-            this.imConfName.addItem(name);
+        if (names.isEmpty()) {
+            this.imConfName.addItem("NONE!"); //Prevent a null pointer error.
+        } else {
+            for (String name : names) {
+                this.imConfName.addItem(name);
+            }
         }
     }
 }

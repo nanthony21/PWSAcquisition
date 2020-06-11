@@ -46,6 +46,8 @@ public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements
         this.add(pwsCBPanel, "wrap, span");
         this.add(dynCBPanel, "wrap, span");
         this.add(fluorCBPanel, "wrap, span");
+        
+        this.setConfigNames(new ArrayList()); //We can't yet reference Globals on initialization. at least initialize an empty state. the property change listener should get fired afterward.
     }
     
     @Override
@@ -104,23 +106,27 @@ public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements
         //We subscribe to the Globals property changes. This gets fired when a change is detected.
         if (evt.getPropertyName().equals("config")) {
             HWConfiguration cfg = (HWConfiguration) evt.getNewValue();
-            List<String> normalNames = new ArrayList<>();
-            List<String> spectralNames = new ArrayList<>();
-            for (ImagingConfigurationSettings setting : cfg.getSettings().configs) {
-                if (setting.configType == ImagingConfiguration.Types.StandardCamera) {
-                    normalNames.add(setting.name);
-                } else if (setting.configType == ImagingConfiguration.Types.SpectralCamera) {
-                    spectralNames.add(setting.name);
-                }
+            setConfigNames(cfg.getSettings().configs);
+        }
+    }
+    
+    private void setConfigNames(List<ImagingConfigurationSettings> settings) {
+        List<String> normalNames = new ArrayList<>();
+        List<String> spectralNames = new ArrayList<>();
+        for (ImagingConfigurationSettings setting : settings) {
+            if (setting.configType == ImagingConfiguration.Types.StandardCamera) {
+                normalNames.add(setting.name);
+            } else if (setting.configType == ImagingConfiguration.Types.SpectralCamera) {
+                spectralNames.add(setting.name);
             }
-            this.pwsSettings.setAvailableConfigNames(spectralNames);
-            this.dynSettings.setAvailableConfigNames(spectralNames);
-            List<String> allNames = new ArrayList<>();
-            allNames.addAll(normalNames);
-            allNames.addAll(spectralNames);
-            for (BuilderJPanel flSettings : fluorSettings.getSubComponents()) {
-                ((FluorPanel) flSettings).setAvailableConfigNames(allNames);
-            }
+        }
+        this.pwsSettings.setAvailableConfigNames(spectralNames);
+        this.dynSettings.setAvailableConfigNames(spectralNames);
+        List<String> allNames = new ArrayList<>();
+        allNames.addAll(normalNames);
+        allNames.addAll(spectralNames);
+        for (BuilderJPanel flSettings : fluorSettings.getSubComponents()) {
+            ((FluorPanel) flSettings).setAvailableConfigNames(allNames);
         }
     }
 }

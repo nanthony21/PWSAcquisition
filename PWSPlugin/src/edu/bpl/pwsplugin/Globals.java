@@ -36,6 +36,7 @@ public class Globals {
         instance().mmAdapter = new MMConfigAdapter();
         instance().acqMan_ = new AcquisitionManager();
         instance().frame = new PluginFrame();
+        instance().config = new HWConfiguration(new HWConfigurationSettings());
         //Load settings
         //try {
             PWSPluginSettings settings = Globals.loadSettings();

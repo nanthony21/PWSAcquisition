@@ -64,8 +64,12 @@ public class DynPanel extends SingleBuilderJPanel<DynSettings>{
     
     public void setAvailableConfigNames(List<String> names) {
         this.imConfName.removeAllItems();
-        for (String name : names) {
-            this.imConfName.addItem(name);
+        if (names.isEmpty()) {
+            this.imConfName.addItem("NONE!"); //Prevent a null pointer error.
+        } else {
+            for (String name : names) {
+                this.imConfName.addItem(name);
+            }
         }
     }
 }

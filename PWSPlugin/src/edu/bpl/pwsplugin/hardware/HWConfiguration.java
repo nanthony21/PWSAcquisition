@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 
 public class HWConfiguration {
@@ -31,7 +32,7 @@ public class HWConfiguration {
     public ImagingConfiguration getImagingConfigurationByName(String name) {
         ImagingConfiguration conf = this.imConfigs.get(name);
         if (conf==null) {
-            Globals.mm().logs().logError("Could not find Imaging Configuration by the name " + name);
+            throw new NoSuchElementException("Could not find Imaging Configuration by the name " + name);
         }
         return conf;
     }
