@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
+import org.micromanager.data.Coords;
 
 
 /**
@@ -110,6 +111,7 @@ class AcquireTimeSeries extends ContainerStep<SequencerSettings.AcquireTimeSerie
                 double lastAcqTime = 0;
                 for (int k=0; k<settings.numFrames; k++) {
                     // wait for the specified frame interval before proceeding to next frame
+                    status.coords = status.coords.copyBuilder().t(k).build();
                     Integer msgId = status.newStatusMessage(""); //This will be updated below.
                     if (k!=0) { //No pause for the first iteration
                         int count = 0;
@@ -127,6 +129,7 @@ class AcquireTimeSeries extends ContainerStep<SequencerSettings.AcquireTimeSerie
                     status = stepFunction.apply(status);
                     status.newStatusMessage(String.format("Finished time step %d of %d", k+1, settings.numFrames));
                 }
+                status.coords = status.coords.copyBuilder().removeAxis(Coords.TIME_POINT).build();
                 return status;
             }
         };

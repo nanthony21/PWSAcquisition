@@ -11,12 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import org.apache.commons.lang.StringUtils;
+import org.micromanager.data.internal.DefaultCoords;
 
 /**
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class AcquisitionStatus { //TODO make this thread safe.
+public class AcquisitionStatus {
     //This object acts as a go-between between the UI and the acquisition thread.
     private String currentPath;
     protected Integer currentCellNum; //The folder number we are currently acquiring.
@@ -24,6 +25,7 @@ public class AcquisitionStatus { //TODO make this thread safe.
     private final Function<AcquisitionStatus, Void> publishCallBack; //This callback should link to the `publish` method of the swingworker running the acquisition thread.
     private final Function<Void, Void> pauseCallBack; // This callback should link to the `pausepoint` method of a pause button.
     private Step[] treePath; //This keeps track of where in the sequence we are. Callbacks can use this to determine where they are being called from.
+    public DefaultCoords coords = new DefaultCoords.Builder().build();
     
     public AcquisitionStatus(Function<AcquisitionStatus, Void> publishCallBack, Function<Void, Void> pauseCallBack) {
         //Create a new status object 
@@ -63,8 +65,7 @@ public class AcquisitionStatus { //TODO make this thread safe.
     }
     
     public void allowPauseHere() {
-        //If the pause button was armed then block this thread until it is disarmed.
-        pauseCallBack.apply(null);
+        pauseCallBack.apply(null); //If the pause button was armed then block this thread until it is disarmed.
     }
     
     public String getSavePath() {

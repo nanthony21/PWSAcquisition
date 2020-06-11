@@ -12,6 +12,7 @@ import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
+import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
@@ -65,7 +66,7 @@ class AcquireCell extends EndpointStep<AcquireCellSettings> {
     }
     
     @Override
-    public SequencerFunction getStepFunction() { //TODO save sequencer metadata (time step, position name, etc.)
+    public SequencerFunction getStepFunction() {
         AcquireCellSettings settings = this.getSettings();
         AcquisitionManager acqMan = Globals.acqManager();
         return new SequencerFunction() {
@@ -91,6 +92,8 @@ class AcquireCell extends EndpointStep<AcquireCellSettings> {
                     acqMan.setDynamicsSettings(settings.dynSettings);
                     acqMan.acquireDynamics();
                 }
+                //TODO save the treepath too so the coords are unique. Add uuid for each Step to save with treepath. Don't save as stupid MM propertymap
+                status.coords.toPropertyMap().saveJSON(FileSpecs.getCellFolderName(Paths.get(status.getSavePath()), status.getCellNum()).resolve("sequencerCoords.json").toFile(), false, false);
                 status.allowPauseHere();
                 return status;
             }

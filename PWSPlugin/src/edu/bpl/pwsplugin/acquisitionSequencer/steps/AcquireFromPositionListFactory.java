@@ -20,6 +20,7 @@ import net.miginfocom.swing.MigLayout;
 import org.micromanager.AutofocusPlugin;
 import org.micromanager.MultiStagePosition;
 import org.micromanager.PositionList;
+import org.micromanager.data.Coords;
 import org.micromanager.internal.positionlist.PositionListDlg;
 
 /**
@@ -80,6 +81,7 @@ class AcquireFromPositionList extends ContainerStep<SequencerSettings.AcquirePos
                 Globals.core().setTimeoutMs(30000); //TODO put somewhere else. set timeout to 30 seconds. Otherwise we get an error if a position move takes greater than 5 seconds. (default timeout)
                 for (int posNum=0; posNum < list.getNumberOfPositions(); posNum++) {
                     MultiStagePosition pos = list.getPosition(posNum);
+                    status.coords = status.coords.copyBuilder().stagePosition(posNum).build();
                     String label = pos.getLabel();
                     status.newStatusMessage(String.format("Moving to position %s", label));
                     Callable<Void> preMoveRoutine = ()->{return null;};
@@ -99,6 +101,7 @@ class AcquireFromPositionList extends ContainerStep<SequencerSettings.AcquirePos
                     postMoveRoutine.call();
                     status = stepFunction.apply(status);
                 }
+                status.coords = status.coords.copyBuilder().removeAxis(Coords.STAGE_POSITION).build();
                 return status;
             }
         };
