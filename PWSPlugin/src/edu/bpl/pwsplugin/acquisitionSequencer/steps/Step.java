@@ -170,7 +170,7 @@ class StepTypeAdapter extends TypeAdapter<Step> {
         try {
             in.beginObject();
             if (!in.nextName().equals("id")) { throw new RuntimeException(); } //ID is determined at runtime don't load it.
-            int id = in.nextInt(); //read the id
+            int id = in.nextInt(); //read the id to get rid of it.
             if (!in.nextName().equals("stepType")) { throw new RuntimeException(); } //This must be "stepType" 
             Consts.Type stepType = Consts.Type.valueOf(in.nextString());
             Step step = Consts.getFactory(stepType).getStep().newInstance();

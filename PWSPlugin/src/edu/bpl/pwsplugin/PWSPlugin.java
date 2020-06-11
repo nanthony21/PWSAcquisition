@@ -80,6 +80,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
             JsonableParam.registerClass(AcquireCellSettings.class);
             Consts.registerGson();
             Step.registerGsonType();
+            PWSPluginSettings.registerGsonType();
             Globals.init(studio_);       
             initialized_ = true;
         }

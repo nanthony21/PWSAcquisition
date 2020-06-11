@@ -22,7 +22,11 @@ public class GsonUtils {
     public static void registerType(TypeAdapterFactory adapter) {
         gsonBuilder.registerTypeAdapterFactory(adapter);
     }
-
+    
+    public static GsonBuilder builder() {
+        return gsonBuilder;
+    }
+    
     public static Gson getGson() {
         return gsonBuilder.create();
     }

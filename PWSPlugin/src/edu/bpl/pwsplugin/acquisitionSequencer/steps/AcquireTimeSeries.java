@@ -35,9 +35,9 @@ public class AcquireTimeSeries extends ContainerStep<SequencerSettings.AcquireTi
                 for (int k = 0; k < settings.numFrames; k++) {
                     // wait for the specified frame interval before proceeding to next frame
                     status.coords = status.coords.copyBuilder().t(k).build();
-                    Integer msgId = status.newStatusMessage(""); //This will be updated below.
                     if (k != 0) {
                         //No pause for the first iteration
+                        Integer msgId = status.newStatusMessage("Waiting"); //This will be updated below.
                         int count = 0;
                         while ((System.currentTimeMillis() - lastAcqTime) / 60000 < settings.frameIntervalMinutes) {
                             String msg = String.format("Waiting %.1f minutes before acquiring next frame", settings.frameIntervalMinutes - (System.currentTimeMillis() - lastAcqTime) / 60000);
