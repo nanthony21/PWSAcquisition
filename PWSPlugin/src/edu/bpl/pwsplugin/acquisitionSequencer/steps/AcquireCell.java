@@ -5,6 +5,10 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.stream.JsonWriter;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
@@ -13,6 +17,8 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
+import edu.bpl.pwsplugin.utils.GsonUtils;
+import java.io.FileWriter;
 import java.nio.file.Paths;
 
 /**
@@ -53,8 +59,18 @@ public class AcquireCell extends EndpointStep<AcquireCellSettings> {
                     acqMan.setDynamicsSettings(settings.dynSettings);
                     acqMan.acquireDynamics();
                 }
-                //TODO save the treepath too so the coords are unique. Add uuid for each Step to save with treepath. Don't save as stupid MM propertymap
-                status.coords.toPropertyMap().saveJSON(FileSpecs.getCellFolderName(Paths.get(status.getSavePath()), status.getCellNum()).resolve("sequencerCoords.json").toFile(), false, false);
+                JsonObject obj1 = new JsonObject();
+                JsonArray obj = new JsonArray();
+                for (Step s : status.getTreePath()) {
+                    obj.add(new JsonPrimitive(s.getID()));
+                }
+                obj1.add("treeIdPath", obj);    
+                obj1.add("coords", GsonUtils.getGson().toJsonTree(status.coords));
+                String savePath = FileSpecs.getCellFolderName(Paths.get(status.getSavePath()), status.getCellNum()).resolve("sequencerCoords.json").toString();
+                try (FileWriter w = new FileWriter(savePath)) {
+                    GsonUtils.getGson().toJson(obj1, w);
+                }
+                //status.coords.toPropertyMap().saveJSON(FileSpecs.getCellFolderName(Paths.get(status.getSavePath()), status.getCellNum()).resolve("sequencerCoords.json").toFile(), false, false);
                 status.allowPauseHere();
                 return status;
             }

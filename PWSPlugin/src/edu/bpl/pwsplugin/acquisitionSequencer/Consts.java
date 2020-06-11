@@ -86,10 +86,6 @@ public class Consts {
         } 
         throw new RuntimeException("Shouldn't get here.");
     }
-
-    public static boolean isContainer(Type type) {
-        return ContainerStep.class.isAssignableFrom(getFactory(type).getStep());
-    }
     
     public static void registerGson() {
         for (Type t : Type.values()) {

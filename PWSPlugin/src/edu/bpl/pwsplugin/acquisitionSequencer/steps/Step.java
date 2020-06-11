@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import javax.swing.tree.TreeNode;
 
@@ -34,6 +36,8 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
     protected T settings; 
     private final Consts.Type stepType;
     protected final List<SequencerFunction> callbacks = new ArrayList<>();
+    private static final AtomicInteger counter = new AtomicInteger(); //This static counter makes sure that each Step object has it's own uid during runtime.
+    private Integer uid = counter.getAndIncrement();
 
     
     public Step(T settings, Consts.Type type) {
@@ -42,10 +46,13 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
         this.setSettings(settings);
     }
     
+    
     public Step(Step step) { //copy constructor
         this((T) step.settings.copy(), step.stepType);        
     }
     
+    public Integer getID() { return this.uid; }
+        
     public final Consts.Type getType() {
         return stepType;
     }
@@ -144,6 +151,8 @@ class StepTypeAdapter extends TypeAdapter<Step> {
     @Override
     public void write(JsonWriter out, Step step) throws IOException {
         out.beginObject();
+        out.name("id");
+        out.value(step.getID());
         out.name("stepType");
         out.value(step.getType().name());
         out.name("settings");
@@ -160,6 +169,7 @@ class StepTypeAdapter extends TypeAdapter<Step> {
     public Step read(JsonReader in) throws IOException {
         try {
             in.beginObject();
+            //ID is determined at runtime don't load it.
             if (!in.nextName().equals("stepType")) { throw new RuntimeException(); } //This must be "stepType" 
             Consts.Type stepType = Consts.Type.valueOf(in.nextString());
             Step step = Consts.getFactory(stepType).getStep().newInstance();
