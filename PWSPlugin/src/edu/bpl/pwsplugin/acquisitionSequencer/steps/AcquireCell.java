@@ -6,8 +6,6 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.UI.settings.AcquireCellUI;
-import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
@@ -15,64 +13,27 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
-import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.nio.file.Paths;
 
 /**
  *
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author nick
  */
-public class AcquireCellFactory extends StepFactory {
-    @Override
-    public Class<? extends BuilderJPanel> getUI() {
-        return AcquireCellUI.class;
-    }
+public class AcquireCell extends EndpointStep<AcquireCellSettings> {
     
-    @Override
-    public Class<? extends JsonableParam> getSettings() {
-        return AcquireCellSettings.class;
-    }
-    
-    @Override
-    public Class<? extends Step> getStep() {
-        return AcquireCell.class;
-    }
-    
-    @Override
-    public String getDescription() {
-        return "Acquire PWS, Dynamics, and Fluorescence into a single folder.";
-    }
-    
-    @Override
-    public String getName() {
-        return "Acquisition";
-    }
-    
-    @Override
-    public Consts.Category getCategory() {
-        return Consts.Category.ACQ;
-    }
-
-    @Override
-    public Consts.Type getType() {
-        return Consts.Type.ACQ;
-    }
-}
-
-class AcquireCell extends EndpointStep<AcquireCellSettings> {
     //Represents the acquisition of a single "CellXXX" folder, it can contain multiple PWS, Dynamics, and Fluorescence acquisitions.
     public AcquireCell() {
         super(new AcquireCellSettings(), Consts.Type.ACQ);
     }
-    
+
     @Override
     public SequencerFunction getStepFunction() {
         AcquireCellSettings settings = this.getSettings();
         AcquisitionManager acqMan = Globals.acqManager();
         return new SequencerFunction() {
             @Override
-            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception{
-                status.setCellNum(status.getCellNum()+1);
+            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
+                status.setCellNum(status.getCellNum() + 1);
                 status.newStatusMessage(String.format("Acquiring Cell %d", status.getCellNum()));
                 for (FluorSettings flSettings : settings.fluorSettings) {
                     status.allowPauseHere();
@@ -99,7 +60,7 @@ class AcquireCell extends EndpointStep<AcquireCellSettings> {
             }
         };
     }
-    
+
     @Override
     protected SimFn getSimulatedFunction() {
         return (Step.SimulatedStatus status) -> {
@@ -108,6 +69,5 @@ class AcquireCell extends EndpointStep<AcquireCellSettings> {
             return status;
         };
     }
+    
 }
-
-

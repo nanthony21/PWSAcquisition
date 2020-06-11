@@ -3,14 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.acquisitionSequencer.steps;
+package edu.bpl.pwsplugin.acquisitionSequencer.factory;
 
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.EveryNTimes;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.JLabel;
@@ -59,45 +57,6 @@ public class EveryNTimesFactory extends StepFactory {
     }
 }
 
-class EveryNTimes extends ContainerStep<SequencerSettings.EveryNTimesSettings> {
-    int iteration = 0;
-    int simulatedIteration = 0;
-    
-    public EveryNTimes() {
-        super(new SequencerSettings.EveryNTimesSettings(), Consts.Type.EVERYN);
-    }
-    
-    @Override
-    public SequencerFunction getStepFunction() {
-        SequencerFunction stepFunction = super.getSubstepsFunction();
-        iteration = 0; //initialize
-        SequencerSettings.EveryNTimesSettings settings = this.settings;
-        return new SequencerFunction() {
-            @Override
-            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-                if (((iteration - settings.offset) % settings.n) == 0) {
-                    status.newStatusMessage(String.format("EveryNTimes: Running substep on iteration %d", iteration));
-                    status = stepFunction.apply(status);
-                }
-                iteration++;
-                return status;
-            } 
-        };
-    }
-    
-    @Override
-    protected SimFn getSimulatedFunction() {
-        SimFn subStepSimFn = this.getSubStepSimFunction();
-        simulatedIteration = 0; //Initialize
-        return (Step.SimulatedStatus status) -> {
-            if (((simulatedIteration - this.settings.offset) % this.settings.n) == 0) {
-                status = subStepSimFn.apply(status);
-            }
-            simulatedIteration++;
-            return status;
-        };
-    }
-}
 
 class EveryNTimesUI extends BuilderJPanel<SequencerSettings.EveryNTimesSettings> {
     private JSpinner n;

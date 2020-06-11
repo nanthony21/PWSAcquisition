@@ -3,14 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.acquisitionSequencer.steps;
+package edu.bpl.pwsplugin.acquisitionSequencer.factory;
 
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ZStackStep;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -63,46 +66,6 @@ public class ZStackFactory extends StepFactory {
     }
 }
     
-class ZStackStep extends ContainerStep<SequencerSettings.ZStackSettings> {
-    public ZStackStep() {
-        super(new SequencerSettings.ZStackSettings(), Consts.Type.ZSTACK);
-    }
-    
-    @Override
-    public SequencerFunction getStepFunction() { 
-        SequencerSettings.ZStackSettings settings = this.getSettings();
-        SequencerFunction subStepFunc = getSubstepsFunction();
-        return new SequencerFunction() {
-            @Override
-            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-                if (settings.absolute) {
-                    Globals.core().setPosition(settings.deviceName, settings.startingPosition);
-                }
-                double initialPos = Globals.core().getPosition(settings.deviceName);
-                for (int i=0; i<settings.numStacks; i++) {
-                    status.coords = status.coords.copyBuilder().z(i).build();
-                    status.newStatusMessage(String.format("Moving to z-slice %d of %d", i+1, settings.numStacks));
-                    Globals.core().setPosition(settings.deviceName, initialPos + (settings.intervalUm * i));
-                    status = subStepFunc.apply(status);
-                }
-                status.coords = status.coords.copyBuilder().removeAxis(Coords.Z).build();
-                return status;
-            }
-        };    
-    }
-    
-    @Override
-    protected SimFn getSimulatedFunction() {
-        SimFn subStepSimFn = this.getSubStepSimFunction();
-        return (Step.SimulatedStatus status) -> {
-            int iterations = this.settings.numStacks;
-            for (int i=0; i<iterations; i++) {
-                status = subStepSimFn.apply(status);
-            }
-            return status;
-        };
-    }
-}
 
 class ZStackUI extends BuilderJPanel<SequencerSettings.ZStackSettings> {
     private final JSpinner intervalUm = new JSpinner(new SpinnerNumberModel(1.0, -100.0, 100.0, 0.5));

@@ -3,14 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.acquisitionSequencer.steps;
+package edu.bpl.pwsplugin.acquisitionSequencer.factory;
 
+import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.SoftwareAutofocus;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -82,29 +86,3 @@ class SoftwareAutoFocusUI extends BuilderJPanel<SequencerSettings.SoftwareAutoFo
     }
 }
 
-class SoftwareAutofocus extends EndpointStep<SequencerSettings.SoftwareAutoFocusSettings> {
-         
-    public SoftwareAutofocus() {
-        super(new SequencerSettings.SoftwareAutoFocusSettings(), Consts.Type.AF);
-    }
-    
-    @Override
-    public SequencerFunction getStepFunction() {
-        SequencerSettings.SoftwareAutoFocusSettings settings = this.settings;
-        return new SequencerFunction() {
-            @Override
-            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-                Globals.mm().getAutofocusManager().setAutofocusMethodByName(settings.afPluginName);
-                Globals.mm().getAutofocusManager().getAutofocusMethod().fullFocus();
-                return status;
-            } 
-        };
-    }
-    
-    @Override
-    protected SimFn getSimulatedFunction() {
-        return (Step.SimulatedStatus status) -> {
-            return status;
-        };
-    }
-}

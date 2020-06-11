@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.pwsplugin.acquisitionSequencer.steps;
+package edu.bpl.pwsplugin.acquisitionSequencer.factory;
 
+import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
@@ -13,6 +14,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ChangeConfigGroup;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.event.ItemEvent;
@@ -118,35 +120,3 @@ class ChangeConfigGroupUI extends BuilderJPanel<SequencerSettings.ChangeConfigGr
     
 }
 
-class ChangeConfigGroup extends ContainerStep<SequencerSettings.ChangeConfigGroupSettings> {
-    public ChangeConfigGroup() {
-        super(new SequencerSettings.ChangeConfigGroupSettings(), Consts.Type.CONFIG);
-    }
-
-    @Override
-    public SequencerFunction getStepFunction() {
-        SequencerFunction subStepFunc = getSubstepsFunction();
-        SequencerSettings.ChangeConfigGroupSettings settings = this.settings;
-        return new SequencerFunction() {
-            @Override
-            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-                String origConfValue = Globals.core().getCurrentConfig(settings.configGroupName);
-                status.newStatusMessage(String.format("Changing %s config group to %s", settings.configGroupName, settings.configValue));
-                Globals.core().setConfig(settings.configGroupName, settings.configValue);
-                status = subStepFunc.apply(status);
-                Globals.core().setConfig(settings.configGroupName, origConfValue);
-                status.newStatusMessage(String.format("Changing %s config group back to original setting, %s", settings.configGroupName, origConfValue));
-                return status;
-            }
-        };
-    }  
-    
-    @Override
-    protected SimFn getSimulatedFunction() {
-        SimFn subStepSimFn = this.getSubStepSimFunction();
-        return (Step.SimulatedStatus status) -> {
-            status = subStepSimFn.apply(status);
-            return status;
-        };
-    }
-}

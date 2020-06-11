@@ -24,7 +24,7 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.PWSPlugin;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.SequencerUI;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStepFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.factory.RootStepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStep;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
