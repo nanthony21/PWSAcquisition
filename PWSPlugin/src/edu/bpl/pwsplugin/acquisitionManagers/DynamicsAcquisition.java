@@ -124,7 +124,7 @@ class DynamicsAcquisition implements Acquisition<DynSettings>{
     }
     
     @Override
-    public String getFilePrefix() { //TODO Should be static, handle file spec stuff in a separate class. That way we can refer to the same information from other places (file scanning).
-        return FileSpecs.getFilePrefix(FileSpecs.Type.DYNAMICS);
+    public FileSpecs.Type getFileType() {
+        return FileSpecs.Type.DYNAMICS;
     }
 }

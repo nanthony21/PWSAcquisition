@@ -23,7 +23,6 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
-import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
@@ -36,7 +35,6 @@ import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import org.micromanager.internal.utils.ReportingUtils;
-import java.util.concurrent.LinkedBlockingQueue;
 import org.micromanager.data.Image;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -105,8 +103,8 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
     }
     
     @Override
-    public String getFilePrefix() {
-        return FileSpecs.getFilePrefix(FileSpecs.Type.PWS);
+    public FileSpecs.Type getFileType() {
+        return FileSpecs.Type.PWS;
     }
     
     @Override

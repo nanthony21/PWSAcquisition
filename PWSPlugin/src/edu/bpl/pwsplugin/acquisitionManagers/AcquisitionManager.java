@@ -26,6 +26,7 @@ import org.micromanager.internal.utils.ReportingUtils;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
+import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.DynSettings;
@@ -55,7 +56,7 @@ public class AcquisitionManager {
         }
         acquisitionRunning_ = true;
 
-        if (Globals.core().getPixelSizeUm() == 0.0) { //TODO bundle this into the `Metadata`
+        if (Globals.core().getPixelSizeUm() == 0.0) { //This information gets saved to the metadata below in the form of an affine transform.
             ReportingUtils.showMessage("It is highly recommended that you provide MicroManager with a pixel size setting for the current setup. Having this information is useful for analysis.");
         }
         try {
@@ -82,7 +83,7 @@ public class AcquisitionManager {
                 ReportingUtils.showMessage(String.format("The image queue started a new acquisition with %d images already in it! Your image file is likely corrupted. This can mean that Java has not been allocated enough heap size.", imageQueue.size()));
                 imageQueue.clear();
             }
-            SaverThread imSaver = new MMSaver(manager.getSavePath(savePath_, cellNum_), imageQueue, manager.numFrames() ,manager.getFilePrefix());
+            SaverThread imSaver = new MMSaver(manager.getSavePath(savePath_, cellNum_), imageQueue, manager.numFrames() ,FileSpecs.getFilePrefix(manager.getFileType()));
             manager.acquireImages(imSaver, metadata);
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();

@@ -27,10 +27,10 @@ import org.apache.commons.lang.StringUtils;
  * @author nick
  */
 public class CamUI extends BuilderJPanel<CamSettings>{
-    private JComboBox<String> camCombo = new JComboBox<>();
-    private JSpinner darkCountsSpinner;
-    private DoubleListTextField linEdit = new DoubleListTextField();
-    private JComboBox<Camera.Types> camType = new JComboBox<>();
+    private final JComboBox<String> camCombo = new JComboBox<>();
+    private final JSpinner darkCountsSpinner;
+    private final DoubleListTextField linEdit = new DoubleListTextField();
+    private final JComboBox<Camera.Types> camType = new JComboBox<>();
     
     public CamUI() {
         super(new MigLayout(), CamSettings.class);
@@ -61,7 +61,7 @@ public class CamUI extends BuilderJPanel<CamSettings>{
     }
     
     private void updateComboBoxes() {
-        this.camCombo.setModel(new DefaultComboBoxModel<String>(new Vector<String>(Globals.getMMConfigAdapter().getConnectedCameras())));
+        this.camCombo.setModel(new DefaultComboBoxModel<>(new Vector<String>(Globals.getMMConfigAdapter().getConnectedCameras())));
     }
     
     @Override

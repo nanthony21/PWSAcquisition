@@ -19,9 +19,6 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import mmcorej.DoubleVector;
-import mmcorej.org.json.JSONArray;
-import mmcorej.org.json.JSONObject;
 import org.micromanager.data.Coords;
 import org.micromanager.data.Image;
 import org.micromanager.data.Pipeline;
@@ -43,8 +40,8 @@ public class FluorescenceAcquisition implements Acquisition<FluorSettings>{
     }
     
     @Override
-    public String getFilePrefix() {
-        return FileSpecs.getFilePrefix(FileSpecs.Type.FLUORESCENCE);
+    public FileSpecs.Type getFileType() {
+        return FileSpecs.Type.FLUORESCENCE;
     }
     
     @Override
