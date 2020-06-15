@@ -36,17 +36,13 @@ public class Globals {
         instance().mmAdapter = new MMConfigAdapter();
         instance().acqMan_ = new AcquisitionManager();
         instance().frame = new PluginFrame();
-        instance().config = new HWConfiguration(new HWConfigurationSettings());
-        //Load settings
-        //try {
-            PWSPluginSettings settings = Globals.loadSettings();
-            instance().frame.populateFields(settings);
-            if (settings != null) {
-                Globals.setHardwareConfigurationSettings(settings.hwConfiguration);
-            }
-        //} catch (Exception e) {
-         //   studio.logs().logError("Failed to load PWSPlugin settings.");
-        //}
+        instance().config = new HWConfiguration(new HWConfigurationSettings()); //Set these even though they should be overridden when the settings are loaded.
+
+        PWSPluginSettings settings = Globals.loadSettings();
+        instance().frame.populateFields(settings);
+        if (settings != null) {
+            Globals.setHardwareConfigurationSettings(settings.hwConfiguration);
+        }
     }
     
     public static void saveSettings(PWSPluginSettings settings) {

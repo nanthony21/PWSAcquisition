@@ -25,13 +25,13 @@ import net.miginfocom.swing.MigLayout;
  * @author N2-LiveCell
  */
 public class ImagingConfigUI extends SingleBuilderJPanel<ImagingConfigurationSettings>{
-    private CamUI camSettings = new CamUI();
-    private TunableFilterUI filtSettings = new TunableFilterUI();
-    private JComboBox<ImagingConfiguration.Types> typeCombo = new JComboBox<>();
-    private JTextField name = new JTextField(10);
-    private DisabledPanel filtSettingsPanel;
-    private JComboBox<String> configGroup = new JComboBox<>();
-    private JComboBox<String> configState = new JComboBox<>();
+    private final CamUI camSettings = new CamUI();
+    private final TunableFilterUI filtSettings = new TunableFilterUI();
+    private final JComboBox<ImagingConfiguration.Types> typeCombo = new JComboBox<>();
+    private final JTextField name = new JTextField(10);
+    private final DisabledPanel filtSettingsPanel; //Used to block the filter settings when they are not applicable.
+    private final JComboBox<String> configGroup = new JComboBox<>();
+    private final JComboBox<String> configState = new JComboBox<>();
     
     public ImagingConfigUI() {
         super(new MigLayout(), ImagingConfigurationSettings.class);

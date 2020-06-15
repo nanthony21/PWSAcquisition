@@ -1,7 +1,5 @@
 package edu.bpl.pwsplugin.hardware;
 
-
-import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;

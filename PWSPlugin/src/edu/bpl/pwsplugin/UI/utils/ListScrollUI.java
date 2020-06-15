@@ -45,7 +45,7 @@ public class ListScrollUI<T extends List<S>, S extends JsonableParam> extends Li
         double maxWidth = 0;
         double maxHeight = 0;
         for (S step : defaultStepTypes) {
-            BuilderJPanel<S> panel = UIFactory.getUI((Class<?>) step.getClass());
+            BuilderJPanel<S> panel = UIFactory.getUI((Class<? extends JsonableParam>) step.getClass());
             Dimension dim = panel.getPreferredSize();
             if (dim.getHeight() > maxHeight) {
                 maxHeight = dim.getHeight();
@@ -91,7 +91,7 @@ public class ListScrollUI<T extends List<S>, S extends JsonableParam> extends Li
         components = new ArrayList<BuilderJPanel<S>>();
         Integer i = 0;
         for (S s : t) {
-            BuilderJPanel<S> p = UIFactory.getUI((Class<?>) s.getClass());
+            BuilderJPanel<S> p = UIFactory.getUI((Class<? extends JsonableParam>) s.getClass());
             p.populateFields(s);
             ListScrollItem item = new ListScrollItem(p, i, this);
             this.scrollContents.add(item, "wrap"); //Must add to layout before populating or we get a null pointer error.

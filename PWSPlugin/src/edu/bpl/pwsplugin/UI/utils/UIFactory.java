@@ -13,7 +13,6 @@ import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
-import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import edu.bpl.pwsplugin.settings.TunableFilterSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
@@ -24,7 +23,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class UIFactory {
-    public static BuilderJPanel getUI(Class<?> clazz) {
+    public static BuilderJPanel getUI(Class<? extends JsonableParam> clazz) {
         if (clazz.equals(PWSSettings.class)) {
             return new PWSPanel();
         } else if (clazz.equals(DynSettings.class)) {
@@ -40,7 +39,7 @@ public class UIFactory {
         } else if (clazz.equals(FluorSettings.class)) {
             return new FluorPanel();
         } else {
-            ReportingUtils.showError("Could not build UI for class: " + clazz);
+            ReportingUtils.showError("Could not find UI for class: " + clazz);
             return null;
         }
     }

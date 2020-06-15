@@ -29,7 +29,6 @@ package edu.bpl.pwsplugin;
 //Add sequence logging.
 //Transmission imaging
 //Allow subfolder naming by position and timepoint. Do this with dedicated step types (namebyPosition,
-//Add coordinate metadata for z-stack, position, time etc.
 
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.acquisitionSequencer.Consts;

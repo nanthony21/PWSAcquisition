@@ -7,7 +7,6 @@ package edu.bpl.pwsplugin.UI.utils;
 
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -140,7 +139,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         components = new ArrayList<BuilderJPanel<S>>();
         Integer i = 1;
         for (S s : t) {
-            BuilderJPanel<S> p = UIFactory.getUI((Class<?>) s.getClass());
+            BuilderJPanel<S> p = UIFactory.getUI((Class<? extends JsonableParam>) s.getClass());
             cardPanel.add(p, i.toString()); //Must add to layout before populating or we get a null pointer error.
             p.populateFields(s);
             components.add(p);

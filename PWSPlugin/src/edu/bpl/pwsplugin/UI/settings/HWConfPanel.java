@@ -33,18 +33,13 @@ import org.micromanager.internal.utils.ReportingUtils;
  */
 public class HWConfPanel extends BuilderJPanel<HWConfigurationSettings>{
     private JTextField sysNameEdit = new JTextField(20);
-    private JLabel configsFoundLabel = new JLabel();
-    private JButton editConfigsButton = new JButton("Edit Configurations");
+    private JLabel configsFoundLabel = new JLabel("Imaging Configurations: 0");
+    private JButton editConfigsButton = new JButton("Edit Imaging Configurations");
     private List<ImagingConfigurationSettings> configs = new ArrayList<>();
     
     public HWConfPanel() {
         super(new MigLayout(), HWConfigurationSettings.class);
-        
-        ImagingConfigurationSettings defaultConfig = new ImagingConfigurationSettings();
-        defaultConfig.configType = ImagingConfiguration.Types.StandardCamera;
-        defaultConfig.camSettings = new CamSettings();
-        defaultConfig.filtSettings = new TunableFilterSettings();
-        
+                
         this.editConfigsButton.addActionListener((evt)->{
             ImagingConfigDlg dlg = new ImagingConfigDlg(SwingUtilities.getWindowAncestor(this), this.configs);
             List<ImagingConfigurationSettings> results = dlg.showDialog();
@@ -92,9 +87,7 @@ class ImagingConfigDlg extends JDialog {
         this.setContentPane(new JPanel(new MigLayout()));
         
         ImagingConfigurationSettings defaultConfig = new ImagingConfigurationSettings();
-        defaultConfig.configType = ImagingConfiguration.Types.StandardCamera;
-        defaultConfig.camSettings = new CamSettings();
-        defaultConfig.filtSettings = new TunableFilterSettings();
+
         this.configs = new ListScrollUI<>((Class<List<ImagingConfigurationSettings>>)(Object) ArrayList.class, defaultConfig);
         
         try {
@@ -104,7 +97,7 @@ class ImagingConfigDlg extends JDialog {
             ReportingUtils.logError(e);
         }
         
-        this.acceptButton.addActionListener((evt)->{
+        this.acceptButton.addActionListener((evt)->{ //Set the result and then close the dialog.
             try {
                 this.result = configs.build();
             } catch (BuilderJPanel.BuilderPanelException e) {
@@ -115,7 +108,7 @@ class ImagingConfigDlg extends JDialog {
             this.dispose();
         });
         
-        this.cancelButton.addActionListener((evt)->{
+        this.cancelButton.addActionListener((evt)->{ // Close the dialog while leaving `result` as `null`
             this.setVisible(false);
             this.dispose();
         });
@@ -127,6 +120,7 @@ class ImagingConfigDlg extends JDialog {
     }
     
     public List<ImagingConfigurationSettings> showDialog() {
+        //Open the dialog, block until it is closed, then return the `result`.
         this.setVisible(true);
         return this.result;
     }
