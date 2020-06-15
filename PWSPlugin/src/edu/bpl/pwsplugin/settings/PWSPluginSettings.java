@@ -9,22 +9,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.google.gson.TypeAdapter;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.GsonUtils;
 import edu.bpl.pwsplugin.utils.JsonableParam;
-import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.List;
-import jdk.nashorn.internal.objects.Global;
 
 
 /**
@@ -44,25 +35,12 @@ public class PWSPluginSettings extends JsonableParam {
         return (PWSPluginSettings) JsonableParam.fromJson(str, PWSPluginSettings.class);
     }
     
-    @Override
-    public String toJsonString() {
-        Gson gson = GsonUtils.getGson();
-        JsonObject obj = new JsonObject();
-        obj.add("hwConfiguration", gson.toJsonTree(hwConfiguration));
-        obj.add("acquisitionSettings", gson.toJsonTree(acquisitionSettings));
-        obj.add("sequenceRoot", gson.toJsonTree(sequenceRoot));
-        obj.add("saveDir", gson.toJsonTree(saveDir));
-        obj.add("cellNum", gson.toJsonTree(cellNum));
-        return gson.toJson(obj);
-    }
-    
     public static void registerGsonType() { //This must be called for GSON loading/saving to work.
-        GsonUtils.builder().registerTypeAdapter(PWSPluginSettings.class, new PWSSettingsSerializer());
-        GsonUtils.builder().registerTypeAdapter(PWSPluginSettings.class, new PWSSettingsDeserializer());
+        GsonUtils.builder().registerTypeAdapter(PWSPluginSettings.class, new PWSSettingsGson());
     }
 }
 
-final class PWSSettingsDeserializer implements JsonDeserializer<PWSPluginSettings> {
+final class PWSSettingsGson implements JsonDeserializer<PWSPluginSettings>, JsonSerializer<PWSPluginSettings> {
     @Override
     public PWSPluginSettings deserialize(final JsonElement jsonElement, final java.lang.reflect.Type type, final JsonDeserializationContext context) throws JsonParseException {
         final JsonObject obj = jsonElement.getAsJsonObject();
@@ -79,9 +57,7 @@ final class PWSSettingsDeserializer implements JsonDeserializer<PWSPluginSetting
         settings.cellNum = obj.getAsJsonPrimitive("cellNum").getAsInt();
         return settings;
     }
-}
 
-final class PWSSettingsSerializer implements JsonSerializer<PWSPluginSettings> {
     @Override
     public JsonElement serialize(PWSPluginSettings settings, Type type, JsonSerializationContext jsc) {
         if (!type.getTypeName().equals(settings.getClass().getTypeName())) { //Not sure if this is even possible.
