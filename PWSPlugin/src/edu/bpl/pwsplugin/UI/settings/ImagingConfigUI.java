@@ -27,9 +27,9 @@ import net.miginfocom.swing.MigLayout;
 public class ImagingConfigUI extends SingleBuilderJPanel<ImagingConfigurationSettings>{
     private final CamUI camSettings = new CamUI();
     private final TunableFilterUI filtSettings = new TunableFilterUI();
+    private final IlluminatorUI illumSettings = new IlluminatorUI();
     private final JComboBox<ImagingConfiguration.Types> typeCombo = new JComboBox<>();
     private final JTextField name = new JTextField(10);
-    private final DisabledPanel filtSettingsPanel; //Used to block the filter settings when they are not applicable.
     private final JComboBox<String> configGroup = new JComboBox<>();
     private final JComboBox<String> configState = new JComboBox<>();
     
@@ -39,19 +39,19 @@ public class ImagingConfigUI extends SingleBuilderJPanel<ImagingConfigurationSet
         JPanel p = new JPanel(new MigLayout("insets 0 0 0 0, fill"));
         p.add(new JLabel("Tunable Filter:"), "wrap");
         p.add(filtSettings);
-        filtSettingsPanel = new DisabledPanel(p);
+        DisabledPanel filtSettingsPanel = new DisabledPanel(p);//Used to block the filter settings when they are not applicable.
         
         typeCombo.setModel(new DefaultComboBoxModel<>(ImagingConfiguration.Types.values()));
         
         this.camSettings.setBorder(BorderFactory.createLoweredBevelBorder());
-        
         this.filtSettings.setBorder(BorderFactory.createLoweredBevelBorder());
+        this.illumSettings.setBorder(BorderFactory.createLoweredBevelBorder());
         
         this.typeCombo.addActionListener((evt)->{
             if (this.typeCombo.getSelectedItem() == ImagingConfiguration.Types.StandardCamera) {
-                this.filtSettingsPanel.setEnabled(false); // filter settings do not apply to a standard camera.
+                filtSettingsPanel.setEnabled(false); // filter settings do not apply to a standard camera.
             } else {
-                this.filtSettingsPanel.setEnabled(true);
+                filtSettingsPanel.setEnabled(true);
             }
         });
         
@@ -74,8 +74,9 @@ public class ImagingConfigUI extends SingleBuilderJPanel<ImagingConfigurationSet
         this.add(configState, "wrap");
         this.add(new JLabel("Camera:"), "wrap");
         this.add(this.camSettings, "wrap, span");
-        this.add(this.filtSettingsPanel, "span, wrap");
-        //this.add(this.filtSettings, "span, wrap");
+        this.add(new JLabel("Illuminator:"), "wrap");
+        this.add(this.illumSettings, "wrap, span");
+        this.add(filtSettingsPanel, "span, wrap");
     }
     
     @Override
@@ -85,6 +86,7 @@ public class ImagingConfigUI extends SingleBuilderJPanel<ImagingConfigurationSet
         map.put("configType", typeCombo);
         map.put("camSettings", camSettings);
         map.put("filtSettings", filtSettings);
+        map.put("illuminatorSettings", illumSettings);
         map.put("configurationGroup", configGroup);
         map.put("configurationName", configState);
         return map;

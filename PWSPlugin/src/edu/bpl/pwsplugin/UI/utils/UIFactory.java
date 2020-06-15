@@ -7,11 +7,13 @@ import edu.bpl.pwsplugin.UI.settings.TunableFilterUI;
 import edu.bpl.pwsplugin.UI.settings.DynPanel;
 import edu.bpl.pwsplugin.UI.settings.FluorPanel;
 import edu.bpl.pwsplugin.UI.settings.HWConfPanel;
+import edu.bpl.pwsplugin.UI.settings.IlluminatorUI;
 import edu.bpl.pwsplugin.UI.settings.PWSPanel;
 import edu.bpl.pwsplugin.settings.CamSettings;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
+import edu.bpl.pwsplugin.settings.IlluminatorSettings;
 import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import edu.bpl.pwsplugin.settings.TunableFilterSettings;
@@ -34,6 +36,8 @@ public class UIFactory {
             return new CamUI();
         } else if (clazz.equals(TunableFilterSettings.class)) {
             return new TunableFilterUI();
+        } else if (clazz.equals(IlluminatorSettings.class)) {
+            return new IlluminatorUI();
         } else if (clazz.equals(ImagingConfigurationSettings.class)) {
             return new ImagingConfigUI();
         } else if (clazz.equals(FluorSettings.class)) {

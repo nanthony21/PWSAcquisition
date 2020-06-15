@@ -7,8 +7,9 @@ import mmcorej.DeviceType;
 
 public class MMConfigAdapter {
     //Scans the Micro-Manager hardware configuration to provide useful information to the PWS plugin.
-    List<String> filters;
-    List<String> connectedCameras;
+    private List<String> filters;
+    private List<String> connectedCameras;
+    private List<String> connectedShutters;
     public boolean autoFilterSwitching;
 
     public MMConfigAdapter() {
@@ -27,6 +28,8 @@ public class MMConfigAdapter {
         }
         //Cameras
         this.connectedCameras = Arrays.asList(Globals.core().getLoadedDevicesOfType(DeviceType.CameraDevice).toArray());
+        //Shutters (illuminators
+        this.connectedShutters = Arrays.asList(Globals.core().getLoadedDevicesOfType(DeviceType.ShutterDevice).toArray());
     }
     
     public List<String> getFilters() {
@@ -35,6 +38,10 @@ public class MMConfigAdapter {
 
     public List<String> getConnectedCameras() {
         return this.connectedCameras;
+    }
+    
+    public List<String> getConnectedShutters() {
+        return this.connectedShutters;
     }
     
 }
