@@ -27,11 +27,13 @@ import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
+import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
+import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.List;
 import mmcorej.DoubleVector;
@@ -50,7 +52,7 @@ public class AcquisitionManager {
     private int cellNum_;
     private String savePath_;
     
-    private void run(Acquisition manager) throws InterruptedException { //All acquisitions should be run with this.
+    private void run(Acquisition manager) throws InterruptedException, Exception { //All acquisitions should be run with this.
         if (acquisitionRunning_) {
             throw new IllegalStateException("Attempting to start acquisition when acquisition is already running.");
         }
@@ -88,9 +90,6 @@ public class AcquisitionManager {
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
             throw ie;
-            //throw new RuntimeException(ie);
-        } catch (Exception ex) {  
-            throw new RuntimeException(ex);
         } finally {
             imageQueue.clear();
             acquisitionRunning_ = false;
@@ -113,11 +112,11 @@ public class AcquisitionManager {
     public DynSettings getDynSettings() { return dynManager_.getSettings(); }
     public FluorSettings getFluorescenceSettings() { return flManager_.getSettings(); }
     
-    public void acquirePWS() throws InterruptedException { run(pwsManager_); }
+    public void acquirePWS() throws InterruptedException, Exception { run(pwsManager_); }
     
-    public void acquireDynamics() throws InterruptedException { run(dynManager_); }
+    public void acquireDynamics() throws InterruptedException, Exception { run(dynManager_); }
     
-    public void acquireFluorescence() throws InterruptedException { run(flManager_); }
+    public void acquireFluorescence() throws InterruptedException, Exception { run(flManager_); }
     
     public boolean isAcquisitionRunning() { return acquisitionRunning_; }
 }
