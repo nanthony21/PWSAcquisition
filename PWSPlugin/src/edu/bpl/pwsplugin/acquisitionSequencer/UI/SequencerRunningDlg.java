@@ -80,7 +80,7 @@ class SequencerRunningDlg extends JDialog {
 
     public void updateStatus(AcquisitionStatus status) {
         this.cellNum.setText(String.format("Acquiring Cell: %d", status.getCellNum()));
-        this.statusMsg.setText(String.join("\n", status.statusMsg));
+        this.statusMsg.setText(String.join("\n", status.getStatusMessage()));
         this.tree.setSelectionPath(new TreePath(status.getTreePath()));
     }
 

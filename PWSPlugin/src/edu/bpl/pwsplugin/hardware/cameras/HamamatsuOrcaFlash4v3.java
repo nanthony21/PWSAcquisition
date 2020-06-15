@@ -128,8 +128,7 @@ public class HamamatsuOrcaFlash4v3 extends Camera{
     
     @Override
     public Image snapImage() throws MMDeviceException {
-        //TODO what if we are not set as the core camera at this point.
-        //TODO if (Globals.core().getCameraDevice()!=_devName) {Globals.core().setCameraDevice(_devName);}
+        //The `activate` method should guarantee that we are set as the core camera at this point.
         try {
             Globals.core().snapImage();
             return Globals.mm().data().convertTaggedImage(Globals.core().getTaggedImage());

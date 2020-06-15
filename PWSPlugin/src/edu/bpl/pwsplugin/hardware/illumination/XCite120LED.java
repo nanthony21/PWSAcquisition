@@ -16,7 +16,7 @@ import java.util.List;
  * @author nick
  */
 public class XCite120LED extends Illuminator {
-    private IlluminatorSettings settings;
+    private final IlluminatorSettings settings;
     
     public XCite120LED(IlluminatorSettings settings) {
         this.settings = settings;

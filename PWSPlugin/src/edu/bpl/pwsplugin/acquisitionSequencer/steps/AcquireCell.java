@@ -70,7 +70,7 @@ public class AcquireCell extends EndpointStep<AcquireCellSettings> {
             obj.add(new JsonPrimitive(s.getID()));
         }
         obj1.add("treeIdPath", obj);    
-        obj1.add("coords", GsonUtils.getGson().toJsonTree(status.coords));
+        obj1.add("coords", GsonUtils.getGson().toJsonTree(status.getCoords()));
         String savePath = FileSpecs.getCellFolderName(Paths.get(status.getSavePath()), status.getCellNum()).resolve("sequencerCoords.json").toString();
         try (FileWriter w = new FileWriter(savePath)) {
             GsonUtils.getGson().toJson(obj1, w);
