@@ -10,7 +10,7 @@ import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
@@ -58,13 +58,13 @@ public class ChangeConfigGroupFactory extends StepFactory {
     }
     
     @Override
-    public Consts.Category getCategory() {
-        return Consts.Category.UTIL;
+    public SequencerConsts.Category getCategory() {
+        return SequencerConsts.Category.UTIL;
     }
 
     @Override
-    public Consts.Type getType() {
-        return Consts.Type.CONFIG;
+    public SequencerConsts.Type getType() {
+        return SequencerConsts.Type.CONFIG;
     }
 }
 

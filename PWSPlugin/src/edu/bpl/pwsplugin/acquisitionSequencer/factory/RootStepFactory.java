@@ -10,7 +10,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.JLabel;
@@ -48,13 +48,13 @@ public class RootStepFactory extends StepFactory{
     }
     
     @Override
-    public Consts.Category getCategory() {
+    public SequencerConsts.Category getCategory() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Consts.Type getType() {
-        return Consts.Type.ROOT;
+    public SequencerConsts.Type getType() {
+        return SequencerConsts.Type.ROOT;
     }
 }
 

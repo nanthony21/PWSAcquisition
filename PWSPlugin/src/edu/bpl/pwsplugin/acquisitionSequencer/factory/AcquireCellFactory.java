@@ -11,7 +11,7 @@ import edu.bpl.pwsplugin.UI.settings.AcquireCellUI;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireCell;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
@@ -51,13 +51,13 @@ public class AcquireCellFactory extends StepFactory {
     }
     
     @Override
-    public Consts.Category getCategory() {
-        return Consts.Category.ACQ;
+    public SequencerConsts.Category getCategory() {
+        return SequencerConsts.Category.ACQ;
     }
 
     @Override
-    public Consts.Type getType() {
-        return Consts.Type.ACQ;
+    public SequencerConsts.Type getType() {
+        return SequencerConsts.Type.ACQ;
     }
 }
 

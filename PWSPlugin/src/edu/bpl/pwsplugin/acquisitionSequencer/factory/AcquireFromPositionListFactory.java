@@ -9,7 +9,7 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireFromPositionList;
 import edu.bpl.pwsplugin.utils.JsonableParam;
@@ -50,13 +50,13 @@ public class AcquireFromPositionListFactory extends StepFactory {
     }
     
     @Override
-    public Consts.Category getCategory() {
-        return Consts.Category.SEQ;
+    public SequencerConsts.Category getCategory() {
+        return SequencerConsts.Category.SEQ;
     }
 
     @Override
-    public Consts.Type getType() {
-        return Consts.Type.POS;
+    public SequencerConsts.Type getType() {
+        return SequencerConsts.Type.POS;
     }
 }
 

@@ -6,7 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import java.nio.file.InvalidPathException;
@@ -23,7 +23,7 @@ public class EnterSubfolderStep extends ContainerStep<SequencerSettings.EnterSub
     private Integer simCellNum = 0;
 
     public EnterSubfolderStep() {
-        super(new SequencerSettings.EnterSubfolderSettings(), Consts.Type.SUBFOLDER);
+        super(new SequencerSettings.EnterSubfolderSettings(), SequencerConsts.Type.SUBFOLDER);
     }
 
     @Override

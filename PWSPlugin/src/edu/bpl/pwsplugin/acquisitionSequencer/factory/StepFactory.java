@@ -7,7 +7,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.factory;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /**
@@ -21,8 +21,8 @@ public abstract class StepFactory {
     public abstract Class<? extends Step> getStep();
     public abstract String getDescription();
     public abstract String getName();
-    public abstract Consts.Category getCategory();
-    public abstract Consts.Type getType();
+    public abstract SequencerConsts.Category getCategory();
+    public abstract SequencerConsts.Type getType();
     
     public BuilderJPanel createUI() {
         try {    

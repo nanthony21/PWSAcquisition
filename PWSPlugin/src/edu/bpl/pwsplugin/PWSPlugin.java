@@ -31,7 +31,7 @@ package edu.bpl.pwsplugin;
 //Allow subfolder naming by position and timepoint. Do this with dedicated step types (namebyPosition,
 
 import com.google.common.eventbus.Subscribe;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.settings.CamSettings;
@@ -39,8 +39,11 @@ import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.IlluminatorSettings;
+import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
+import edu.bpl.pwsplugin.settings.PWSSettingsConsts;
+import edu.bpl.pwsplugin.settings.TunableFilterSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import org.micromanager.Studio;
 import org.micromanager.MenuPlugin;
@@ -69,15 +72,8 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
             //In order for json serial/deserialization to work, each class must be 
             //registered with Gson. Let's do that now to make sure.
             //They also register themselves when they are instantiated but that may not happen in time.
-            JsonableParam.registerClass(FluorSettings.class);
-            JsonableParam.registerClass(PWSSettings.class);
-            JsonableParam.registerClass(DynSettings.class);
-            JsonableParam.registerClass(HWConfigurationSettings.class);
-            JsonableParam.registerClass(CamSettings.class);
-            JsonableParam.registerClass(IlluminatorSettings.class);
-            JsonableParam.registerClass(PWSPluginSettings.class);
-            JsonableParam.registerClass(AcquireCellSettings.class);
-            Consts.registerGson();
+            PWSSettingsConsts.registerGson();
+            SequencerConsts.registerGson();
             Step.registerGsonType();
             PWSPluginSettings.registerGsonType();
             Globals.init(studio_);       

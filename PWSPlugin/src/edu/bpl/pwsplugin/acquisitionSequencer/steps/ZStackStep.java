@@ -7,7 +7,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import org.micromanager.data.Coords;
@@ -19,7 +19,7 @@ import org.micromanager.data.Coords;
 public class ZStackStep extends ContainerStep<SequencerSettings.ZStackSettings> {
     
     public ZStackStep() {
-        super(new SequencerSettings.ZStackSettings(), Consts.Type.ZSTACK);
+        super(new SequencerSettings.ZStackSettings(), SequencerConsts.Type.ZSTACK);
     }
 
     @Override

@@ -7,7 +7,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import javax.swing.BorderFactory;
@@ -27,7 +27,7 @@ import net.miginfocom.swing.MigLayout;
 public class PauseStep extends EndpointStep<SequencerSettings.PauseStepSettings> {
     
     public PauseStep() {
-        super(new SequencerSettings.PauseStepSettings(), Consts.Type.PAUSE);
+        super(new SequencerSettings.PauseStepSettings(), SequencerConsts.Type.PAUSE);
     }
 
     @Override

@@ -7,7 +7,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.factory;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.PauseStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
@@ -48,13 +48,13 @@ public class PauseFactory extends StepFactory {
     }
     
     @Override
-    public Consts.Category getCategory() {
-        return Consts.Category.UTIL;
+    public SequencerConsts.Category getCategory() {
+        return SequencerConsts.Category.UTIL;
     }
 
     @Override
-    public Consts.Type getType() {
-        return Consts.Type.PAUSE;
+    public SequencerConsts.Type getType() {
+        return SequencerConsts.Type.PAUSE;
     }
 }
 

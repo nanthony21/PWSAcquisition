@@ -5,7 +5,7 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyOnlyTransferHandler;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeRenderers;
@@ -30,25 +30,25 @@ class NewStepsTree extends TreeDragAndDrop {
         this.tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
         
-        Map<Consts.Category, DefaultMutableTreeNode> categories = new HashMap<>();
-        for (Consts.Category cat : Consts.Category.values()) {
-            String name = Consts.getCategoryName(cat);
+        Map<SequencerConsts.Category, DefaultMutableTreeNode> categories = new HashMap<>();
+        for (SequencerConsts.Category cat : SequencerConsts.Category.values()) {
+            String name = SequencerConsts.getCategoryName(cat);
             DefaultMutableTreeNode node = new DefaultMutableTreeNode(name);
             root.add(node);
             categories.put(cat, node);
         }
         
-        for (Consts.Type type : Consts.Type.values()) {
-            if (type == Consts.Type.ROOT) { continue; }//ignore this special case
+        for (SequencerConsts.Type type : SequencerConsts.Type.values()) {
+            if (type == SequencerConsts.Type.ROOT) { continue; }//ignore this special case
             JsonableParam settings;
             try {
-                settings = Consts.getFactory(type).getSettings().newInstance();
+                settings = SequencerConsts.getFactory(type).getSettings().newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
-            Step node = Consts.getFactory(type).createStep();
+            Step node = SequencerConsts.getFactory(type).createStep();
             node.setSettings(settings);
-            categories.get(Consts.getFactory(type).getCategory()).add(node);
+            categories.get(SequencerConsts.getFactory(type).getCategory()).add(node);
         } 
         
         model.setRoot(root);

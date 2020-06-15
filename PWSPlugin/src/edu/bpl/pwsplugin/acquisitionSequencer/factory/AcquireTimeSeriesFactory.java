@@ -11,7 +11,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireTimeSeries;
@@ -57,13 +57,13 @@ public class AcquireTimeSeriesFactory extends StepFactory {
     }
     
     @Override
-    public Consts.Category getCategory() {
-        return Consts.Category.SEQ;
+    public SequencerConsts.Category getCategory() {
+        return SequencerConsts.Category.SEQ;
     }
 
     @Override
-    public Consts.Type getType() {
-        return Consts.Type.TIME;
+    public SequencerConsts.Type getType() {
+        return SequencerConsts.Type.TIME;
     }
 }
 

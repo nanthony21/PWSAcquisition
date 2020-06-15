@@ -6,7 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 
@@ -20,7 +20,7 @@ public class EveryNTimes extends ContainerStep<SequencerSettings.EveryNTimesSett
     int simulatedIteration = 0;
 
     public EveryNTimes() {
-        super(new SequencerSettings.EveryNTimesSettings(), Consts.Type.EVERYN);
+        super(new SequencerSettings.EveryNTimesSettings(), SequencerConsts.Type.EVERYN);
     }
 
     @Override

@@ -6,7 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import java.io.File;
@@ -26,7 +26,7 @@ import javax.swing.tree.TreeNode;
  */
 public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> {
     public RootStep() {
-        super(new SequencerSettings.RootStepSettings(), Consts.Type.ROOT);
+        super(new SequencerSettings.RootStepSettings(), SequencerConsts.Type.ROOT);
     }
     
     @Override
@@ -83,7 +83,7 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
         Enumeration<Step> en = this.breadthFirstEnumeration();
         while (en.hasMoreElements()) {
             Step step = en.nextElement();
-            if (step.getType().equals(Consts.Type.SUBFOLDER)) {
+            if (step.getType().equals(SequencerConsts.Type.SUBFOLDER)) {
                 subfolderSteps.add(step);
             }
         }
@@ -95,7 +95,7 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
             Step[] treePath = Arrays.copyOf(path, path.length, Step[].class); //cast to Step[].
             List<String> subfoldersAlongPath = new ArrayList<>();
             for (Step step : treePath) {
-                if (step.getType().equals(Consts.Type.SUBFOLDER)) {
+                if (step.getType().equals(SequencerConsts.Type.SUBFOLDER)) {
                     String relPath = ((SequencerSettings.EnterSubfolderSettings) step.getSettings()).relativePath;
                     subfoldersAlongPath.add(relPath);
                 }

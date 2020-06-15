@@ -5,6 +5,7 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.settings.CamSettings;
+import java.awt.Color;
 import java.util.Vector;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -133,6 +134,16 @@ class DoubleListTextField extends BuilderJPanel<List<Double>> {
     class CSVInputVerifier extends InputVerifier {
     @Override
     public boolean verify(JComponent input) {
+        boolean status = verifyInnerFunc(input);
+        if (status) {
+            DoubleListTextField.this.textField.setBackground(DoubleListTextField.this.getBackground());
+        } else {
+            DoubleListTextField.this.textField.setBackground(Color.red);
+        }
+        return status;
+    }
+    
+    private boolean verifyInnerFunc(JComponent input) {
         String text = ((JTextField) input).getText().trim();
         if ((text.equals("None")) || (text.equals("null")) || text.equals("")) {
             return true;

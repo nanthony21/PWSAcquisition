@@ -15,7 +15,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.GsonUtils;
@@ -36,7 +36,7 @@ public class PWSPluginSettings extends JsonableParam {
     //passed around, saved, loaded, etc.
     public HWConfigurationSettings hwConfiguration = new HWConfigurationSettings();
     public AcquireCellSettings acquisitionSettings = new AcquireCellSettings();
-    public RootStep sequenceRoot = (RootStep) Consts.getFactory(Consts.Type.ROOT).createStep();
+    public RootStep sequenceRoot = (RootStep) SequencerConsts.getFactory(SequencerConsts.Type.ROOT).createStep();
     public String saveDir = "";
     public int cellNum = 1;
 

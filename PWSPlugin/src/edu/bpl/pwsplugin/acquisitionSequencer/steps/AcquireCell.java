@@ -11,7 +11,7 @@ import com.google.gson.JsonPrimitive;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
@@ -29,7 +29,7 @@ public class AcquireCell extends EndpointStep<AcquireCellSettings> {
     
     //Represents the acquisition of a single "CellXXX" folder, it can contain multiple PWS, Dynamics, and Fluorescence acquisitions.
     public AcquireCell() {
-        super(new AcquireCellSettings(), Consts.Type.ACQ);
+        super(new AcquireCellSettings(), SequencerConsts.Type.ACQ);
     }
 
     @Override

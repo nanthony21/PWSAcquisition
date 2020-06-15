@@ -6,7 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import org.micromanager.data.Coords;
@@ -18,7 +18,7 @@ import org.micromanager.data.Coords;
 public class AcquireTimeSeries extends ContainerStep<SequencerSettings.AcquireTimeSeriesSettings> {
     
     public AcquireTimeSeries() {
-        super(new SequencerSettings.AcquireTimeSeriesSettings(), Consts.Type.TIME);
+        super(new SequencerSettings.AcquireTimeSeriesSettings(), SequencerConsts.Type.TIME);
     }
 
     @Override

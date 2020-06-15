@@ -7,7 +7,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 
@@ -18,7 +18,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 public class ChangeConfigGroup extends ContainerStep<SequencerSettings.ChangeConfigGroupSettings> {
     
     public ChangeConfigGroup() {
-        super(new SequencerSettings.ChangeConfigGroupSettings(), Consts.Type.CONFIG);
+        super(new SequencerSettings.ChangeConfigGroupSettings(), SequencerConsts.Type.CONFIG);
     }
 
     @Override

@@ -13,7 +13,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyableMutableTreeNode;
 import edu.bpl.pwsplugin.utils.GsonUtils;
 import edu.bpl.pwsplugin.utils.JsonableParam;
@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import javax.swing.tree.TreeNode;
@@ -34,13 +33,13 @@ import javax.swing.tree.TreeNode;
  */
 public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeNode {
     protected T settings; 
-    private final Consts.Type stepType;
+    private final SequencerConsts.Type stepType;
     protected final List<SequencerFunction> callbacks = new ArrayList<>();
     private static final AtomicInteger counter = new AtomicInteger(); //This static counter makes sure that each Step object has it's own uid during runtime.
     private Integer uid = counter.getAndIncrement();
 
     
-    public Step(T settings, Consts.Type type) {
+    public Step(T settings, SequencerConsts.Type type) {
         super();
         this.stepType = type;
         this.setSettings(settings);
@@ -53,7 +52,7 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
     
     public Integer getID() { return this.uid; }
         
-    public final Consts.Type getType() {
+    public final SequencerConsts.Type getType() {
         return stepType;
     }
 
@@ -108,7 +107,7 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
         
     @Override
     public String toString() { //this determines how its labeled in a JTree
-        return Consts.getFactory(this.getType()).getName();
+        return SequencerConsts.getFactory(this.getType()).getName();
     }
     
     public abstract List<String> validate(); //Return a list of any errors for this step.
@@ -156,7 +155,7 @@ class StepTypeAdapter extends TypeAdapter<Step> {
         out.name("stepType");
         out.value(step.getType().name());
         out.name("settings");
-        gson.toJson(step.getSettings(), Consts.getFactory(step.getType()).getSettings(), out);
+        gson.toJson(step.getSettings(), SequencerConsts.getFactory(step.getType()).getSettings(), out);
         if (step.getAllowsChildren()) {
             out.name("children");
             gson.toJson(Collections.list(step.children()), List.class, out); // recursion!
@@ -172,10 +171,10 @@ class StepTypeAdapter extends TypeAdapter<Step> {
             if (!in.nextName().equals("id")) { throw new RuntimeException(); } //ID is determined at runtime don't load it.
             int id = in.nextInt(); //read the id to get rid of it.
             if (!in.nextName().equals("stepType")) { throw new RuntimeException(); } //This must be "stepType" 
-            Consts.Type stepType = Consts.Type.valueOf(in.nextString());
-            Step step = Consts.getFactory(stepType).getStep().newInstance();
+            SequencerConsts.Type stepType = SequencerConsts.Type.valueOf(in.nextString());
+            Step step = SequencerConsts.getFactory(stepType).getStep().newInstance();
             if (!in.nextName().equals("settings")) { throw new RuntimeException(); }
-            JsonableParam settings = gson.fromJson(in, Consts.getFactory(stepType).getSettings());
+            JsonableParam settings = gson.fromJson(in, SequencerConsts.getFactory(stepType).getSettings());
             step.setSettings(settings);
             if (step.getAllowsChildren()) {
                 if (!in.nextName().equals("children")) { throw new RuntimeException(); }

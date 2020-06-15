@@ -6,7 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.factory;
 
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionSequencer.Consts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.EveryNTimes;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
@@ -47,13 +47,13 @@ public class EveryNTimesFactory extends StepFactory {
     }
     
     @Override
-    public Consts.Category getCategory() {
-        return Consts.Category.LOGIC;
+    public SequencerConsts.Category getCategory() {
+        return SequencerConsts.Category.LOGIC;
     }
 
     @Override
-    public Consts.Type getType() {
-        return Consts.Type.EVERYN;
+    public SequencerConsts.Type getType() {
+        return SequencerConsts.Type.EVERYN;
     }
 }
 
