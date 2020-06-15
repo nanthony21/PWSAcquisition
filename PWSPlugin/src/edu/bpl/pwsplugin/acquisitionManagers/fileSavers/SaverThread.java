@@ -9,6 +9,6 @@ public abstract class SaverThread extends Thread{
     @Override
     public abstract void run(); //Starts the thread and begins the saving process. An needed arguments should have been passed to the constructor.
     
-    public abstract void setMetadata(MetadataBase md); //We allow the metadata that needs to be saved to be passed after the thread has started. This is how the metadata is set. //TODO do away with JSONObject and use MetadataBase
+    public abstract void setMetadata(MetadataBase md); //We allow the metadata that needs to be saved to be passed after the thread has started. This is how the metadata is set.
     public abstract Queue getQueue();
 }
