@@ -38,6 +38,10 @@ public abstract class TunableFilter {
     
     public abstract List<String> validate(); //Return a list of errors found with the device.
     
+    public abstract void initialize() throws MMDeviceException; // One time initialization of device
+    
+    public abstract void activate() throws MMDeviceException; //Make sure this device is ready for usage, may be run many times.
+    
     public static TunableFilter getInstance(TunableFilterSettings settings) {
         if (settings.filterType == Types.VARISPECLCTF) {
             return new VarispecLCTF(settings);

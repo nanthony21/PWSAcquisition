@@ -19,6 +19,7 @@ import org.micromanager.data.internal.DefaultCoords;
  */
 public class AcquisitionStatus {
     //This object acts as a go-between between the UI and the acquisition thread.
+    //TODO This is not thread-safe and it probably should be.
     private String currentPath;
     protected Integer currentCellNum; //The folder number we are currently acquiring.
     public List<String> statusMsg = new ArrayList<>(); //A string describing what is currently happening.
@@ -43,7 +44,7 @@ public class AcquisitionStatus {
     }
     
     private void publish() {
-        //Send a copy of this object back to the swingworker so it can be accessed from the `process` method. //TODO is this necesary, can't we just maintain a reference to a single object?
+        //Send a copy of this object back to the swingworker so it can be accessed from the `process` method. 
         publishCallBack.apply(this);
     }
     

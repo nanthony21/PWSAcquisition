@@ -85,8 +85,6 @@ class SequencerRunningDlg extends JDialog {
     }
 
     class AcquisitionThread extends SwingWorker<Void, AcquisitionStatus> {
-
-        //TODO maybe this hsould be inner to dialog.
         SequencerFunction rootFunc;
         private final AcquisitionStatus startingStatus;
 

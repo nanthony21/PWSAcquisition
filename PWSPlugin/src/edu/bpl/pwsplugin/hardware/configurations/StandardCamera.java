@@ -20,7 +20,7 @@ public class StandardCamera extends ImagingConfiguration {
     Camera _cam;
     Illuminator _illum;
     
-    public StandardCamera(ImagingConfigurationSettings settings) {
+    protected StandardCamera(ImagingConfigurationSettings settings) {
         super(settings);
         _cam = Camera.getInstance(settings.camSettings);
         _illum = Illuminator.getInstance(settings.illuminatorSettings);

@@ -47,7 +47,6 @@ public class AcquireFromPositionList extends ContainerStep<SequencerSettings.Acq
                     Callable<Void> postMoveRoutine = () -> {
                         return null;
                     };
-                    //TODO do we want to keep this undocumented naming stuff? Replace it with a more formalized Hook functionality
                     if (label.contains("APFS")) {
                         //Turn off pfs before moving. after moving run autofocus to get back i the right range. then enable pfs again.
                         preMoveRoutine = () -> {

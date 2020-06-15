@@ -15,8 +15,17 @@ public class HamamatsuEMCCD extends Camera {
     }
     
     @Override
+    public void activate() throws MMDeviceException {
+        try {
+            Globals.core().setCameraDevice(_settings.name);
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
+    }
+    
+    @Override
     public void initialize() {
-        //Not sure if we need to do anything here.
+        //Not sure anything needs to be done here.
     }
     
     @Override

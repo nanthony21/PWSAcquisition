@@ -21,45 +21,62 @@ public class SimulatedFilter extends TunableFilter {
         this.settings = settings;
     }
     
+    @Override
     public void setWavelength(int wavelength) {
         wv = wavelength;
     }
     
+    @Override
     public int getWavelength() {
         return wv;
     }
     
+    @Override
     public boolean supportsSequencing() {
         return false;
     }
     
+    @Override
     public int getMaxSequenceLength() {
         throw new UnsupportedOperationException();
     }
     
+    @Override
     public void loadSequence(int[] wavelengthSequence) {
         throw new UnsupportedOperationException();
     }
     
+    @Override
     public void startSequence() {
         throw new UnsupportedOperationException();
     }
     
+    @Override
     public void stopSequence() {
         throw new UnsupportedOperationException();
     }
     
+    @Override
     public boolean isBusy() {
         return false;
     }
     
+    @Override
     public double getDelayMs() {
         return 50;
     }
     
+    @Override
     public TunableFilterSettings getSettings() { return settings; }
     
+    @Override
     public List<String> validate() {
          return new ArrayList<String>();
     }
+    
+    @Override
+    public void initialize() {}//Not sure what to do here
+    
+    @Override
+    public void activate() {}//Not sure what to do here
 }

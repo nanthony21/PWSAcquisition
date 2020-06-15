@@ -109,4 +109,10 @@ public abstract class DefaultTunableFilter extends TunableFilter{
     public TunableFilterSettings getSettings() {
         return _settings;
     }
+    
+    @Override
+    public void initialize() {}//Not sure what to do here
+    
+    @Override
+    public void activate() {}//Not sure what to do here
 }

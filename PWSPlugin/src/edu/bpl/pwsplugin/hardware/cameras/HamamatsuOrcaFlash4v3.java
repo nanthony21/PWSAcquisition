@@ -39,6 +39,15 @@ public class HamamatsuOrcaFlash4v3 extends Camera{
     }
     
     @Override
+    public void activate() throws MMDeviceException {
+        try {
+            Globals.core().setCameraDevice(_settings.name);
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }    
+    }
+    
+    @Override
     public boolean supportsExternalTriggering() { return true; }
     
     @Override

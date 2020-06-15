@@ -22,7 +22,7 @@ public class SpectralCamera extends ImagingConfiguration {
     TunableFilter _filt;
     Illuminator _illum;
     
-    public SpectralCamera(ImagingConfigurationSettings settings) {
+    protected SpectralCamera(ImagingConfigurationSettings settings) {
         super(settings);
         _cam = Camera.getInstance(settings.camSettings);
         _filt = TunableFilter.getInstance(settings.filtSettings);

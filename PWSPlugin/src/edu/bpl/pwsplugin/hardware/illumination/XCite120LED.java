@@ -54,4 +54,6 @@ public class XCite120LED extends Illuminator {
     @Override
     public void initialize() {}//Not sure what to do here
     
+    @Override
+    public void activate() {}//Not sure what to do here
 }

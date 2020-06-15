@@ -8,7 +8,9 @@ import java.util.List;
 public abstract class Illuminator {
     public abstract List<String> validate(); //Return a list of strings for every error detected in the configuration. return empty list if no errors found.
 
-    public abstract void initialize() throws MMDeviceException;
+    public abstract void initialize() throws MMDeviceException; // One time initialization of device
+    
+    public abstract void activate() throws MMDeviceException; //Make sure this device is ready for usage, may be run many times.
     
     public abstract void setShutter(boolean on) throws MMDeviceException;
     

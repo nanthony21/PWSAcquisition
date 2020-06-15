@@ -2,7 +2,6 @@
 package edu.bpl.pwsplugin.hardware.tunableFilters;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.TunableFilterSettings;
 import java.util.ArrayList;
 import java.util.Arrays;

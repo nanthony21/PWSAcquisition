@@ -19,8 +19,9 @@ import java.util.List;
  */
 public abstract class ImagingConfiguration {
     ImagingConfigurationSettings settings;
+    private boolean initialized_ = false;
     
-    public ImagingConfiguration(ImagingConfigurationSettings settings) {
+    protected ImagingConfiguration(ImagingConfigurationSettings settings) {
         this.settings = settings;
     }
     
@@ -34,7 +35,24 @@ public abstract class ImagingConfiguration {
     public abstract Illuminator illuminator();
     public abstract List<String> validate();
     
+    private void initialize() throws MMDeviceException { //One-time initialization of devices
+        camera().initialize();
+        if (hasTunableFilter()) {
+            tunableFilter().initialize();
+        }
+        illuminator().initialize();
+        initialized_ = true;
+    }
+    
     public void activateConfiguration() throws MMDeviceException { //Actually configure the hardware to use this configuration.
+        if (!initialized_) {
+            this.initialize(); //If we haven't yet then run the one-time initialization for the the devices.
+        }
+        camera().activate();
+        if (hasTunableFilter()) {
+            tunableFilter().activate();
+        }
+        illuminator().activate();
         try {
             Globals.core().setConfig(settings.configurationGroup, settings.configurationName);
         } catch (InterruptedException ie) {

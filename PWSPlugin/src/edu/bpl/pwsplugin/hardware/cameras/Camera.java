@@ -15,7 +15,9 @@ import org.micromanager.data.Image;
  * @author N2-LiveCell
  */
 public abstract class Camera {
-    public abstract void initialize() throws MMDeviceException;
+    public abstract void initialize() throws MMDeviceException; // One time initialization of device
+    
+    public abstract void activate() throws MMDeviceException; //Make sure this device is ready for usage, may be run many times.
     
     public abstract boolean supportsExternalTriggering(); //True if the camera can have new image acquisitions triggered by an incoming TTL signal
     

@@ -38,4 +38,19 @@ public class HWConfiguration {
     public List<ImagingConfiguration> getImagingConfigurations() {
         return new ArrayList<>(this.imConfigs.values());
     }
+    
+    /*public void initialize() throws MMDeviceException {
+        for (ImagingConfiguration conf : this.imConfigs.values()) {
+            conf.initialize();
+        }
+    }
+    
+    public boolean hasBeenInitialized() {
+        for (ImagingConfiguration conf : this.imConfigs.values()) {
+            if (!conf.hasBeenInitialized()) {
+                return false;
+            }
+        }
+        return true; //We only get here if all imaging configurations are initialized.
+    }*/
 }
