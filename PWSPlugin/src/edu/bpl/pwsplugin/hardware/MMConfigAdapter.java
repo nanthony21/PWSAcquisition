@@ -1,5 +1,6 @@
-package edu.bpl.pwsplugin;
+package edu.bpl.pwsplugin.hardware;
 
+import edu.bpl.pwsplugin.Globals;
 import java.util.Arrays;
 import java.util.List;
 import mmcorej.DeviceType;

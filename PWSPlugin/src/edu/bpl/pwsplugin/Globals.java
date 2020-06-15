@@ -1,6 +1,7 @@
 
 package edu.bpl.pwsplugin;
 
+import edu.bpl.pwsplugin.hardware.MMConfigAdapter;
 import edu.bpl.pwsplugin.hardware.HWConfiguration;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.UI.PluginFrame;
