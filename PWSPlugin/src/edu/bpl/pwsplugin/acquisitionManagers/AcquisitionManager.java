@@ -21,19 +21,13 @@
 package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.Globals;
-import java.util.concurrent.LinkedBlockingQueue;
 import org.micromanager.internal.utils.ReportingUtils;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
-import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
-import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
-import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
-import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
-import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.List;
 import mmcorej.DoubleVector;

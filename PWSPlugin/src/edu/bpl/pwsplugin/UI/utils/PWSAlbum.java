@@ -34,7 +34,7 @@ import javax.swing.SwingUtilities;
 import org.micromanager.data.RewritableDatastore;
 
 public class PWSAlbum {
-   private RewritableDatastore store_;
+   private final RewritableDatastore store_;
    private int idx = 0;
    String displayName_;
    private DisplayWindow display = null;
