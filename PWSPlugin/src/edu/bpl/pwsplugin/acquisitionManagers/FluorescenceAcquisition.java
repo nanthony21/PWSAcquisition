@@ -28,7 +28,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author LCPWS3
  */
-public class FluorescenceAcquisition implements Acquisition<FluorSettings>{
+public class FluorescenceAcquisition extends MultiThreadedAcquisition<FluorSettings>{
     protected FluorSettings settings;
     Camera camera;
     TunableFilter tunableFilter;
@@ -40,12 +40,12 @@ public class FluorescenceAcquisition implements Acquisition<FluorSettings>{
     }
     
     @Override
-    public FileSpecs.Type getFileType() {
+    protected FileSpecs.Type getFileType() {
         return FileSpecs.Type.FLUORESCENCE;
     }
     
     @Override
-    public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException {
+    protected String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException {
         int i = 0;
         Path path;
         do { //Increment the folder numbering until a nonused folder is found.
@@ -68,22 +68,17 @@ public class FluorescenceAcquisition implements Acquisition<FluorSettings>{
     }
     
     @Override
-    public FluorSettings getSettings() {
-        return this.settings;
-    }
-    
-    @Override
     public Integer numFrames() {
         return 1;
     }
     
     @Override
     public ImagingConfiguration getImgConfig() {
-        return Globals.getHardwareConfiguration().getImagingConfigurationByName(getSettings().imConfigName);
+        return Globals.getHardwareConfiguration().getImagingConfigurationByName(this.settings.imConfigName);
     }
     
     @Override
-    public void acquireImages(SaverThread imSaver, MetadataBase metadata) throws Exception {
+    protected void _acquireImages(SaverThread imSaver, MetadataBase metadata) throws Exception {
         String initialFilter = ""; 
         boolean spectralMode = imConf.hasTunableFilter();
         if (Globals.getMMConfigAdapter().autoFilterSwitching) {

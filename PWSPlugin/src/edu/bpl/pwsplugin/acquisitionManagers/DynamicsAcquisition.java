@@ -46,7 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-class DynamicsAcquisition implements Acquisition<DynSettings>{
+class DynamicsAcquisition extends MultiThreadedAcquisition<DynSettings>{
     double exposure_; //The camera exposure in milliseconds.
     int wavelength_; //The wavelength to acquire images at
     int numFrames_; //The number of images to acquire.
@@ -66,22 +66,17 @@ class DynamicsAcquisition implements Acquisition<DynSettings>{
     }
     
     @Override
-    public DynSettings getSettings() {
-        return this.settings;
-    }
-    
-    @Override
     public Integer numFrames() {
         return settings.numFrames;
     }
     
     @Override
     public ImagingConfiguration getImgConfig() {
-        return Globals.getHardwareConfiguration().getImagingConfigurationByName(getSettings().imConfigName);
+        return Globals.getHardwareConfiguration().getImagingConfigurationByName(this.settings.imConfigName);
     }
     
     @Override
-    public void acquireImages(SaverThread imSaver, MetadataBase metadata) throws Exception {
+    public void _acquireImages(SaverThread imSaver, MetadataBase metadata) throws Exception {
         ImagingConfiguration conf = Globals.getHardwareConfiguration().getImagingConfigurationByName(this.settings.imConfigName);
         Camera camera = conf.camera();
         TunableFilter tunableFilter = conf.tunableFilter();

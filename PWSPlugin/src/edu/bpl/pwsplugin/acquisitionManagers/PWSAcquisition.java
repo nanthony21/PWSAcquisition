@@ -47,7 +47,7 @@ import org.micromanager.data.Pipeline;
 import org.micromanager.data.PipelineErrorException;
 
 
-class PWSAcquisition implements Acquisition<PWSSettings>{
+class PWSAcquisition extends MultiThreadedAcquisition<PWSSettings>{
     int[] wv; //The array of wavelengths to image at.
     final String filtProp  = "Wavelength"; //The property name of the filter that we want to tune.
     Boolean hardwareSequence; // Whether or not to attempt to use TTL triggering between the camera and spectral filter.
@@ -85,30 +85,24 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
             }
         }  
     }
-    
-    @Override
-    public PWSSettings getSettings() {
-        return this.settings;
-    }
-    
         
     @Override
-    public Integer numFrames() {
+    protected Integer numFrames() {
         return wv.length;
     }
     
     @Override
     public ImagingConfiguration getImgConfig() {
-        return Globals.getHardwareConfiguration().getImagingConfigurationByName(getSettings().imConfigName);
+        return Globals.getHardwareConfiguration().getImagingConfigurationByName(this.settings.imConfigName);
     }
     
     @Override
-    public FileSpecs.Type getFileType() {
+    protected FileSpecs.Type getFileType() {
         return FileSpecs.Type.PWS;
     }
     
     @Override
-    public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException{
+    protected String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException{
         Path path = FileSpecs.getCellFolderName(Paths.get(savePath), cellNum).resolve(FileSpecs.getSubfolderName(FileSpecs.Type.PWS));
         if (Files.isDirectory(path)){
             throw new FileAlreadyExistsException("Cell " + cellNum + " PWS already exists.");
@@ -117,7 +111,7 @@ class PWSAcquisition implements Acquisition<PWSSettings>{
     }
       
     @Override
-    public void acquireImages(SaverThread saver, MetadataBase metadata) throws Exception {
+    protected void _acquireImages(SaverThread saver, MetadataBase metadata) throws Exception {
         long configStartTime = System.currentTimeMillis();
         album_.clear();
         int initialWv = 550;

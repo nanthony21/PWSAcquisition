@@ -47,7 +47,6 @@ public class AcquisitionManager {
     private final PWSAcquisition pwsManager_ = new PWSAcquisition(new PWSAlbum("PWS"));
     private final DynamicsAcquisition dynManager_ = new DynamicsAcquisition(new PWSAlbum("Dynamics"));
     private final FluorescenceAcquisition flManager_ = new FluorescenceAcquisition(new PWSAlbum("Fluorescence"));
-    private final LinkedBlockingQueue imageQueue = new LinkedBlockingQueue();; //This queue is used to pass images from one of the acquisition managers to the ImSaver which saves the file concurrently.
     private volatile boolean acquisitionRunning_ = false;
     private int cellNum_;
     private String savePath_;
@@ -81,17 +80,11 @@ public class AcquisitionManager {
             if (Globals.mm().live().getIsLiveModeOn()) {
                 Globals.mm().live().setLiveMode(false);
             }
-            if (imageQueue.size() > 0) {
-                ReportingUtils.showMessage(String.format("The image queue started a new acquisition with %d images already in it! Your image file is likely corrupted. This can mean that Java has not been allocated enough heap size.", imageQueue.size()));
-                imageQueue.clear();
-            }
-            SaverThread imSaver = new MMSaver(manager.getSavePath(savePath_, cellNum_), imageQueue, manager.numFrames() ,FileSpecs.getFilePrefix(manager.getFileType()));
-            manager.acquireImages(imSaver, metadata);
+            manager.acquireImages(savePath_, cellNum_, metadata);
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
             throw ie;
         } finally {
-            imageQueue.clear();
             acquisitionRunning_ = false;
         }
     }
@@ -107,10 +100,6 @@ public class AcquisitionManager {
     public void setPWSSettings(PWSSettings settings) throws Exception { pwsManager_.setSettings(settings); }
     
     public void setDynamicsSettings(DynSettings settings) { dynManager_.setSettings(settings); }
-    
-    public PWSSettings getPWSSettings() { return pwsManager_.getSettings(); }
-    public DynSettings getDynSettings() { return dynManager_.getSettings(); }
-    public FluorSettings getFluorescenceSettings() { return flManager_.getSettings(); }
     
     public void acquirePWS() throws InterruptedException, Exception { run(pwsManager_); }
     
