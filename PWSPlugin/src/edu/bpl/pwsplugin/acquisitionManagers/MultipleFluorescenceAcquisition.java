@@ -22,7 +22,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author nick
  */
-public class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings> {
+public class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings> { //TODO some weird stuff can happen with the display when different iterations have different resolutions. that's ok though.
     private FluorSettings settings;
     private ImagingConfiguration imConf;
     

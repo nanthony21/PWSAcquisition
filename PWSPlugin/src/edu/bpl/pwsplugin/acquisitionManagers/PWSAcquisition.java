@@ -142,7 +142,6 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
                     
                     boolean canExit = false;
                     int i = 0;
-                    int oldi = -1;
                     long lastImTime = System.currentTimeMillis();
                     while (true) {
                         boolean remaining = (Globals.core().getRemainingImageCount() > 0);
