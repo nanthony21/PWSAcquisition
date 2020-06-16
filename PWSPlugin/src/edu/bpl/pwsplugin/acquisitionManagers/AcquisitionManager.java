@@ -32,9 +32,9 @@ public class AcquisitionManager {
     There should only be one of these objects for a given set of hardware in order to avoid trying to run multiple acquisitions at once.
     This should be the only way to access any of sublevel acquisition managers.
     */
-    private final PWSAcquisition pwsManager_ = new PWSAcquisition(new PWSAlbum("PWS"));
-    private final DynamicsAcquisition dynManager_ = new DynamicsAcquisition(new PWSAlbum("Dynamics"));
-    private final FluorescenceAcquisition flManager_ = new FluorescenceAcquisition(new PWSAlbum("Fluorescence"));
+    private final Acquisition pwsManager_ = new PWSAcquisition(new PWSAlbum("PWS"));
+    private final Acquisition dynManager_ = new DynamicsAcquisition(new PWSAlbum("Dynamics"));
+    private final Acquisition flManager_ = new MultipleFluorescenceAcquisition(new PWSAlbum("Fluorescence"));
     private volatile boolean acquisitionRunning_ = false;
     private int cellNum_;
     private String savePath_;
