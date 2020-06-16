@@ -41,9 +41,9 @@ public class AcquireCell extends EndpointStep<AcquireCellSettings> {
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 status.setCellNum(status.getCellNum() + 1);
                 status.newStatusMessage(String.format("Acquiring Cell %d", status.getCellNum()));
-                for (FluorSettings flSettings : settings.fluorSettings) {
+                if (!settings.fluorSettings.isEmpty()) {
                     status.allowPauseHere();
-                    acqMan.setFluorescenceSettings(flSettings);
+                    acqMan.setFluorescenceSettings(settings.fluorSettings);
                     acqMan.acquireFluorescence();
                 }
                 if (settings.pwsSettings != null) {

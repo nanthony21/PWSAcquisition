@@ -1,6 +1,8 @@
 package edu.bpl.pwsplugin.hardware;
 
 import edu.bpl.pwsplugin.Globals;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import mmcorej.DeviceType;
@@ -12,10 +14,7 @@ public class MMConfigAdapter {
     private List<String> connectedCameras;
     private List<String> connectedShutters;
     public boolean autoFilterSwitching;
-
-    public MMConfigAdapter() {
-        this.refresh();
-    }
+    private List<ActionListener> onRefreshListeners = new ArrayList<>();
 
     public void refresh() {
         //Scan the hardware configuration
@@ -31,10 +30,25 @@ public class MMConfigAdapter {
         this.connectedCameras = Arrays.asList(Globals.core().getLoadedDevicesOfType(DeviceType.CameraDevice).toArray());
         //Shutters (illuminators
         this.connectedShutters = Arrays.asList(Globals.core().getLoadedDevicesOfType(DeviceType.ShutterDevice).toArray());
+        
+        //Fire action listeners
+        for (ActionListener l : this.onRefreshListeners) {
+            l.actionPerformed(null);
+        }
+    }
+    
+    public void addRefreshListener(ActionListener listener) {
+        this.onRefreshListeners.add(listener);
     }
     
     public List<String> getFilters() {
-        return this.filters;
+        if (this.filters.isEmpty()) {
+            List<String> l = new ArrayList<>();
+            l.add("None!");
+            return l;
+        } else {
+            return this.filters;
+        }
     }
 
     public List<String> getConnectedCameras() {

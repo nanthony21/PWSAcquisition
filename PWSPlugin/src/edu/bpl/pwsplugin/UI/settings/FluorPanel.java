@@ -30,13 +30,17 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
     private JComboBox<String> imConfName = new JComboBox<>();
 
     
-    public FluorPanel() {
+    public FluorPanel() { //TODO disable the `wavelength field when a standard camera is selected.
         super(new MigLayout(), FluorSettings.class);
         
         wvSpinner = new JSpinner(new SpinnerNumberModel(550, 400, 1000, 5));
         exposureSpinner = new JSpinner(new SpinnerNumberModel(1000.0, 1.0, 5000.0, 100.0));
         focusOffsetSpinner = new JSpinner(new SpinnerNumberModel(0, -10000, 10000, 100));
         filterCombo.setModel(this.getFilterComboModel());
+        
+        Globals.getMMConfigAdapter().addRefreshListener((evt)->{
+            filterCombo.setModel(this.getFilterComboModel());
+        });
         
         try {
             List<String> confNames = new ArrayList<>();
@@ -61,7 +65,8 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
     
     private DefaultComboBoxModel<String> getFilterComboModel() {    
         try { // Allow the panel to show up even if we don't have our connection to micromanager working (useful for testing).
-            return new DefaultComboBoxModel<>((String[]) Globals.getMMConfigAdapter().getFilters().toArray());
+            List<String> filters = Globals.getMMConfigAdapter().getFilters();
+            return new DefaultComboBoxModel<>(filters.toArray(new String[filters.size()]));
         } catch (NullPointerException e) {
             String[] filts = {"None!"};
             return new DefaultComboBoxModel<>(filts);
@@ -73,7 +78,7 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
         FluorSettings settings = new FluorSettings();
         settings.exposure = (Double) this.exposureSpinner.getValue();
         settings.filterConfigName = (String) this.filterCombo.getSelectedItem();
-        settings.focusOffset = (Long) this.focusOffsetSpinner.getValue();
+        settings.focusOffset = (Integer) this.focusOffsetSpinner.getValue();
         settings.tfWavelength = (Integer) this.wvSpinner.getValue();
         settings.imConfigName = (String) this.imConfName.getSelectedItem();
         return settings;
@@ -91,11 +96,7 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
     //API
     public boolean setFluorescenceFilter(String filter) { //Returns true if success
         this.filterCombo.setSelectedItem(filter);
-        if (this.filterCombo.getSelectedItem() != filter) {//Selection won't change if the above command didn't work
-            return false;
-        } else {
-            return true;
-        }
+        return this.filterCombo.getSelectedItem() == filter; //Selection won't change if the above command didn't work
     }
     
     public String getSelectedFilterName() {

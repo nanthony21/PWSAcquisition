@@ -25,6 +25,7 @@ import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
+import java.util.List;
 
 
 public class AcquisitionManager { 
@@ -57,7 +58,7 @@ public class AcquisitionManager {
         }
     }
     
-    public void setFluorescenceSettings(FluorSettings settings) { flManager_.setSettings(settings); }
+    public void setFluorescenceSettings(List<FluorSettings> settings) { flManager_.setSettings(settings); }
     
     public void setCellNum(int num) { cellNum_ = num; }
     

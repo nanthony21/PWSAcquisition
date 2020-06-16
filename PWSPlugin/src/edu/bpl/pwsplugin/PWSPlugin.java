@@ -69,6 +69,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
             Globals.init(studio_);       
             initialized_ = true;
         }
+        Globals.getMMConfigAdapter().refresh(); //Checks for the presence of specific config groups. etc.
         Globals.frame().setVisible(true);
     }
     

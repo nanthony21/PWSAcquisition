@@ -112,9 +112,9 @@ class AcquisitionPanel extends JPanel {
             return;
         }
         ThrowingFunction<Void, Void> f = (nul)->{return null;};
-        for (FluorSettings flSettings : settings.fluorSettings) {
+        if (!settings.fluorSettings.isEmpty()) {
             f = f.andThen((nul)->{
-                acqMan.setFluorescenceSettings(flSettings);
+                acqMan.setFluorescenceSettings(settings.fluorSettings);
                 acqMan.acquireFluorescence(); return null;
             });
         }
