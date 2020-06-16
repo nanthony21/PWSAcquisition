@@ -50,31 +50,11 @@ public class AcquisitionManager {
             throw new IllegalStateException("Attempting to start acquisition when acquisition is already running.");
         }
         acquisitionRunning_ = true;
-
-        if (Globals.core().getPixelSizeUm() == 0.0) { //This information gets saved to the metadata below in the form of an affine transform.
-            ReportingUtils.showMessage("It is highly recommended that you provide MicroManager with a pixel size setting for the current setup. Having this information is useful for analysis.");
-        }
         try {
-            ImagingConfiguration imConf = manager.getImgConfig(); 
-            if (!imConf.isActive()) { //It's important that the configuration is activated before we try pulling metadata like the affine transform
-                imConf.activateConfiguration(); //Activation must occur every time the imaging configuration changes.
-            }
-            DoubleVector aff = Globals.core().getPixelSizeAffine();
-            List<Double> trans = new ArrayList<>();
-            for (int i=0; i<aff.size(); i++) {
-                trans.add(aff.get(i));
-            }            
-     
-            MetadataBase metadata = new MetadataBase(
-                    imConf.camera().getSettings().linearityPolynomial,
-                    Globals.getHardwareConfiguration().getSettings().systemName,
-                    imConf.camera().getSettings().darkCounts,
-                    trans);
-        
             if (Globals.mm().live().getIsLiveModeOn()) {
                 Globals.mm().live().setLiveMode(false);
             }
-            manager.acquireImages(savePath_, cellNum_, metadata);
+            manager.acquireImages(savePath_, cellNum_);
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
             throw ie;

@@ -20,16 +20,7 @@
 //
 package edu.bpl.pwsplugin.acquisitionManagers;
 
-import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
-import edu.bpl.pwsplugin.metadata.MetadataBase;
-
-
 interface Acquisition <S> {
-    public void acquireImages(String savePath, int cellNum, MetadataBase metadata) throws Exception; //Begin the acquisition process.
-    //public String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException; // given a parent directory and a cell number, return the full path to save to.
-    //public FileSpecs.Type getFileType(); //Return the type enumerator for this acquisition, used for file saving information.
+    public void acquireImages(String savePath, int cellNum) throws Exception; //Begin the acquisition process.
     public void setSettings(S settings);
-    //public S getSettings();
-    public ImagingConfiguration getImgConfig();
-    //public Integer numFrames();
 }

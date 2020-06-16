@@ -18,11 +18,11 @@ import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
  *
  * @author nick
  */
-public abstract class MultiThreadedAcquisition<S> implements Acquisition<S> {
+public abstract class MultiThreadedAcquisition<S> extends SingleAcquisitionBase<S> {
     LinkedBlockingQueue imageQueue = new LinkedBlockingQueue();
     
     @Override
-    public void acquireImages(String savePath, int cellNum, MetadataBase metadata) throws Exception {
+    protected void runImageAcquisition(String savePath, int cellNum, MetadataBase metadata) throws Exception {
         if (imageQueue.size() > 0) {
             ReportingUtils.showMessage(String.format("The image queue started a new acquisition with %d images already in it! Your image file is likely corrupted. This can mean that Java has not been allocated enough heap size.", imageQueue.size()));
             imageQueue.clear();
