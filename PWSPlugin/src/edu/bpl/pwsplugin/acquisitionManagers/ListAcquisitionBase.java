@@ -37,6 +37,7 @@ public abstract class ListAcquisitionBase<S> implements Acquisition<List<S>>{
     
     @Override
     public void acquireImages(String savePath, int cellNum) throws Exception {
+        this.display.clear(); //The implementation of `runSingleImageAcquisition` call `displayImage` to add images to the display throughout the imaging process.
         for (int i=0; i< this.settingsList.size(); i++) {
             S settings = this.settingsList.get(i);
             this.setCurrentSettings(settings);
@@ -52,7 +53,6 @@ public abstract class ListAcquisitionBase<S> implements Acquisition<List<S>>{
             String subFolderName = String.format("%s_%d", FileSpecs.getSubfolderName(this.getFileType()), i);
             Path fullSavePath = FileSpecs.getCellFolderName(Paths.get(savePath), cellNum).resolve(subFolderName);
             SaverThread imSaver = new MMSaver(fullSavePath.toString(), imageQueue, this.numFrames(), FileSpecs.getFilePrefix(this.getFileType()));
-            this.display.clear(); //The implementation of `runSingleImageAcquisition` call `displayImage` to add images to the display throughout the imaging process.
             this.runSingleImageAcquisition(imSaver, md);
         }
     }
