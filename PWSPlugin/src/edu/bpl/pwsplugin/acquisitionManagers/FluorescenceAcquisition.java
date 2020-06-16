@@ -28,7 +28,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author LCPWS3
  */
-public class FluorescenceAcquisition extends MultiThreadedAcquisition<FluorSettings>{
+public class FluorescenceAcquisition extends SingleAcquisitionBase<FluorSettings>{
     protected FluorSettings settings;
     Camera camera;
     TunableFilter tunableFilter;

@@ -47,7 +47,7 @@ import org.micromanager.data.Pipeline;
 import org.micromanager.data.PipelineErrorException;
 
 
-class PWSAcquisition extends MultiThreadedAcquisition<PWSSettings>{
+class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
     int[] wv; //The array of wavelengths to image at.
     final String filtProp  = "Wavelength"; //The property name of the filter that we want to tune.
     Boolean hardwareSequence; // Whether or not to attempt to use TTL triggering between the camera and spectral filter.
