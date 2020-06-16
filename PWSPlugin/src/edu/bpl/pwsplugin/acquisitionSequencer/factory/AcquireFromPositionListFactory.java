@@ -6,7 +6,6 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.factory;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
