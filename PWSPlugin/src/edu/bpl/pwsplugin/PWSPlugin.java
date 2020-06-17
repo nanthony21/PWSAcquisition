@@ -24,7 +24,6 @@ package edu.bpl.pwsplugin;
 //Generate camera affine transform
 //TODO test test test
 //Optional:
-//Add display album for fluorescence. Make fluorescence acq engine support multiple channels.
 //Step types:
 //Add sequence logging.
 //Transmission imaging
