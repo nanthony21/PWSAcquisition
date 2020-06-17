@@ -28,7 +28,8 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author LCPWS3
  */
-public class FluorescenceAcquisition extends SingleAcquisitionBase<FluorSettings>{
+class FluorescenceAcquisition extends SingleAcquisitionBase<FluorSettings>{
+    //This class is now unused in favor of the `MultipleFluorescenceAcquisition`. We'll keep it around anyway. This switch was made on 6/16/2020.
     protected FluorSettings settings;
     Camera camera;
     TunableFilter tunableFilter;

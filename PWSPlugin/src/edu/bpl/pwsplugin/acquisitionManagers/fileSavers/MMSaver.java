@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import mmcorej.org.json.JSONException;
@@ -25,7 +24,7 @@ import org.micromanager.data.Coords;
 import org.micromanager.data.internal.DefaultMetadata;
 
 public class MMSaver extends DefaultSaverThread {
-    //A thread that saves a tiff file using Micro-Managers `DataStore`. Metadata is saved to a separate json file.
+    //A thread that saves a tiff file using Micro-Manager's `DataStore`. Metadata is saved to a separate json file.
     int expectedFrames_;
     String savePath_;
     JSONObject metadata_;
@@ -71,6 +70,7 @@ public class MMSaver extends DefaultSaverThread {
                 ds.close();
             }
 
+            //Rename from micromanager's default datastore naming to our own custom name.
             File oldFile = new File(savePath_).listFiles((dir, name) -> name.endsWith(".ome.tif") && name.contains("MMStack"))[0];
             File newFile = new File(Paths.get(savePath_).resolve(filePrefix_ + ".tif").toString());
             oldFile.renameTo(newFile);

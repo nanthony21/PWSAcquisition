@@ -25,7 +25,9 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author nick
  */
-public abstract class ListAcquisitionBase<S> implements Acquisition<List<S>>{
+abstract class ListAcquisitionBase<S> implements Acquisition<List<S>>{
+    //A base class for an acquisition that acquires from a list of settings and puts the resulting images all into a shared display.
+    //Images are saved to individual numbered folders.
     private List<S> settingsList;
     private LinkedBlockingQueue imageQueue = new LinkedBlockingQueue();
     private PWSAlbum display;

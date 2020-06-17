@@ -21,6 +21,7 @@
 package edu.bpl.pwsplugin.acquisitionManagers;
 
 interface Acquisition <S> {
+    // The basic requirements for an acquisition managed by the `AcquisitionManager class.
     public void acquireImages(String savePath, int cellNum) throws Exception; //Begin the acquisition process.
     public void setSettings(S settings);
 }

@@ -43,6 +43,8 @@ import java.util.List;
 
 
 class DynamicsAcquisition extends SingleAcquisitionBase<DynSettings>{
+    //Saves a single dynamics acquisition.
+    
     double exposure_; //The camera exposure in milliseconds.
     int wavelength_; //The wavelength to acquire images at
     int numFrames_; //The number of images to acquire.
