@@ -5,7 +5,6 @@
  */
 package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
 /**

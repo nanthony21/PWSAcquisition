@@ -22,7 +22,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author nick
  */
-public abstract class SingleAcquisitionBase<S> implements Acquisition<S> {
+abstract class SingleAcquisitionBase<S> implements Acquisition<S> {
     //A base class an acquisition manager that handles instantiation of a the required metadata for every type of image.
     //This class assumes that the same imaging configuration will be used throughout the whole imaging process, which may not be true.
     LinkedBlockingQueue imageQueue = new LinkedBlockingQueue();
