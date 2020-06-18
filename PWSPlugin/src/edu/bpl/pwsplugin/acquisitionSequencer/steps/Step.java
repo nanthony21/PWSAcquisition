@@ -21,12 +21,10 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import javax.swing.tree.TreeNode;
 
 /**
  *
@@ -188,6 +186,8 @@ class StepTypeAdapter extends TypeAdapter<Step> {
             throw new RuntimeException(e);
         } catch (IOException | JsonIOException | IllegalStateException ioe) {
             try {
+                while (in.hasNext()) { in.skipValue(); } //Read out the rest of the failed json object before returning.
+                in.endObject();
                 return SequencerConsts.getFactory(SequencerConsts.Type.BROKEN).getStep().newInstance();//Rather than allow an exception to break the whole loading process just insert the special "Broken step" where the error occured.
             } catch (InstantiationException | IllegalAccessException e) {
                 throw new RuntimeException(e);

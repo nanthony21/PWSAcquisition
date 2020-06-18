@@ -97,7 +97,7 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
                 }
                 RootStep rootStep = GsonUtils.getGson().fromJson(new FileReader(path), RootStep.class);
                 this.populateFields(rootStep);
-            } catch (FileNotFoundException | NullPointerException | JsonIOException e) {
+            } catch (FileNotFoundException | NullPointerException | JsonIOException | ClassCastException e) {
                 Globals.mm().logs().showError(e);
             }
         });
