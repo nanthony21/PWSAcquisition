@@ -16,7 +16,8 @@ import java.util.HashSet;
  */
 
 
-public class JsonableParam {    
+public class JsonableParam {   
+    //This base class allows it's subclasses to work more smoothly with Gson, they will Jsonified based on their runtime type rather than their declared type.
     //Note: Subclasses of this can not have any attributes names `type`. if they do they won't work with the runtime type adapter.
     private static final RuntimeTypeAdapterFactory<JsonableParam> adapter = RuntimeTypeAdapterFactory.of(JsonableParam.class);
 
@@ -34,7 +35,7 @@ public class JsonableParam {
     }
     
     public JsonableParam() {
-        this.registerClass(this.getClass());
+        this.registerClass(this.getClass()); //Automatically register the class at instantiation. Really though we want to explicitly register each class elsewhere, otherwise Gson won't work for the class until the first time it is instantiated.
     }
         
     public JsonableParam copy() {
@@ -77,7 +78,7 @@ public class JsonableParam {
     }
     
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o) { //Determine equality based on the json string representation of the class.
         if (o == null) {
             return false;
         } else if (this.getClass()!=o.getClass()) {
