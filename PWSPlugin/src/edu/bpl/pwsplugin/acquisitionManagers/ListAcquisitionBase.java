@@ -29,8 +29,8 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>>{
     //A base class for an acquisition that acquires from a list of settings and puts the resulting images all into a shared display.
     //Images are saved to individual numbered folders.
     private List<S> settingsList;
-    private LinkedBlockingQueue imageQueue = new LinkedBlockingQueue();
-    private PWSAlbum display;
+    private final LinkedBlockingQueue imageQueue = new LinkedBlockingQueue();
+    private final PWSAlbum display;
     
     protected ListAcquisitionBase(PWSAlbum album) {
         this.display = album;

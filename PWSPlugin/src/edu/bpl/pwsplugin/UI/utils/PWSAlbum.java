@@ -53,7 +53,7 @@ public class PWSAlbum {
        store_.deleteAllImages();
    }
 
-   public void addImage(Image image){   
+   public void addImage(Image image) {
         if ((display==null) || (display.isClosed())) {
             display = Globals.mm().displays().createDisplay(store_);
             try { 

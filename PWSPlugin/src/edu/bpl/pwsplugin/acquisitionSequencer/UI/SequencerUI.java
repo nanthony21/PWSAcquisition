@@ -95,9 +95,15 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
                 if (path == null) {
                     return; // file dialog must have been cancelled.
                 }
-                RootStep rootStep = GsonUtils.getGson().fromJson(new FileReader(path), RootStep.class);
+                RootStep rootStep;
+                try (FileReader reader = new FileReader(path)) {
+                    rootStep = GsonUtils.getGson().fromJson(reader, RootStep.class);
+                } catch (IOException ioe) {
+                    Globals.mm().logs().showError(ioe);
+                    return;
+                }
                 this.populateFields(rootStep);
-            } catch (FileNotFoundException | NullPointerException | JsonIOException | ClassCastException e) {
+            } catch (NullPointerException | JsonIOException | ClassCastException e) {
                 Globals.mm().logs().showError(e);
             }
         });
