@@ -27,6 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.text.DefaultCaret;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import net.miginfocom.swing.MigLayout;
@@ -48,6 +49,7 @@ class SequencerRunningDlg extends JDialog {
         super(owner, title, Dialog.ModalityType.DOCUMENT_MODAL);
         this.setLocationRelativeTo(owner);
         statusMsg.setEditable(false);
+        ((DefaultCaret) statusMsg.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE); // this should prevent automatic scrollin got the bottom of the textarea when it updates
         JScrollPane textScroll = new JScrollPane(statusMsg);
         tree = new DisplayTree(rootStep);
         JPanel contentPane = new JPanel(new MigLayout("fill"));
