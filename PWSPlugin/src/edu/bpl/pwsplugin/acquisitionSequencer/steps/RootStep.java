@@ -63,6 +63,7 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
     protected SimFn getSimulatedFunction() {
         SimFn subStepSimFn = this.getSubStepSimFunction();
         return (Step.SimulatedStatus status) -> {
+            status.requiredPaths.add(Paths.get(status.workingDirectory, "sequence.pwsseq").toString()); //This way we get a warning about overwriting the sequence file.
             status = subStepSimFn.apply(status);
             return status;
         };
