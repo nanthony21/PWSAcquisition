@@ -39,7 +39,7 @@ class NewStepsTree extends TreeDragAndDrop {
         }
         
         for (SequencerConsts.Type type : SequencerConsts.Type.values()) {
-            if (type == SequencerConsts.Type.ROOT) { continue; }//ignore this special case
+            if (type == SequencerConsts.Type.ROOT || type == SequencerConsts.Type.BROKEN) { continue; }//ignore this special case
             JsonableParam settings;
             try {
                 settings = SequencerConsts.getFactory(type).getSettings().newInstance();

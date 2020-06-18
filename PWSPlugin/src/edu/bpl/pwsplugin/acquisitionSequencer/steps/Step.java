@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
@@ -185,6 +186,12 @@ class StepTypeAdapter extends TypeAdapter<Step> {
             return step;
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
+        } catch (IOException | JsonIOException | IllegalStateException ioe) {
+            try {
+                return SequencerConsts.getFactory(SequencerConsts.Type.BROKEN).getStep().newInstance();//Rather than allow an exception to break the whole loading process just insert the special "Broken step" where the error occured.
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }
