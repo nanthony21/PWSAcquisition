@@ -8,7 +8,6 @@ package edu.bpl.pwsplugin.acquisitionSequencer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.google.gson.annotations.SerializedName;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.util.ArrayList;
@@ -19,16 +18,14 @@ import java.util.List;
  *
  * @author nick
  */
-public class SeqeuncerCoordinate {
+public class SequencerCoordinate {
     //Uniquely identifies the location in the tree structure of steps used by the sequencer.
     //In addition to a `TreePath` containing the IDs for each step back up to the root
     //some steps also have multiple iterations which must be accounted for.
-    @SerializedName("treeIdPath")
     private final List<Step> treePath = new ArrayList<>();
-    @SerializedName("treeIterations")
     private final List<Integer> iterations = new ArrayList<>();
     
-    public SeqeuncerCoordinate() {}
+    public SequencerCoordinate() {}
     
     public void moveDownTree(Step newStep) {
         //Add a new node to the end of the current path
@@ -42,9 +39,9 @@ public class SeqeuncerCoordinate {
         this.iterations.remove(this.iterations.size()-1);
     }
     
-    public void incrementIteration() {
+    public void setIterationOfCurrentStep(int iteration) {
         int idx = this.iterations.size()-1; // Last item in the path
-        this.iterations.set(idx, this.iterations.get(idx)+1);
+        this.iterations.set(idx, iteration);
     }
     
     public JsonObject toJson() {
@@ -59,19 +56,7 @@ public class SeqeuncerCoordinate {
         return obj1;
     }
     
-    public List<Step> getTreePath() {
-        return Collections.unmodifiableList(treePath);
-    }
-    /*public void setTreePath(Step[] treePath) {
-        idPath.clear();
-        for (Step step : treePath) {
-            idPath.add(step.getID());
-        }
-        //Clear the iteration since we are 
-    }*/
-    
-    
-    
-    
-    
+    public Step[] getTreePath() {
+        return treePath.toArray(new Step[treePath.size()]);
+    }  
 }

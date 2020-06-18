@@ -6,13 +6,10 @@
 package edu.bpl.pwsplugin.acquisitionSequencer;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import org.apache.commons.lang.StringUtils;
-import org.micromanager.data.Coords;
-import org.micromanager.data.internal.DefaultCoords;
 
 /**
  *
@@ -25,8 +22,7 @@ public class AcquisitionStatus {
     private List<String> statusMsg = new ArrayList<>(); //A string describing what is currently happening.
     private final Function<AcquisitionStatus, Void> publishCallBack; //This callback should link to the `publish` method of the swingworker running the acquisition thread.
     private final Function<Void, Void> pauseCallBack; // This callback should link to the `pausepoint` method of a pause button.
-    private Step[] treePath; //This keeps track of where in the sequence we are. Callbacks can use this to determine where they are being called from.
-    private DefaultCoords coords = new DefaultCoords.Builder().build();
+    private final SequencerCoordinate coords = new SequencerCoordinate(); //This keeps track of where in the sequence we are. Callbacks can use this to determine where they are being called from.
     
     public AcquisitionStatus(Function<AcquisitionStatus, Void> publishCallBack, Function<Void, Void> pauseCallBack) {
         //Create a new status object 
@@ -50,7 +46,7 @@ public class AcquisitionStatus {
     }
     
     public synchronized Integer newStatusMessage(String message) {
-        Integer indentation = treePath.length - 2; //The length of the treepath controls the indentation of messages for more readable log. The rootstep doesn't log anything so a 2 length treepath should have no indentation.
+        Integer indentation = this.coords.getTreePath().length - 2; //The length of the treepath controls the indentation of messages for more readable log. The rootstep doesn't log anything so a 2 length treepath should have no indentation.
         String indent = StringUtils.repeat("  ", indentation);
         this.statusMsg.add(indent + message);
         this.publish();
@@ -93,20 +89,28 @@ public class AcquisitionStatus {
         return currentCellNum;
     }
     
-    public synchronized void setTreePath(Step[] treePath) {
-        this.treePath = treePath;
-        this.publish();
+    /*public synchronized List<Step> getTreePath() {
+        return coords.getTreePath();
     }
     
-    public synchronized Step[] getTreePath() {
-        return treePath;
+    //Coordinate tracking methods. It is important that each step calls these to keep track of where we are in the sequence, this is mostly handled by the base classes.
+    public synchronized void moveDownTree(Step step) {
+        this.coords.moveDownTree(step);
     }
     
-    public synchronized void setCoords(DefaultCoords coords) {
-        this.coords = coords;
+    public synchronized void moveUpTree() {
+        this.coords.moveUpTree();
     }
     
-    public synchronized DefaultCoords getCoords() {
+    public synchronized void incrementIteration() {
+        this.coords.incrementIteration();
+    }
+    
+    public JsonObject getCoordsAsJson() {
+        return this.coords.toJson();
+    }*/
+    
+    public synchronized SequencerCoordinate coords() {
         return this.coords;
     }
 }
