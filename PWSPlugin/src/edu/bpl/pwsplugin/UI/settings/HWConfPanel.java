@@ -28,9 +28,9 @@ import org.micromanager.internal.utils.ReportingUtils;
  * @author nick
  */
 public class HWConfPanel extends BuilderJPanel<HWConfigurationSettings>{
-    private JTextField sysNameEdit = new JTextField(20);
-    private JLabel configsFoundLabel = new JLabel("Imaging Configurations: 0");
-    private JButton editConfigsButton = new JButton("Edit Imaging Configurations");
+    private final JTextField sysNameEdit = new JTextField(20);
+    private final JLabel configsFoundLabel = new JLabel("Imaging Configurations: 0");
+    private final JButton editConfigsButton = new JButton("Edit Imaging Configurations");
     private List<ImagingConfigurationSettings> configs = new ArrayList<>();
     
     public HWConfPanel() {
