@@ -38,6 +38,8 @@ import org.micromanager.internal.propertymap.PropertyMapJSONSerializer;
 public class GsonUtils {
 
     private static final GsonBuilder gsonBuilder = new GsonBuilder()
+            .registerTypeHierarchyAdapter(PositionList.class, new PositionListGson())
+            .registerTypeHierarchyAdapter(DefaultCoords.class, new CoordGson())
             .setPrettyPrinting()
             .serializeNulls(); //Without `serializeNulls` null fields will be skipped, then we json is loaded the default values will be used instead of null.
 
@@ -47,5 +49,41 @@ public class GsonUtils {
     
     public static Gson getGson() {
         return gsonBuilder.create();
+    }
+}
+
+//Gson adapters for Micro-Manager built-in classes that use PropertyMaps.
+final class PositionListGson implements JsonDeserializer<PositionList>, JsonSerializer<PositionList> {
+    @Override
+    public PositionList deserialize(final JsonElement jsonElement, final java.lang.reflect.Type type, final JsonDeserializationContext context) throws JsonParseException {
+        PropertyMap pmap = PropertyMapJSONSerializer.fromGson(jsonElement);
+        PositionList list = new PositionList();
+        try {
+            list.replaceWithPropertyMap(pmap);
+        } catch (IOException e) {
+            throw new JsonParseException(e);
+        }
+        return list;
+    }
+
+    @Override
+    public JsonElement serialize(PositionList list, Type type, JsonSerializationContext jsc) {
+        PropertyMap pmap = list.toPropertyMap();
+        return PropertyMapJSONSerializer.toGson(pmap);
+    }
+}
+
+
+final class CoordGson implements JsonDeserializer<DefaultCoords>, JsonSerializer<DefaultCoords> {
+    @Override
+    public DefaultCoords deserialize(final JsonElement jsonElement, final java.lang.reflect.Type type, final JsonDeserializationContext context) throws JsonParseException {
+        PropertyMap pmap = PropertyMapJSONSerializer.fromGson(jsonElement);
+        return (DefaultCoords) DefaultCoords.fromPropertyMap(pmap);
+    }
+
+    @Override
+    public JsonElement serialize(DefaultCoords coords, Type type, JsonSerializationContext jsc) {
+        PropertyMap pmap = coords.toPropertyMap();
+        return PropertyMapJSONSerializer.toGson(pmap);
     }
 }
