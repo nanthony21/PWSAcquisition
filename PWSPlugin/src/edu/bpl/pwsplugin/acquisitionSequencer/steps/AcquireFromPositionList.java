@@ -38,7 +38,7 @@ public class AcquireFromPositionList extends ContainerStep<SequencerSettings.Acq
                 Globals.core().setTimeoutMs(30000); //TODO put somewhere else. set timeout to 30 seconds. Otherwise we get an error if a position move takes greater than 5 seconds. (default timeout)
                 for (int posNum = 0; posNum < list.getNumberOfPositions(); posNum++) {
                     MultiStagePosition pos = list.getPosition(posNum);
-                    status.setCoords(status.getCoords().copyBuilder().stagePosition(posNum).build());
+                    status.coords().setIterationOfCurrentStep(posNum);
                     String label = pos.getLabel();
                     status.newStatusMessage(String.format("Moving to position %s", label));
                     Callable<Void> preMoveRoutine = () -> {
@@ -79,7 +79,6 @@ public class AcquireFromPositionList extends ContainerStep<SequencerSettings.Acq
                     postMoveRoutine.call();
                     status = stepFunction.apply(status);
                 }
-                status.setCoords(status.getCoords().copyBuilder().removeAxis(Coords.STAGE_POSITION).build());
                 return status;
             }
         };

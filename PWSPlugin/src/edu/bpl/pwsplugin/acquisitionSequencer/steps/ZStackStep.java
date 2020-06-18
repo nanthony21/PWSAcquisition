@@ -34,12 +34,11 @@ public class ZStackStep extends ContainerStep<SequencerSettings.ZStackSettings> 
                 }
                 double initialPos = Globals.core().getPosition(settings.deviceName);
                 for (int i = 0; i < settings.numStacks; i++) {
-                    status.setCoords(status.getCoords().copyBuilder().z(i).build());
+                    status.coords().setIterationOfCurrentStep(i); //Update the coordinates to indicate which iteration of this step we are on.
                     status.newStatusMessage(String.format("Moving to z-slice %d of %d", i + 1, settings.numStacks));
                     Globals.core().setPosition(settings.deviceName, initialPos + (settings.intervalUm * i));
                     status = subStepFunc.apply(status);
                 }
-                status.setCoords(status.getCoords().copyBuilder().removeAxis(Coords.Z).build());
                 return status;
             }
         };

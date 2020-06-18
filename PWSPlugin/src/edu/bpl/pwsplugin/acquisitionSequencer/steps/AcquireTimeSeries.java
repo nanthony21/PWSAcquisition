@@ -34,7 +34,7 @@ public class AcquireTimeSeries extends ContainerStep<SequencerSettings.AcquireTi
                 double lastAcqTime = 0;
                 for (int k = 0; k < settings.numFrames; k++) {
                     // wait for the specified frame interval before proceeding to next frame
-                    status.setCoords(status.getCoords().copyBuilder().t(k).build());
+                    status.coords().setIterationOfCurrentStep(k);
                     if (k != 0) {
                         //No pause for the first iteration
                         Integer msgId = status.newStatusMessage("Waiting"); //This will be updated below.
@@ -53,7 +53,6 @@ public class AcquireTimeSeries extends ContainerStep<SequencerSettings.AcquireTi
                     status = stepFunction.apply(status);
                     status.newStatusMessage(String.format("Finished time step %d of %d", k + 1, settings.numFrames));
                 }
-                status.setCoords(status.getCoords().copyBuilder().removeAxis(Coords.TIME_POINT).build());
                 return status;
             }
         };

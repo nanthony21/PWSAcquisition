@@ -10,6 +10,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import java.util.List;
 
 /**
  *
@@ -23,7 +24,8 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
 
     private SequencerFunction getCallback() {
         return (status) -> {
-            if (status.getTreePath()[status.getTreePath().length - 1].getType() == SequencerConsts.Type.ACQ) {
+            Step[] path = status.coords().getTreePath(); //Indicates our current location in the tree of steps.
+            if (path[path.length - 1].getType() == SequencerConsts.Type.ACQ) {
                 //If the current  step is an acquisition then check for refocus.
                 if (!Globals.core().isContinuousFocusLocked()) {
                     //Check if focused. and log. later we will add refocusing.

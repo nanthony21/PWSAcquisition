@@ -81,21 +81,18 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
     
     public final SequencerFunction getFunction() {
         SequencerFunction stepFunc = this.getStepFunction();
-        TreeNode[] path = this.getPath();
-        Step[] treePath = Arrays.copyOf(path, path.length, Step[].class); //cast to Step[].
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 //Update the status object with information about the current step.
-                Step[] origPath = status.getTreePath();
-                status.setTreePath(treePath);
+                status.coords().moveDownTree(Step.this); //Append this step to the end of our coordinate path.
                 //Run any callbacks that have been set for this step.
                 for (SequencerFunction func : callbacks) {
                     status = func.apply(status);
                 } 
-                //Run the function for this step
+                //Run the function for this step subclass.
                 status = stepFunc.apply(status);
-                status.setTreePath(origPath); //Set the path back to where it was
+                status.coords().moveUpTree(); //Set the path back to where it was as we exit this step
                 return status;
             }
         };

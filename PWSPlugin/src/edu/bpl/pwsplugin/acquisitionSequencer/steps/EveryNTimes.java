@@ -32,7 +32,7 @@ public class EveryNTimes extends ContainerStep<SequencerSettings.EveryNTimesSett
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 if (((iteration - settings.offset) % settings.n) == 0) {
-                    status.newStatusMessage(String.format("EveryNTimes: Running substep on iteration %d", iteration));
+                    status.newStatusMessage(String.format("EveryNTimes: Running substep on iteration %d", iteration+1));
                     status = stepFunction.apply(status);
                 }
                 iteration++;
