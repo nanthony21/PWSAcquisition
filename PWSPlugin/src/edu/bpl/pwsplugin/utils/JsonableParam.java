@@ -9,7 +9,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
-import org.micromanager.internal.utils.ReportingUtils;
 
 /**
  *
@@ -19,13 +18,12 @@ import org.micromanager.internal.utils.ReportingUtils;
 
 public class JsonableParam {    
     //Note: Subclasses of this can not have any attributes names `type`. if they do they won't work with the runtime type adapter.
-    private static final RuntimeTypeAdapterFactory<JsonableParam> adapter = 
-            RuntimeTypeAdapterFactory.of(JsonableParam.class);
+    private static final RuntimeTypeAdapterFactory<JsonableParam> adapter = RuntimeTypeAdapterFactory.of(JsonableParam.class);
 
     private static final HashSet<Class<?>> registeredClasses= new HashSet<Class<?>>();
             
     static {
-        GsonUtils.registerType(adapter);
+        GsonUtils.builder().registerTypeAdapterFactory(adapter);
     }
 
     public static synchronized void registerClass(Class<? extends JsonableParam> c) {

@@ -113,7 +113,7 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
     public abstract List<String> validate(); //Return a list of any errors for this step.
     
     public static void registerGsonType() { //This must be called for GSON loading/saving to work.
-        GsonUtils.registerType(StepTypeAdapter.FACTORY);
+        GsonUtils.builder().registerTypeAdapterFactory(StepTypeAdapter.FACTORY);
     }
     
     public void saveToJson(String savePath) throws IOException {
@@ -129,7 +129,7 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
 }
 
 class StepTypeAdapter extends TypeAdapter<Step> {
-
+    //This custom adapter enables Steps to be Jsonified even though they have a circular parent/child reference.
     public static final TypeAdapterFactory FACTORY = new TypeAdapterFactory() {
         @Override
         @SuppressWarnings("unchecked") // we use a runtime check to make sure the 'T's equal

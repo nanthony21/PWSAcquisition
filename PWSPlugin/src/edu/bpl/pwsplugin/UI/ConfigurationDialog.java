@@ -38,6 +38,7 @@ class ConfigurationDialog extends JDialog {
         pnl.add(acceptButton, "span, align center");
         this.setContentPane(pnl);
         this.pack();
+        this.setResizable(false);
     }
     
     public void populateFields(HWConfigurationSettings config) {
