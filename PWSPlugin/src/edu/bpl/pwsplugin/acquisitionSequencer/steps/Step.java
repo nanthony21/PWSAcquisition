@@ -168,16 +168,16 @@ class StepTypeAdapter extends TypeAdapter<Step> {
     public Step read(JsonReader in) throws IOException {
         try {
             in.beginObject();
-            if (!in.nextName().equals("id")) { throw new RuntimeException(); } //ID is determined at runtime don't load it.
+            if (!in.nextName().equals("id")) { throw new IOException("Json Parse Error"); } //ID is determined at runtime don't load it.
             int id = in.nextInt(); //read the id to get rid of it.
-            if (!in.nextName().equals("stepType")) { throw new RuntimeException(); } //This must be "stepType" 
+            if (!in.nextName().equals("stepType")) { throw new IOException("Json Parse Error"); } //This must be "stepType" 
             SequencerConsts.Type stepType = SequencerConsts.Type.valueOf(in.nextString());
             Step step = SequencerConsts.getFactory(stepType).getStep().newInstance();
-            if (!in.nextName().equals("settings")) { throw new RuntimeException(); }
+            if (!in.nextName().equals("settings")) { throw new IOException("Json Parse Error"); }
             JsonableParam settings = gson.fromJson(in, SequencerConsts.getFactory(stepType).getSettings());
             step.setSettings(settings);
             if (step.getAllowsChildren()) {
-                if (!in.nextName().equals("children")) { throw new RuntimeException(); }
+                if (!in.nextName().equals("children")) { throw new IOException("Json Parse Error"); }
                 in.beginArray();
                 while (in.hasNext()) {
                     step.add(read(in)); // recursion! this did also set the parent of the child-node
