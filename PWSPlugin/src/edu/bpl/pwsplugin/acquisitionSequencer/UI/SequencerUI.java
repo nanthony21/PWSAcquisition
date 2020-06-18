@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
+import com.google.gson.JsonIOException;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
@@ -96,7 +97,7 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
                 }
                 RootStep rootStep = GsonUtils.getGson().fromJson(new FileReader(path), RootStep.class);
                 this.populateFields(rootStep);
-            } catch (FileNotFoundException | NullPointerException e) {
+            } catch (FileNotFoundException | NullPointerException | JsonIOException e) {
                 Globals.mm().logs().showError(e);
             }
         });
@@ -137,7 +138,12 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
             boolean err = false;
             for (Path p : conflict) {
                 try {
-                    FileUtils.deleteDirectory(Paths.get(dir).resolve(p).toFile());
+                    File f = Paths.get(dir).resolve(p).toFile();
+                    if (f.isDirectory()) {
+                        FileUtils.deleteDirectory(f);
+                    } else {
+                        err = !f.delete(); // This line returns false if the deletion fails.
+                    }
                 } catch (IOException e) {
                     Globals.mm().logs().logError(e);
                     err = true;
