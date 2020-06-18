@@ -48,9 +48,12 @@ public class GsonUtils {
 //TypeAdapters we protect a minor change in internal Micro-Manager code from breaking
 //all of our configuration files. E.G. if something about one of the classes changes
 //we would get errors when trying to load a configuration file. With these type adapter we will get a compile error here first.
+
+//These adapters could potentially be replaced by adding Gson's @SerializedName annotation to the fields of the classes.
 class MMTypeAdapterFactory implements TypeAdapterFactory {
+    
     @Override
-    @SuppressWarnings("unchecked") // we use a runtime check to make sure the 'T's equal
+    //@SuppressWarnings("unchecked") // we use a runtime check to make sure the 'T's equal
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
         if (PositionList.class.isAssignableFrom(type.getRawType())) { //Allow subtypes to use this factory.
             return (TypeAdapter<T>) new PositionListTypeAdapter(gson);
