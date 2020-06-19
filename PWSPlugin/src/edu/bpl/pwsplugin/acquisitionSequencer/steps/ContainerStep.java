@@ -49,7 +49,7 @@ public abstract class ContainerStep<T extends JsonableParam> extends Step<T> {
         }
     }
     
-    public final SequencerFunction getSubstepsFunction() { // Execute each substep in sequence
+    protected final SequencerFunction getSubstepsFunction() { // Execute each substep in sequence
         for (Step substep : this.getSubSteps()) { //Pass callbacks on to child steps.
             for (SequencerFunction cb : this.callbacks) {
                 substep.addCallback(cb);

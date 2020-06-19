@@ -78,6 +78,7 @@ public class AcquireFromPositionList extends ContainerStep<SequencerSettings.Acq
                     pos.goToPosition(pos, Globals.core()); //Yes, I know this is weird. It's a static method that needs a position and the core as input.
                     postMoveRoutine.call();
                     status = stepFunction.apply(status);
+                    pos.goToPosition(pos, Globals.core()); //Just in case the substep took us to new positions we want to make sure to move back to our position to avoid confusion.
                 }
                 return status;
             }
