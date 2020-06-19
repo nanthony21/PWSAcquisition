@@ -152,7 +152,7 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
                         }
                         if (remaining) {    //Process images
                             Image im = Globals.mm().data().convertTaggedImage(Globals.core().popNextTaggedImage());
-                            addImage(im, i, pipeline, saver.getQueue());
+                            addImage(im, i, pipeline, saver);
                             i++;
                             lastImTime = System.currentTimeMillis();
                             collectionEndTime = System.currentTimeMillis();
@@ -176,7 +176,7 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
             else {  //Software sequenced acquisition
                 for (int i=0; i<wv.length; i++) {
                     Image im = conf.snapImage(wv[i]);
-                    addImage(im, i, pipeline, saver.getQueue());
+                    addImage(im, i, pipeline, saver);
                 }
             }
             saver.join();
@@ -185,12 +185,12 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
         }
     }
     
-    private void addImage(Image im, int idx, Pipeline pipeline, Queue imageQueue) throws IOException, PipelineErrorException{
+    private void addImage(Image im, int idx, Pipeline pipeline, SaverThread saver) throws IOException, PipelineErrorException{
         Coords newCoords = im.getCoords().copyBuilder().t(idx).build();
         im = im.copyAtCoords(newCoords);
         pipeline.insertImage(im); //Add image to the data pipeline for processing
         im = pipeline.getDatastore().getImage(newCoords); //Retrieve the processed image.
         album_.addImage(im); //Add the image to the album for display
-        imageQueue.add(im); //Add the image to a queue for multithreaded saving.
+        saver.addImage(im); //Add the image to a queue for multithreaded saving.
     }
 }

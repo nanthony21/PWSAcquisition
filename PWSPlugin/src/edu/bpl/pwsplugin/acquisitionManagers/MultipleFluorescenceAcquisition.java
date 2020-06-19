@@ -83,7 +83,7 @@ class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings>
             img = pipeline.getDatastore().getImage(coords); //Retrieve the processed image. 
             imSaver.setMetadata(flmd);
             this.displayImage(img);
-            imSaver.getQueue().add(img);
+            imSaver.addImage(img);
             Globals.core().setPosition(origZ);
             imSaver.join();
         } finally {

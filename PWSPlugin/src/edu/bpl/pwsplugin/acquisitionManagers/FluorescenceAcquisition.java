@@ -110,7 +110,7 @@ class FluorescenceAcquisition extends SingleAcquisitionBase<FluorSettings>{
             imSaver.setMetadata(flmd);
             album.clear(); //One day it would be nice to show multiple fluorescence images at once.
             album.addImage(img);
-            imSaver.getQueue().add(img);
+            imSaver.addImage(img);
             Globals.core().setPosition(origZ);
             imSaver.join();
         } finally {

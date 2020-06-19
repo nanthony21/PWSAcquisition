@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
 import java.util.concurrent.BlockingQueue;
+import org.micromanager.data.Image;
 
 /**
  *
@@ -18,9 +19,13 @@ public abstract class DefaultSaverThread extends SaverThread {
         q_ = q;
     }
     
-    @Override
-    public BlockingQueue getQueue() {
+    protected BlockingQueue getQueue() {
         return q_;
+    }
+    
+    @Override
+    public void addImage(Image img) {
+        q_.add(img);
     }
     
 }

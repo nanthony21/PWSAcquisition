@@ -98,7 +98,7 @@ class DynamicsAcquisition extends SingleAcquisitionBase<DynSettings>{
             im = im.copyAtCoords(newCoords);
             pipeline.insertImage(im); //Add image to the data pipeline for processing
             im = pipeline.getDatastore().getImage(newCoords); //Retrieve the processed image.
-            imSaver.getQueue().add(im);
+            imSaver.addImage(im);
             album_.addImage(im);
         }
         DynamicsMetadata dmd = new DynamicsMetadata(metadata, Double.valueOf(wavelength_), times, camera.getExposure());
