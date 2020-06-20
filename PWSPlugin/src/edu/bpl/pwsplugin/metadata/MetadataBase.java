@@ -1,12 +1,15 @@
 
 package edu.bpl.pwsplugin.metadata;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import mmcorej.org.json.JSONArray;
-import mmcorej.org.json.JSONException;
-import mmcorej.org.json.JSONObject;
+import org.micromanager.data.internal.DefaultMetadata;
+import org.micromanager.internal.propertymap.PropertyMapJSONSerializer;
 import org.micromanager.internal.utils.ReportingUtils;
 
 
@@ -16,6 +19,7 @@ public class MetadataBase { //All images should have this metadata.
     private final Integer darkCounts;
     private final String time;
     private final List<Double> affineTransform;
+    private DefaultMetadata MMmd;
                     
     public MetadataBase(List<Double> linearityPoly, String systemName, Integer darkCounts, List<Double> afTransform) {
         this.linearityPoly = linearityPoly;
@@ -39,28 +43,33 @@ public class MetadataBase { //All images should have this metadata.
         this.darkCounts = base.darkCounts;
         this.affineTransform = base.affineTransform;
         this.time = base.time;
+        this.MMmd = base.MMmd;
+    }
+    
+    public void setMicroManagerMetadata(DefaultMetadata md) { //This must be called before saving.
+        this.MMmd = md;
     }
     
     /*public final List<Double> linearityPoly() { return linearityPoly; }
     public final String systemName() { return system; }
     public final Integer darkCounts() { return darkCounts; }*/
                 
-    public JSONObject toJson() {
-        try {
-            JSONObject md = new JSONObject();
-            if (this.linearityPoly.size() > 0) {
-                JSONArray linPoly = new JSONArray(this.linearityPoly);
-                md.put("linearityPoly", linPoly);
-            } else{
-                md.put("linearityPoly", JSONObject.NULL);
-            }
-            md.put("system", this.system);
-            md.put("darkCounts", this.darkCounts);
-            md.put("time", this.time);
-            md.put("cameraTransform", new JSONArray(this.affineTransform));
-            return md;
-        } catch (JSONException e) {
-            throw new RuntimeException(e); //This shouldn't happen.
+    public JsonObject toJson() {
+        JsonObject md = new JsonObject();
+        if (this.linearityPoly.size() > 0) {
+            JsonArray linPoly = GsonUtils.getGson().toJsonTree(this.linearityPoly).getAsJsonArray();
+            md.add("linearityPoly", linPoly);
+        } else{
+            md.add("linearityPoly", JsonNull.INSTANCE);
         }
+        md.addProperty("system", this.system);
+        md.addProperty("darkCounts", this.darkCounts);
+        md.addProperty("time", this.time);
+        md.add("cameraTransform", GsonUtils.getGson().toJsonTree(this.affineTransform).getAsJsonArray());
+        if (MMmd == null) {
+            throw new RuntimeException("Attempted to save metadata without adding micromanager metadata.");
+        }
+        md.add("MicroManagerMetadata", PropertyMapJSONSerializer.toGson(MMmd.toPropertyMap()).getAsJsonObject().get("map"));
+        return md;
     }
 }

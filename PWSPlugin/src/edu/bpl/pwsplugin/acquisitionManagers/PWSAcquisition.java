@@ -24,7 +24,6 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
-import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
@@ -46,6 +45,7 @@ import java.util.Queue;
 import org.micromanager.data.Coords;
 import org.micromanager.data.Pipeline;
 import org.micromanager.data.PipelineErrorException;
+import org.micromanager.data.internal.DefaultMetadata;
 
 
 class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
@@ -130,7 +130,6 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
                 WV.add(Double.valueOf(wv[i]));
             }     
             PWSMetadata pmd = new PWSMetadata(metadata, WV, conf.camera().getExposure());  //This must happen after we have set the camera to our desired exposure.
-            saver.setMetadata(pmd);
             saver.beginSavingThread();
             
             long seqEndTime=0;
@@ -153,6 +152,10 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
                         }
                         if (remaining) {    //Process images
                             Image im = Globals.mm().data().convertTaggedImage(Globals.core().popNextTaggedImage());
+                            if (i==0) {
+                                pmd.setMicroManagerMetadata((DefaultMetadata) im.getMetadata()); 
+                                saver.setMetadata(pmd);
+                            }
                             addImage(im, i, pipeline, saver);
                             i++;
                             lastImTime = System.currentTimeMillis();
@@ -177,6 +180,10 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
             else {  //Software sequenced acquisition
                 for (int i=0; i<wv.length; i++) {
                     Image im = conf.snapImage(wv[i]);
+                    if (i==0) {
+                        pmd.setMicroManagerMetadata((DefaultMetadata) im.getMetadata()); 
+                        saver.setMetadata(pmd);
+                    }
                     addImage(im, i, pipeline, saver);
                 }
             }

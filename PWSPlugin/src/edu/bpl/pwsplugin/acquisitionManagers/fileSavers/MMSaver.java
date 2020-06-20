@@ -1,8 +1,10 @@
 
 package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
+import com.google.gson.JsonObject;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
+import edu.bpl.pwsplugin.utils.GsonUtils;
 import ij.ImagePlus;
 import ij.io.FileInfo;
 import ij.io.FileSaver;
@@ -12,23 +14,19 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import mmcorej.org.json.JSONException;
-import mmcorej.org.json.JSONObject;
 import org.micromanager.data.Image;
 import org.micromanager.internal.utils.ReportingUtils;
-import org.micromanager.data.Metadata;
 import org.micromanager.data.Datastore;
 import org.micromanager.data.Coords;
-import org.micromanager.data.internal.DefaultMetadata;
 
 public class MMSaver extends SaverThread {
     //A thread that saves a tiff file using Micro-Manager's `DataStore`. Metadata is saved to a separate json file.
     //6/18/2020 The `Datastore` used seems somewhat cumbersome and has random errors presumably due to code that is not thread-safe. Going to consider switching to a lower lever api.
     int expectedFrames_;
     String savePath_;
-    JSONObject metadata_;
+    JsonObject metadata_;
     String filePrefix_;
     
     @Override
@@ -43,7 +41,6 @@ public class MMSaver extends SaverThread {
     public void run(){
         try {
             long now = System.currentTimeMillis(); 
-            JSONObject jmd = null;
             Datastore ds = Globals.mm().data().createMultipageTIFFDatastore(savePath_, false, true);
             try {
                 ds.setName("PWSPluginSaver");
@@ -51,10 +48,6 @@ public class MMSaver extends SaverThread {
                 Coords.Builder coords;
                 for (int i=0; i<expectedFrames_; i++) {
                     im = (Image) getQueue().poll(5, TimeUnit.SECONDS); //Wait for an image
-                    if (i==0) {
-                        Metadata md = im.getMetadata();
-                        jmd = new JSONObject(((DefaultMetadata)md).toPropertyMap().toJSON()); //Save the micromanager metadata from the first image.
-                    }
                     if (im == null) {
                         ReportingUtils.showError("ImSaver timed out while waiting for image");
                         return;
@@ -87,7 +80,6 @@ public class MMSaver extends SaverThread {
                     return;
                 }
             }
-            metadata_.put("MicroManagerMetadata", jmd.get("map")); //Add the micromanager metadata.
             writeMetadata();
             
             long itTook = System.currentTimeMillis() - now;
@@ -110,7 +102,7 @@ public class MMSaver extends SaverThread {
  
     private void writeMetadata() throws IOException, JSONException {
         FileWriter file = new FileWriter(Paths.get(savePath_).resolve(filePrefix_ + "metadata.json").toString());
-        file.write(metadata_.toString(4)); //4 spaces of indentation
+        file.write(GsonUtils.getGson().toJson(metadata_)); //4 spaces of indentation
         file.flush();
         file.close();
     }

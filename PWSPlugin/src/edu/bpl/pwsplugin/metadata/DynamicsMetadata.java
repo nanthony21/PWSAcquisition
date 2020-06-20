@@ -5,10 +5,9 @@
  */
 package edu.bpl.pwsplugin.metadata;
 
-import mmcorej.org.json.JSONObject;
+import com.google.gson.JsonObject;
+import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.util.List;
-import mmcorej.org.json.JSONArray;
-import mmcorej.org.json.JSONException;
 
 /**
  *
@@ -27,15 +26,11 @@ public class DynamicsMetadata extends MetadataBase{
     }
     
     @Override
-    public JSONObject toJson() {
-        JSONObject md = super.toJson();
-        try {
-            md.put("wavelength", wavelength);
-            md.put("exposure", exposure);
-            md.put("times", new JSONArray(times));
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+    public JsonObject toJson() {
+        JsonObject md = super.toJson();
+        md.addProperty("wavelength", wavelength);
+        md.addProperty("exposure", exposure);
+        md.add("times", GsonUtils.getGson().toJsonTree(times).getAsJsonArray());
         return md;
     }
 }

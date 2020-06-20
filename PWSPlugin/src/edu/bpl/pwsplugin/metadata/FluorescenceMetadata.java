@@ -5,8 +5,8 @@
  */
 package edu.bpl.pwsplugin.metadata;
 
-import mmcorej.org.json.JSONException;
-import mmcorej.org.json.JSONObject;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
 
 /**
  *
@@ -25,15 +25,14 @@ public class FluorescenceMetadata extends MetadataBase {
     }
     
     @Override
-    public JSONObject toJson() {
-        JSONObject md = super.toJson();
-        try {
-            md.put("filterBlock", filterBlock);
-            md.put("exposure", exposure);
-            if (wavelength == null) { md.put("wavelength", JSONObject.NULL); 
-            } else { md.put("wavelength", wavelength); }
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+    public JsonObject toJson() {
+        JsonObject md = super.toJson();
+        md.addProperty("filterBlock", filterBlock);
+        md.addProperty("exposure", exposure);
+        if (wavelength == null) {
+            md.add("wavelength", JsonNull.INSTANCE); 
+        } else { 
+            md.addProperty("wavelength", wavelength);
         }
         return md;
     }

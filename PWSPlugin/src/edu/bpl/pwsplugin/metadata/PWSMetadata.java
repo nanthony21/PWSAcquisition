@@ -5,6 +5,9 @@
  */
 package edu.bpl.pwsplugin.metadata;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.util.List;
 import mmcorej.org.json.JSONArray;
 import mmcorej.org.json.JSONException;
@@ -25,14 +28,10 @@ public class PWSMetadata extends MetadataBase{
     }
     
     @Override
-    public JSONObject toJson() {
-        JSONObject md = super.toJson();
-        try {
-            md.put("wavelengths", new JSONArray(wavelengths));
-            md.put("exposure", exposure);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+    public JsonObject toJson() {
+        JsonObject md = super.toJson();
+        md.add("wavelengths", GsonUtils.getGson().toJsonTree(wavelengths).getAsJsonArray());
+        md.addProperty("exposure", exposure);
         return md;
     }
     

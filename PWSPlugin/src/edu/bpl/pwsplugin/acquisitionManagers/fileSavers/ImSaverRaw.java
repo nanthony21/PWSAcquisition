@@ -20,8 +20,10 @@
 //
 package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
+import com.google.gson.JsonObject;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
+import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.nio.file.Paths;
 import java.io.File;
 import java.io.FileWriter;
@@ -50,7 +52,7 @@ public class ImSaverRaw extends SaverThread {
     int expectedFrames_;
     String savePath_;
     ImageJConverter imJConv;
-    volatile JSONObject metadata_;
+    volatile JsonObject metadata_;
     String filePrefix_;
 
     public ImSaverRaw(boolean debug){
@@ -89,10 +91,7 @@ public class ImSaverRaw extends SaverThread {
                 ReportingUtils.showError("ImSaver timed out while waiting for image");
                 return;
             }
-            
-            Metadata md = im.getMetadata();
-            JSONObject jmd = new JSONObject(((DefaultMetadata)md).toPropertyMap().toJSON());
-       
+                   
             stack = new ImageStack(im.getWidth(), im.getHeight());
             stack.addSlice(imJConv.createProcessor(im));
             for (int i=1; i<expectedFrames_; i++) {
@@ -117,7 +116,6 @@ public class ImSaverRaw extends SaverThread {
                     return;
                 }
             }
-            metadata_.put("MicroManagerMetadata", jmd.get("map"));
             writeMetadata();
             imPlus.setProperty("Info", metadata_.toString());
             FileInfo info = new FileInfo();
@@ -143,7 +141,7 @@ public class ImSaverRaw extends SaverThread {
     
     private void writeMetadata() throws IOException, JSONException {
             FileWriter file = new FileWriter(Paths.get(savePath_).resolve(filePrefix_ + "metadata.json").toString());
-            file.write(metadata_.toString(4)); //4 spaces of indentation
+            file.write(GsonUtils.getGson().toJson(metadata_));
             file.flush();
             file.close();
     }

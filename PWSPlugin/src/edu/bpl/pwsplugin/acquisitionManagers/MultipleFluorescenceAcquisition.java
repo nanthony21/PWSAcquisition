@@ -8,7 +8,6 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
-import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.metadata.FluorescenceMetadata;
@@ -17,6 +16,7 @@ import edu.bpl.pwsplugin.settings.FluorSettings;
 import org.micromanager.data.Coords;
 import org.micromanager.data.Image;
 import org.micromanager.data.Pipeline;
+import org.micromanager.data.internal.DefaultMetadata;
 import org.micromanager.internal.utils.ReportingUtils;
 
 /**
@@ -75,6 +75,7 @@ class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings>
             imConf.camera().setExposure(settings.exposure);
             Globals.core().clearCircularBuffer();
             Image img = imConf.camera().snapImage();
+            metadata.setMicroManagerMetadata((DefaultMetadata) img.getMetadata());
             Integer wv;
             if (spectralMode) { wv = settings.tfWavelength; } else { wv = null; }
             FluorescenceMetadata flmd = new FluorescenceMetadata(metadata, settings.filterConfigName, imConf.camera().getExposure(), wv); //This must happen after we have set our exposure.

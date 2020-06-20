@@ -23,7 +23,6 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
-import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
@@ -41,6 +40,7 @@ import org.micromanager.data.Pipeline;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import org.micromanager.data.internal.DefaultMetadata;
 
 
 class DynamicsAcquisition extends SingleAcquisitionBase<DynSettings>{
@@ -95,6 +95,7 @@ class DynamicsAcquisition extends SingleAcquisitionBase<DynSettings>{
             TaggedImage taggedIm = Globals.core().popNextTaggedImage();
             times.add(Double.parseDouble((String) taggedIm.tags.get("ElapsedTime-ms"))); //Convert to float and save to json array.
             Image im = Globals.mm().data().convertTaggedImage(taggedIm);
+            if (i==0) { metadata.setMicroManagerMetadata((DefaultMetadata) im.getMetadata()); }
             Coords newCoords = im.getCoords().copyBuilder().t(i).build();
             im = im.copyAtCoords(newCoords);
             pipeline.insertImage(im); //Add image to the data pipeline for processing
