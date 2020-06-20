@@ -23,19 +23,20 @@ import org.micromanager.data.Datastore;
 import org.micromanager.data.Coords;
 import org.micromanager.data.internal.DefaultMetadata;
 
-public class MMSaver extends DefaultSaverThread {
+public class MMSaver extends SaverThread {
     //A thread that saves a tiff file using Micro-Manager's `DataStore`. Metadata is saved to a separate json file.
     //6/18/2020 The `Datastore` used seems somewhat cumbersome and has random errors presumably due to code that is not thread-safe. Going to consider switching to a lower lever api.
     int expectedFrames_;
     String savePath_;
     JSONObject metadata_;
     String filePrefix_;
-
-    public MMSaver(String savePath, int expectedFrames, String filePrefix){
-        super();
+    
+    @Override
+    public void configure(String savePath, String fileNamePrefix, Integer expectedFrames) {
         expectedFrames_ = expectedFrames; // The number of image frames that are expected to be received via queue
         savePath_ = savePath; // The file path to save to
-        filePrefix_ = filePrefix; // The prefix to name the image file by. This is used by the analysis software to find images.
+        filePrefix_ = fileNamePrefix; // The prefix to name the image file by. This is used by the analysis software to find images.
+        configured = true;
     }
     
     @Override

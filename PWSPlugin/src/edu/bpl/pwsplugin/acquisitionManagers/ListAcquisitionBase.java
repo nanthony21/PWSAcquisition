@@ -50,7 +50,8 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>>{
             MetadataBase md = this.initializeMetadata(imConf);
             String subFolderName = String.format("%s_%d", FileSpecs.getSubfolderName(this.getFileType()), i);
             Path fullSavePath = FileSpecs.getCellFolderName(Paths.get(savePath), cellNum).resolve(subFolderName);
-            ImageSaver imSaver = new MMSaver(fullSavePath.toString(), this.numFrames(), FileSpecs.getFilePrefix(this.getFileType()));
+            ImageSaver imSaver = new MMSaver();
+            imSaver.configure(fullSavePath.toString(), FileSpecs.getFilePrefix(this.getFileType()), this.numFrames());
             this.runSingleImageAcquisition(imSaver, md);
         }
     }

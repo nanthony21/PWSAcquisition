@@ -20,11 +20,11 @@
 //
 package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import java.nio.file.Paths;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.concurrent.LinkedBlockingQueue;
 import org.micromanager.Studio;
 import org.micromanager.data.Image;
 import org.micromanager.internal.utils.ReportingUtils;
@@ -44,26 +44,27 @@ import ij.plugin.ContrastEnhancer;
 import java.util.concurrent.TimeUnit;
 
 
-public class ImSaverRaw extends DefaultSaverThread {
-    //This isn't currently used. SAves to TIFF using imageJ functions.
+public class ImSaverRaw extends SaverThread {
+    //This isn't currently used. SAves to TIFF using imageJ functions. Probably buggy
     boolean debug_;
-    Thread t;
-    Studio studio_;
     int expectedFrames_;
     String savePath_;
     ImageJConverter imJConv;
     volatile JSONObject metadata_;
     String filePrefix_;
 
-    public ImSaverRaw(Studio studio, String savePath, int expectedFrames, boolean debug, String filePrefix){
+    public ImSaverRaw(boolean debug){
         super();
         debug_ = debug;
-        studio_ = studio;
-        expectedFrames_ = expectedFrames;
-        savePath_ = savePath;
-        imJConv = studio.data().getImageJConverter();
-        metadata_ = null;
-        filePrefix_ = filePrefix;
+        imJConv = Globals.mm().data().getImageJConverter();
+    }
+    
+    @Override
+    public void configure(String savePath, String fileNamePrefix, Integer expectedFrames) {
+        expectedFrames_ = expectedFrames; // The number of image frames that are expected to be received via queue
+        savePath_ = savePath; // The file path to save to
+        filePrefix_ = fileNamePrefix; // The prefix to name the image file by. This is used by the analysis software to find images.
+        this.configured = true;
     }
     
     @Override

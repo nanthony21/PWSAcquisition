@@ -31,7 +31,8 @@ abstract class SingleAcquisitionBase<S> implements Acquisition<S> {
     @Override
     public void acquireImages(String savePath, int cellNum) throws Exception {
         MetadataBase metadata = this.initializeMetadata();
-        ImageSaver imSaver = new MMSaver(this.getSavePath(savePath, cellNum), this.numFrames(), FileSpecs.getFilePrefix(this.getFileType()));
+        ImageSaver imSaver = new MMSaver();
+        imSaver.configure(this.getSavePath(savePath, cellNum), FileSpecs.getFilePrefix(this.getFileType()), this.numFrames());
         this._acquireImages(imSaver, metadata);
     }
     
