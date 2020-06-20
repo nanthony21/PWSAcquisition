@@ -25,6 +25,7 @@ import org.micromanager.data.internal.DefaultMetadata;
 
 public class MMSaver extends DefaultSaverThread {
     //A thread that saves a tiff file using Micro-Manager's `DataStore`. Metadata is saved to a separate json file.
+    //6/18/2020 The `Datastore` used seems somewhat cumbersome and has random errors presumably due to code that is not thread-safe. Going to consider switching to a lower lever api.
     int expectedFrames_;
     String savePath_;
     JSONObject metadata_;

@@ -23,6 +23,7 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
+import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
@@ -112,7 +113,7 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
     }
       
     @Override
-    protected void _acquireImages(SaverThread saver, MetadataBase metadata) throws Exception {
+    protected void _acquireImages(ImageSaver saver, MetadataBase metadata) throws Exception {
         long configStartTime = System.currentTimeMillis();
         album_.clear();
         int initialWv = 550;
@@ -130,7 +131,7 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
             }     
             PWSMetadata pmd = new PWSMetadata(metadata, WV, conf.camera().getExposure());  //This must happen after we have set the camera to our desired exposure.
             saver.setMetadata(pmd);
-            saver.start();
+            saver.beginSavingThread();
             
             long seqEndTime=0;
             long collectionEndTime=0;
@@ -179,13 +180,13 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
                     addImage(im, i, pipeline, saver);
                 }
             }
-            saver.join();
+            saver.awaitThreadTermination();
         } finally {
             conf.tunableFilter().setWavelength(initialWv); //Set back to initial wavelength
         }
     }
     
-    private void addImage(Image im, int idx, Pipeline pipeline, SaverThread saver) throws IOException, PipelineErrorException{
+    private void addImage(Image im, int idx, Pipeline pipeline, ImageSaver saver) throws IOException, PipelineErrorException{
         Coords newCoords = im.getCoords().copyBuilder().t(idx).build();
         im = im.copyAtCoords(newCoords);
         pipeline.insertImage(im); //Add image to the data pipeline for processing

@@ -19,7 +19,7 @@ public abstract class DefaultSaverThread extends SaverThread {
         q_ = q;
     }
     
-    protected BlockingQueue getQueue() {
+    protected BlockingQueue getQueue() { //Internal code can retrieve images with getQueue().poll(timeout, TimeUnit.SECONDS);
         return q_;
     }
     

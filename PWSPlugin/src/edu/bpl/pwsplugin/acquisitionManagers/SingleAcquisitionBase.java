@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
@@ -35,7 +36,7 @@ abstract class SingleAcquisitionBase<S> implements Acquisition<S> {
             ReportingUtils.showMessage(String.format("The image queue started a new acquisition with %d images already in it! Your image file is likely corrupted. This can mean that Java has not been allocated enough heap size.", imageQueue.size()));
             imageQueue.clear();
         }
-        SaverThread imSaver = new MMSaver(this.getSavePath(savePath, cellNum), imageQueue, this.numFrames(), FileSpecs.getFilePrefix(this.getFileType()));
+        ImageSaver imSaver = new MMSaver(this.getSavePath(savePath, cellNum), imageQueue, this.numFrames(), FileSpecs.getFilePrefix(this.getFileType()));
         this._acquireImages(imSaver, metadata);
     }
     
@@ -66,6 +67,6 @@ abstract class SingleAcquisitionBase<S> implements Acquisition<S> {
     protected abstract String getSavePath(String savePath, int cellNum) throws FileAlreadyExistsException;
     protected abstract FileSpecs.Type getFileType(); //Return the type enumerator for this acquisition, used for file saving information.
     protected abstract Integer numFrames();
-    protected abstract void _acquireImages(SaverThread saver, MetadataBase md) throws Exception;
+    protected abstract void _acquireImages(ImageSaver saver, MetadataBase md) throws Exception;
 
 }

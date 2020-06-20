@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
+import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
@@ -54,7 +55,7 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>>{
             }
             String subFolderName = String.format("%s_%d", FileSpecs.getSubfolderName(this.getFileType()), i);
             Path fullSavePath = FileSpecs.getCellFolderName(Paths.get(savePath), cellNum).resolve(subFolderName);
-            SaverThread imSaver = new MMSaver(fullSavePath.toString(), imageQueue, this.numFrames(), FileSpecs.getFilePrefix(this.getFileType()));
+            ImageSaver imSaver = new MMSaver(fullSavePath.toString(), imageQueue, this.numFrames(), FileSpecs.getFilePrefix(this.getFileType()));
             this.runSingleImageAcquisition(imSaver, md);
         }
     }
@@ -85,7 +86,7 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>>{
     
     protected abstract void setCurrentSettings(S settings);
     protected abstract ImagingConfiguration getImgConfig();
-    protected abstract void runSingleImageAcquisition(SaverThread saver, MetadataBase md) throws Exception;
+    protected abstract void runSingleImageAcquisition(ImageSaver saver, MetadataBase md) throws Exception;
     protected abstract FileSpecs.Type getFileType(); //Return the type enumerator for this acquisition, used for file saving information.
     protected abstract Integer numFrames();
     

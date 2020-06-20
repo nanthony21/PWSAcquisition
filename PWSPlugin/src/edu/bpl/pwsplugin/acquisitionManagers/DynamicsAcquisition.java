@@ -22,6 +22,7 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
+import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
@@ -74,7 +75,7 @@ class DynamicsAcquisition extends SingleAcquisitionBase<DynSettings>{
     }
     
     @Override
-    public void _acquireImages(SaverThread imSaver, MetadataBase metadata) throws Exception {
+    public void _acquireImages(ImageSaver imSaver, MetadataBase metadata) throws Exception {
         ImagingConfiguration conf = Globals.getHardwareConfiguration().getImagingConfigurationByName(this.settings.imConfigName);
         Camera camera = conf.camera();
         TunableFilter tunableFilter = conf.tunableFilter();
@@ -85,7 +86,7 @@ class DynamicsAcquisition extends SingleAcquisitionBase<DynSettings>{
         Globals.core().clearCircularBuffer();
         camera.startSequence(numFrames_, 0, false);
         Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
-        imSaver.start();
+        imSaver.beginSavingThread();
         List<Double> times = new ArrayList<>();
         for (int i=0; i<numFrames_; i++) {
             while (Globals.core().getRemainingImageCount() < 1) { //Wait for an image to be ready
@@ -104,7 +105,7 @@ class DynamicsAcquisition extends SingleAcquisitionBase<DynSettings>{
         DynamicsMetadata dmd = new DynamicsMetadata(metadata, Double.valueOf(wavelength_), times, camera.getExposure());
 
         imSaver.setMetadata(dmd);
-        imSaver.join();
+        imSaver.awaitThreadTermination();
     }
     
     @Override

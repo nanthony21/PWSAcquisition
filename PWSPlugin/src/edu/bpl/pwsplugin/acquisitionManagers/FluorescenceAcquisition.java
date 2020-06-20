@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
+import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
@@ -80,7 +81,7 @@ class FluorescenceAcquisition extends SingleAcquisitionBase<FluorSettings>{
     }
     
     @Override
-    protected void _acquireImages(SaverThread imSaver, MetadataBase metadata) throws Exception {
+    protected void _acquireImages(ImageSaver imSaver, MetadataBase metadata) throws Exception {
         String initialFilter = ""; 
         boolean spectralMode = imConf.hasTunableFilter();
         if (Globals.getMMConfigAdapter().autoFilterSwitching) {
@@ -96,7 +97,7 @@ class FluorescenceAcquisition extends SingleAcquisitionBase<FluorSettings>{
             }
             double origZ = Globals.core().getPosition(); //TODO will this work with PFS on?
             Globals.core().setPosition(origZ + settings.focusOffset);
-            imSaver.start();
+            imSaver.beginSavingThread();
             this.camera.setExposure(settings.exposure);
             Globals.core().clearCircularBuffer();
             Image img = this.camera.snapImage();
@@ -112,7 +113,7 @@ class FluorescenceAcquisition extends SingleAcquisitionBase<FluorSettings>{
             album.addImage(img);
             imSaver.addImage(img);
             Globals.core().setPosition(origZ);
-            imSaver.join();
+            imSaver.awaitThreadTermination();
         } finally {
             if (Globals.getMMConfigAdapter().autoFilterSwitching) {
                 Globals.core().setConfig("Filter", initialFilter);
