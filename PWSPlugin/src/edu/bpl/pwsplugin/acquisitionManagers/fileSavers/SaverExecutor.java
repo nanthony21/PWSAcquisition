@@ -8,7 +8,6 @@ package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -25,9 +24,13 @@ public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
     private final LinkedBlockingQueue<Image> queue = new LinkedBlockingQueue<>();
     private final LinkedBlockingQueue<MetadataBase> mdQueue = new LinkedBlockingQueue<>(1);
     private boolean initialized = false;
+    protected boolean configured = false; //subclasses must set this true before running.
     
     @Override
     public void beginSavingThread() {
+        if (!configured) {
+            throw new RuntimeException("Must configure ImageSaver before attempting to start thread,");
+        }
         if (initialized) {
             throw new RuntimeException("This ImageSaver has already been run once. You must create a new one.");
         }
