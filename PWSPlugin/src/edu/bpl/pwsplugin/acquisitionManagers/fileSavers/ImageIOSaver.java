@@ -31,6 +31,10 @@ import javax.imageio.ImageTypeSpecifier;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.utils.GsonUtils;
+import io.scif.media.imageio.plugins.tiff.BaselineTIFFTagSet;
+import io.scif.media.imageio.plugins.tiff.TIFFDirectory;
+import io.scif.media.imageio.plugins.tiff.TIFFField;
+import io.scif.media.imageio.plugins.tiff.TIFFTag;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -84,10 +88,14 @@ public class ImageIOSaver extends SaverExecutor {
                 JsonObject mdJson = md.toJson();
                 writeMetadata(this.savePath, this.fileName, mdJson); // saves metadata to a text file.
                 IIOMetadata iomd = writer.getDefaultStreamMetadata(param);
-                IIOMetadataNode node = new IIOMetadataNode("PWSPluginMetadata");
-                node.setNodeValue(GsonUtils.getGson().toJson(mdJson));
-                iomd.mergeTree(iomd.getNativeMetadataFormatName(), node);
-                writer.replaceStreamMetadata(iomd);//Also try to save it to the tiff file.
+                //IIOMetadataNode node = new IIOMetadataNode("PWSPluginMetadata");
+                //node.setNodeValue(GsonUtils.getGson().toJson(mdJson));
+                //iomd.mergeTree(iomd.getNativeMetadataFormatName(), node);
+                TIFFDirectory dir = TIFFDirectory.createFromMetadata(iomd);
+                TIFFTag tag = BaselineTIFFTagSet.getInstance().getTag(BaselineTIFFTagSet.TAG_IMAGE_DESCRIPTION);
+                TIFFField field = new TIFFField(tag, TIFFTag.TIFF_ASCII, 1, GsonUtils.getGson().toJson(mdJson));
+                dir.addTIFFField(field);
+                writer.replaceStreamMetadata(dir.getAsMetadata());//Also try to save it to the tiff file.
             } finally { // We don't need to catch any exceptions we can just have them get thrown.
                 writer.endWriteSequence();
                 writer.dispose();
