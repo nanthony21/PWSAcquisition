@@ -26,17 +26,12 @@ import org.micromanager.internal.utils.ReportingUtils;
 abstract class SingleAcquisitionBase<S> implements Acquisition<S> {
     //A base class an acquisition manager that handles instantiation of a the required metadata for every type of image.
     //This class assumes that the same imaging configuration will be used throughout the whole imaging process, which may not be true.
-    LinkedBlockingQueue imageQueue = new LinkedBlockingQueue();
 
     
     @Override
     public void acquireImages(String savePath, int cellNum) throws Exception {
         MetadataBase metadata = this.initializeMetadata();
-        if (imageQueue.size() > 0) {
-            ReportingUtils.showMessage(String.format("The image queue started a new acquisition with %d images already in it! Your image file is likely corrupted. This can mean that Java has not been allocated enough heap size.", imageQueue.size()));
-            imageQueue.clear();
-        }
-        ImageSaver imSaver = new MMSaver(this.getSavePath(savePath, cellNum), imageQueue, this.numFrames(), FileSpecs.getFilePrefix(this.getFileType()));
+        ImageSaver imSaver = new MMSaver(this.getSavePath(savePath, cellNum), this.numFrames(), FileSpecs.getFilePrefix(this.getFileType()));
         this._acquireImages(imSaver, metadata);
     }
     

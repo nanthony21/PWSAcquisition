@@ -31,8 +31,8 @@ public class MMSaver extends DefaultSaverThread {
     JSONObject metadata_;
     String filePrefix_;
 
-    public MMSaver(String savePath, LinkedBlockingQueue imageQueue, int expectedFrames, String filePrefix){
-        super(imageQueue); //The queue to receive images through.
+    public MMSaver(String savePath, int expectedFrames, String filePrefix){
+        super();
         expectedFrames_ = expectedFrames; // The number of image frames that are expected to be received via queue
         savePath_ = savePath; // The file path to save to
         filePrefix_ = filePrefix; // The prefix to name the image file by. This is used by the analysis software to find images.

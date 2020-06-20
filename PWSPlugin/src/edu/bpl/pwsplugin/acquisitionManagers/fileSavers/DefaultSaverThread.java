@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import org.micromanager.data.Image;
 
 /**
@@ -13,11 +14,8 @@ import org.micromanager.data.Image;
  * @author nicke
  */
 public abstract class DefaultSaverThread extends SaverThread {
-    BlockingQueue<Object> q_;
+    BlockingQueue<Image> q_ = new LinkedBlockingQueue<>();
     
-    public DefaultSaverThread(BlockingQueue q) {
-        q_ = q;
-    }
     
     protected BlockingQueue getQueue() { //Internal code can retrieve images with getQueue().poll(timeout, TimeUnit.SECONDS);
         return q_;

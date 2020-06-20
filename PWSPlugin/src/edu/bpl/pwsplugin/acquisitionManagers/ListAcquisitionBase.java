@@ -30,7 +30,6 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>>{
     //A base class for an acquisition that acquires from a list of settings and puts the resulting images all into a shared display.
     //Images are saved to individual numbered folders.
     private List<S> settingsList;
-    private final LinkedBlockingQueue imageQueue = new LinkedBlockingQueue();
     private final PWSAlbum display;
     
     protected ListAcquisitionBase(PWSAlbum album) {
@@ -49,13 +48,9 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>>{
                 imConf.activateConfiguration(); //Activation must occur every time the imaging configuration changes.
             }
             MetadataBase md = this.initializeMetadata(imConf);
-            if (imageQueue.size() > 0) {
-                ReportingUtils.showMessage(String.format("The image queue started a new acquisition with %d images already in it! Your image file is likely corrupted. This can mean that Java has not been allocated enough heap size.", imageQueue.size()));
-                imageQueue.clear();
-            }
             String subFolderName = String.format("%s_%d", FileSpecs.getSubfolderName(this.getFileType()), i);
             Path fullSavePath = FileSpecs.getCellFolderName(Paths.get(savePath), cellNum).resolve(subFolderName);
-            ImageSaver imSaver = new MMSaver(fullSavePath.toString(), imageQueue, this.numFrames(), FileSpecs.getFilePrefix(this.getFileType()));
+            ImageSaver imSaver = new MMSaver(fullSavePath.toString(), this.numFrames(), FileSpecs.getFilePrefix(this.getFileType()));
             this.runSingleImageAcquisition(imSaver, md);
         }
     }

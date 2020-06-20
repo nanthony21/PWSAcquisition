@@ -55,8 +55,8 @@ public class ImSaverRaw extends DefaultSaverThread {
     volatile JSONObject metadata_;
     String filePrefix_;
 
-    public ImSaverRaw(Studio studio, String savePath, LinkedBlockingQueue queue_, int expectedFrames, boolean debug, String filePrefix){
-        super(queue_);
+    public ImSaverRaw(Studio studio, String savePath, int expectedFrames, boolean debug, String filePrefix){
+        super();
         debug_ = debug;
         studio_ = studio;
         expectedFrames_ = expectedFrames;
