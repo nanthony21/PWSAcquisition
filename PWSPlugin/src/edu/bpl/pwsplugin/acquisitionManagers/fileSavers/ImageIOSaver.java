@@ -77,9 +77,7 @@ public class ImageIOSaver extends SaverExecutor {
                 if (md == null) {
                     throw new TimeoutException("ImageIOSaver timed out on receiving metadata.");
                 }
-                JsonObject mdJson = md.toJson();
-                writeMetadata(this.savePath, this.fileName, mdJson); // saves metadata to a text file.
-                IIOMetadata iomd = writer.getDefaultStreamMetadata(param);
+                writeMetadata(this.savePath, this.fileName, md.toJson()); // saves metadata to a text file.
                 //Twelve monkeys does not support writing metadata after the fact, just use the json text file.
             } finally { // We don't need to catch any exceptions we can just have them get thrown.
                 writer.endWriteSequence();
@@ -99,6 +97,7 @@ public class ImageIOSaver extends SaverExecutor {
     }
     
     private IIOImage MM2IIO(Image mmImg) {
+        //This implementation will only work for 2byte pixels.
         BufferedImage bim = ImageIOHelper.arrtoim(mmImg.getWidth(), mmImg.getHeight(),(short[]) mmImg.getRawPixels());
         return new IIOImage(bim ,null, null); // We can set metadata later, or maybe we don't need to, no need for thumbnails.
     }

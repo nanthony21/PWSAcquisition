@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageIOSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
@@ -31,7 +32,7 @@ abstract class SingleAcquisitionBase<S> implements Acquisition<S> {
     @Override
     public void acquireImages(String savePath, int cellNum) throws Exception {
         MetadataBase metadata = this.initializeMetadata();
-        ImageSaver imSaver = new MMSaver();
+        ImageSaver imSaver = new ImageIOSaver();
         imSaver.configure(this.getSavePath(savePath, cellNum), FileSpecs.getFilePrefix(this.getFileType()), this.numFrames());
         this._acquireImages(imSaver, metadata);
     }

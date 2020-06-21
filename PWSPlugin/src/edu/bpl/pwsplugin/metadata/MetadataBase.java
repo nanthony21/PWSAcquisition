@@ -69,7 +69,7 @@ public class MetadataBase { //All images should have this metadata.
         if (MMmd == null) {
             throw new RuntimeException("Attempted to save metadata without adding micromanager metadata.");
         }
-        md.add("MicroManagerMetadata", PropertyMapJSONSerializer.toGson(MMmd.toPropertyMap()).getAsJsonObject().get("map"));
+        md.add("MicroManagerMetadata", PropertyMapJSONSerializer.toGson(MMmd.toPropertyMap()).getAsJsonObject());
         return md;
     }
 }

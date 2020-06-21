@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.acquisitionManagers;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
+import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageIOSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
@@ -50,7 +51,7 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>>{
             MetadataBase md = this.initializeMetadata(imConf);
             String subFolderName = String.format("%s_%d", FileSpecs.getSubfolderName(this.getFileType()), i);
             Path fullSavePath = FileSpecs.getCellFolderName(Paths.get(savePath), cellNum).resolve(subFolderName);
-            ImageSaver imSaver = new MMSaver();
+            ImageSaver imSaver = new ImageIOSaver();
             imSaver.configure(fullSavePath.toString(), FileSpecs.getFilePrefix(this.getFileType()), this.numFrames());
             this.runSingleImageAcquisition(imSaver, md);
         }

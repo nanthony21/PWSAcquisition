@@ -61,7 +61,7 @@ public class MMSaver extends SaverThread {
                     }
                 }
             } finally { //If something goes wrong we still want to make sure to close the file.
-                ds.freeze(); //This must be called prior to closing or the file will be corrupted.
+                ds.freeze(); //This must be called prior to closing or the file will be corrupted. We are sometimes getting a null pointer error here, maybe due to non-threadsafe code.
                 ds.close();
             }
 
@@ -101,10 +101,10 @@ public class MMSaver extends SaverThread {
     
  
     private void writeMetadata() throws IOException, JSONException {
-        FileWriter file = new FileWriter(Paths.get(savePath_).resolve(filePrefix_ + "metadata.json").toString());
-        file.write(GsonUtils.getGson().toJson(metadata_)); //4 spaces of indentation
-        file.flush();
-        file.close();
+        try (FileWriter file = new FileWriter(Paths.get(savePath_).resolve(filePrefix_ + "metadata.json").toString())) {
+            file.write(GsonUtils.getGson().toJson(metadata_)); //4 spaces of indentation
+            file.flush();
+        }
     }
     
     private void saveImBd(Image im) throws IOException{
