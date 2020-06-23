@@ -30,7 +30,7 @@ public class SequencerCoordinate {
     public void moveDownTree(Step newStep) {
         //Add a new node to the end of the current path
         this.treePath.add(newStep);
-        this.iterations.add(0); // We start on the zeroth iteration.
+        this.iterations.add(null); // Unless specified we have not iteration, set to null.
     }
     
     public void moveUpTree() {
