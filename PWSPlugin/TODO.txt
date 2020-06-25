@@ -1,0 +1,5 @@
+fluorescence switches back to initial filter between every image.
+Executor image saver thread doesn't exit.
+File resource not being released
+"Fluorescence" focus offset is confusing to user
+Config: Tunable filter use dropdown for device name
