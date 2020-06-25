@@ -3,3 +3,7 @@ Executor image saver thread doesn't exit.
 File resource not being released
 "Fluorescence" focus offset is confusing to user
 Config: Tunable filter use dropdown for device name
+validate that initialization path is not empty
+imSaver.awaitThreadTermination is hanging.: Tiff writing is going insanely slow
+fluorescence z offset silently disables PFS
+disable wavelength field of fluorescence settings when using a standard camera.

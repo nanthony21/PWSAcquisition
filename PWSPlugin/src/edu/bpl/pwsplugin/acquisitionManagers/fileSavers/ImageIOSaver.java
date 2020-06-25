@@ -92,14 +92,14 @@ public class ImageIOSaver extends SaverExecutor {
             }
         }
         long itTook = System.currentTimeMillis() - startTime;
-        ReportingUtils.logMessage(String.format("PWSPlugin: ImageIO produced %s image. Saving took: %d milliseconds.", this.fileName, itTook));
+        ReportingUtils.logMessage(String.format("PWSPlugin: ImageIO produced %s image(s). Saving took: %d milliseconds.", this.fileName, itTook));
         return null;  
     }
     
     private ImageWriteParam configureWriter(ImageWriter writer) {
         ImageWriteParam param = writer.getDefaultWriteParam();
         param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-        param.setCompressionType("ZLib"); //TODO with how this affects things.
+        param.setCompressionType("None");//("ZLib"); //I had hoped that this would speed up saving but it didn't. compression only helps a by ~10% of disk space
         return param;
     }
     
