@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.NoSuchElementException;
 public class ImageIOSaver extends SaverExecutor {
     private String savePath;
     private String fileName;
@@ -46,7 +47,12 @@ public class ImageIOSaver extends SaverExecutor {
     
     @Override
     public Void call() throws Exception { //This was tested using the TwelveMonkeys imageIO plugin for TIFF. In theory it should work for any ImageIO tiff plugin.
-        ImageWriter writer = ImageIO.getImageWritersBySuffix("tif").next(); //This will throw an error if a Tiff plugin can't be found. The default java version for Micro-Manager is version 8 which doesn't have  a plugin by default. One solution is just to make sure to use java 9 or higher.   
+        ImageWriter writer;
+        try {
+            writer = ImageIO.getImageWritersBySuffix("tif").next();
+        } catch (NoSuchElementException e) { //This will throw an error if a Tiff plugin can't be found. The default java version for Micro-Manager is version 8 which doesn't have  a plugin by default. One solution is just to make sure to use java 9 or higher.   
+            throw new NoSuchElementException("An ImageIO plugin for saving TIFF files could not be found. Please install the TwelveMonkeys TIFF plugin.");
+        }
         ImageWriteParam param = configureWriter(writer);
         
         long startTime = System.currentTimeMillis();
