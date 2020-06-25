@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -19,7 +20,7 @@ import org.micromanager.data.Image;
  * @author nick
  */
 public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
-    private final ExecutorService ex = Executors.newSingleThreadExecutor();
+    private final ExecutorService ex = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("PWS_ImageIO_Saver_Thread_%d").build());
     private Future<Void> threadFuture;
     private final LinkedBlockingQueue<Image> queue = new LinkedBlockingQueue<>();
     private final LinkedBlockingQueue<MetadataBase> mdQueue = new LinkedBlockingQueue<>(1);

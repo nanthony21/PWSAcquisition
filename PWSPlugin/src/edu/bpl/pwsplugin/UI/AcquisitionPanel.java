@@ -94,7 +94,7 @@ class AcquisitionPanel extends JPanel {
                 try {
                     FileUtils.deleteDirectory(savePath.toFile());
                 } catch (IOException e) {
-                    Globals.mm().logs().logError(e);
+                    Globals.mm().logs().showError(e);
                     return;
                 }
             } else {

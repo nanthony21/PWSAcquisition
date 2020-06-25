@@ -116,14 +116,20 @@ class ExposurePanel extends JPanel implements PropertyChangeListener {
 
         public Double run(Integer targetIntensityPercent) throws MMDeviceException {
             String origCamDevice = Globals.core().getCameraDevice();
+            boolean liveModeWasOn = false;
+            if (Globals.mm().live().getIsLiveModeOn()) {
+                liveModeWasOn = true;
+                Globals.mm().live().setLiveMode(false);
+            }
+            Double initialExposure;
             try {
                 Globals.core().setCameraDevice(this.config.camera().getName()); //We need our camera to be "The Camera" for the next part to work.
+                initialExposure = Globals.core().getExposure();
             } catch (Exception e) {
                 throw new MMDeviceException(e);
             }
             Integer maxCounts = ((int) Math.round(Math.pow(2, Globals.core().getImageBitDepth()))) - 1; //This should be the count when the image is saturated.        
             Integer targetCounts = (int) Math.round(maxCounts * (targetIntensityPercent / 100.0)); //Calculate target counts from percentage based on camera information.
-            
             Calcfc opt = new Calcfc() { //This class is what we provide to the COBYLA optimizer to execute the optimization.
                 @Override
                 public double Compute(int n, int m, double[] x, double[] con) {
@@ -153,17 +159,21 @@ class ExposurePanel extends JPanel implements PropertyChangeListener {
                 }
             };
 
-            double[] exposure = { 50 }; //Initial value of 50ms
-            double rhoBegin = 50; //The tuning sensitivity at first.
+            double[] exposure = { initialExposure }; //Initial value of whatever the camera was initially set to.
+            double rhoBegin = 20; //The tuning sensitivity at first.
             double rhoEnd = 2; //The tuning sensitivity at the end to finalize.
             CobylaExitStatus status = Cobyla.FindMinimum(opt, 1, 2, exposure, rhoBegin, rhoEnd, 0, 100);
             Globals.mm().logs().logMessage(String.format("AutoExposure: Finished with status: %s", status.toString()));
             try {
+                Globals.core().setExposure(exposure[0]); //Apply the optimized exposure value.
                 Globals.core().setCameraDevice(origCamDevice); // Set things back the way they were.
             } catch (Exception e) {
                 throw new MMDeviceException(e);
             }
-            return exposure[0]; //laserPower now contains the optimal value.  
+            if (liveModeWasOn) {
+                Globals.mm().live().setLiveMode(true);
+            }
+            return exposure[0]; //exposure now contains the optimal value.  
         }
 
         private Integer percentile(List<Integer> values, double percentile) {

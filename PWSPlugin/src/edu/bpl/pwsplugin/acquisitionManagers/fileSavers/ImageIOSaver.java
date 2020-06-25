@@ -14,7 +14,6 @@ import javax.imageio.ImageWriter;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.IIOImage;
-import javax.imageio.metadata.IIOMetadata;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import javax.imageio.stream.ImageOutputStream;
@@ -32,6 +31,8 @@ import java.util.concurrent.TimeoutException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.NoSuchElementException;
+
+
 public class ImageIOSaver extends SaverExecutor {
     private String savePath;
     private String fileName;
@@ -91,7 +92,7 @@ public class ImageIOSaver extends SaverExecutor {
             }
         }
         long itTook = System.currentTimeMillis() - startTime;
-        ReportingUtils.logMessage(String.format("PWSPlugin: ImageIO produced %s image. Saving took:" + itTook + "milliseconds.", this.fileName));
+        ReportingUtils.logMessage(String.format("PWSPlugin: ImageIO produced %s image. Saving took: %d milliseconds.", this.fileName, itTook));
         return null;  
     }
     
