@@ -68,6 +68,9 @@ public class EnterSubfolderStep extends ContainerStep<SequencerSettings.EnterSub
     public List<String> validate() {
         List<String> errs = super.validate();
         String path = this.settings.relativePath;
+        if (path.equals("")) {
+            errs.add("The `EnterSubFolder` path may not be empty.");
+        }
         if (path.contains(".")) {
             errs.add("The `.` character is not allowed the in `EnterSubFolder` step.");
         }
