@@ -98,7 +98,7 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
     }
     
     public final void addCallback(SequencerFunction cb) { 
-        callbacks.add(cb);
+        callbacks.add(cb); //TODO this is persistent so they just keep adding up. needs to be temporary just for runtime.
     }
         
     @Override

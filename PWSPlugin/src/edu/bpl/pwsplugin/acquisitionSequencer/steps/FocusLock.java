@@ -10,7 +10,6 @@ import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
-import java.util.List;
 
 /**
  *
@@ -29,11 +28,12 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
                 //If the current  step is an acquisition then check for refocus.
                 if (!Globals.core().isContinuousFocusLocked()) {
                     //Check if focused. and log. later we will add refocusing.
-                    Globals.mm().logs().logMessage("Focus is unlocked");
+                    Globals.mm().logs().logMessage("PWSPlugin: Focus is unlocked");
                     Globals.core().fullFocus();
                     Globals.core().enableContinuousFocus(true);
+                    Thread.sleep((long) (settings.preDelay * 1000.0));
                 } else {
-                    Globals.mm().logs().logMessage("Focus is locked");
+                    Globals.mm().logs().logMessage("PWSPLugin: Focus is locked");
                 }
             }
             return status;

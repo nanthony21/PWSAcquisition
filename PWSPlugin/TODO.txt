@@ -7,3 +7,5 @@ validate that initialization path is not empty
 imSaver.awaitThreadTermination is hanging.: Tiff writing is going insanely slow
 fluorescence z offset silently disables PFS
 disable wavelength field of fluorescence settings when using a standard camera.
+Add our own logger that format messages to the mm logger
+callback getting called way too many times. it is being added to the step multiple times?
