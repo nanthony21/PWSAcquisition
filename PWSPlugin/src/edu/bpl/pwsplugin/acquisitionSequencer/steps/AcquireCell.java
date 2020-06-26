@@ -14,6 +14,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.utils.GsonUtils;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -40,6 +41,8 @@ public class AcquireCell extends EndpointStep<AcquireCellSettings> {
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 status.setCellNum(status.getCellNum() + 1);
                 status.newStatusMessage(String.format("Acquiring Cell %d", status.getCellNum()));
+                File directory = FileSpecs.getCellFolderName(Paths.get(status.getSavePath()), status.getCellNum()).toFile();
+                if (!directory.exists()) { directory.mkdirs(); } //The cell folder can be created by the Image saving thread once acquisition begins. In some cases the other thread can get backed up, for safety we just make sure to create the folder right at the beginning.
                 if (!settings.fluorSettings.isEmpty()) {
                     status.allowPauseHere();
                     acqMan.setFluorescenceSettings(settings.fluorSettings);
@@ -66,7 +69,6 @@ public class AcquireCell extends EndpointStep<AcquireCellSettings> {
         JsonObject obj = status.coords().toJson();
         Path directory = FileSpecs.getCellFolderName(Paths.get(status.getSavePath()), status.getCellNum());
         String savePath = directory.resolve("sequencerCoords.json").toString();
-        if (!directory.toFile().exists()) { directory.toFile().mkdirs(); } //Usually the cell folder should be created by the Image saving thread. In some cases it can get backed up, this will prevent a crash in that case.
         try (FileWriter w = new FileWriter(savePath)) {
             GsonUtils.getGson().toJson(obj, w);
         }
