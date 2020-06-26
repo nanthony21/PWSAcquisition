@@ -16,6 +16,7 @@ import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -63,7 +64,9 @@ public class AcquireCell extends EndpointStep<AcquireCellSettings> {
     
     private void saveSequenceCoordsFile(AcquisitionStatus status) throws IOException {
         JsonObject obj = status.coords().toJson();
-        String savePath = FileSpecs.getCellFolderName(Paths.get(status.getSavePath()), status.getCellNum()).resolve("sequencerCoords.json").toString();
+        Path directory = FileSpecs.getCellFolderName(Paths.get(status.getSavePath()), status.getCellNum());
+        String savePath = directory.resolve("sequencerCoords.json").toString();
+        if (!directory.toFile().exists()) { directory.toFile().mkdirs(); } //Usually the cell folder should be created by the Image saving thread. In some cases it can get backed up, this will prevent a crash in that case.
         try (FileWriter w = new FileWriter(savePath)) {
             GsonUtils.getGson().toJson(obj, w);
         }
