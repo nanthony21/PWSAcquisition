@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.swing.tree.TreeNode;
 
 /**
  *
@@ -30,7 +31,7 @@ public abstract class ContainerStep<T extends JsonableParam> extends Step<T> {
     }    
     
     public final List<Step> getSubSteps() {
-        return Collections.list(this.children());
+        return (List<Step>) (List<? extends TreeNode>) Collections.list(this.children());
     }
     
     @Override

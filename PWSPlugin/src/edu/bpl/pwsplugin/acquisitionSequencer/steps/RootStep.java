@@ -81,7 +81,7 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
         List<String> errs = new ArrayList<>();
         //Collect all subfolder steps.
         List<Step> subfolderSteps = new ArrayList<>();
-        Enumeration<Step> en = this.breadthFirstEnumeration();
+        Enumeration<Step> en = (Enumeration<Step>) (Enumeration<? extends TreeNode>) this.breadthFirstEnumeration();
         while (en.hasMoreElements()) {
             Step step = en.nextElement();
             if (step.getType().equals(SequencerConsts.Type.SUBFOLDER)) {
