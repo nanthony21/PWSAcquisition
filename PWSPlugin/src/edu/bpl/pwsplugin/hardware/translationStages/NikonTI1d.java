@@ -8,6 +8,7 @@ package edu.bpl.pwsplugin.hardware.translationStages;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
+import mmcorej.DeviceType;
 
 /**
  *
@@ -16,9 +17,22 @@ import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
 public class NikonTI1d extends TranslationStage1d {
     private final TranslationStage1dSettings settings;
     private final double pfsConversion = .1; //TODO figure out actual value
+    private String devName;
 
-    public NikonTI1d(TranslationStage1dSettings settings) {
+    public NikonTI1d(TranslationStage1dSettings settings) throws MMDeviceException {
         this.settings = settings;
+        try {
+        for (String devName : Globals.core().getLoadedDevicesOfType(DeviceType.StageDevice)) {
+            String library = Globals.core().getDeviceLibrary(devName);
+            if (library.equals("DemoCamera")) {////For now this just support simulation and nikon. should be split into separate classes.
+                this.devName = devName;
+                return;
+            }
+        }
+        } catch (Exception e) {
+            throw new MMDeviceException();
+        }
+        throw new MMDeviceException();
     }
     
     @Override
@@ -46,7 +60,7 @@ public class NikonTI1d extends TranslationStage1d {
                 double val = um / pfsConversion;
                 Globals.core().setAutoFocusOffset(val);
             } else {
-                Globals.core().setPosition(settings.devName, um);
+                Globals.core().setPosition(devName, um);
             }    
         } catch (Exception e) {
             throw new MMDeviceException(e);
@@ -57,7 +71,7 @@ public class NikonTI1d extends TranslationStage1d {
     @Override
     public double getPosUm() throws MMDeviceException {
         try {
-            double val = Globals.core().getPosition(settings.devName);
+            double val = Globals.core().getPosition(devName);
             return val;
         } catch (Exception e) {
             throw new MMDeviceException(e);

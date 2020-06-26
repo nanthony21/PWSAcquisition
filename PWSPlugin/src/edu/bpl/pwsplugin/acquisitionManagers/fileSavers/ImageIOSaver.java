@@ -47,7 +47,7 @@ public class ImageIOSaver extends SaverExecutor {
     }
     
     @Override
-    public Void call() throws Exception { //This was tested using the TwelveMonkeys imageIO plugin for TIFF. In theory it should work for any ImageIO tiff plugin.
+    public void runInThread() throws Exception { //This was tested using the TwelveMonkeys imageIO plugin for TIFF. In theory it should work for any ImageIO tiff plugin.
         ImageWriter writer;
         try {
             writer = ImageIO.getImageWritersBySuffix("tif").next();
@@ -94,7 +94,6 @@ public class ImageIOSaver extends SaverExecutor {
         }
         long itTook = System.currentTimeMillis() - startTime;
         ReportingUtils.logMessage(String.format("PWSPlugin: ImageIO produced %s image(s). Saving took: %d milliseconds.", this.fileName, itTook));
-        return null;  
     }
     
     private ImageWriteParam configureWriter(ImageWriter writer) {

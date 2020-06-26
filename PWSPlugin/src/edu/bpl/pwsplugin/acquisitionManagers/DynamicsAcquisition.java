@@ -106,7 +106,7 @@ class DynamicsAcquisition extends SingleAcquisitionBase<DynSettings>{
         DynamicsMetadata dmd = new DynamicsMetadata(metadata, Double.valueOf(wavelength_), times, camera.getExposure());
 
         imSaver.setMetadata(dmd);
-        imSaver.awaitThreadTermination();
+        //imSaver.awaitThreadTermination();
     }
     
     @Override

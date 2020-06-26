@@ -11,6 +11,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,24 +32,20 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
     
     @Override
     public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) { 
-        SequencerSettings.RootStepSettings settings = this.settings;
         SequencerFunction subStepFunc = getSubstepsFunction(callbacks);
-        return new SequencerFunction() {
-            @Override
-            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-                File startingDir = Paths.get(settings.directory).toFile();
-                if (!startingDir.exists()) {
-                    boolean success = startingDir.mkdirs();
-                    if (!success) {
-                        throw new IOException("Failed to create initial directory.");
-                    }
+        return (status) -> {
+            File startingDir = Paths.get(settings.directory).toFile();
+            if (!startingDir.exists()) {
+                boolean success = startingDir.mkdirs();
+                if (!success) {
+                    throw new IOException("Failed to create initial directory.");
                 }
-                status.setCellNum(0);
-                status.setSavePath(settings.directory);
-                RootStep.this.saveToJson(Paths.get(settings.directory, "sequence.pwsseq").toString()); //Save the sequence to file for retrospect.
-                status = subStepFunc.apply(status);
-                return status;
             }
+            status.setCellNum(0);
+            status.setSavePath(settings.directory);
+            RootStep.this.saveToJson(Paths.get(settings.directory, "sequence.pwsseq").toString()); //Save the sequence to file for retrospect.
+            status = subStepFunc.apply(status);
+            return status;
         };    
     }
     
@@ -72,6 +69,14 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
     @Override
     public List<String> validate() {
         List<String> errs = super.validate();
+        if (settings.directory.equals("")) {
+            errs.add("Initialization directory is empty.");
+        }
+        try {
+            Paths.get(settings.directory);
+        } catch (InvalidPathException e) {
+            errs.add(String.format("Initialization path %s is invalid", settings.directory));
+        }
         errs.addAll(this.validateSubfolderSteps());
         return errs;
     }

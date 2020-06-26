@@ -114,7 +114,7 @@ class FluorescenceAcquisition extends SingleAcquisitionBase<FluorSettings>{
             album.addImage(img);
             imSaver.addImage(img);
             Globals.core().setPosition(origZ);
-            imSaver.awaitThreadTermination();
+            //imSaver.awaitThreadTermination();
         } finally {
             if (Globals.getMMConfigAdapter().autoFilterSwitching) {
                 Globals.core().setConfig("Filter", initialFilter);

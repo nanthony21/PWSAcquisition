@@ -9,7 +9,6 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -23,7 +22,7 @@ import org.micromanager.data.Image;
  */
 public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
     private final ExecutorService ex = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("PWS_ImageIO_Saver_Thread_%d").setPriority(Thread.MAX_PRIORITY).build());
-    private Future<Void> threadFuture;
+    //private Future<Void> threadFuture;
     private final LinkedBlockingQueue<Image> queue = new LinkedBlockingQueue<>();
     private final LinkedBlockingQueue<MetadataBase> mdQueue = new LinkedBlockingQueue<>(1);
     private boolean initialized = false;
@@ -38,7 +37,8 @@ public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
             throw new RuntimeException("This ImageSaver has already been run once. You must create a new one.");
         }
         initialized = true;
-        threadFuture = ex.submit(this);
+        //threadFuture = ex.submit(this);
+        ex.submit(this);
     }
     
     @Override
@@ -61,7 +61,13 @@ public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
     }
     
     @Override
-    public abstract Void call() throws Exception;
+    public Void call() throws Exception {
+        this.runInThread();
+        ex.shutdown();
+        return null;
+    }
+    
+    protected abstract void runInThread() throws Exception;
     
     @Override
     public void setMetadata(MetadataBase md) {
