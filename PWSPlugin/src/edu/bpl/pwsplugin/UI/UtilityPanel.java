@@ -167,6 +167,7 @@ class ExposurePanel extends JPanel implements PropertyChangeListener {
             try {
                 Globals.core().setExposure(exposure[0]); //Apply the optimized exposure value.
                 Globals.core().setCameraDevice(origCamDevice); // Set things back the way they were.
+                Globals.mm().app().refreshGUI(); //Show the changed exposure in the GUI.
             } catch (Exception e) {
                 throw new MMDeviceException(e);
             }

@@ -38,6 +38,7 @@ import javax.swing.tree.DefaultTreeModel;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.io.FileUtils;
 import org.micromanager.internal.utils.FileDialogs;
+import org.micromanager.internal.utils.ReportingUtils;
         
 
 /**
@@ -70,7 +71,8 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
                 if (!success) { return; }
                 SequencerRunningDlg dlg = new SequencerRunningDlg(SwingUtilities.getWindowAncestor(this), "Acquisition Sequence Running", rootStep);
             } catch (BuilderPanelException | RuntimeException e) {
-                Globals.mm().logs().showError(e);
+                //Globals.mm().logs().showError(e);
+                ReportingUtils.showError(e, this); //This puts the error message over the plugin UI rather than the main Micro-Manager UI
             }
         }); //Run starting at cell 1.
         

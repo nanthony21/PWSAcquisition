@@ -1,15 +1,15 @@
 1:
-pending testing: Executor image saver thread doesn't exit.
 imSaver.awaitThreadTermination is hanging.: Tiff writing is going insanely slow
 pending testing: fluorescence z offset silently disables PFS
 
 2:
 fluorescence switches back to initial filter between every image.
 Config: Tunable filter use dropdown for device name
-validate that initialization path is not empty
+AutoExposure locks up the UI thread
 
 3:
 Add our own logger that format messages to the mm logger
 disable wavelength field of fluorescence settings when using a standard camera.
 add simple view for acquisition.
 Fluorescence "focus offset" is confusing to user
+Add autoexposure to sequencer

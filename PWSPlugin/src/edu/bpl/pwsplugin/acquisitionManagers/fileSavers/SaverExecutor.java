@@ -6,8 +6,10 @@
 package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -38,11 +40,12 @@ public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
         }
         initialized = true;
         int todo = 0;
-        for (Future fut : threadFutures) {
-            if (fut.isDone()) { threadFutures.remove(fut); }
+        for (Iterator<Future<Void>> it = threadFutures.iterator(); it.hasNext();) { //Using "for-each" looping in this case leads to a "ConcurrentModificationException"
+            Future fut = it.next();
+            if (fut.isDone()) { it.remove(); }
             else { todo++; }
         }
-        //Globals.mm().logs().logMessage(String.format("TODO: %d", todo));
+        Globals.mm().logs().logMessage(String.format("TODO: %d", todo));
         threadFutures.add(ex.submit(this)); //We used to allow multiple saving threads at once, this led to terrible write speed. Better to feed all tasks to a single thread.
     }
     

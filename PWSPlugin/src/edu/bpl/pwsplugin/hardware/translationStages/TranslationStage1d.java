@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.hardware.translationStages;
 
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
 
@@ -41,12 +42,17 @@ public abstract class TranslationStage1d {
     }
         
     public static TranslationStage1d getInstance(TranslationStage1dSettings settings) {
-        if (settings.stageType == TranslationStage1d.Types.NikonTI) {
-            return new NikonTI1d(settings);
-        } else if (settings.stageType == TranslationStage1d.Types.Simulated) {
-            return new NikonTI1d(settings);
-        } else {
-            return null; //This shouldn't ever happen.
+        try {
+            if (settings.stageType == TranslationStage1d.Types.NikonTI) {
+                return new NikonTI1d(settings);
+            } else if (settings.stageType == TranslationStage1d.Types.Simulated) {
+                return new NikonTI1d(settings);
+            } else {
+                return null; //This shouldn't ever happen.
+            }
+        } catch (MMDeviceException e) {
+            Globals.mm().logs().logError(e);
+            return null;
         }
     }
 }
