@@ -27,7 +27,7 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
             Step[] path = status.coords().getTreePath(); //Indicates our current location in the tree of steps.
             if (path[path.length - 1].getType() == SequencerConsts.Type.ACQ) {
                 //If the current  step is an acquisition then check for refocus.
-                if (!Globals.core().isContinuousFocusLocked()) {
+                if (!Globals.core().isContinuousFocusLocked()) { //TODO use stage here
                     //Check if focused. and log. later we will add refocusing.
                     Globals.mm().logs().logMessage("PWSPlugin: Focus is unlocked");
                     Globals.core().fullFocus();

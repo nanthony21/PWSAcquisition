@@ -69,8 +69,10 @@ class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings>
             if (spectralMode) { 
                 imConf.tunableFilter().setWavelength(settings.tfWavelength);
             }
-            double origZ = Globals.core().getPosition(); //TODO will this work with PFS on?
-            Globals.core().setPosition(origZ + settings.focusOffset);
+//            double origZ = Globals.core().getPosition(); //TODO will this work with PFS on?
+//            Globals.core().setPosition(origZ + settings.focusOffset);
+            double origZ = imConf.zStage().getPosUm();
+            imConf.zStage().setPosUm(origZ + settings.focusOffset);
             imSaver.beginSavingThread();
             imConf.camera().setExposure(settings.exposure);
             Globals.core().clearCircularBuffer();
@@ -86,7 +88,8 @@ class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings>
             imSaver.setMetadata(flmd);
             this.displayImage(img);
             imSaver.addImage(img);
-            Globals.core().setPosition(origZ);
+            imConf.zStage().setPosUm(origZ);
+            //Globals.core().setPosition(origZ);
             imSaver.awaitThreadTermination();
         } finally {
             if (Globals.getMMConfigAdapter().autoFilterSwitching) {

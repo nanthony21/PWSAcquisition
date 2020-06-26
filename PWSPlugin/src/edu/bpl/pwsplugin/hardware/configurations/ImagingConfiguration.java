@@ -11,6 +11,8 @@ import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
+import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
+import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
 import java.util.List;
 
 /**
@@ -34,6 +36,10 @@ public abstract class ImagingConfiguration {
     public abstract TunableFilter tunableFilter();
     public abstract Illuminator illuminator();
     public abstract List<String> validate();
+    
+    public TranslationStage1d zStage() {
+        return TranslationStage1d.getInstance(new TranslationStage1dSettings()); //TODO implement this like the rest of the devices
+    }
     
     private void initialize() throws MMDeviceException { //One-time initialization of devices
         camera().initialize();
