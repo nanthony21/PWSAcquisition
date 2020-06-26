@@ -1,0 +1,19 @@
+target = 3660.0;
+margin = 1.0;
+sign = -1;
+mmc.enableContinuousFocus(true);
+while (Math.abs(mmc.getPosition() - target) >= margin) {
+	while (!mmc.isContinuousFocusLocked()) {
+		Thread.sleep(10); //wait for lock
+		print("wait");
+	}
+	err = mmc.getPosition() - target;
+	print(err);
+	//mmc.setAutoFocusOffset(mmc.getAutoFocusOffset() + err*0.1);
+	currentOffset = Double.valueOf(mmc.getProperty("TIPFSOffset", "Position"));
+	print(currentOffset);
+	newOffset = currentOffset + (sign * err);
+	print(newOffset);
+	mmc.setProperty("TIPFSOffset", "Position", newOffset);
+}
+print("done");
