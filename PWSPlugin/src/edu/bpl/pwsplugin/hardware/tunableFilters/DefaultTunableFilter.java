@@ -4,7 +4,7 @@ package edu.bpl.pwsplugin.hardware.tunableFilters;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
-import edu.bpl.pwsplugin.settings.TunableFilterSettings;
+import edu.bpl.pwsplugin.hardware.settings.TunableFilterSettings;
 import mmcorej.StrVector;
 
 /**

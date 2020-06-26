@@ -6,7 +6,7 @@
 package edu.bpl.pwsplugin.hardware.cameras;
 
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
-import edu.bpl.pwsplugin.settings.CamSettings;
+import edu.bpl.pwsplugin.hardware.settings.CamSettings;
 import java.util.List;
 import org.micromanager.data.Image;
 

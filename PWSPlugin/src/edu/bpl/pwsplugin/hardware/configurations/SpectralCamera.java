@@ -8,7 +8,7 @@ package edu.bpl.pwsplugin.hardware.configurations;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
-import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
+import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
 import java.util.ArrayList;
 import java.util.List;
 import org.micromanager.data.Image;

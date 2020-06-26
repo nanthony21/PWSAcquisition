@@ -1,5 +1,9 @@
 package edu.bpl.pwsplugin.settings;
 
+import edu.bpl.pwsplugin.hardware.settings.TunableFilterSettings;
+import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
+import edu.bpl.pwsplugin.hardware.settings.IlluminatorSettings;
+import edu.bpl.pwsplugin.hardware.settings.CamSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /*

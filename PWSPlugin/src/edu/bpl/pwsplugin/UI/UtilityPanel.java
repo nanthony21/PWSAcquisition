@@ -13,7 +13,7 @@ import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.hardware.HWConfiguration;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
-import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
+import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;

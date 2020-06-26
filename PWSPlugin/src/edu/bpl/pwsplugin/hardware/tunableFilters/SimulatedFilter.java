@@ -5,7 +5,7 @@
  */
 package edu.bpl.pwsplugin.hardware.tunableFilters;
 
-import edu.bpl.pwsplugin.settings.TunableFilterSettings;
+import edu.bpl.pwsplugin.hardware.settings.TunableFilterSettings;
 import java.util.ArrayList;
 import java.util.List;
 

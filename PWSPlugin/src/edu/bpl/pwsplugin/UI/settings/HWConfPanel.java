@@ -9,7 +9,7 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.ListScrollUI;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
-import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
+import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
 import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;

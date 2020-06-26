@@ -4,7 +4,7 @@ package edu.bpl.pwsplugin.UI.settings;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
-import edu.bpl.pwsplugin.settings.CamSettings;
+import edu.bpl.pwsplugin.hardware.settings.CamSettings;
 import java.awt.Color;
 import java.util.Vector;
 import java.util.ArrayList;

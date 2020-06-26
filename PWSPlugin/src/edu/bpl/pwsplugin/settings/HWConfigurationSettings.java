@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.settings;
 
+import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.ArrayList;
 import java.util.List;

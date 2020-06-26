@@ -2,7 +2,7 @@ package edu.bpl.pwsplugin.hardware;
 
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
-import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
+import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

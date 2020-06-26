@@ -9,7 +9,7 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.disablePanel.DisabledPanel;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
-import edu.bpl.pwsplugin.settings.ImagingConfigurationSettings;
+import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.BorderFactory;
