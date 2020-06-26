@@ -59,6 +59,6 @@ public class SequencerSettings {
         public int numStacks = 2;
         public boolean absolute = false;
         public double startingPosition = 0; //Only used if absolute is true
-        public String deviceName = "";
+        //public String deviceName = ""; //TODO remove this
     }
 }
