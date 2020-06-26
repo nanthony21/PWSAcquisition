@@ -24,7 +24,7 @@ public class NikonTI1d extends TranslationStage1d {
         try {
         for (String devName : Globals.core().getLoadedDevicesOfType(DeviceType.StageDevice)) {
             String library = Globals.core().getDeviceLibrary(devName);
-            if (library.equals("DemoCamera")) {////For now this just support simulation and nikon. should be split into separate classes.
+            if (library.equals("DemoCamera") || library.equals("NikonTI")) {//TODO For now this just support simulation and nikon. should be split into separate classes.
                 this.devName = devName;
                 return;
             }
