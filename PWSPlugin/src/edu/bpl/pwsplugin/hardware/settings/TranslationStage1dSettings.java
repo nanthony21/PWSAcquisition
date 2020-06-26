@@ -13,7 +13,6 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
  * @author nicke
  */
 public class TranslationStage1dSettings extends JsonableParam {
-    public String devName = "";
     public TranslationStage1d.Types stageType = TranslationStage1d.Types.NikonTI;
     public int speed = 0;
 }
