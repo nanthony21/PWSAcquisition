@@ -30,7 +30,7 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
                 if (!Globals.core().isContinuousFocusLocked()) { //TODO use stage here
                     //Check if focused. and log. later we will add refocusing.
                     Globals.mm().logs().logMessage("PWSPlugin: Focus is unlocked");
-                    Globals.core().fullFocus();
+                    Globals.core().fullFocus(); //TODO this can fail and throw an exception, don't let that crash the whole experiment.
                     Globals.core().enableContinuousFocus(true);
                     Thread.sleep((long) (settings.preDelay * 1000.0));
                 } else {
@@ -51,7 +51,7 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 //FocusLock A function that turns on the PFS, runs substep and then turns it off.
                 Globals.core().setAutoFocusOffset(settings.zOffset);
-                Globals.core().fullFocus();
+                Globals.core().fullFocus(); //TODO this can fail and throw an exception, don't let that crash the whole experiment.
                 Globals.core().enableContinuousFocus(true);
                 Thread.sleep((long) (settings.preDelay * 1000.0));
                 AcquisitionStatus newstatus = stepFunction.apply(status);
