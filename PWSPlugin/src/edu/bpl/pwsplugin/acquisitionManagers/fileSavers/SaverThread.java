@@ -36,8 +36,8 @@ public abstract class SaverThread extends Thread implements ImageSaver {
         this.start();
     }
     
-    @Override
+    /*@Override
     public void awaitThreadTermination() throws InterruptedException {
         this.join();
-    }
+    }*/
 }

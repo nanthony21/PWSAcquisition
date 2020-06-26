@@ -187,7 +187,7 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
                     addImage(im, i, pipeline, saver);
                 }
             }
-            saver.awaitThreadTermination();
+            //saver.awaitThreadTermination();
         } finally {
             conf.tunableFilter().setWavelength(initialWv); //Set back to initial wavelength
         }

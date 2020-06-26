@@ -90,7 +90,7 @@ class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings>
             imSaver.addImage(img);
             imConf.zStage().setPosUm(origZ);
             //Globals.core().setPosition(origZ);
-            imSaver.awaitThreadTermination();
+            //imSaver.awaitThreadTermination();
         } finally {
             if (Globals.getMMConfigAdapter().autoFilterSwitching) {
                 Globals.core().setConfig("Filter", initialFilter);
