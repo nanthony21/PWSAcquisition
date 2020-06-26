@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -13,6 +14,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import org.micromanager.data.Image;
 
 /**
@@ -20,7 +22,7 @@ import org.micromanager.data.Image;
  * @author nick
  */
 public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
-    private final ExecutorService ex = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("PWS_ImageIO_Saver_Thread_%d").build());
+    private final ExecutorService ex = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("PWS_ImageIO_Saver_Thread_%d").setPriority(Thread.MAX_PRIORITY).build());
     private Future<Void> threadFuture;
     private final LinkedBlockingQueue<Image> queue = new LinkedBlockingQueue<>();
     private final LinkedBlockingQueue<MetadataBase> mdQueue = new LinkedBlockingQueue<>(1);
@@ -40,6 +42,25 @@ public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
     }
     
     @Override
+    public void awaitThreadTermination() {
+        ex.shutdown(); // Disable new tasks from being submitted
+        try {
+          // Wait a while for existing tasks to terminate
+          if (!ex.awaitTermination(60, TimeUnit.SECONDS)) {
+            ex.shutdownNow(); // Cancel currently executing tasks
+            // Wait a while for tasks to respond to being cancelled
+            if (!ex.awaitTermination(60, TimeUnit.SECONDS))
+                Globals.mm().logs().logError("SaverExecutor thread did not terminate");
+          }
+        } catch (InterruptedException ie) {
+          // (Re-)Cancel if current thread also interrupted
+          ex.shutdownNow();
+          // Preserve interrupt status
+          Thread.currentThread().interrupt();
+        }
+    }
+    
+    @Override
     public abstract Void call() throws Exception;
     
     @Override
@@ -52,10 +73,10 @@ public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
         this.queue.add(img);
     }
     
-    @Override
-    public void awaitThreadTermination() throws InterruptedException, ExecutionException {
-        this.threadFuture.get();
-    }
+//    @Override
+//    public void awaitThreadTermination() throws InterruptedException, ExecutionException {
+//        this.threadFuture.get();
+//    }
     
     //Methods to be used by subclasses.
     protected LinkedBlockingQueue<Image> getImageQueue() {
