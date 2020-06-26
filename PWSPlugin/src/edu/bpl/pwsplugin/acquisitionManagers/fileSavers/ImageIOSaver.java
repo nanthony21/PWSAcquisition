@@ -60,7 +60,8 @@ public class ImageIOSaver extends SaverExecutor {
         String fullFileName = String.format("%s.tif", this.fileName);
         File directory = new File(this.savePath);
         if (!directory.exists()) { directory.mkdirs(); }
-        try (ImageOutputStream outStream = ImageIO.createImageOutputStream(new FileOutputStream(Paths.get(this.savePath, fullFileName).toFile()))) {
+        try (FileOutputStream innerStream = new FileOutputStream(Paths.get(this.savePath, fullFileName).toFile()); 
+                ImageOutputStream outStream = ImageIO.createImageOutputStream(innerStream)) {
             writer.setOutput(outStream);
             writer.prepareWriteSequence(null); //null means we will use the default streamMetadata.
             try {

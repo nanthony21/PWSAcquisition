@@ -22,12 +22,10 @@ package edu.bpl.pwsplugin;
 
 //Must Do:
 //Generate camera affine transform
-//TODO test test test
-//Optional:
-//Step types:
+//
 //Add sequence logging.
 //Transmission imaging
-//Allow subfolder naming by position and timepoint. Do this with dedicated step types (namebyPosition,
+//STORM imaging
 
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
