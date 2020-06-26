@@ -30,9 +30,9 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
     }
     
     @Override
-    public SequencerFunction getStepFunction() { 
+    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) { 
         SequencerSettings.RootStepSettings settings = this.settings;
-        SequencerFunction subStepFunc = getSubstepsFunction();
+        SequencerFunction subStepFunc = getSubstepsFunction(callbacks);
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {

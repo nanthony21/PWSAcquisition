@@ -10,6 +10,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -31,7 +32,7 @@ public class PauseStep extends EndpointStep<SequencerSettings.PauseStepSettings>
     }
 
     @Override
-    public SequencerFunction getStepFunction() {
+    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
         SequencerSettings.PauseStepSettings settings = this.settings;
         return new SequencerFunction() {
             @Override

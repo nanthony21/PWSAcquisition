@@ -10,6 +10,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import java.util.List;
 
 /**
  *
@@ -22,7 +23,7 @@ public class SoftwareAutofocus extends EndpointStep<SequencerSettings.SoftwareAu
     }
 
     @Override
-    public SequencerFunction getStepFunction() {
+    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
         SequencerSettings.SoftwareAutoFocusSettings settings = this.settings;
         return new SequencerFunction() {
             @Override

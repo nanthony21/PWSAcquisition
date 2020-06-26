@@ -10,6 +10,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import java.util.List;
 
 /**
  *
@@ -22,8 +23,8 @@ public class ChangeConfigGroup extends ContainerStep<SequencerSettings.ChangeCon
     }
 
     @Override
-    public SequencerFunction getStepFunction() {
-        SequencerFunction subStepFunc = getSubstepsFunction();
+    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
+        SequencerFunction subStepFunc = getSubstepsFunction(callbacks);
         SequencerSettings.ChangeConfigGroupSettings settings = this.settings;
         return new SequencerFunction() {
             @Override

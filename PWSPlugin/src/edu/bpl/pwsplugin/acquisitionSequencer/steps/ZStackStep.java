@@ -10,6 +10,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import java.util.List;
 import org.micromanager.data.Coords;
 
 /**
@@ -23,9 +24,9 @@ public class ZStackStep extends ContainerStep<SequencerSettings.ZStackSettings> 
     }
 
     @Override
-    public SequencerFunction getStepFunction() {
+    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
         SequencerSettings.ZStackSettings settings = this.getSettings();
-        SequencerFunction subStepFunc = getSubstepsFunction();
+        SequencerFunction subStepFunc = getSubstepsFunction(callbacks);
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {

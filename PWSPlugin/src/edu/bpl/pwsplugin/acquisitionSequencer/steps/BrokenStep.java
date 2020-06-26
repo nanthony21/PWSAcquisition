@@ -20,7 +20,7 @@ public class BrokenStep extends ContainerStep<JsonableParam> {
     }
     
     @Override
-    public SequencerFunction getStepFunction() {
+    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
         return (status) -> { throw new RuntimeException("The BrokenStep should never be run."); };
     }
     

@@ -42,20 +42,11 @@ public abstract class ContainerStep<T extends JsonableParam> extends Step<T> {
         return errs;
     }
     
-    protected final void addCallbackToSubsteps(SequencerFunction cb) { 
-        //Add a callback for all the substeps of this step. Due to the implementation of `getSubstepsFunction` the callback will propagate all the way down.
-        for (Step step : this.getSubSteps()) {
-            step.addCallback(cb);
-        }
-    }
-    
-    protected final SequencerFunction getSubstepsFunction() { // Execute each substep in sequence
+    protected final SequencerFunction getSubstepsFunction(List<SequencerFunction> callbacks) { // Execute each substep in sequence
+        List<SequencerFunction> stepFunctions = new ArrayList<>();
         for (Step substep : this.getSubSteps()) { //Pass callbacks on to child steps.
-            for (SequencerFunction cb : this.callbacks) {
-                substep.addCallback(cb);
-            }
+            stepFunctions.add(substep.getFunction(callbacks));
         }
-        List<SequencerFunction> stepFunctions = this.getSubSteps().stream().map(Step::getFunction).collect(Collectors.toList());
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {

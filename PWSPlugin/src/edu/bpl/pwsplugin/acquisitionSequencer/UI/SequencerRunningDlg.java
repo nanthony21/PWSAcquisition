@@ -18,6 +18,7 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Window;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -62,7 +63,7 @@ class SequencerRunningDlg extends JDialog {
         contentPane.add(cancelButton, "cell 0 3, gapright push, align center");
         this.pack();
         this.setResizable(true);
-        acqThread = new AcquisitionThread(rootStep.getFunction(), 1); //This starts the thread.
+        acqThread = new AcquisitionThread(rootStep.getFunction(new ArrayList<>()), 1); //This starts the thread.
         cancelButton.addActionListener((evt) -> {
             //The acquisition engine doesn't deal well with InterruptedException. Manually cancel any acquisitions before trying to cancel the thread.
             if (Globals.mm().acquisitions().isAcquisitionRunning()) {

@@ -27,8 +27,8 @@ public class EnterSubfolderStep extends ContainerStep<SequencerSettings.EnterSub
     }
 
     @Override
-    public SequencerFunction getStepFunction() {
-        SequencerFunction stepFunction = super.getSubstepsFunction();
+    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
+        SequencerFunction stepFunction = super.getSubstepsFunction(callbacks);
         cellNum = 0; //initialize cell num
         SequencerSettings.EnterSubfolderSettings settings = this.settings;
         return new SequencerFunction() {

@@ -10,6 +10,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import java.util.List;
 
 /**
  *
@@ -41,9 +42,9 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
     }
 
     @Override
-    public SequencerFunction getStepFunction() {
-        this.addCallbackToSubsteps(getCallback());
-        SequencerFunction stepFunction = super.getSubstepsFunction();
+    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
+        callbacks.add(this.getCallback());
+        SequencerFunction stepFunction = super.getSubstepsFunction(callbacks);
         SequencerSettings.FocusLockSettings settings = this.getSettings();
         return new SequencerFunction() {
             @Override

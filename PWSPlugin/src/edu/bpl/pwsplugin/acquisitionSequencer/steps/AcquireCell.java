@@ -17,6 +17,7 @@ import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.List;
 
 /**
  *
@@ -30,7 +31,7 @@ public class AcquireCell extends EndpointStep<AcquireCellSettings> {
     }
 
     @Override
-    public SequencerFunction getStepFunction() {
+    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
         AcquireCellSettings settings = this.getSettings();
         AcquisitionManager acqMan = Globals.acqManager();
         return new SequencerFunction() {

@@ -33,7 +33,6 @@ import java.util.function.Function;
 public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeNode {
     protected T settings; 
     private final SequencerConsts.Type stepType;
-    protected final List<SequencerFunction> callbacks = new ArrayList<>();
     private static final AtomicInteger counter = new AtomicInteger(); //This static counter makes sure that each Step object has it's own uid during runtime.
     private Integer uid = counter.getAndIncrement();
 
@@ -65,7 +64,7 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
     
     public final void setSettings(T settings) { this.settings = settings; }
     
-    protected abstract SequencerFunction getStepFunction(); //Return  function to run for this step during execution. Does not include callbacks and mandatory changes to the status object which are handled automatically by `getFunction`. This should initialize any variables that are used for context during runtime.
+    protected abstract SequencerFunction getStepFunction(List<SequencerFunction> callbacks); //Return  function to run for this step during execution. Does not include callbacks and mandatory changes to the status object which are handled automatically by `getFunction`. This should initialize any variables that are used for context during runtime.
           
     protected abstract SimFn getSimulatedFunction(); //return a function that simulates how folder usage and cell number changes through the run.
     
@@ -78,27 +77,20 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
     @FunctionalInterface
     protected static interface SimFn extends Function<SimulatedStatus, SimulatedStatus> {} 
     
-    public final SequencerFunction getFunction() {
-        SequencerFunction stepFunc = this.getStepFunction();
-        return new SequencerFunction() {
-            @Override
-            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-                //Update the status object with information about the current step.
-                status.coords().moveDownTree(Step.this); //Append this step to the end of our coordinate path.
-                //Run any callbacks that have been set for this step.
-                for (SequencerFunction func : callbacks) {
-                    status = func.apply(status);
-                } 
-                //Run the function for this step subclass.
-                status = stepFunc.apply(status);
-                status.coords().moveUpTree(); //Set the path back to where it was as we exit this step
-                return status;
-            }
+    public final SequencerFunction getFunction(List<SequencerFunction> callbacks) {
+        SequencerFunction stepFunc = this.getStepFunction(callbacks);
+        return (status) -> {
+            //Update the status object with information about the current step.
+            status.coords().moveDownTree(Step.this); //Append this step to the end of our coordinate path.
+            //Run any callbacks that have been set for this step.
+            for (SequencerFunction func : callbacks) {
+                status = func.apply(status);
+            } 
+            //Run the function for this step subclass.
+            status = stepFunc.apply(status);
+            status.coords().moveUpTree(); //Set the path back to where it was as we exit this step
+            return status;
         };
-    }
-    
-    public final void addCallback(SequencerFunction cb) { 
-        callbacks.add(cb); //TODO this is persistent so they just keep adding up. needs to be temporary just for runtime.
     }
         
     @Override

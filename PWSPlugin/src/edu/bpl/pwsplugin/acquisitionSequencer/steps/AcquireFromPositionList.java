@@ -29,12 +29,10 @@ public class AcquireFromPositionList extends ContainerStep<SequencerSettings.Acq
     }
 
     @Override
-    public SequencerFunction getStepFunction() {
+    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
         PositionList list = this.getSettings().posList;
-        SequencerFunction stepFunction = super.getSubstepsFunction();
-        return new SequencerFunction() {
-            @Override
-            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
+        SequencerFunction stepFunction = super.getSubstepsFunction(callbacks);
+        return (status) -> {
                 Globals.core().setTimeoutMs(30000); //TODO put somewhere else. set timeout to 30 seconds. Otherwise we get an error if a position move takes greater than 5 seconds. (default timeout)
                 for (int posNum = 0; posNum < list.getNumberOfPositions(); posNum++) {
                     MultiStagePosition pos = list.getPosition(posNum);
@@ -81,7 +79,6 @@ public class AcquireFromPositionList extends ContainerStep<SequencerSettings.Acq
                     pos.goToPosition(pos, Globals.core()); //Just in case the substep took us to new positions we want to make sure to move back to our position to avoid confusion.
                 }
                 return status;
-            }
         };
     }
 
