@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -31,7 +32,7 @@ public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
     protected boolean configured = false; //subclasses must set this true before running.
     
     @Override
-    public void beginSavingThread() {
+    public void beginSavingThread() throws InterruptedException, ExecutionException {
         if (!configured) {
             throw new RuntimeException("Must configure ImageSaver before attempting to start thread,");
         }
@@ -42,11 +43,19 @@ public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
         int todo = 0;
         for (Iterator<Future<Void>> it = threadFutures.iterator(); it.hasNext();) { //Using "for-each" looping in this case leads to a "ConcurrentModificationException"
             Future fut = it.next();
-            if (fut.isDone()) { it.remove(); }
+            if (fut.isDone()) {
+                try {
+                    fut.get(); //If an exception was thrown in the thread this will cause it to be thrown here as an ExecutionException.
+                } finally {
+                    it.remove();
+                }
+            }
             else { todo++; }
         }
         Globals.mm().logs().logMessage(String.format("TODO: %d", todo));
-        threadFutures.add(ex.submit(this)); //We used to allow multiple saving threads at once, this led to terrible write speed. Better to feed all tasks to a single thread.
+        Future future = ex.submit(this);
+        threadFutures.add(future); //We used to allow multiple saving threads at once, this led to terrible write speed. Better to feed all tasks to a single thread.
+        
     }
     
     /*@Override
