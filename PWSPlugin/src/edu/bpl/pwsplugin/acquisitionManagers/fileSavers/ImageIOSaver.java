@@ -24,6 +24,7 @@ import ij.io.FileSaver;
 import ij.plugin.ContrastEnhancer;
 import ij.process.ImageConverter;
 import edu.bpl.pwsplugin.utils.GsonUtils;
+import java.io.BufferedOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -60,8 +61,8 @@ public class ImageIOSaver extends SaverExecutor {
         String fullFileName = String.format("%s.tif", this.fileName);
         File directory = new File(this.savePath);
         if (!directory.exists()) { directory.mkdirs(); }
-        try (FileOutputStream innerStream = new FileOutputStream(Paths.get(this.savePath, fullFileName).toFile()); 
-                ImageOutputStream outStream = ImageIO.createImageOutputStream(innerStream)) {
+        File file = Paths.get(this.savePath, fullFileName).toFile(); //Caution: I was previously wrapping this in a FileOutputStream before passing it to `CreateImageOutputStream`. This resulted in terrible write speeds that caused many other bugs.
+        try (ImageOutputStream outStream = ImageIO.createImageOutputStream(file)) {
             writer.setOutput(outStream);
             writer.prepareWriteSequence(null); //null means we will use the default streamMetadata.
             try {
