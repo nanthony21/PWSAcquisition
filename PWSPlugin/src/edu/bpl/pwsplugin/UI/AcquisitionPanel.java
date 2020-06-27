@@ -23,7 +23,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
+import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -38,13 +38,13 @@ import org.micromanager.internal.utils.ReportingUtils;
 class AcquisitionPanel extends JPanel {
     private final JButton acqButton = new JButton("Acquire Now");
     private final DirectorySelector dirSelect = new DirectorySelector(DirectorySelector.DefaultMMFunctions.MMDataSetDirectory);;
-    private final JSpinner cellNumSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
+    private final ImprovedJSpinner cellNumSpinner = new ImprovedJSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
     private final AcquireCellUI cellUI = new AcquireCellUI();
     
     public AcquisitionPanel() {
         super(new MigLayout("insets 0 0 0 0"));
         
-        ((JSpinner.DefaultEditor)cellNumSpinner.getEditor()).getTextField().setColumns(4);
+        ((ImprovedJSpinner.DefaultEditor)cellNumSpinner.getEditor()).getTextField().setColumns(4);
         
         acqButton.addActionListener((e)->{
             this.acquire();

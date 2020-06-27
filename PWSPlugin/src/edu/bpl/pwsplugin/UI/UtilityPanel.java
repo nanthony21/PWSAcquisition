@@ -26,7 +26,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
+import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
@@ -50,8 +50,8 @@ class UtilityPanel extends JPanel {
 }
 
 class ExposurePanel extends JPanel implements PropertyChangeListener {
-    JSpinner wv = new JSpinner(new SpinnerNumberModel(550, 400, 1000, 10));
-    JSpinner targetIntensity = new JSpinner(new SpinnerNumberModel(90, 0, 100, 10)); //Expressed as a percentage of max range of the camera.
+    ImprovedJSpinner wv = new ImprovedJSpinner(new SpinnerNumberModel(550, 400, 1000, 10));
+    ImprovedJSpinner targetIntensity = new ImprovedJSpinner(new SpinnerNumberModel(90, 0, 100, 10)); //Expressed as a percentage of max range of the camera.
     JComboBox<String> config = new JComboBox<>();
     JButton runBtn = new JButton("Run");
     JTextField exposureText = new JTextField();

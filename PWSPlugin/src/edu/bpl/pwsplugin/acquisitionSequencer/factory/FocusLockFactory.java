@@ -20,7 +20,7 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JLabel;
-import javax.swing.JSpinner;
+import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
@@ -66,16 +66,16 @@ public class FocusLockFactory extends StepFactory {
 }
 
 class FocusLockUI extends SingleBuilderJPanel<SequencerSettings.FocusLockSettings>{
-    JSpinner offset;
-    JSpinner delay;
+    ImprovedJSpinner offset;
+    ImprovedJSpinner delay;
     
     public FocusLockUI() {
         super(new MigLayout(), SequencerSettings.FocusLockSettings.class);
         
-        offset = new JSpinner(new SpinnerNumberModel(0, -1e8, 1e8, 1));
-        delay = new JSpinner(new SpinnerNumberModel(1.0, 0.0, 30.0, 1.0));
-        ((JSpinner.DefaultEditor) offset.getEditor()).getTextField().setColumns(4);
-        ((JSpinner.DefaultEditor) delay.getEditor()).getTextField().setColumns(4);
+        offset = new ImprovedJSpinner(new SpinnerNumberModel(0, -1e8, 1e8, 1));
+        delay = new ImprovedJSpinner(new SpinnerNumberModel(1.0, 0.0, 30.0, 1.0));
+        ((ImprovedJSpinner.DefaultEditor) offset.getEditor()).getTextField().setColumns(4);
+        ((ImprovedJSpinner.DefaultEditor) delay.getEditor()).getTextField().setColumns(4);
         
         this.add(new JLabel("Z Offset:"), "gapleft push");
         this.add(offset, "wrap");

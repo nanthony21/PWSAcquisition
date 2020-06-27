@@ -14,7 +14,7 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JSpinner;
+import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
@@ -23,9 +23,9 @@ import net.miginfocom.swing.MigLayout;
  * @author nick
  */
 public class FluorPanel extends BuilderJPanel<FluorSettings>{
-    private JSpinner wvSpinner;
-    private JSpinner exposureSpinner;
-    private JSpinner focusOffsetSpinner;
+    private ImprovedJSpinner wvSpinner;
+    private ImprovedJSpinner exposureSpinner;
+    private ImprovedJSpinner focusOffsetSpinner;
     private JComboBox<String> filterCombo = new JComboBox<>();
     private JComboBox<String> imConfName = new JComboBox<>();
 
@@ -33,9 +33,9 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
     public FluorPanel() { //TODO disable the `wavelength field when a standard camera is selected.
         super(new MigLayout(), FluorSettings.class);
         
-        wvSpinner = new JSpinner(new SpinnerNumberModel(550, 400, 1000, 5));
-        exposureSpinner = new JSpinner(new SpinnerNumberModel(1000.0, 1.0, 5000.0, 100.0));
-        focusOffsetSpinner = new JSpinner(new SpinnerNumberModel(0, -10000, 10000, 100));
+        wvSpinner = new ImprovedJSpinner(new SpinnerNumberModel(550, 400, 1000, 5));
+        exposureSpinner = new ImprovedJSpinner(new SpinnerNumberModel(1000.0, 1.0, 5000.0, 100.0));
+        focusOffsetSpinner = new ImprovedJSpinner(new SpinnerNumberModel(0, -10000, 10000, 100));
         filterCombo.setModel(this.getFilterComboModel());
         
         Globals.getMMConfigAdapter().addRefreshListener((evt)->{

@@ -20,7 +20,7 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JLabel;
-import javax.swing.JSpinner;
+import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 import org.micromanager.data.Coords;
@@ -69,16 +69,16 @@ public class AcquireTimeSeriesFactory extends StepFactory {
 
 
 class TimeSeriesUI extends SingleBuilderJPanel<SequencerSettings.AcquireTimeSeriesSettings> {
-    JSpinner numFrames;
-    JSpinner frameIntervalMinutes;
+    ImprovedJSpinner numFrames;
+    ImprovedJSpinner frameIntervalMinutes;
     
     public TimeSeriesUI() {
         super(new MigLayout("insets 5 0 0 0"), SequencerSettings.AcquireTimeSeriesSettings.class);
         
-        numFrames = new JSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
-        frameIntervalMinutes = new JSpinner(new SpinnerNumberModel(1.0, 0.0, 1000000000.0, 1.0));
-        ((JSpinner.DefaultEditor) numFrames.getEditor()).getTextField().setColumns(6);
-        ((JSpinner.DefaultEditor) frameIntervalMinutes.getEditor()).getTextField().setColumns(6);
+        numFrames = new ImprovedJSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
+        frameIntervalMinutes = new ImprovedJSpinner(new SpinnerNumberModel(1.0, 0.0, 1000000000.0, 1.0));
+        ((ImprovedJSpinner.DefaultEditor) numFrames.getEditor()).getTextField().setColumns(6);
+        ((ImprovedJSpinner.DefaultEditor) frameIntervalMinutes.getEditor()).getTextField().setColumns(6);
 
                 
         

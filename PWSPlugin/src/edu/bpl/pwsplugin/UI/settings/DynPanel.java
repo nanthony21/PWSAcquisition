@@ -14,7 +14,7 @@ import java.util.Map;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JSpinner;
+import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
@@ -24,9 +24,9 @@ import net.miginfocom.swing.MigLayout;
  * @author nick
  */
 public class DynPanel extends SingleBuilderJPanel<DynSettings>{
-    private final JSpinner wvSpinner = new JSpinner();
-    private final JSpinner framesSpinner = new JSpinner();
-    private final JSpinner exposureSpinner = new JSpinner();
+    private final ImprovedJSpinner wvSpinner = new ImprovedJSpinner();
+    private final ImprovedJSpinner framesSpinner = new ImprovedJSpinner();
+    private final ImprovedJSpinner exposureSpinner = new ImprovedJSpinner();
     private final JComboBox<String> imConfName = new JComboBox<>();
 
     

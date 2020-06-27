@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.UI.settings;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.PWSSettings;
@@ -15,7 +16,6 @@ import java.util.Map;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
@@ -24,10 +24,10 @@ import net.miginfocom.swing.MigLayout;
  * @author nick
  */
 public class PWSPanel extends SingleBuilderJPanel<PWSSettings>{
-    private JSpinner exposureSpinner;
-    private JSpinner wvStartSpinner;
-    private JSpinner wvStopSpinner;
-    private JSpinner wvStepSpinner;
+    private ImprovedJSpinner exposureSpinner;
+    private ImprovedJSpinner wvStartSpinner;
+    private ImprovedJSpinner wvStopSpinner;
+    private ImprovedJSpinner wvStepSpinner;
     private JComboBox<String> imConfName = new JComboBox<>();
     private JCheckBox ttlTriggerCheckbox = new JCheckBox("Use TTL Sequencing");
     private JCheckBox externalTriggerCheckBox = new JCheckBox("Use External TTL Trigger");
@@ -35,14 +35,14 @@ public class PWSPanel extends SingleBuilderJPanel<PWSSettings>{
     public PWSPanel() {
         super(new MigLayout(), PWSSettings.class);
         
-        exposureSpinner = new JSpinner(new SpinnerNumberModel(100, 1, 1000, 5));
-        wvStartSpinner = new JSpinner(new SpinnerNumberModel(500, 400, 1000, 5));
+        exposureSpinner = new ImprovedJSpinner(new SpinnerNumberModel(100, 1, 1000, 5));
+        wvStartSpinner = new ImprovedJSpinner(new SpinnerNumberModel(500, 400, 1000, 5));
         wvStartSpinner.setToolTipText("In nanometers. The wavelength to start scanning at.");
 
-        wvStopSpinner = new JSpinner(new SpinnerNumberModel(700, 400, 1000, 5));
+        wvStopSpinner = new ImprovedJSpinner(new SpinnerNumberModel(700, 400, 1000, 5));
         wvStopSpinner.setToolTipText("In nanometers. The wavelength to stop scanning at.");
 
-        wvStepSpinner = new JSpinner(new SpinnerNumberModel(2, 1, 50, 1));
+        wvStepSpinner = new ImprovedJSpinner(new SpinnerNumberModel(2, 1, 50, 1));
         
         ttlTriggerCheckbox.setToolTipText("Whether the camera should be configured to trigger wavelength changes in the filter over TTL. This may not be supported.");
         ttlTriggerCheckbox.addActionListener((evt)->{
