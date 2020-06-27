@@ -9,8 +9,6 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageIOSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
-import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
-import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
@@ -18,7 +16,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
 import mmcorej.DoubleVector;
 import org.micromanager.data.Image;
 import org.micromanager.internal.utils.ReportingUtils;
@@ -41,19 +38,24 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>>{
     @Override
     public void acquireImages(String savePath, int cellNum) throws Exception {
         this.display.clear(); //The implementation of `runSingleImageAcquisition` call `displayImage` to add images to the display throughout the imaging process.
-        for (int i=0; i< this.settingsList.size(); i++) {
-            S settings = this.settingsList.get(i);
-            this.setCurrentSettings(settings);
-            ImagingConfiguration imConf = this.getImgConfig(); //Activation must occur every time the imaging configuration changes. Initializemetadata requires that the correct configuration is active.
-            if (!imConf.isActive()) { //It's important that the configuration is activated before we try pulling metadata like the affine transform
-                imConf.activateConfiguration(); //Activation must occur every time the imaging configuration changes.
+        this.initializeAcquisitions();
+        try {
+            for (int i=0; i< this.settingsList.size(); i++) {
+                S settings = this.settingsList.get(i);
+                this.setCurrentSettings(settings);
+                ImagingConfiguration imConf = this.getImgConfig(); //Activation must occur every time the imaging configuration changes. Initializemetadata requires that the correct configuration is active.
+                if (!imConf.isActive()) { //It's important that the configuration is activated before we try pulling metadata like the affine transform
+                    imConf.activateConfiguration(); //Activation must occur every time the imaging configuration changes.
+                }
+                MetadataBase md = this.initializeMetadata(imConf);
+                String subFolderName = String.format("%s_%d", FileSpecs.getSubfolderName(this.getFileType()), i);
+                Path fullSavePath = FileSpecs.getCellFolderName(Paths.get(savePath), cellNum).resolve(subFolderName);
+                ImageSaver imSaver = new ImageIOSaver();
+                imSaver.configure(fullSavePath.toString(), FileSpecs.getFilePrefix(this.getFileType()), this.numFrames());
+                this.runSingleImageAcquisition(imSaver, md);
             }
-            MetadataBase md = this.initializeMetadata(imConf);
-            String subFolderName = String.format("%s_%d", FileSpecs.getSubfolderName(this.getFileType()), i);
-            Path fullSavePath = FileSpecs.getCellFolderName(Paths.get(savePath), cellNum).resolve(subFolderName);
-            ImageSaver imSaver = new ImageIOSaver();
-            imSaver.configure(fullSavePath.toString(), FileSpecs.getFilePrefix(this.getFileType()), this.numFrames());
-            this.runSingleImageAcquisition(imSaver, md);
+        } finally {
+            this.finalizeAcquisitions();
         }
     }
     
@@ -83,6 +85,8 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>>{
     
     protected abstract void setCurrentSettings(S settings);
     protected abstract ImagingConfiguration getImgConfig();
+    protected abstract void finalizeAcquisitions() throws Exception;
+    protected abstract void initializeAcquisitions() throws Exception;
     protected abstract void runSingleImageAcquisition(ImageSaver saver, MetadataBase md) throws Exception;
     protected abstract FileSpecs.Type getFileType(); //Return the type enumerator for this acquisition, used for file saving information.
     protected abstract Integer numFrames();

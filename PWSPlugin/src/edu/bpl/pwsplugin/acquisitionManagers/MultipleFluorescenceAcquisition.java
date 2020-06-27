@@ -9,6 +9,7 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
+import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.metadata.FluorescenceMetadata;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
@@ -27,6 +28,7 @@ class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings>
     //Acquires multiple fluorescence images from a list of fluorescence settings.
     private FluorSettings settings;
     private ImagingConfiguration imConf;
+    private String initialFilter;
     
     public MultipleFluorescenceAcquisition(PWSAlbum display) {
         super(display);
@@ -53,51 +55,63 @@ class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings>
     protected FileSpecs.Type getFileType() {
         return FileSpecs.Type.FLUORESCENCE;
     }
-
+    
     @Override
-    protected void runSingleImageAcquisition(ImageSaver imSaver, MetadataBase metadata) throws Exception {
-        String initialFilter = ""; 
-        boolean spectralMode = imConf.hasTunableFilter();
-        if (Globals.getMMConfigAdapter().autoFilterSwitching) {
-            initialFilter = Globals.core().getCurrentConfig("Filter");
-            Globals.core().setConfig("Filter", this.settings.filterConfigName);
-            Globals.core().waitForConfig("Filter", this.settings.filterConfigName); // Wait for the device to be ready.
-        } else {
-            ReportingUtils.showMessage("Set the correct fluorescence filter and click `OK`."); //This blocks until saving is done.
-        }
+    protected void finalizeAcquisitions() throws MMDeviceException {
         try {
-            if (spectralMode) { 
-                imConf.tunableFilter().setWavelength(settings.tfWavelength);
-            }
-//            double origZ = Globals.core().getPosition(); //TODO will this work with PFS on?
-//            Globals.core().setPosition(origZ + settings.focusOffset);
-            double origZ = imConf.zStage().getPosUm();
-            imConf.zStage().setPosUm(origZ + settings.focusOffset);
-            imSaver.beginSavingThread();
-            imConf.camera().setExposure(settings.exposure);
-            Globals.core().clearCircularBuffer();
-            Image img = imConf.camera().snapImage();
-            metadata.setMicroManagerMetadata((DefaultMetadata) img.getMetadata());
-            Integer wv;
-            if (spectralMode) { wv = settings.tfWavelength; } else { wv = null; }
-            FluorescenceMetadata flmd = new FluorescenceMetadata(metadata, settings.filterConfigName, imConf.camera().getExposure(), wv); //This must happen after we have set our exposure.
-            Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
-            Coords coords = img.getCoords();
-            pipeline.insertImage(img); //Add image to the data pipeline for processing
-            img = pipeline.getDatastore().getImage(coords); //Retrieve the processed image. 
-            imSaver.setMetadata(flmd);
-            this.displayImage(img);
-            imSaver.addImage(img);
-            imConf.zStage().setPosUm(origZ);
-            //Globals.core().setPosition(origZ);
-            //imSaver.awaitThreadTermination();
-        } finally {
             if (Globals.getMMConfigAdapter().autoFilterSwitching) {
                 Globals.core().setConfig("Filter", initialFilter);
                 Globals.core().waitForConfig("Filter", initialFilter); // Wait for the device to be ready.
             } else {
                 ReportingUtils.showMessage("Return to the PWS filter block and click `OK`.");
             }
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
         }
+    }
+    
+    @Override
+    protected void initializeAcquisitions() throws MMDeviceException {
+        try {
+            initialFilter = Globals.core().getCurrentConfig("Filter");
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
+    }
+
+    @Override
+    protected void runSingleImageAcquisition(ImageSaver imSaver, MetadataBase metadata) throws Exception {
+        boolean spectralMode = imConf.hasTunableFilter();
+        if (Globals.getMMConfigAdapter().autoFilterSwitching) {
+            Globals.core().setConfig("Filter", this.settings.filterConfigName);
+            Globals.core().waitForConfig("Filter", this.settings.filterConfigName); // Wait for the device to be ready.
+        } else {
+            ReportingUtils.showMessage("Set the correct fluorescence filter and click `OK`."); //This blocks until saving is done.
+        }
+        if (spectralMode) { 
+            imConf.tunableFilter().setWavelength(settings.tfWavelength);
+        }
+//            double origZ = Globals.core().getPosition(); //TODO will this work with PFS on?
+//            Globals.core().setPosition(origZ + settings.focusOffset);
+        double origZ = imConf.zStage().getPosUm();
+        imConf.zStage().setPosUm(origZ + settings.focusOffset);
+        imSaver.beginSavingThread();
+        imConf.camera().setExposure(settings.exposure);
+        Globals.core().clearCircularBuffer();
+        Image img = imConf.camera().snapImage();
+        metadata.setMicroManagerMetadata((DefaultMetadata) img.getMetadata());
+        Integer wv;
+        if (spectralMode) { wv = settings.tfWavelength; } else { wv = null; }
+        FluorescenceMetadata flmd = new FluorescenceMetadata(metadata, settings.filterConfigName, imConf.camera().getExposure(), wv); //This must happen after we have set our exposure.
+        Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
+        Coords coords = img.getCoords();
+        pipeline.insertImage(img); //Add image to the data pipeline for processing
+        img = pipeline.getDatastore().getImage(coords); //Retrieve the processed image. 
+        imSaver.setMetadata(flmd);
+        this.displayImage(img);
+        imSaver.addImage(img);
+        imConf.zStage().setPosUm(origZ);
+        //Globals.core().setPosition(origZ);
+        //imSaver.awaitThreadTermination();
     }
 }

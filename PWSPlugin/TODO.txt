@@ -4,7 +4,7 @@ pending testing: fluorescence z offset silently disables PFS
 spinboxes in settings don't save correct value. Use formatted textfield instead?
 
 2:
-fluorescence switches back to initial filter between every image.
+pending testing: fluorescence switches back to initial filter between every image.
 Config: Tunable filter use dropdown for device name
 AutoExposure locks up the UI thread
 
