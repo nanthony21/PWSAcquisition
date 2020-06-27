@@ -1,5 +1,4 @@
 1:
-imSaver.awaitThreadTermination is hanging.: Tiff writing is going insanely slow
 pending testing: fluorescence z offset silently disables PFS
 spinboxes in settings don't save correct value. Use formatted textfield instead?
 
