@@ -27,8 +27,14 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
+import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
+import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
+import java.awt.event.ActionListener;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import net.miginfocom.swing.MigLayout;
 import org.micromanager.data.Image;
 
@@ -56,6 +62,7 @@ class ExposurePanel extends JPanel implements PropertyChangeListener {
     JButton runBtn = new JButton("Run");
     JTextField exposureText = new JTextField();
     PWSAlbum display = new PWSAlbum("Auto Exposure");
+    private AutoExposureThread aethread;
             
     public ExposurePanel() {
         super(new MigLayout());
@@ -81,11 +88,8 @@ class ExposurePanel extends JPanel implements PropertyChangeListener {
         runBtn.addActionListener((evt)->{
             ImagingConfiguration conf = Globals.getHardwareConfiguration().getImagingConfigurationByName((String) config.getSelectedItem());
             try {
-                display.clear();
-                AutoExposeController aec = new AutoExposeController(conf, (Integer) wv.getValue());
-                Double exposure = aec.run((Integer) targetIntensity.getValue());
-                exposureText.setText(String.format("%.2f", exposure));
-            } catch (MMDeviceException | IOException e) {
+                this.aethread = new AutoExposureThread(conf, (Integer) wv.getValue(), (Integer) targetIntensity.getValue());
+            } catch (MMDeviceException e) {
                 Globals.mm().logs().showError(e);
             }
         });
@@ -183,4 +187,38 @@ class ExposurePanel extends JPanel implements PropertyChangeListener {
             return values.get(index - 1);
         }
     }
+    
+     class AutoExposureThread extends SwingWorker<Void, Void> {
+         private final AutoExposeController aec;
+         private double exposureResult = 0;
+         private final Integer targetIntensityPercent;
+
+        public AutoExposureThread(ImagingConfiguration imConf, Integer wavelength, Integer targetIntensity) throws MMDeviceException {
+            this.aec = new AutoExposeController(imConf, wavelength);
+            this.targetIntensityPercent = targetIntensity;
+            ExposurePanel.this.runBtn.setEnabled(false);
+            this.execute();
+        }
+
+        @Override
+        public Void doInBackground() {
+            try {
+                this.exposureResult = this.aec.run(this.targetIntensityPercent);
+            } catch (MMDeviceException ie) {
+                Globals.mm().logs().logError(ie);
+                Globals.mm().logs().showError(String.format("Error in sequencer. See core log file. %s", ie.getMessage()));
+            }
+            SwingUtilities.invokeLater(() -> {
+                finished();
+            });
+            return null;
+        }
+
+        //public void done() This method has a bug where it can run before the thread actually exits. Use invokelater instead.
+        public void finished() {
+            ExposurePanel.this.runBtn.setEnabled(true);
+            ExposurePanel.this.exposureText.setText(String.format("%.2f", exposureResult));
+        }
+
+    } 
 }
