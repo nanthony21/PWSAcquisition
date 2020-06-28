@@ -23,11 +23,11 @@ public class NikonTI1d extends TranslationStage1d {
     private final TranslationStage1dSettings settings;
     private double pfsConversionSlope = .1;
     private boolean calibrated = false;
-    private String devName;
-    private String pfsStatusName;
-    private String pfsOffsetName;
-    private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    private String oldState;
+    private final String devName;
+    private final String pfsStatusName;
+    private final String pfsOffsetName;
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private String oldPFSState;
     private final int MAX_PFS_OFFSET; //TODO fill this in.
 
     public NikonTI1d(TranslationStage1dSettings settings) {
@@ -154,15 +154,16 @@ public class NikonTI1d extends TranslationStage1d {
             if (evt.getProperty().equals("Position") && Globals.core().getDeviceName(evt.getDevice()).equals("TIPFSOffset")) {//TODO i made up these names
                 if (!evt.getValue().equals("Locked")) {
                     String currentState = ""; // TODO
-                    pcs.firePropertyChange("focusLock", oldState, currentState);
-                    oldState = currentState;
+                    pcs.firePropertyChange("focusLock", oldPFSState, currentState);
+                    oldPFSState = currentState;
                 }
             }
         } catch (Exception e) {
             Globals.mm().logs().logError(e);
         }
     }
-        
+    
+    @Override    
     public void addFocusLockListener(PropertyChangeListener listener) {
         this.pcs.addPropertyChangeListener("focusLock", listener);
     }
