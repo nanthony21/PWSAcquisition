@@ -22,6 +22,7 @@ import java.util.List;
 public abstract class ImagingConfiguration {
     ImagingConfigurationSettings settings;
     private boolean initialized_ = false;
+    private TranslationStage1d zStage;
     
     protected ImagingConfiguration(ImagingConfigurationSettings settings) {
         this.settings = settings;
@@ -38,10 +39,11 @@ public abstract class ImagingConfiguration {
     public abstract List<String> validate();
     
     public TranslationStage1d zStage() {
-        return TranslationStage1d.getInstance(new TranslationStage1dSettings()); //TODO implement this like the rest of the devices
+        return zStage;
     }
     
     private void initialize() throws MMDeviceException { //One-time initialization of devices
+        zStage = TranslationStage1d.getAutomaticInstance();
         camera().initialize();
         if (hasTunableFilter()) {
             tunableFilter().initialize();

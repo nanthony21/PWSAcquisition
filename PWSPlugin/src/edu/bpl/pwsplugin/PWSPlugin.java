@@ -22,7 +22,7 @@ package edu.bpl.pwsplugin;
 
 //Must Do:
 //Generate camera affine transform
-//
+//Software autofocus log step?
 //Add sequence logging.
 //Transmission imaging
 //STORM imaging
