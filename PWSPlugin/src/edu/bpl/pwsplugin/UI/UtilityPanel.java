@@ -10,7 +10,7 @@ import com.cureos.numerics.Cobyla;
 import com.cureos.numerics.CobylaExitStatus;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
-import edu.bpl.pwsplugin.hardware.HWConfiguration;
+import edu.bpl.pwsplugin.hardware.configurations.HWConfiguration;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;

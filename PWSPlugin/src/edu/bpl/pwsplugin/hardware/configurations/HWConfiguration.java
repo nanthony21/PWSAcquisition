@@ -1,5 +1,7 @@
-package edu.bpl.pwsplugin.hardware;
+package edu.bpl.pwsplugin.hardware.configurations;
 
+import com.google.common.collect.Iterables;
+import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
@@ -13,6 +15,7 @@ import java.util.NoSuchElementException;
 public class HWConfiguration {
     HWConfigurationSettings settings;
     Map<String, ImagingConfiguration> imConfigs;
+    private ImagingConfiguration activeConf_;
     
     public HWConfiguration(HWConfigurationSettings settings) {
         this.settings = settings;
@@ -20,6 +23,15 @@ public class HWConfiguration {
         for (int i=0; i < settings.configs.size(); i++) {
             ImagingConfigurationSettings s = settings.configs.get(i);
             imConfigs.put(s.name, ImagingConfiguration.getInstance(s));
+        }
+        if (imConfigs.size() > 0) {
+            ImagingConfiguration conf = Iterables.get(imConfigs.values(), 0);
+            this.activeConf_ = conf;
+            try {
+                this.activateImagingConfiguration(conf);//We must always have one, and only one, active configuration
+            } catch (MMDeviceException e) {
+                throw new RuntimeException(e); //This is messy, hopefully it just never comes up.
+            }
         }
     }
     
@@ -39,18 +51,13 @@ public class HWConfiguration {
         return new ArrayList<>(this.imConfigs.values());
     }
     
-    /*public void initialize() throws MMDeviceException {
-        for (ImagingConfiguration conf : this.imConfigs.values()) {
-            conf.initialize();
-        }
+    public ImagingConfiguration getActiveConfiguration() {
+        return activeConf_;
     }
     
-    public boolean hasBeenInitialized() {
-        for (ImagingConfiguration conf : this.imConfigs.values()) {
-            if (!conf.hasBeenInitialized()) {
-                return false;
-            }
-        }
-        return true; //We only get here if all imaging configurations are initialized.
-    }*/
+    public void activateImagingConfiguration(ImagingConfiguration conf) throws MMDeviceException{
+        this.activeConf_.deactivateConfiguration();
+        conf.activateConfiguration();
+        this.activeConf_ = conf;
+    }
 }

@@ -44,8 +44,8 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>>{
                 S settings = this.settingsList.get(i);
                 this.setCurrentSettings(settings);
                 ImagingConfiguration imConf = this.getImgConfig(); //Activation must occur every time the imaging configuration changes. Initializemetadata requires that the correct configuration is active.
-                if (!imConf.isActive()) { //It's important that the configuration is activated before we try pulling metadata like the affine transform
-                    imConf.activateConfiguration(); //Activation must occur every time the imaging configuration changes.
+                if (!(imConf == Globals.getHardwareConfiguration().getActiveConfiguration())) { //It's important that the configuration is activated before we try pulling metadata like the affine transform
+                    Globals.getHardwareConfiguration().activateImagingConfiguration(imConf); //Activation must occur every time the imaging configuration changes.
                 }
                 MetadataBase md = this.initializeMetadata(imConf);
                 String subFolderName = String.format("%s_%d", FileSpecs.getSubfolderName(this.getFileType()), i);

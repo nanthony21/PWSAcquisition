@@ -39,8 +39,8 @@ abstract class SingleAcquisitionBase<S> implements Acquisition<S> {
     
     private MetadataBase initializeMetadata() throws Exception {
         ImagingConfiguration imConf = this.getImgConfig(); 
-        if (!imConf.isActive()) { //It's important that the configuration is activated before we try pulling metadata like the affine transform
-            imConf.activateConfiguration(); //Activation must occur every time the imaging configuration changes.
+        if (!(imConf == Globals.getHardwareConfiguration().getActiveConfiguration())) { //It's important that the configuration is activated before we try pulling metadata like the affine transform
+            Globals.getHardwareConfiguration().activateImagingConfiguration(imConf); //Activation must occur every time the imaging configuration changes.
         }
         if (Globals.core().getPixelSizeUm() == 0.0) { //This information gets saved to the metadata below in the form of an affine transform.
             ReportingUtils.showMessage("It is highly recommended that you provide MicroManager with a pixel size setting for the current setup. Having this information is useful for analysis.");

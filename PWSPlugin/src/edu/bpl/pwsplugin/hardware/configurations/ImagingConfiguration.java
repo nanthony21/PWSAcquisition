@@ -23,6 +23,7 @@ public abstract class ImagingConfiguration {
     ImagingConfigurationSettings settings;
     private boolean initialized_ = false;
     private TranslationStage1d zStage;
+    private boolean activated_ = false;
     
     protected ImagingConfiguration(ImagingConfigurationSettings settings) {
         this.settings = settings;
@@ -44,6 +45,9 @@ public abstract class ImagingConfiguration {
     
     private void initialize() throws MMDeviceException { //One-time initialization of devices
         zStage = TranslationStage1d.getAutomaticInstance();
+        if (zStage == null) {
+            throw new MMDeviceException("No supported Z-stage was found.");
+        }
         camera().initialize();
         if (hasTunableFilter()) {
             tunableFilter().initialize();
@@ -52,7 +56,9 @@ public abstract class ImagingConfiguration {
         initialized_ = true;
     }
     
-    public void activateConfiguration() throws MMDeviceException { //Actually configure the hardware to use this configuration.
+    //We only want the following functions to be accessed by the HWConfigrartion
+    
+    void activateConfiguration() throws MMDeviceException { //Actually configure the hardware to use this configuration.
         if (!initialized_) {
             this.initialize(); //If we haven't yet then run the one-time initialization for the the devices.
         }
@@ -69,10 +75,16 @@ public abstract class ImagingConfiguration {
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }
+        activated_ = true;
     }
     
-    public boolean isActive() throws MMDeviceException {
-        try {
+    void deactivateConfiguration() {
+        activated_ = false;
+    }
+    
+    boolean isActive() throws MMDeviceException {
+        if (!activated_) { return false; }
+        try { //Even if the `activated_` flag is true we still check that the configuration group is properly set, just to make sure.
             boolean active = Globals.core().getCurrentConfig(settings.configurationGroup).equals(settings.configurationName);
             return active;
         } catch (InterruptedException ie) {
