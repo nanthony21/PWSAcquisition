@@ -27,13 +27,43 @@ public class NikonTI1d extends TranslationStage1d {
     private final String pfsStatusName;
     private final String pfsOffsetName;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    private String oldPFSState;
-    private final int MAX_PFS_OFFSET; //TODO fill this in.
+    private Status oldPFSState;
+    private final int MAX_PFS_OFFSET = 750; //I measured this as 753.025, weird, I'll just use 750
 
-    public NikonTI1d(TranslationStage1dSettings settings) {
+    public NikonTI1d(TranslationStage1dSettings settings) throws MMDeviceException {
         this.settings = settings;
         this.devName = settings.deviceName;
-        //TODO detect the pfs devices.
+        try {
+            String nikonHub = null;
+            for (String hubLabel : Globals.core().getLoadedDevicesOfType(DeviceType.HubDevice)) {
+                if (Globals.core().getDeviceName(hubLabel).equals("TIScope")) {
+                    nikonHub = hubLabel;
+                    break;
+                }
+            }
+            if (nikonHub == null) { 
+                throw new MMDeviceException("No Nikon Hub device was found."); 
+            }
+            String offsetName=null; String statusName=null;
+            for (String devLabel : Globals.core().getLoadedPeripheralDevices(nikonHub)) {
+                String name;
+                name = Globals.core().getDeviceName(devLabel);
+                if (name.equals("TIPFSOffset")) {
+                    offsetName = devLabel;
+                } else if (name.equals("TIPFSStatus")) {
+                    statusName = devLabel;
+                }
+            }
+            if (offsetName==null || statusName==null) {
+                throw new MMDeviceException("PFS devices were not found.");
+            }
+            pfsOffsetName = offsetName;
+            pfsStatusName = statusName;
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
+        
+        Globals.mm().events().registerForEvents(this); //Register for microanager events.
     }
     
     private void setPFSOffset(int offset) throws MMDeviceException {
@@ -147,16 +177,29 @@ public class NikonTI1d extends TranslationStage1d {
         }
     }
     
+    public enum Status {
+        LOCKED("Locked in focus"),
+        INRANGE("Within range of focus search"),
+        OUTRANGE("Out of focus search range");
+          
+        private final String text;
+        Status(final String text) {
+            this.text = text;
+        }
+
+        @Override
+        public String toString() {
+            return text;
+        }    
+    }
+    
     @Subscribe
     public void focusChanged(PropertyChangedEvent evt) {
-        
         try {
-            if (evt.getProperty().equals("Position") && Globals.core().getDeviceName(evt.getDevice()).equals("TIPFSOffset")) {//TODO i made up these names
-                if (!evt.getValue().equals("Locked")) {
-                    String currentState = ""; // TODO
-                    pcs.firePropertyChange("focusLock", oldPFSState, currentState);
-                    oldPFSState = currentState;
-                }
+            if (evt.getProperty().equals("Status") && evt.getDevice().equals(pfsStatusName)) {//TODO i made up these names
+                Status currentState = Status.valueOf(evt.getValue());
+                pcs.firePropertyChange("focusLock", oldPFSState, currentState);
+                oldPFSState = currentState;
             }
         } catch (Exception e) {
             Globals.mm().logs().logError(e);
@@ -167,4 +210,6 @@ public class NikonTI1d extends TranslationStage1d {
     public void addFocusLockListener(PropertyChangeListener listener) {
         this.pcs.addPropertyChangeListener("focusLock", listener);
     }
+    
+    //TODO check if objective changed. and make sure to recalibrated.
 }

@@ -49,7 +49,12 @@ public abstract class TranslationStage1d {
         
     public static TranslationStage1d getInstance(TranslationStage1dSettings settings) {
         if (settings.stageType == TranslationStage1d.Types.NikonTI) {
-            return new NikonTI1d(settings);
+            try {
+                return new NikonTI1d(settings);
+            } catch (MMDeviceException e) {
+                Globals.mm().logs().logError(e);
+                return null;
+            }
         } else if (settings.stageType == TranslationStage1d.Types.Simulated) {
             return new SimulationStage1d(settings);
         } else {
@@ -59,19 +64,21 @@ public abstract class TranslationStage1d {
     
     public static TranslationStage1d getAutomaticInstance() {
         //Detect which stage is connected automatically, assumes that only one is connected.
-        return StageFactory.detectConnectedStage();
+        return StageFactory.detectConnectedStage(); // This can be null
     }
 }
 
 
 class StageFactory {
     public static TranslationStage1d detectConnectedStage() {
-        for (String devName : Globals.core().getLoadedDevicesOfType(DeviceType.StageDevice)) {
+        for (String devLabel : Globals.core().getLoadedDevicesOfType(DeviceType.StageDevice)) {
             TranslationStage1dSettings settings = new TranslationStage1dSettings();
-            settings.deviceName = devName;
+            settings.deviceName = devLabel;
             String library;
+            String name;
             try {
-                library = Globals.core().getDeviceLibrary(devName);
+                library = Globals.core().getDeviceLibrary(devLabel);
+                name = Globals.core().getDeviceName(devLabel);
             } catch (Exception e) {
                 Globals.mm().logs().logError(e);
                 continue;
@@ -79,11 +86,14 @@ class StageFactory {
             if (library.equals("DemoCamera")) {
                 settings.stageType = TranslationStage1d.Types.Simulated;
                 return new SimulationStage1d(settings);
-            } else if (library.equals("NikonTI") || library.equals("NikonTI2")) { //TODO is the library name correct? can the same class handle the TI1 and the TI2?
+            } else if ((library.equals("NikonTI") || library.equals("NikonTI2")) && name.equals("TIZDrive")) { //TODO is the library name correct? can the same class handle the TI1 and the TI2?
                 settings.stageType = TranslationStage1d.Types.NikonTI;
-                return new NikonTI1d(settings);
-            } else {
-                Globals.mm().logs().logMessage(String.format("Detected unsupport translation stage %s from library %s", devName, library));
+                try {
+                    return new NikonTI1d(settings);
+                } catch (MMDeviceException e) {
+                    Globals.mm().logs().logError(e);
+                    return null;
+                }
             }
         }
         return null; // no stages detected
