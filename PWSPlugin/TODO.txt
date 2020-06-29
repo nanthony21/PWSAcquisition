@@ -5,7 +5,6 @@ Experimenting needed: fluorescence z offset silently disables PFS
 test software autofocus
 
 2:
-pending testing: fluorescence switches back to initial filter between every image.
 add simple view for acquisition.
 
 3:
