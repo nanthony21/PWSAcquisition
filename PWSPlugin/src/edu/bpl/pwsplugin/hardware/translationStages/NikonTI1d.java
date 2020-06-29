@@ -11,7 +11,11 @@ import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.List;
 import mmcorej.DeviceType;
+import org.apache.commons.math3.fitting.PolynomialCurveFitter;
+import org.apache.commons.math3.fitting.WeightedObservedPoint;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.micromanager.events.PropertyChangedEvent;
 
@@ -21,7 +25,6 @@ import org.micromanager.events.PropertyChangedEvent;
  */
 public class NikonTI1d extends TranslationStage1d {
     private final TranslationStage1dSettings settings;
-    private double pfsConversionSlope = .1;
     private boolean calibrated = false;
     private final String devName;
     private final String pfsStatusName;
@@ -29,6 +32,7 @@ public class NikonTI1d extends TranslationStage1d {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private Status PFSStatus;
     private final int MAX_PFS_OFFSET = 750; //I measured this as 753.025, weird, I'll just use 750
+    private double[] pfsOffsetConversion; //Should be 3 elements giving the quadratic fit of x: um, y: offset. stored in order [intercept, linear, quadratic]
 
     public NikonTI1d(TranslationStage1dSettings settings) throws MMDeviceException {
         this.settings = settings;
@@ -84,43 +88,25 @@ public class NikonTI1d extends TranslationStage1d {
             throw new MMDeviceException(e);
         }
         this.setAutoFocusEnabled(true);
-        SimpleRegression regression = new SimpleRegression(true);
+        List<WeightedObservedPoint> observations = new ArrayList<>();
+        double zOrig = this.getPosUm();
         for (int offset=0; offset<MAX_PFS_OFFSET; offset+=100) { //TODO see how well this works and reduce the number of iterations to speed it up. maybe we don't need to go to max offset.
             this.setPFSOffset(offset); 
             while (this.PFSStatus!=Status.FOCUSING) { Thread.sleep(10); } //Sometimes there is a delay, but at some point the status must chnage to "focusing"
             while (this.PFSStatus!=Status.LOCKED) { Thread.sleep(10); } //Wait until we are locked gain before measuring z position.
-            regression.addData(offset, this.getPosUm());
-            System.out.println(String.format("%s, %s", offset, this.getPosUm()));
+            observations.add(new WeightedObservedPoint(1, this.getPosUm() - zOrig, offset));
+            System.out.println(String.format("%s, %s", this.getPosUm() - zOrig, offset));
         }
-        this.pfsConversionSlope = regression.getSlope(); //TODO rather than using slope, use a quadratic regression and use "predict" Also make everything relative (i.e intercept should be 0, only used for relative moves.
-        double r2 = regression.getRSquare();
-        Globals.mm().logs().logMessage(String.format("PWSPlugin: Nikon zStage calibrated. Slope %f, R2 %f", pfsConversionSlope, r2));
+        PolynomialCurveFitter regression = PolynomialCurveFitter.create(2);
+        this.pfsOffsetConversion = regression.fit(observations);
         calibrated = true;
     }
-    
-   /* //@Override
-    protected double convertValueToUm(double val) throws MMDeviceException{
-        if (this.getAutoFocusEnabled()) {
-            return val * pfsConversionSlope;
-        } else {
-            return val;
-        }
-    }
-    
-    //@Override
-    protected double convertUmToValue(double um) throws MMDeviceException {
-        if (this.getAutoFocusEnabled()) {
-            return um / pfsConversion;
-        } else {
-            return um;
-        }     
-    }*/
     
     public void setPosRelativeUm(double um) throws MMDeviceException {
         try {
             if (this.getAutoFocusEnabled()) {
                 if (!calibrated) { this.calibrate(); }
-                double deltaOffset = um / pfsConversionSlope; //This can only work for relative moves.
+                double deltaOffset = pfsOffsetConversion[0] + pfsOffsetConversion[1]*um + pfsOffsetConversion[2]*Math.pow(um, 2);
                 double offset = Double.valueOf(Globals.core().getProperty(pfsOffsetName, "Position"));
                 Globals.core().setProperty(pfsOffsetName, "Position", offset);
             } else {
