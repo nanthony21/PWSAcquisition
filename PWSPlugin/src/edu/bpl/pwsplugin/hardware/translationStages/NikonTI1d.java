@@ -27,7 +27,7 @@ public class NikonTI1d extends TranslationStage1d {
     private final String pfsStatusName;
     private final String pfsOffsetName;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    private Status oldPFSState;
+    private Status PFSStatus;
     private final int MAX_PFS_OFFSET = 750; //I measured this as 753.025, weird, I'll just use 750
 
     public NikonTI1d(TranslationStage1dSettings settings) throws MMDeviceException {
@@ -75,7 +75,7 @@ public class NikonTI1d extends TranslationStage1d {
         }
     }
     
-    public void calibrate() throws MMDeviceException {
+    public void calibrate() throws MMDeviceException, InterruptedException {
         //move pfs offset and measure zstage to calibrate pfsConversion.
         this.setPFSOffset(0);
         try {
@@ -84,12 +84,15 @@ public class NikonTI1d extends TranslationStage1d {
             throw new MMDeviceException(e);
         }
         this.setAutoFocusEnabled(true);
-        SimpleRegression regression = new SimpleRegression(false);
-        for (int offset=0; offset<MAX_PFS_OFFSET; offset+=10) { //TODO see how well this works and reduce the number of iterations to speed it up. maybe we don't need to go to max offset.
-            this.setPFSOffset(offset);
+        SimpleRegression regression = new SimpleRegression(true);
+        for (int offset=0; offset<MAX_PFS_OFFSET; offset+=100) { //TODO see how well this works and reduce the number of iterations to speed it up. maybe we don't need to go to max offset.
+            this.setPFSOffset(offset); 
+            while (this.PFSStatus!=Status.FOCUSING) { Thread.sleep(10); } //Sometimes there is a delay, but at some point the status must chnage to "focusing"
+            while (this.PFSStatus!=Status.LOCKED) { Thread.sleep(10); } //Wait until we are locked gain before measuring z position.
             regression.addData(offset, this.getPosUm());
+            System.out.println(String.format("%s, %s", offset, this.getPosUm()));
         }
-        this.pfsConversionSlope = regression.getSlope();
+        this.pfsConversionSlope = regression.getSlope(); //TODO rather than using slope, use a quadratic regression and use "predict" Also make everything relative (i.e intercept should be 0, only used for relative moves.
         double r2 = regression.getRSquare();
         Globals.mm().logs().logMessage(String.format("PWSPlugin: Nikon zStage calibrated. Slope %f, R2 %f", pfsConversionSlope, r2));
         calibrated = true;
@@ -117,14 +120,29 @@ public class NikonTI1d extends TranslationStage1d {
         try {
             if (this.getAutoFocusEnabled()) {
                 if (!calibrated) { this.calibrate(); }
-                double val = um / pfsConversionSlope; //This can only work for relative moves.
-                    Globals.core().setAutoFocusOffset(val); //TODO this doesn't work on PFS
+                double deltaOffset = um / pfsConversionSlope; //This can only work for relative moves.
+                double offset = Double.valueOf(Globals.core().getProperty(pfsOffsetName, "Position"));
+                Globals.core().setProperty(pfsOffsetName, "Position", offset);
             } else {
                 Globals.core().setRelativePosition(devName, um); //TODO do we need to block here?
             }
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }         
+    }
+    
+    public boolean busy() throws MMDeviceException{
+        boolean zStageBusy;
+        try {
+              zStageBusy = Globals.core().deviceBusy(this.devName);
+        } catch (Exception e) {
+              throw new MMDeviceException(e);
+        }
+        if (this.getAutoFocusEnabled()) {
+            return ((this.PFSStatus == Status.FOCUSING) || zStageBusy);
+        } else {
+            return zStageBusy;
+        }
     }
     
     @Override
@@ -179,6 +197,7 @@ public class NikonTI1d extends TranslationStage1d {
     
     public enum Status {
         LOCKED("Locked in focus"),
+        FOCUSING("Focusing"),
         INRANGE("Within range of focus search"),
         OUTRANGE("Out of focus search range");
           
@@ -190,16 +209,25 @@ public class NikonTI1d extends TranslationStage1d {
         @Override
         public String toString() {
             return text;
-        }    
+        }   
+        
+        public static Status fromString(String str) {
+            for (Status s : Status.values()){
+                if (s.toString().equals(str)) {
+                    return s;
+                }
+            }
+            return null;
+        }
     }
     
     @Subscribe
     public void focusChanged(PropertyChangedEvent evt) {
         try {
-            if (evt.getProperty().equals("Status") && evt.getDevice().equals(pfsStatusName)) {//TODO i made up these names
-                Status currentState = Status.valueOf(evt.getValue());
-                pcs.firePropertyChange("focusLock", oldPFSState, currentState);
-                oldPFSState = currentState;
+            if (evt.getProperty().equals("Status") && evt.getDevice().equals(pfsStatusName)) {
+                Status currentState = Status.fromString(evt.getValue());
+                pcs.firePropertyChange("focusLock", PFSStatus, currentState);
+                PFSStatus = currentState;
             }
         } catch (Exception e) {
             Globals.mm().logs().logError(e);
