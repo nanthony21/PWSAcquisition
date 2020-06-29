@@ -62,13 +62,14 @@ public abstract class ImagingConfiguration {
         if (!initialized_) {
             this.initialize(); //If we haven't yet then run the one-time initialization for the the devices.
         }
-        camera().activate();
-        if (hasTunableFilter()) {
-            tunableFilter().activate();
-        }
-        illuminator().activate();
         try {
-            Globals.core().setConfig(settings.configurationGroup, settings.configurationName);
+            Globals.core().setConfig(settings.configurationGroup, settings.configurationName); //Get this process started, it can sometimes take some time.
+            camera().activate();
+            if (hasTunableFilter()) {
+                tunableFilter().activate();
+            }
+            illuminator().activate();
+            Globals.core().waitForConfig(settings.configurationGroup, settings.configurationName); //Make sure to let the config group change finish before proceeding.
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
             throw new MMDeviceException(ie);
