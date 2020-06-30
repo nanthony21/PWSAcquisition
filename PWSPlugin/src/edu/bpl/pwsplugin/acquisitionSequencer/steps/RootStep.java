@@ -25,6 +25,7 @@ import javax.swing.tree.TreeNode;
  * @author nick
  */
 public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> {
+    //TODO more initialization: turn off PFS.
     public RootStep() {
         super(new SequencerSettings.RootStepSettings(), SequencerConsts.Type.ROOT);
     }

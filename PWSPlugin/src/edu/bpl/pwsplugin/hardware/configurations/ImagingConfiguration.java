@@ -63,6 +63,11 @@ public abstract class ImagingConfiguration {
             this.initialize(); //If we haven't yet then run the one-time initialization for the the devices.
         }
         try {
+            boolean liveMode = false; 
+            if (Globals.mm().live().getIsLiveModeOn()) {
+                liveMode = true;
+                Globals.mm().live().setLiveMode(false); //We need to turn off live mode for this step or we can get errors.
+            }
             Globals.core().setConfig(settings.configurationGroup, settings.configurationName); //Get this process started, it can sometimes take some time.
             camera().activate();
             if (hasTunableFilter()) {
@@ -70,6 +75,9 @@ public abstract class ImagingConfiguration {
             }
             illuminator().activate();
             Globals.core().waitForConfig(settings.configurationGroup, settings.configurationName); //Make sure to let the config group change finish before proceeding.
+            if (liveMode) {
+                Globals.mm().live().setLiveMode(true); //Reenable live mode if it was on.
+            }
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
             throw new MMDeviceException(ie);

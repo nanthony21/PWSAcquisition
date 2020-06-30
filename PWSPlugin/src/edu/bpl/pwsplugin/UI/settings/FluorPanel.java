@@ -30,7 +30,7 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
     private JComboBox<String> imConfName = new JComboBox<>();
 
     
-    public FluorPanel() { //TODO disable the `wavelength field when a standard camera is selected.
+    public FluorPanel() { //TODO disable the `wavelength field when a standard camera is selected. Focus offset is confusing, lower limit of focus offset, only needs to be <50um at the very most.
         super(new MigLayout(), FluorSettings.class);
         
         wvSpinner = new ImprovedJSpinner(new SpinnerNumberModel(550, 400, 1000, 5));
