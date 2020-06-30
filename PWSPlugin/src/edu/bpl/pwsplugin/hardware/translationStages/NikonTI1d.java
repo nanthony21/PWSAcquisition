@@ -7,13 +7,21 @@ package edu.bpl.pwsplugin.hardware.translationStages;
 
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.FocusLock;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import mmcorej.DeviceType;
+import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoint;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
@@ -33,6 +41,7 @@ public class NikonTI1d extends TranslationStage1d {
     private Status PFSStatus_;
     private final int MAX_PFS_OFFSET = 750; //I measured this as 753.025, weird, I'll just use 750
     private double[] coef_; //Should be 3 elements giving the quadratic fit of x: um, y: offset. stored in order [intercept, linear, quadratic]
+    private final FocusLockWatcher fl;
 
     public NikonTI1d(TranslationStage1dSettings settings) throws MMDeviceException {
         this.settings = settings;
@@ -67,7 +76,7 @@ public class NikonTI1d extends TranslationStage1d {
             throw new MMDeviceException(e);
         }
         
-        Globals.mm().events().registerForEvents(this); //Register for microanager events.
+        fl = new FocusLockWatcher(); //run thread to watch focus status. //Globals.mm().events().registerForEvents(this); //Register for microanager events.
     }
     
     private void setPFSOffset(double offset) throws MMDeviceException {
@@ -119,23 +128,18 @@ public class NikonTI1d extends TranslationStage1d {
         calibrated = true;
     }
     
-    private double relPosToOffset(double relUm) {
-        //relUm is 0 when PFS offset is 0, increasing UM increases offset
-        return coef_[0] + coef_[1]*relUm + coef_[2]*Math.pow(relUm, 2);
-    }
-    
     private double offsetToRelPos(double offset) {
-        //Use the positive quadratic formula to invert the curve fit.
-        double top = (-coef_[1] + Math.sqrt(Math.pow(coef_[1], 2) - 4*coef_[2]*(coef_[0]-offset)));
-        double bottom = (2*coef_[2]);
-        return top / bottom;
+        //Uses the positive quadratic formula to invert the curve fit.
+        double numerator = (-coef_[1] + Math.sqrt(Math.pow(coef_[1], 2) - 4*coef_[2]*(coef_[0]-offset)));
+        double denominator = (2*coef_[2]);
+        return numerator / denominator;
     }
     
     private double getOffsetForMicron(double currentOffset, double relUm) {
         //Use our PFS conversion coefficients to determine what the new PFS offset should be to achieve a relative movement in microns.
         double currentRelMicron = offsetToRelPos(currentOffset);
         double finalRelMicron = currentRelMicron + relUm;
-        double newOffset = relPosToOffset(finalRelMicron);
+        double newOffset = new PolynomialFunction(coef_).value(finalRelMicron);
         if ((newOffset > MAX_PFS_OFFSET) || (newOffset < 0)) {
             throw new RuntimeException(String.format("PFS offset of %f is out of bounds", newOffset));
         }
@@ -147,7 +151,7 @@ public class NikonTI1d extends TranslationStage1d {
             if (this.getAutoFocusEnabled()) {
                 if (!calibrated) { this.calibrate(); }
                 double currentOffset = getPFSOffset();
-                double newOffset = this.getOffsetForMicron(currentOffset, um);
+                double newOffset = this.getOffsetForMicron(currentOffset, um); //TODO, if this doesn't work well enough just recurse it 2 or 3 times.
                 this.setPFSOffset(newOffset);
             } else {
                 Globals.core().setRelativePosition(devName, um); 
@@ -249,7 +253,9 @@ public class NikonTI1d extends TranslationStage1d {
         }
     }
     
-    @Subscribe
+    //TODO check if objective changed. and make sure to recalibrate.
+    
+    /*@Subscribe
     public void focusChanged(PropertyChangedEvent evt) {
         try {
             if (evt.getProperty().equals("Status") && evt.getDevice().equals(pfsStatusName)) {
@@ -261,11 +267,47 @@ public class NikonTI1d extends TranslationStage1d {
             Globals.mm().logs().logError(e);
         }
     }
-    
+
     @Override    
     public void addFocusLockListener(PropertyChangeListener listener) {
         this.pcs.addPropertyChangeListener("focusLock", listener);
     }
     
-    //TODO check if objective changed. and make sure to recalibrate.
+
+    class FocusLockWatcher implements Runnable {
+        //TODO is this actually faster than using the events?
+        private final ScheduledExecutorService exc = Executors.newSingleThreadScheduledExecutor();
+        private Status currentStatus;
+        
+        public FocusLockWatcher() {
+            long period = 10; //100hz
+            exc.scheduleAtFixedRate(this, 10, period, TimeUnit.DAYS); //initial delay to avoid issue with leaking this in constructor.
+        }
+
+        @Override
+        public void run() {
+            //boolean run = true;
+            //while (run) {
+            try {
+                iterate();
+            } catch (MMDeviceException e) {
+                Globals.mm().logs().logError(e);
+            }
+            //}
+        }
+
+        private void iterate() throws MMDeviceException {
+            Status status = NikonTI1d.this.getPFSStatus();
+            if (status != currentStatus) {
+                emitStatusChanged(status, currentStatus);
+            }
+            currentStatus = status;
+        }
+        
+        private void emitStatusChanged(Status newStatus, Status oldStatus) {
+            NikonTI1d.this.pcs.firePropertyChange("focusLock", oldStatus, newStatus);
+        }
+
+    }
+    */
 }
