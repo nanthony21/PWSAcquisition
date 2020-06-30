@@ -5,27 +5,16 @@
  */
 package edu.bpl.pwsplugin.hardware.translationStages;
 
-import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.FocusLock;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import mmcorej.DeviceType;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoint;
-import org.apache.commons.math3.stat.regression.SimpleRegression;
-import org.micromanager.events.PropertyChangedEvent;
 
 /**
  *
@@ -41,7 +30,7 @@ public class NikonTI1d extends TranslationStage1d {
     private Status PFSStatus_;
     private final int MAX_PFS_OFFSET = 750; //I measured this as 753.025, weird, I'll just use 750
     private double[] coef_; //Should be 3 elements giving the quadratic fit of x: um, y: offset. stored in order [intercept, linear, quadratic]
-    private final FocusLockWatcher fl;
+    //private final FocusLockWatcher fl;
 
     public NikonTI1d(TranslationStage1dSettings settings) throws MMDeviceException {
         this.settings = settings;
@@ -76,12 +65,15 @@ public class NikonTI1d extends TranslationStage1d {
             throw new MMDeviceException(e);
         }
         
-        fl = new FocusLockWatcher(); //run thread to watch focus status. //Globals.mm().events().registerForEvents(this); //Register for microanager events.
+        //fl = new FocusLockWatcher(); //run thread to watch focus status. //Globals.mm().events().registerForEvents(this); //Register for microanager events.
     }
     
-    private void setPFSOffset(double offset) throws MMDeviceException {
+    private void setPFSOffset(double offset) throws MMDeviceException, InterruptedException {
         try {
             Globals.core().setProperty(pfsOffsetName, "Position", offset);
+            while (busy()) { Thread.sleep(10); } //block until refocused.
+        } catch (InterruptedException | MMDeviceException ee) {
+            throw ee;
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }
@@ -106,15 +98,21 @@ public class NikonTI1d extends TranslationStage1d {
     private void calibrate() throws MMDeviceException, InterruptedException {
         //move pfs offset and measure zstage to calibrate pfsConversion.
         List<WeightedObservedPoint> observations = new ArrayList<>();
-        this.setPFSOffset(0);
+        double origOffset = this.getPFSOffset(); //It is vital that we go back to this settings at the end.
+        this.setPFSOffset(100);
+        //Thread.sleep(100);
+        //while (busy()) { Thread.sleep(10); }
         try {
             Globals.core().fullFocus();
             this.setAutoFocusEnabled(true);
-            double zOrig = this.getPosUm();
-            for (int offset=0; offset<MAX_PFS_OFFSET; offset+=100) { //TODO see how well this works and reduce the number of iterations to speed it up. maybe we don't need to go to max offset.
+            double zOrig = 0; //This will actually get initialized on the first iteration.
+            for (int offset=0; offset<MAX_PFS_OFFSET; offset+=(MAX_PFS_OFFSET/4)-1) { //TODO see how well this works and reduce the number of iterations to speed it up. maybe we don't need to go to max offset.
                 this.setPFSOffset(offset); 
-                while (!(getPFSStatus() == Status.FOCUSING)) { Thread.sleep(10); } //Sometimes there is a delay, but at some point the status must chnage to "focusing"
-                while (!(getPFSStatus() == Status.LOCKED)) { Thread.sleep(10); } //Wait until we are locked gain before measuring z position.
+                //while (!(getPFSStatus() == Status.FOCUSING)) { Thread.sleep(10); } //Sometimes there is a delay, but at some point the status must chnage to "focusing"
+                //while (!(getPFSStatus() == Status.LOCKED)) { Thread.sleep(10); } //Wait until we are locked gain before measuring z position.
+                if (offset==0) {
+                    zOrig = this.getPosUm(); //All um measurement are relative to the measurement at pfsOffset = 0
+                }
                 observations.add(new WeightedObservedPoint(1, this.getPosUm() - zOrig, offset));
                 System.out.println(String.format("%s, %s", this.getPosUm() - zOrig, offset));
             }
@@ -125,6 +123,7 @@ public class NikonTI1d extends TranslationStage1d {
         }
         PolynomialCurveFitter regression = PolynomialCurveFitter.create(2);
         this.coef_ = regression.fit(observations);
+        this.setPFSOffset(origOffset);
         calibrated = true;
     }
     
@@ -135,18 +134,18 @@ public class NikonTI1d extends TranslationStage1d {
         return numerator / denominator;
     }
     
-    private double getOffsetForMicron(double currentOffset, double relUm) {
+    private double getOffsetForMicron(double currentOffset, double relUm) throws IllegalArgumentException {
         //Use our PFS conversion coefficients to determine what the new PFS offset should be to achieve a relative movement in microns.
         double currentRelMicron = offsetToRelPos(currentOffset);
         double finalRelMicron = currentRelMicron + relUm;
         double newOffset = new PolynomialFunction(coef_).value(finalRelMicron);
         if ((newOffset > MAX_PFS_OFFSET) || (newOffset < 0)) {
-            throw new RuntimeException(String.format("PFS offset of %f is out of bounds", newOffset));
+            throw new IllegalArgumentException(String.format("PFS offset of %f is out of bounds", newOffset));
         }
         return newOffset;
     }
     
-    public void setPosRelativeUm(double um) throws MMDeviceException {
+    public void setPosRelativeUm(double um) throws MMDeviceException, InterruptedException {
         try {
             if (this.getAutoFocusEnabled()) {
                 if (!calibrated) { this.calibrate(); }
@@ -155,8 +154,11 @@ public class NikonTI1d extends TranslationStage1d {
                 this.setPFSOffset(newOffset);
             } else {
                 Globals.core().setRelativePosition(devName, um); 
+                while (busy()) { Thread.sleep(10); }
             }
             while (this.busy()) {Thread.sleep(10); } //wait for it to finish focusing.
+        } catch (InterruptedException | MMDeviceException ee) {
+            throw ee;
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }         
@@ -165,9 +167,9 @@ public class NikonTI1d extends TranslationStage1d {
     public boolean busy() throws MMDeviceException{
         boolean zStageBusy;
         try {
-              zStageBusy = Globals.core().deviceBusy(this.devName);
+            zStageBusy = Globals.core().deviceBusy(this.devName);
         } catch (Exception e) {
-              throw new MMDeviceException(e);
+            throw new MMDeviceException(e);
         }
         if (this.getAutoFocusEnabled()) {
             return ((this.getPFSStatus() == Status.FOCUSING) || zStageBusy);
@@ -182,10 +184,11 @@ public class NikonTI1d extends TranslationStage1d {
             if (this.getAutoFocusEnabled()) {
                 if (!calibrated) { this.calibrate(); }
                 double currentUm = this.getPosUm();
-                double relativeUm = currentUm - um;
+                double relativeUm = um - currentUm;
                 this.setPosRelativeUm(relativeUm); // PFS can only be adjusted in a relative context.
             } else {
                 Globals.core().setPosition(devName, um);
+                while (busy()) { Thread.sleep(10); }
             }    
         } catch (Exception e) {
             throw new MMDeviceException(e);
