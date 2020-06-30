@@ -3,6 +3,7 @@ Experimenting needed: fluorescence z offset silently disables PFS
 	Idea: optical focus starts thread that periodically monitors zstage and detects fast changes associated with focus loss.
 	Idea: in separate thread monitor for loss of continuous focus lock, if found then go through refocus procedure
 test software autofocus
+callbacks getting called everywhere for some reason.
 
 2:
 add simple view for acquisition.
