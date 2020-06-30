@@ -12,13 +12,15 @@ import pandas as pd
 
 
 plt.plot(data[:,0], data[:,1])
+plt.xlabel("microns")
+plt.ylabel("PFS offset")
 
 # a = stats.linregress(data[:,0], data[:,1])
 
 # def fun(x):
 #     return x*a.slope + a.intercept
     
-x = np.linspace(0, data[:,0].max())
+x = np.linspace(data[:,0].min(), data[:,0].max())
 # plt.plot(x, fun(x))
 
 def q(x, c0, c1, c2):
