@@ -1,7 +1,5 @@
 1:
-Experimenting needed: fluorescence z offset silently disables PFS
-	Idea: optical focus starts thread that periodically monitors zstage and detects fast changes associated with focus loss.
-	Idea: in separate thread monitor for loss of continuous focus lock, if found then go through refocus procedure
+Idea: use events to monitor for loss of continuous focus lock, if found then go through refocus procedure
 test software autofocus, get answers
 test focus lock in realistic situation, ethanol cells and weird dishes.
 
@@ -9,9 +7,6 @@ test focus lock in realistic situation, ethanol cells and weird dishes.
 add simple view for acquisition.
 
 3:
-Config: Tunable filter use dropdown for device name
-
-4:
 Config automatically determine which adapter to use based on MMCore library name.
 Add autoexposure to sequencer
 Add our own logger that format messages to the mm logger
