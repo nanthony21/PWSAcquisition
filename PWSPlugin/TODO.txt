@@ -10,10 +10,9 @@ add simple view for acquisition.
 
 3:
 Config: Tunable filter use dropdown for device name
-disable wavelength field of fluorescence settings when using a standard camera.
-Fluorescence "focus offset" is confusing to user
 
 4:
+Config automatically determine which adapter to use based on MMCore library name.
 Add autoexposure to sequencer
 Add our own logger that format messages to the mm logger
 Add a cell selection step (AI type stuff)

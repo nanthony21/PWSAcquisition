@@ -11,10 +11,8 @@ import mmcorej.DeviceType;
 public class MMConfigAdapter {
     //Scans the Micro-Manager hardware configuration to provide useful information to the PWS plugin.
     private List<String> filters;
-    private List<String> connectedCameras;
-    private List<String> connectedShutters;
     public boolean autoFilterSwitching;
-    private List<ActionListener> onRefreshListeners = new ArrayList<>();
+    private final List<ActionListener> onRefreshListeners = new ArrayList<>();
 
     public void refresh() {
         //Scan the hardware configuration
@@ -26,11 +24,7 @@ public class MMConfigAdapter {
         } else {
             this.autoFilterSwitching = true;
         }
-        //Cameras
-        this.connectedCameras = Arrays.asList(Globals.core().getLoadedDevicesOfType(DeviceType.CameraDevice).toArray());
-        //Shutters (illuminators
-        this.connectedShutters = Arrays.asList(Globals.core().getLoadedDevicesOfType(DeviceType.ShutterDevice).toArray());
-        
+
         //Fire action listeners
         for (ActionListener l : this.onRefreshListeners) {
             l.actionPerformed(null);
@@ -52,11 +46,15 @@ public class MMConfigAdapter {
     }
 
     public List<String> getConnectedCameras() {
-        return this.connectedCameras;
+        return Arrays.asList(Globals.core().getLoadedDevicesOfType(DeviceType.CameraDevice).toArray());
     }
     
     public List<String> getConnectedShutters() {
-        return this.connectedShutters;
+        return Arrays.asList(Globals.core().getLoadedDevicesOfType(DeviceType.ShutterDevice).toArray());
+    }
+    
+    public List<String> getAllDevices() {
+        return Arrays.asList(Globals.core().getLoadedDevicesOfType(DeviceType.AnyType).toArray());
     }
     
 }

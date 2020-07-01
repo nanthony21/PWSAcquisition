@@ -57,10 +57,6 @@ public class CamUI extends BuilderJPanel<CamSettings>{
         super.add(new JLabel("Linearity Polynomial:"), "gapleft push");
         super.add(linEdit, "wrap");
 
-        this.updateComboBoxes();
-    }
-    
-    private void updateComboBoxes() {
         this.camCombo.setModel(new DefaultComboBoxModel<>(new Vector<String>(Globals.getMMConfigAdapter().getConnectedCameras())));
     }
     

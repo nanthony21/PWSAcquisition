@@ -5,12 +5,14 @@
  */
 package edu.bpl.pwsplugin.UI.settings;
 
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.hardware.settings.TunableFilterSettings;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -22,7 +24,7 @@ import net.miginfocom.swing.MigLayout;
  * @author N2-LiveCell
  */
 public class TunableFilterUI extends SingleBuilderJPanel<TunableFilterSettings>{
-    private JTextField name = new JTextField(20);
+    private JComboBox<String> name = new JComboBox<>();
     private JComboBox<TunableFilter.Types> filterType = new JComboBox<>();
     
     public TunableFilterUI() {
@@ -34,6 +36,8 @@ public class TunableFilterUI extends SingleBuilderJPanel<TunableFilterSettings>{
         this.add(name, "wrap");
         this.add(new JLabel("Type:"), "gapleft push");
         this.add(filterType, "wrap");
+        
+        this.name.setModel(new DefaultComboBoxModel<>(new Vector<String>(Globals.getMMConfigAdapter().getAllDevices())));
     }
     
     @Override
