@@ -165,7 +165,7 @@ public class NikonTI1d extends TranslationStage1d {
         }         
     }
     
-    public boolean busy() throws MMDeviceException{
+    private boolean busy() throws MMDeviceException{
         boolean zStageBusy;
         try {
             zStageBusy = Globals.core().deviceBusy(this.devName);

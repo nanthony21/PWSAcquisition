@@ -30,9 +30,20 @@ public class SimulationStage1d extends TranslationStage1d {
     }
     
     @Override
+    public void setPosRelativeUm(double um) throws MMDeviceException {
+        try {
+            Globals.core().setRelativePosition(settings.deviceName, um); 
+            Globals.core().waitForDevice(settings.deviceName);
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }         
+    }
+    
+    @Override
     public void setPosUm(double um) throws MMDeviceException {
         try {
             Globals.core().setPosition(this.settings.deviceName, um);
+            Globals.core().waitForDevice(settings.deviceName);
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }
