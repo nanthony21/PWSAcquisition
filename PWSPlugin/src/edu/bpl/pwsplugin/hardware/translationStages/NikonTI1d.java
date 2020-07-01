@@ -106,7 +106,7 @@ public class NikonTI1d extends TranslationStage1d {
             Globals.core().fullFocus();
             this.setAutoFocusEnabled(true);
             double zOrig = 0; //This will actually get initialized on the first iteration.
-            for (int offset=0; offset<MAX_PFS_OFFSET; offset+=(MAX_PFS_OFFSET/4)-1) { //TODO see how well this works and reduce the number of iterations to speed it up. maybe we don't need to go to max offset.
+            for (int offset=0; offset<MAX_PFS_OFFSET; offset+=(MAX_PFS_OFFSET/4)-1) {
                 this.setPFSOffset(offset); 
                 if (offset==0) {
                     zOrig = this.getPosUm(); //All um measurement are relative to the measurement at pfsOffset = 0
