@@ -2,7 +2,8 @@
 Experimenting needed: fluorescence z offset silently disables PFS
 	Idea: optical focus starts thread that periodically monitors zstage and detects fast changes associated with focus loss.
 	Idea: in separate thread monitor for loss of continuous focus lock, if found then go through refocus procedure
-test software autofocus
+test software autofocus, get answers
+test focus lock in realistic situation, ethanol cells and weird dishes.
 
 2:
 add simple view for acquisition.
@@ -10,10 +11,10 @@ add simple view for acquisition.
 3:
 Config: Tunable filter use dropdown for device name
 disable wavelength field of fluorescence settings when using a standard camera.
-Add autoexposure to sequencer
+Fluorescence "focus offset" is confusing to user
 
 4:
-Fluorescence "focus offset" is confusing to user
+Add autoexposure to sequencer
 Add our own logger that format messages to the mm logger
 Add a cell selection step (AI type stuff)
 Focus lock snaps a single image and tests sharpness

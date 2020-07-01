@@ -38,7 +38,11 @@ public class Globals {
         instance().mmAdapter = new MMConfigAdapter();
         instance().acqMan_ = new AcquisitionManager();
         instance().frame = new PluginFrame();
-        instance().config = new HWConfiguration(new HWConfigurationSettings()); //Set these even though they should be overridden when the settings are loaded.
+        try {
+            instance().config = new HWConfiguration(new HWConfigurationSettings()); //Set these even though they should be overridden when the settings are loaded.
+        } catch (MMDeviceException e) {
+            throw new RuntimeException(e); 
+        }
 
         PWSPluginSettings settings = Globals.loadSettings();
         instance().frame.populateFields(settings);
@@ -90,8 +94,12 @@ public class Globals {
     }
     
     public static void setHardwareConfigurationSettings(HWConfigurationSettings configg) {
-        instance().config = new HWConfiguration(configg);
-        instance().pcs.firePropertyChange("config", null, instance().config);
+        try {
+            instance().config = new HWConfiguration(configg);
+            instance().pcs.firePropertyChange("config", null, instance().config);
+        } catch (MMDeviceException e) {
+            Globals.mm().logs().showError(e);
+        }
     }
     
     public static HWConfiguration getHardwareConfiguration() {

@@ -15,6 +15,8 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
+import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
+import java.util.NoSuchElementException;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
@@ -49,6 +51,16 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
             }
             imConfName.setModel(new DefaultComboBoxModel<String>(confNames.toArray(new String[confNames.size()])));
         } catch (NullPointerException e) {} //This will often fail during plugin initialization. that's ok, the PropertyChangeListener should also set this once initialization is completed.
+        
+        imConfName.addItemListener((evt) -> {
+            String name = (String) imConfName.getSelectedItem();
+            if (Globals.getHardwareConfiguration() != null) { //It can be null on startup
+                try {
+                    ImagingConfiguration conf = Globals.getHardwareConfiguration().getImagingConfigurationByName(name);
+                    wvSpinner.setEnabled(conf.hasTunableFilter());
+                } catch (NoSuchElementException e) {}
+            }
+        });
                 
         super.add(new JLabel("Wavelength (nm)"));
         super.add(new JLabel("Exposure (ms)"));
@@ -56,7 +68,7 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
         super.add(wvSpinner);
         super.add(exposureSpinner);
         super.add(filterCombo, "wrap");
-        super.add(new JLabel("Focus Offset"));
+        super.add(new JLabel("Z Offset (um)"));
         super.add(new JLabel("Imaging Configuration"), "span, wrap");
         super.add(focusOffsetSpinner);
         super.add(imConfName, "span");

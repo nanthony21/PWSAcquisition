@@ -33,7 +33,7 @@ public class ImagingConfigUI extends SingleBuilderJPanel<ImagingConfigurationSet
     private final JComboBox<String> configGroup = new JComboBox<>();
     private final JComboBox<String> configState = new JComboBox<>();
     
-    public ImagingConfigUI() {
+    public ImagingConfigUI() { //TODO validate imaging configuration settings. (name must be filled out, etc.)
         super(new MigLayout(), ImagingConfigurationSettings.class);
         
         JPanel p = new JPanel(new MigLayout("insets 0 0 0 0, fill"));

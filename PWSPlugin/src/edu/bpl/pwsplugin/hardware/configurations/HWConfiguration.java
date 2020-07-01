@@ -17,7 +17,7 @@ public class HWConfiguration {
     Map<String, ImagingConfiguration> imConfigs;
     private ImagingConfiguration activeConf_;
     
-    public HWConfiguration(HWConfigurationSettings settings) {
+    public HWConfiguration(HWConfigurationSettings settings) throws MMDeviceException {
         this.settings = settings;
         imConfigs = new HashMap<>();
         for (int i=0; i < settings.configs.size(); i++) {
@@ -27,11 +27,7 @@ public class HWConfiguration {
         if (imConfigs.size() > 0) {
             ImagingConfiguration conf = Iterables.get(imConfigs.values(), 0);
             this.activeConf_ = conf;
-            try {
-                this.activateImagingConfiguration(conf);//We must always have one, and only one, active configuration
-            } catch (MMDeviceException e) {
-                throw new RuntimeException(e); //This is messy, hopefully it just never comes up.
-            }
+            this.activateImagingConfiguration(conf);//We must always have one, and only one, active configuration
         }
     }
     
@@ -55,7 +51,7 @@ public class HWConfiguration {
         return activeConf_;
     }
     
-    public void activateImagingConfiguration(ImagingConfiguration conf) throws MMDeviceException{
+    public final void activateImagingConfiguration(ImagingConfiguration conf) throws MMDeviceException{
         this.activeConf_.deactivateConfiguration();
         conf.activateConfiguration();
         this.activeConf_ = conf;
