@@ -77,13 +77,17 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
     @FunctionalInterface
     protected static interface SimFn extends Function<SimulatedStatus, SimulatedStatus> {} 
     
-    public final SequencerFunction getFunction(List<SequencerFunction> callbacks) {
+    protected SequencerFunction getCallback() { return null; } //Subclasses can override to define a callback function that will be run before each child step.
+    
+    public final SequencerFunction getFunction(List<SequencerFunction> rcvdCallbacks) {
+        final List<SequencerFunction> callbacks = new ArrayList<>(rcvdCallbacks); //To avoid confusion due to the mutable nature of the List we make sure that each time a sequencer function is created it has it's own copy of callbacks to work with, other wise all steps end up sharing a single callback list.
+        if (this.getCallback()!=null) { callbacks.add(this.getCallback()); }
         SequencerFunction stepFunc = this.getStepFunction(callbacks);
         return (status) -> {
             //Update the status object with information about the current step.
             status.coords().moveDownTree(Step.this); //Append this step to the end of our coordinate path.
             //Run any callbacks that have been set for this step.
-            for (SequencerFunction func : callbacks) {
+            for (SequencerFunction func : rcvdCallbacks) {
                 status = func.apply(status);
             } 
             //Run the function for this step subclass.

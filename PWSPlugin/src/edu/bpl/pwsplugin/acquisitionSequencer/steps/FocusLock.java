@@ -22,7 +22,8 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
         super(new SequencerSettings.FocusLockSettings(), SequencerConsts.Type.PFS);
     }
 
-    private SequencerFunction getCallback() {
+    @Override
+    protected SequencerFunction getCallback() {
         return (status) -> {
             Step[] path = status.coords().getTreePath(); //Indicates our current location in the tree of steps.
             if (path[path.length - 1].getType() == SequencerConsts.Type.ACQ) {
@@ -43,7 +44,6 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
 
     @Override
     public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
-        callbacks.add(this.getCallback());
         SequencerFunction stepFunction = super.getSubstepsFunction(callbacks);
         SequencerSettings.FocusLockSettings settings = this.getSettings();
         return new SequencerFunction() {
