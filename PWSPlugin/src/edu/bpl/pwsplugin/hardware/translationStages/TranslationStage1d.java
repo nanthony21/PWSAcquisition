@@ -26,10 +26,13 @@ public abstract class TranslationStage1d {
     
     public abstract double getPosUm() throws MMDeviceException;
     
-    public abstract void setPosUm(double um) throws MMDeviceException;
+    public abstract void setPosUm(double um) throws MMDeviceException, InterruptedException;
+    
+    public abstract void setPosRelativeUm(double um) throws MMDeviceException, InterruptedException;
     
     public abstract boolean hasAutoFocus();
     
+    //The following only need to be implemented if `hasAutoFocus` is true
     public void setAutoFocusEnabled(boolean enable) throws MMDeviceException {
         throw new UnsupportedOperationException();
     }

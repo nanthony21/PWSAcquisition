@@ -145,6 +145,7 @@ public class NikonTI1d extends TranslationStage1d {
         return newOffset;
     }
     
+    @Override
     public void setPosRelativeUm(double um) throws MMDeviceException, InterruptedException {
         try {
             if (this.getAutoFocusEnabled()) {
@@ -179,7 +180,7 @@ public class NikonTI1d extends TranslationStage1d {
     }
     
     @Override
-    public void setPosUm(double um) throws MMDeviceException {
+    public void setPosUm(double um) throws MMDeviceException, InterruptedException {
         try {
             if (this.getAutoFocusEnabled()) {
                 if (!calibrated) { this.calibrate(); }
