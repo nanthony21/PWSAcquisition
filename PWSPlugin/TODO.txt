@@ -2,6 +2,7 @@
 Idea: use events to monitor for loss of continuous focus lock, if found then go through refocus procedure
 test software autofocus, get answers
 test focus lock in realistic situation, ethanol cells and weird dishes.
+test objective switching.
 
 2:
 add simple view for acquisition.
@@ -12,3 +13,4 @@ Add autoexposure to sequencer
 Add our own logger that format messages to the mm logger
 Add a cell selection step (AI type stuff)
 Focus lock snaps a single image and tests sharpness
+Z-Drive controller UI

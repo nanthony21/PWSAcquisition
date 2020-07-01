@@ -17,12 +17,10 @@ import org.micromanager.data.Image;
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class SimulatedCamera extends Camera {
-    CamSettings _settings;
-    String _devName;
+    private final CamSettings _settings;
     
     public SimulatedCamera(CamSettings settings) {
         _settings = settings;
-        _devName = settings.name;
     }
     
     @Override
@@ -50,7 +48,7 @@ public class SimulatedCamera extends Camera {
     
     @Override
     public String getName() { //Get the device name used in Micro-Manager.
-        return this._devName;
+        return _settings.name;
     }
     
     @Override
@@ -59,7 +57,7 @@ public class SimulatedCamera extends Camera {
             throw new UnsupportedOperationException();
         } else {
             try {
-                Globals.core().startSequenceAcquisition(_devName, numImages, delayMs, false);
+                Globals.core().startSequenceAcquisition(_settings.name, numImages, delayMs, false);
             } catch (Exception e) {
                throw new MMDeviceException(e);
             }
@@ -69,7 +67,7 @@ public class SimulatedCamera extends Camera {
     @Override
     public void stopSequence() throws MMDeviceException {
         try {
-            Globals.core().stopSequenceAcquisition(_devName);
+            Globals.core().stopSequenceAcquisition(_settings.name);
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }
@@ -83,7 +81,7 @@ public class SimulatedCamera extends Camera {
     @Override
     public void setExposure(double exposureMs) throws MMDeviceException {
         try {
-            Globals.core().setExposure(_devName, exposureMs);
+            Globals.core().setExposure(_settings.name, exposureMs);
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }
@@ -92,7 +90,7 @@ public class SimulatedCamera extends Camera {
     @Override
     public double getExposure() throws MMDeviceException {
         try {
-            return Globals.core().getExposure(_devName);
+            return Globals.core().getExposure(_settings.name);
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }
@@ -112,8 +110,8 @@ public class SimulatedCamera extends Camera {
     public List<String> validate() {
         List<String> errs = new ArrayList<>();
         try {
-            if (!Globals.core().getDeviceName(this._devName).equals("DCam")) {
-                errs.add(_devName + " is not a simulated DemoCamera device");
+            if (!Globals.core().getDeviceName(_settings.name).equals("DCam")) {
+                errs.add(_settings.name + " is not a simulated DemoCamera device");
             }
         } catch (Exception e) {
             errs.add(e.getMessage());
