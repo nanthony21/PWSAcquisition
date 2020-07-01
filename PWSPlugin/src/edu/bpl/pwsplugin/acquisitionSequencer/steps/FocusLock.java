@@ -53,22 +53,19 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
     public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
         SequencerFunction stepFunction = super.getSubstepsFunction(callbacks);
         SequencerSettings.FocusLockSettings settings = this.getSettings();
-        return new SequencerFunction() {
-            @Override
-            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-                //FocusLock A function that turns on the PFS, runs substep and then turns it off.
-                Globals.core().setAutoFocusOffset(settings.zOffset); //Does this serve any purpose?
-                Globals.core().fullFocus(); //TODO this can fail and throw an exception, don't let that crash the whole experiment.
-                Globals.core().enableContinuousFocus(true);
-                Thread.sleep((long) (settings.preDelay * 1000.0));
-                AcquisitionStatus newstatus = stepFunction.apply(status);
-                if (!Globals.core().isContinuousFocusLocked()) {
-                    Globals.mm().logs().logMessage("Autofocus failed!");
-                    status.newStatusMessage("Autofocus failed!");
-                }
-                Globals.core().enableContinuousFocus(false);
-                return newstatus;
+        return (status) -> {
+            //FocusLock A function that turns on the PFS, runs substep and then turns it off.
+            Globals.core().setAutoFocusOffset(settings.zOffset); //Does this serve any purpose?
+            Globals.core().fullFocus(); //TODO this can fail and throw an exception, don't let that crash the whole experiment.
+            Globals.core().enableContinuousFocus(true);
+            Thread.sleep((long) (settings.preDelay * 1000.0));
+            AcquisitionStatus newstatus = stepFunction.apply(status);
+            if (!Globals.core().isContinuousFocusLocked()) {
+                Globals.mm().logs().logMessage("Autofocus failed!");
+                status.newStatusMessage("Autofocus failed!");
             }
+            Globals.core().enableContinuousFocus(false);
+            return newstatus;
         };
     }
 
