@@ -190,7 +190,9 @@ public class NikonTI1d extends TranslationStage1d {
             } else {
                 Globals.core().setPosition(devName, um);
                 while (busy()) { Thread.sleep(10); }
-            }    
+            }
+        } catch (InterruptedException | MMDeviceException ee) {
+            throw ee;
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }
@@ -225,6 +227,24 @@ public class NikonTI1d extends TranslationStage1d {
     public boolean getAutoFocusEnabled() throws MMDeviceException {
         try {
             return Globals.core().isContinuousFocusEnabled();
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
+    }
+    
+    @Override
+    public boolean getAutoFocusLocked() throws MMDeviceException {
+        try {
+            return Globals.core().isContinuousFocusLocked();
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
+    }
+    
+    @Override
+    public void runFullFocus() throws MMDeviceException {
+        try { //TODO add some smart software autofocus here so the image is actually focused.
+            Globals.core().fullFocus();
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }

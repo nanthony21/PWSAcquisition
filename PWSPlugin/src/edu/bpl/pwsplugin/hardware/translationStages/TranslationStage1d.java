@@ -41,6 +41,14 @@ public abstract class TranslationStage1d {
         throw new UnsupportedOperationException();
     }
     
+    public boolean getAutoFocusLocked() throws MMDeviceException {
+        throw new UnsupportedOperationException();
+    }
+    
+    public void runFullFocus() throws MMDeviceException {
+        throw new UnsupportedOperationException();
+    }
+    
     public void addFocusLockListener(PropertyChangeListener listener) {
         throw new UnsupportedOperationException();
     }
