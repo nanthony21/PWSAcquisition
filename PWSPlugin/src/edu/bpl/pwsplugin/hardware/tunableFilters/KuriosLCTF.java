@@ -31,7 +31,20 @@ public class KuriosLCTF extends DefaultTunableFilter {
         if (!identify()) {
             errs.add("KuriosLCTF: Could not find device named " + this.devName + ".");
         }
-        //TODO check if warmed up. check bandwidth mode
+        try {
+            String prop = Globals.core().getProperty(devName, "Status");
+            if (!prop.equals("Ready")) {
+                errs.add(String.format("Kurios LCTF indicates that the device is `%s` rather than `Ready`, please wait.", prop));
+            }
+            prop = Globals.core().getProperty(devName, "Spectral Range");
+            if (!prop.equals("Visible")) {
+                errs.add(String.format("Kurios LCTF reports a spectral range of `%s` rather than `Visible`", prop));
+            }
+        } catch (Exception e) {
+            Globals.mm().logs().logError(e);
+            errs.add("Error in Kurios LCTF validation. Please see corelog file.");
+        }
+        //TODO What do we do about checking bandwidth?
         return errs; 
     }
 }
