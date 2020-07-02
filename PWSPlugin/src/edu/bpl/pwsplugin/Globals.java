@@ -52,7 +52,7 @@ public class Globals {
     }
     
     public static void saveSettings(PWSPluginSettings settings) {
-        instance().mm().profile().getSettings(PWSPlugin.class).putString("settings", settings.toJsonString());
+        Globals.mm().profile().getSettings(PWSPlugin.class).putString("settings", settings.toJsonString());
     }
     
     private static PWSPluginSettings loadSettings() {
