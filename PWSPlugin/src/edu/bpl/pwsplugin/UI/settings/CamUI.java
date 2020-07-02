@@ -1,6 +1,7 @@
 
 package edu.bpl.pwsplugin.UI.settings;
 
+import com.google.common.collect.ImmutableList;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
@@ -17,8 +18,11 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import mmcorej.MMCoreJ;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
 
@@ -31,6 +35,7 @@ public class CamUI extends BuilderJPanel<CamSettings>{
     private final ImprovedJSpinner darkCountsSpinner;
     private final DoubleListTextField linEdit = new DoubleListTextField();
     private final JComboBox<Camera.Types> camType = new JComboBox<>();
+    private final JComboBox<String> binningProperty = new JComboBox<>();
     
     public CamUI() {
         super(new MigLayout(), CamSettings.class);
@@ -56,8 +61,22 @@ public class CamUI extends BuilderJPanel<CamSettings>{
         super.add(darkCountsSpinner, "wrap");
         super.add(new JLabel("Linearity Polynomial:"), "gapleft push");
         super.add(linEdit, "wrap");
+        super.add(new JLabel("Binning:"), "gapleft push");
+        super.add(binningProperty, "wrap");
 
+        this.camCombo.addItemListener((evt) -> { //When the user selects a camera populate binning with the possible values.
+            try {
+                String[] binningVals = Globals.core().getAllowedPropertyValues((String) this.camCombo.getSelectedItem(), MMCoreJ.getG_Keyword_Binning()).toArray();
+                this.binningProperty.setModel(new DefaultComboBoxModel<>(binningVals));
+            } catch (Exception e) {
+                Globals.mm().logs().logError(e);
+            }              
+        });
+        
         this.camCombo.setModel(new DefaultComboBoxModel<>(new Vector<String>(Globals.getMMConfigAdapter().getConnectedCameras())));
+        for (ItemListener l : this.camCombo.getItemListeners()) {
+            l.itemStateChanged(new ItemEvent(camCombo, ItemEvent.ITEM_STATE_CHANGED, camCombo.getSelectedItem(), ItemEvent.SELECTED)); //Manually fire any item listeners to get everything initialized.
+        }
     }
     
     @Override
@@ -66,6 +85,7 @@ public class CamUI extends BuilderJPanel<CamSettings>{
         camType.setSelectedItem(settings.camType);
         darkCountsSpinner.setValue(settings.darkCounts);
         linEdit.populateFields(settings.linearityPolynomial);
+        this.binningProperty.setSelectedItem(settings.binning);
     }
     
     @Override
@@ -75,6 +95,7 @@ public class CamUI extends BuilderJPanel<CamSettings>{
         settings.camType = (Camera.Types) camType.getSelectedItem();
         settings.darkCounts = (Integer) darkCountsSpinner.getValue();
         settings.linearityPolynomial = linEdit.build(); //This can throw an exception.
+        settings.binning = (String) binningProperty.getSelectedItem();
         return settings;
     }
 }

@@ -9,7 +9,7 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.CamSettings;
 import java.util.List;
-import jdk.nashorn.internal.objects.Global;
+import mmcorej.MMCoreJ;
 import org.micromanager.data.Image;
 
 /**
@@ -26,10 +26,11 @@ public abstract class DefaultCamera implements Camera {
     @Override
     public void initialize() throws MMDeviceException {
         try {
-            Globals.core().setProperty(settings.name, "Binning", settings.binning);
+            Globals.core().setProperty(settings.name, MMCoreJ.getG_Keyword_Binning(), settings.binning);
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }
+        Globals.mm().app().refreshGUI(); //update gui to reflect new binning.
     }
 
     @Override
