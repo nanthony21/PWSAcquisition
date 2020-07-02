@@ -204,29 +204,10 @@ public abstract class NikonTIBase extends TranslationStage1d {
     
     public enum Status {
         //An enumerator representing the possible PFS statuses
-        LOCKED("Locked in focus"),
-        FOCUSING("Focusing"),
-        INRANGE("Within range of focus search"),
-        OUTRANGE("Out of focus search range");
-          
-        private final String text;
-        Status(final String text) {
-            this.text = text;
-        }
-
-        @Override
-        public String toString() {
-            return text;
-        }   
-        
-        public static Status fromString(String str) {
-            for (Status s : Status.values()){
-                if (s.toString().equals(str)) {
-                    return s;
-                }
-            }
-            return null;
-        }
+        LOCKED, //Locked in focus
+        FOCUSING, //Searching for focus
+        INRANGE, //Could try to focus but isn't currently
+        OUTRANGE; //Could not try to focus, specimen is probably out of search range.
     }
     
     //TODO check if objective changed. and make sure to recalibrate.

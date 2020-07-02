@@ -81,11 +81,24 @@ public class NikonTI_zStage extends NikonTIBase {
     
     @Override
     protected NikonTIBase.Status getPFSStatus() throws MMDeviceException {
+        String statusStr;
         try {
-            return NikonTIBase.Status.fromString(Globals.core().getProperty(pfsStatusName, "Status"));
+            statusStr = Globals.core().getProperty(pfsStatusName, "Status");
+            switch (statusStr) {
+                case ("Locked in focus"):
+                    return NikonTIBase.Status.LOCKED;
+                case ("Focusing"):
+                    return NikonTIBase.Status.FOCUSING;
+                case ("Within range of focus search"):
+                    return NikonTIBase.Status.INRANGE;
+                case ("Out of focus search range"):
+                    return NikonTIBase.Status.OUTRANGE;
+            }
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }
+        //If we got this far then the status string must not have been recognized;
+        throw new RuntimeException(String.format("Status string (%s) was not recognized.", statusStr));
     }
     
     @Override
