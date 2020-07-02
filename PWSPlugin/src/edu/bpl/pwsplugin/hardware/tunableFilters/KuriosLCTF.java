@@ -19,7 +19,7 @@ public class KuriosLCTF extends DefaultTunableFilter {
     @Override
     public boolean identify() {
         try {
-            return Globals.core().getDeviceName(this.devName).equals("TODO");
+            return Globals.core().getDeviceName(this.devName).equals("Kurios LCTF");
         } catch (Exception e) {
             return false;
         }

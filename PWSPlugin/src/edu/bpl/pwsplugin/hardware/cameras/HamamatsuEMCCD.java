@@ -27,7 +27,7 @@ public class HamamatsuEMCCD extends DefaultCamera {
         try {
             return ((Globals.core().getDeviceName(this.settings.name).equals("HamamatsuHam_DCAM"))
                 && 
-                (Globals.core().getProperty(this.settings.name, "CameraName").equals("TODO")));
+                (Globals.core().getProperty(this.settings.name, "CameraName").equals("C9100-13")));
         } catch (Exception e) {
             return false;
         }

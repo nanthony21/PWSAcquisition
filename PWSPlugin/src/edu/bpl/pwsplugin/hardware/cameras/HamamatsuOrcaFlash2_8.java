@@ -24,7 +24,7 @@ public class HamamatsuOrcaFlash2_8 extends DefaultCamera {
     public boolean supportsExternalTriggering() { return false; }
         
     @Override
-    public boolean supportsTriggerOutput() { return false; }
+    public boolean supportsTriggerOutput() { return false; } //The camera actually does support this but we don't have the cable for it and have never tried.
     
     @Override
     public void configureTriggerOutput(boolean enable) throws UnsupportedOperationException {
