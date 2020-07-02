@@ -15,42 +15,45 @@ import java.util.List;
  *
  * @author N2-LiveCell
  */
-public abstract class TunableFilter {
-    public abstract void setWavelength(int wavelength) throws MMDeviceException;
+public interface TunableFilter {
+    public void setWavelength(int wavelength) throws MMDeviceException;
     
-    public abstract int getWavelength() throws MMDeviceException;
+    public int getWavelength() throws MMDeviceException;
     
-    public abstract boolean supportsSequencing();
+    public boolean supportsSequencing();
     
-    public abstract int getMaxSequenceLength() throws MMDeviceException;
+    public int getMaxSequenceLength() throws MMDeviceException;
     
-    public abstract void loadSequence(int[] wavelengthSequence) throws MMDeviceException;
+    public void loadSequence(int[] wavelengthSequence) throws MMDeviceException;
     
-    public abstract void startSequence() throws MMDeviceException;
+    public void startSequence() throws MMDeviceException;
     
-    public abstract void stopSequence() throws MMDeviceException;
+    public void stopSequence() throws MMDeviceException;
     
-    public abstract boolean isBusy() throws MMDeviceException;
+    public boolean isBusy() throws MMDeviceException;
     
-    public abstract double getDelayMs() throws MMDeviceException;
+    public double getDelayMs() throws MMDeviceException;
     
-    public abstract TunableFilterSettings getSettings();
+    public TunableFilterSettings getSettings();
     
-    public abstract List<String> validate(); //Return a list of errors found with the device.
+    public List<String> validate(); //Return a list of errors found with the device.
     
-    public abstract void initialize() throws MMDeviceException; // One time initialization of device
+    public void initialize() throws MMDeviceException; // One time initialization of device
     
-    public abstract void activate() throws MMDeviceException; //Make sure this device is ready for usage, may be run many times.
+    public void activate() throws MMDeviceException; //Make sure this device is ready for usage, may be run many times.
     
     public static TunableFilter getInstance(TunableFilterSettings settings) {
-        if (settings.filterType == Types.VARISPECLCTF) {
-            return new VarispecLCTF(settings);
-        } else if (settings.filterType == Types.KURIOSLCTF) {
-            return new KuriosLCTF(settings);
-        }else if (settings.filterType == Types.Simulated) {
-            return new SimulatedFilter(settings);
-        } else {
-            return null; //This shouldn't ever happen.
+        if (null == settings.filterType) {
+            throw new RuntimeException("This shouldn't ever happen.");
+        } else switch (settings.filterType) {
+            case VARISPECLCTF:
+                return new VarispecLCTF(settings);
+            case KURIOSLCTF:
+                return new KuriosLCTF(settings);
+            case Simulated:
+                return new SimulatedFilter(settings);
+            default:
+                return null; //This shouldn't ever happen.
         }
     }
     

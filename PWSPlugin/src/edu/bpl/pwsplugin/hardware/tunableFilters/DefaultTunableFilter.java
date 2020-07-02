@@ -11,7 +11,7 @@ import mmcorej.StrVector;
  *
  * @author N2-LiveCell
  */
-public abstract class DefaultTunableFilter extends TunableFilter{
+public abstract class DefaultTunableFilter implements TunableFilter{
     //Provides a default implementation for the abstract methods of `TunableFilter` class.
     //Based on a device name and wavelength property name this class implements methods by calling the corresponding MMCore functions.
     protected String devName;

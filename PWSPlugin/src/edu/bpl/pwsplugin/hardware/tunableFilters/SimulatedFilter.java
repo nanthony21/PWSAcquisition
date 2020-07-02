@@ -13,8 +13,8 @@ import java.util.List;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class SimulatedFilter extends TunableFilter {
-    private TunableFilterSettings settings;
+public class SimulatedFilter implements TunableFilter {
+    private final TunableFilterSettings settings;
     private int wv;
     
     public SimulatedFilter(TunableFilterSettings settings) {
