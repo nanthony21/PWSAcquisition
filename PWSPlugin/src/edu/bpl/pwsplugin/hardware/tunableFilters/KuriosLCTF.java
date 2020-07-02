@@ -4,7 +4,6 @@ package edu.bpl.pwsplugin.hardware.tunableFilters;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.settings.TunableFilterSettings;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,12 +17,21 @@ public class KuriosLCTF extends DefaultTunableFilter {
     }
     
     @Override
+    public boolean identify() {
+        try {
+            return Globals.core().getDeviceName(this.devName).equals("TODO");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    @Override
     public List<String> validate() {
         List<String> errs = new ArrayList<>();
-        List<String> devs = Arrays.asList(Globals.core().getLoadedDevices().toArray());
-        if (!devs.contains(this.devName)) {
+        if (!identify()) {
             errs.add("KuriosLCTF: Could not find device named " + this.devName + ".");
         }
+        //TODO check if warmed up. check bandwidth mode
         return errs; 
     }
 }

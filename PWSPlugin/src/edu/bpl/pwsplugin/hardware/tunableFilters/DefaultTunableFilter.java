@@ -5,6 +5,7 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.hardware.settings.TunableFilterSettings;
+import java.util.List;
 import mmcorej.StrVector;
 
 /**
@@ -115,4 +116,10 @@ public abstract class DefaultTunableFilter implements TunableFilter{
     
     @Override
     public void activate() {}//Not sure what to do here
+    
+    @Override
+    public abstract boolean identify();
+    
+    @Override
+    public abstract List<String> validate();
 }

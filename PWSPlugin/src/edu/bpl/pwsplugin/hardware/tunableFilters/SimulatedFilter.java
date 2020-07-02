@@ -70,8 +70,13 @@ public class SimulatedFilter implements TunableFilter {
     public TunableFilterSettings getSettings() { return settings; }
     
     @Override
+    public boolean identify() {
+        return true;
+    }
+    
+    @Override
     public List<String> validate() {
-         return new ArrayList<String>();
+         return new ArrayList<>();
     }
     
     @Override

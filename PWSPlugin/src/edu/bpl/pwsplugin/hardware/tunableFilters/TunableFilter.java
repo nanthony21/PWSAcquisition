@@ -36,6 +36,8 @@ public interface TunableFilter {
     
     public TunableFilterSettings getSettings();
     
+    public boolean identify(); //return true if this class supports the device specified in the settings.
+    
     public List<String> validate(); //Return a list of errors found with the device.
     
     public void initialize() throws MMDeviceException; // One time initialization of device
