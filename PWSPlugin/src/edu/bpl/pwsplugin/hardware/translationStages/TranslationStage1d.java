@@ -87,13 +87,6 @@ public abstract class TranslationStage1d implements Device {
     
     public static TranslationStage1d getAutomaticInstance() {
         //Detect which stage is connected automatically, assumes that only one is connected.
-        return StageFactory.detectConnectedStage(); // This can be null
-    }
-}
-
-
-class StageFactory {
-    public static TranslationStage1d detectConnectedStage() {
         for (String devLabel : Globals.core().getLoadedDevicesOfType(DeviceType.StageDevice)) {
             TranslationStage1dSettings settings = new TranslationStage1dSettings();
             settings.deviceName = devLabel;
@@ -105,7 +98,7 @@ class StageFactory {
             } catch (Exception e) {
                 Globals.mm().logs().logError(e);
                 continue;
-            }
+            } //TODO make use of `identify` here. identify should be static.
             if (library.equals("DemoCamera")) {
                 settings.stageType = TranslationStage1d.Types.Simulated;
                 return new SimulationStage1d(settings);
