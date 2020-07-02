@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class SimulatedIlluminator extends Illuminator {
+public class SimulatedIlluminator implements Illuminator {
     private IlluminatorSettings settings;
     
     public SimulatedIlluminator(IlluminatorSettings settings) {
@@ -32,10 +32,19 @@ public class SimulatedIlluminator extends Illuminator {
     }
     
     @Override
+    public boolean identify() {
+        try {
+            return Globals.core().getDeviceName(this.settings.name).equals("DShutter");
+        } catch (Exception e) {
+            return false;
+        } 
+    }
+    
+    @Override
     public List<String> validate() {
         List<String> errs = new ArrayList<>();
         try {
-            if (!Globals.core().getDeviceName(this.settings.name).equals("DShutter")) {
+            if (!identify()) {
                 errs.add(this.settings.name + " is not a simulated DemoShutter device");
             }
 

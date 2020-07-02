@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.hardware.cameras;
 
+import edu.bpl.pwsplugin.hardware.Device;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.CamSettings;
 import java.util.List;
@@ -14,9 +15,7 @@ import org.micromanager.data.Image;
  *
  * @author nicke
  */
-public interface Camera {
-
-    void activate() throws MMDeviceException; //Make sure this device is ready for usage, may be run many times.
+public interface Camera extends Device{
 
     void configureTriggerOutput(boolean enable) throws MMDeviceException; //Turn transmission of TTL pulses on or off.
 
@@ -25,8 +24,6 @@ public interface Camera {
     String getName(); //Get the device name used in Micro-Manager.
 
     CamSettings getSettings();
-
-    void initialize() throws MMDeviceException; // One time initialization of device
 
     void setExposure(double exposureMs) throws MMDeviceException;
 
@@ -41,10 +38,6 @@ public interface Camera {
     //public abstract void configureExternalTriggering(boolean enable, double triggerDelayMs) throws MMDeviceException; //Turn external triggering on or off.
     boolean supportsTriggerOutput(); //True if the camera can send a TTL trigger at the end of each new image it acquires.
 
-    boolean identify(); //Return true if the settings indicate a device that is supported by this class. //TODO use this.
-    
-    List<String> validate(); //Return a list of strings for every error detected in the configuration. return empty list if no errors found.
-    
     public static Camera getInstance(CamSettings settings) {
         if (null == settings.camType) {
             throw new NullPointerException("This shouldn't ever happen"); //This shouldn't ever happen.

@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author nick
  */
-public class XCite120LED extends Illuminator {
+public class XCite120LED implements Illuminator {
     private final IlluminatorSettings settings;
     
     public XCite120LED(IlluminatorSettings settings) {
@@ -32,10 +32,19 @@ public class XCite120LED extends Illuminator {
     }
     
     @Override
+    public boolean identify() {
+        try {
+            return Globals.core().getDeviceName(this.settings.name).equals("XCite-exacte");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    @Override
     public List<String> validate() {
         List<String> errs = new ArrayList<>();
         try {
-            if (!Globals.core().getDeviceName(this.settings.name).equals("XCite-exacte")) { //TODO check this name is right
+            if (!identify()) {
                 errs.add(this.settings.name + " is not a XCite-exacte device");
             }
             

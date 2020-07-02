@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.hardware.tunableFilters;
 
+import edu.bpl.pwsplugin.hardware.Device;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.hardware.settings.TunableFilterSettings;
@@ -15,7 +16,7 @@ import java.util.List;
  *
  * @author N2-LiveCell
  */
-public interface TunableFilter {
+public interface TunableFilter extends Device {
     public void setWavelength(int wavelength) throws MMDeviceException;
     
     public int getWavelength() throws MMDeviceException;
@@ -35,15 +36,7 @@ public interface TunableFilter {
     public double getDelayMs() throws MMDeviceException;
     
     public TunableFilterSettings getSettings();
-    
-    public boolean identify(); //return true if this class supports the device specified in the settings.
-    
-    public List<String> validate(); //Return a list of errors found with the device.
-    
-    public void initialize() throws MMDeviceException; // One time initialization of device
-    
-    public void activate() throws MMDeviceException; //Make sure this device is ready for usage, may be run many times.
-    
+            
     public static TunableFilter getInstance(TunableFilterSettings settings) {
         if (null == settings.filterType) {
             throw new RuntimeException("This shouldn't ever happen.");
