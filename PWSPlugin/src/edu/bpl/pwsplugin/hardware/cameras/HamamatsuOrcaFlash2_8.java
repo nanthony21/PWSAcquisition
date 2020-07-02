@@ -32,10 +32,21 @@ public class HamamatsuOrcaFlash2_8 extends DefaultCamera {
     }
     
     @Override
+    public boolean identify() {
+        try {
+            return ((Globals.core().getDeviceName(this.settings.name).equals("HamamatsuHam_DCAM"))
+                && 
+                (Globals.core().getProperty(this.settings.name, "CameraName").equals("C11440-10C")));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    @Override
     public List<String> validate() {
         List<String> errs = new ArrayList<>();
         try {
-            if (!Globals.core().getDeviceName(this.settings.name).equals("HamamatsuHam_DCAM")) { //TODO this is worthless for validation.
+            if (!identify()) {
                 errs.add(this.settings.name + " is not a HamamatsuHam_DCAM device");
             }
         } catch (Exception e) {

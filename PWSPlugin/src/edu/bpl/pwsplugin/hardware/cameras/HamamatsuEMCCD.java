@@ -23,10 +23,21 @@ public class HamamatsuEMCCD extends DefaultCamera {
     }
     
     @Override
+    public boolean identify() {
+        try {
+            return ((Globals.core().getDeviceName(this.settings.name).equals("HamamatsuHam_DCAM"))
+                && 
+                (Globals.core().getProperty(this.settings.name, "CameraName").equals("TODO")));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    @Override
     public List<String> validate() {
         List<String> errs = new ArrayList<>();
         try {
-            if (!Globals.core().getDeviceName(this.settings.name).equals("HamamatsuHam_DCAM")) { //TODO This is worthless for validation. check something more detailed.
+            if (!identify()) {
                 errs.add(this.settings.name + " is not a HamamatsuHam_DCAM device");
             }
 

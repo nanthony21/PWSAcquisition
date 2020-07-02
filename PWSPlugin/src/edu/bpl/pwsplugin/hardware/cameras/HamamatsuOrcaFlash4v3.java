@@ -18,8 +18,7 @@ import org.micromanager.data.Image;
  */
 public class HamamatsuOrcaFlash4v3 extends DefaultCamera{
     String _devName;
-    //TODO automatic recognition. How?: Library "HamamatsuHam", property "CameraName" = "C13440-20C"
-    
+
     public HamamatsuOrcaFlash4v3(CamSettings settings) {
         super(settings);
         _devName = settings.name;
@@ -91,10 +90,21 @@ public class HamamatsuOrcaFlash4v3 extends DefaultCamera{
     }
     
     @Override
+    public boolean identify() {
+        try {
+            return ((Globals.core().getDeviceName(this.settings.name).equals("HamamatsuHam_DCAM"))
+                && 
+                (Globals.core().getProperty(this.settings.name, "CameraName").equals("C13440-20C")));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    @Override
     public List<String> validate() {
         List<String> errs = new ArrayList<>();
         try {
-            if (!Globals.core().getDeviceName(this._devName).equals("HamamatsuHam_DCAM")) {
+            if (!identify()) {
                 errs.add(_devName + " is not a HamamatsuHam_DCAM device");
             }
         } catch (Exception e) {
@@ -103,3 +113,5 @@ public class HamamatsuOrcaFlash4v3 extends DefaultCamera{
         return errs;
     }
 }
+    //TODO automatic recognition. How?: Library "HamamatsuHam", property "CameraName" = "C13440-20C"
+    

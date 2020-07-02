@@ -105,6 +105,9 @@ public abstract class DefaultCamera implements Camera {
     
     //Override these
     @Override
+    public abstract boolean identify();
+    
+    @Override
     public abstract List<String> validate();
 
     

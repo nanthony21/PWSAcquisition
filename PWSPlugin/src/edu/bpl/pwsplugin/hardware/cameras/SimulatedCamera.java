@@ -6,11 +6,9 @@
 package edu.bpl.pwsplugin.hardware.cameras;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.CamSettings;
 import java.util.ArrayList;
 import java.util.List;
-import org.micromanager.data.Image;
 
 /**
  *
@@ -34,10 +32,19 @@ public class SimulatedCamera extends DefaultCamera {
     }
     
     @Override
+    public boolean identify() {
+        try {
+            return (Globals.core().getDeviceName(this.settings.name).equals("DCam"));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    @Override
     public List<String> validate() {
         List<String> errs = new ArrayList<>();
         try {
-            if (!Globals.core().getDeviceName(settings.name).equals("DCam")) {
+            if (!identify()) {
                 errs.add(settings.name + " is not a simulated DemoCamera device");
             }
         } catch (Exception e) {

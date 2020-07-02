@@ -41,8 +41,9 @@ public interface Camera {
     //public abstract void configureExternalTriggering(boolean enable, double triggerDelayMs) throws MMDeviceException; //Turn external triggering on or off.
     boolean supportsTriggerOutput(); //True if the camera can send a TTL trigger at the end of each new image it acquires.
 
+    boolean identify(); //Return true if the settings indicate a device that is supported by this class. //TODO use this.
+    
     List<String> validate(); //Return a list of strings for every error detected in the configuration. return empty list if no errors found.
-    //TODO split validate in to `validate` and an `identify` functon.
     
     public static Camera getInstance(CamSettings settings) {
         if (null == settings.camType) {
