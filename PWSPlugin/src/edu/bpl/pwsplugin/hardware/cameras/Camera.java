@@ -12,36 +12,37 @@ import org.micromanager.data.Image;
 
 /**
  *
- * @author N2-LiveCell
+ * @author nicke
  */
-public abstract class Camera {
-    public abstract void initialize() throws MMDeviceException; // One time initialization of device
-    
-    public abstract void activate() throws MMDeviceException; //Make sure this device is ready for usage, may be run many times.
-    
-    public abstract boolean supportsExternalTriggering(); //True if the camera can have new image acquisitions triggered by an incoming TTL signal
-    
-//public abstract void configureExternalTriggering(boolean enable, double triggerDelayMs) throws MMDeviceException; //Turn external triggering on or off.
-    
-    public abstract boolean supportsTriggerOutput(); //True if the camera can send a TTL trigger at the end of each new image it acquires.
-    
-    public abstract void configureTriggerOutput(boolean enable) throws MMDeviceException; //Turn transmission of TTL pulses on or off.
-    
-    public abstract String getName(); //Get the device name used in Micro-Manager.
-    
-    public abstract void startSequence(int numImages, double delayMs, boolean externalTriggering) throws MMDeviceException; //If the camera support "Trigger output" then this should start the seqeunce
-    
-    public abstract void stopSequence() throws MMDeviceException; // Clean up and reset the sequence. Only needed for cameras that support trigger output.
-    
-    public abstract void setExposure(double exposureMs) throws MMDeviceException;
-    
-    public abstract double getExposure() throws MMDeviceException;
-    
-    public abstract Image snapImage() throws MMDeviceException;
-    
-    public abstract CamSettings getSettings();
-    
-    public abstract List<String> validate(); //Return a list of strings for every error detected in the configuration. return empty list if no errors found.
+public interface Camera {
+
+    void activate() throws MMDeviceException; //Make sure this device is ready for usage, may be run many times.
+
+    void configureTriggerOutput(boolean enable) throws MMDeviceException; //Turn transmission of TTL pulses on or off.
+
+    double getExposure() throws MMDeviceException;
+
+    String getName(); //Get the device name used in Micro-Manager.
+
+    CamSettings getSettings();
+
+    void initialize() throws MMDeviceException; // One time initialization of device
+
+    void setExposure(double exposureMs) throws MMDeviceException;
+
+    Image snapImage() throws MMDeviceException;
+
+    void startSequence(int numImages, double delayMs, boolean externalTriggering) throws MMDeviceException; //If the camera support "Trigger output" then this should start the seqeunce
+
+    void stopSequence() throws MMDeviceException; // Clean up and reset the sequence. Only needed for cameras that support trigger output.
+
+    boolean supportsExternalTriggering(); //True if the camera can have new image acquisitions triggered by an incoming TTL signal
+
+    //public abstract void configureExternalTriggering(boolean enable, double triggerDelayMs) throws MMDeviceException; //Turn external triggering on or off.
+    boolean supportsTriggerOutput(); //True if the camera can send a TTL trigger at the end of each new image it acquires.
+
+    List<String> validate(); //Return a list of strings for every error detected in the configuration. return empty list if no errors found.
+    //TODO split validate in to `validate` and an `identify` functon.
     
     public static Camera getInstance(CamSettings settings) {
         if (null == settings.camType) {
@@ -66,4 +67,5 @@ public abstract class Camera {
         Simulated,
         HamamatsuOrcaFlash2_8;
     }
+    
 }

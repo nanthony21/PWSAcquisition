@@ -5,85 +5,44 @@
  */
 package edu.bpl.pwsplugin.hardware.cameras;
 
-import edu.bpl.pwsplugin.hardware.MMDeviceException;
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.settings.CamSettings;
+import java.util.ArrayList;
 import java.util.List;
-import org.micromanager.data.Image;
 
 /**
  *
  * @author nicke
  */
-public class HamamatsuOrcaFlash2_8 extends Camera {
-    final private CamSettings _settings;
-    
+public class HamamatsuOrcaFlash2_8 extends DefaultCamera { 
     
     public HamamatsuOrcaFlash2_8(CamSettings settings) {
-        this._settings = settings; 
+        super(settings);
     }
 
     @Override
-    public void initialize() throws MMDeviceException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    public boolean supportsExternalTriggering() { return false; }
+        
     @Override
-    public void activate() throws MMDeviceException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    public boolean supportsTriggerOutput() { return false; }
+    
     @Override
-    public boolean supportsExternalTriggering() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void configureTriggerOutput(boolean enable) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("The Flash 2.8 does not support output triggering");
     }
-
-    @Override
-    public boolean supportsTriggerOutput() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void configureTriggerOutput(boolean enable) throws MMDeviceException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String getName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void startSequence(int numImages, double delayMs, boolean externalTriggering) throws MMDeviceException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void stopSequence() throws MMDeviceException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setExposure(double exposureMs) throws MMDeviceException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public double getExposure() throws MMDeviceException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Image snapImage() throws MMDeviceException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public CamSettings getSettings() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    
     @Override
     public List<String> validate() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<String> errs = new ArrayList<>();
+        try {
+            if (!Globals.core().getDeviceName(this.settings.name).equals("HamamatsuHam_DCAM")) { //TODO this is worthless for validation.
+                errs.add(this.settings.name + " is not a HamamatsuHam_DCAM device");
+            }
+        } catch (Exception e) {
+            errs.add(e.getMessage());
+        }
+
+        return errs;
     }
+    
 }

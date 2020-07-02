@@ -16,17 +16,17 @@ import org.micromanager.data.Image;
  *
  * @author N2-LiveCell
  */
-public class HamamatsuOrcaFlash4v3 extends Camera{
+public class HamamatsuOrcaFlash4v3 extends DefaultCamera{
     String _devName;
-    CamSettings _settings;
     
     public HamamatsuOrcaFlash4v3(CamSettings settings) {
-        _settings = settings;
+        super(settings);
         _devName = settings.name;
     }
     
     @Override
-    public void initialize() throws MMDeviceException {       
+    public void initialize() throws MMDeviceException { 
+        super.initialize();
         try {
             Globals.core().setProperty(this._devName, "TRIGGER SOURCE", "INTERNAL");
             Globals.core().setProperty(this._devName, "MASTER PULSE TRIGGER SOURCE", "SOFTWARE");
@@ -36,15 +36,6 @@ public class HamamatsuOrcaFlash4v3 extends Camera{
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }
-    }
-    
-    @Override
-    public void activate() throws MMDeviceException {
-        try {
-            Globals.core().setCameraDevice(_settings.name);
-        } catch (Exception e) {
-            throw new MMDeviceException(e);
-        }    
     }
     
     @Override
@@ -67,11 +58,6 @@ public class HamamatsuOrcaFlash4v3 extends Camera{
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }
-    }
-    
-    @Override
-    public String getName() { //Get the device name used in Micro-Manager.
-        return this._devName;
     }
     
     @Override
@@ -98,40 +84,6 @@ public class HamamatsuOrcaFlash4v3 extends Camera{
         try {
             Globals.core().stopSequenceAcquisition(this._devName);
             Globals.core().setProperty(this._devName, "TRIGGER SOURCE", "MASTER PULSE"); //Set the trigger source back ot what it was originally
-        } catch (Exception e) {
-            throw new MMDeviceException(e);
-        }
-    }
-    
-    @Override
-    public CamSettings getSettings() {
-        return _settings;
-    }
-    
-    @Override
-    public void setExposure(double exposureMs) throws MMDeviceException {
-        try {
-            Globals.core().setExposure(_devName, exposureMs);
-        } catch (Exception e) {
-            throw new MMDeviceException(e);
-        }
-    }
-    
-    @Override
-    public double getExposure() throws MMDeviceException {
-        try {
-            return Globals.core().getExposure(_devName);
-        } catch (Exception e) {
-            throw new MMDeviceException(e);
-        }
-    }
-    
-    @Override
-    public Image snapImage() throws MMDeviceException {
-        //The `activate` method should guarantee that we are set as the core camera at this point.
-        try {
-            Globals.core().snapImage();
-            return Globals.mm().data().convertTaggedImage(Globals.core().getTaggedImage());
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }
