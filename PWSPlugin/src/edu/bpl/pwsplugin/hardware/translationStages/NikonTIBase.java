@@ -31,20 +31,35 @@ public abstract class NikonTIBase extends TranslationStage1d {
         this.settings = settings;        
     }
     
-    protected abstract void setPFSOffset(double offset) throws MMDeviceException, InterruptedException;
-    
-    protected abstract double getPFSOffset() throws MMDeviceException;
-    
     protected abstract Status getPFSStatus() throws MMDeviceException ;
-    
     protected abstract Double getMaximumPFSOffset();
     protected abstract Double getMinimumPFSOffset();
+    protected abstract String getPFSOffsetDeviceName();
     
     @Override
     public abstract boolean identify();
     
     @Override
     public abstract List<String> validate();
+    
+    protected void setPFSOffset(double offset) throws MMDeviceException, InterruptedException {
+        try {
+            Globals.core().setPosition(getPFSOffsetDeviceName(), offset);
+            while (busy()) { Thread.sleep(10); } //block until refocused.
+        } catch (InterruptedException | MMDeviceException ee) {
+            throw ee;
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
+    }
+    
+    protected double getPFSOffset() throws MMDeviceException {
+        try {
+            return Globals.core().getPosition(getPFSOffsetDeviceName());
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
+    }
     
     
     private void calibrate() throws MMDeviceException, InterruptedException {

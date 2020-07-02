@@ -72,7 +72,12 @@ public abstract class TranslationStage1d implements Device {
                     return null;
                 }
             case NikonTI2:
-                return new NikonTI2_zStage(settings);
+                try {
+                    return new NikonTI2_zStage(settings);
+                } catch (MMDeviceException e) {
+                    Globals.mm().logs().logError(e);
+                    return null;
+                } 
             case Simulated:
                 return new SimulationStage1d(settings);
             default:

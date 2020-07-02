@@ -64,24 +64,8 @@ public class NikonTI_zStage extends NikonTIBase {
     }
     
     @Override
-    protected void setPFSOffset(double offset) throws MMDeviceException, InterruptedException {
-        try {
-            Globals.core().setProperty(pfsOffsetName, "Position", offset);
-            while (busy()) { Thread.sleep(10); } //block until refocused.
-        } catch (InterruptedException | MMDeviceException ee) {
-            throw ee;
-        } catch (Exception e) {
-            throw new MMDeviceException(e);
-        }
-    }
-    
-    @Override
-    protected double getPFSOffset() throws MMDeviceException {
-        try {
-            return Double.valueOf(Globals.core().getProperty(pfsOffsetName, "Position"));
-        } catch (Exception e) {
-            throw new MMDeviceException(e);
-        }
+    protected String getPFSOffsetDeviceName() {
+        return pfsOffsetName;
     }
     
     @Override
