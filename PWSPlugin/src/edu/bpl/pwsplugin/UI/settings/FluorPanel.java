@@ -32,12 +32,12 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
     private JComboBox<String> imConfName = new JComboBox<>();
 
     
-    public FluorPanel() { //TODO disable the `wavelength field when a standard camera is selected. Focus offset is confusing, lower limit of focus offset, only needs to be <50um at the very most.
+    public FluorPanel() {
         super(new MigLayout(), FluorSettings.class);
         
         wvSpinner = new ImprovedJSpinner(new SpinnerNumberModel(550, 400, 1000, 5));
         exposureSpinner = new ImprovedJSpinner(new SpinnerNumberModel(1000.0, 1.0, 5000.0, 100.0));
-        focusOffsetSpinner = new ImprovedJSpinner(new SpinnerNumberModel(0, -10000, 10000, 100));
+        focusOffsetSpinner = new ImprovedJSpinner(new SpinnerNumberModel(0.0, -50.0, 50.0, 1.0));
         filterCombo.setModel(this.getFilterComboModel());
         
         Globals.getMMConfigAdapter().addRefreshListener((evt)->{
@@ -90,7 +90,7 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
         FluorSettings settings = new FluorSettings();
         settings.exposure = (Double) this.exposureSpinner.getValue();
         settings.filterConfigName = (String) this.filterCombo.getSelectedItem();
-        settings.focusOffset = (Integer) this.focusOffsetSpinner.getValue();
+        settings.focusOffset = (Double) this.focusOffsetSpinner.getValue();
         settings.tfWavelength = (Integer) this.wvSpinner.getValue();
         settings.imConfigName = (String) this.imConfName.getSelectedItem();
         return settings;

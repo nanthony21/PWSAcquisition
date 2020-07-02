@@ -26,17 +26,16 @@ public class ChangeConfigGroup extends ContainerStep<SequencerSettings.ChangeCon
     public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
         SequencerFunction subStepFunc = getSubstepsFunction(callbacks);
         SequencerSettings.ChangeConfigGroupSettings settings = this.settings;
-        return new SequencerFunction() {
-            @Override
-            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-                String origConfValue = Globals.core().getCurrentConfig(settings.configGroupName);
-                status.newStatusMessage(String.format("Changing %s config group to %s", settings.configGroupName, settings.configValue));
-                Globals.core().setConfig(settings.configGroupName, settings.configValue);
-                status = subStepFunc.apply(status);
-                Globals.core().setConfig(settings.configGroupName, origConfValue);
-                status.newStatusMessage(String.format("Changing %s config group back to original setting, %s", settings.configGroupName, origConfValue));
-                return status;
-            }
+        return (status) -> {
+            String origConfValue = Globals.core().getCurrentConfig(settings.configGroupName);
+            status.newStatusMessage(String.format("Changing %s config group to %s", settings.configGroupName, settings.configValue));
+            Globals.core().setConfig(settings.configGroupName, settings.configValue);
+            Globals.core().waitForConfig(settings.configGroupName, settings.configValue);
+            status = subStepFunc.apply(status);
+            Globals.core().setConfig(settings.configGroupName, origConfValue);
+            Globals.core().waitForConfig(settings.configGroupName, origConfValue);
+            status.newStatusMessage(String.format("Changing %s config group back to original setting, %s", settings.configGroupName, origConfValue));
+            return status;
         };
     }
 

@@ -106,15 +106,12 @@ public class NikonTI1d extends TranslationStage1d {
             Globals.core().fullFocus();
             this.setAutoFocusEnabled(true);
             double zOrig = 0; //This will actually get initialized on the first iteration.
-            for (int offset=0; offset<MAX_PFS_OFFSET; offset+=(MAX_PFS_OFFSET/4)-1) { //TODO see how well this works and reduce the number of iterations to speed it up. maybe we don't need to go to max offset.
+            for (int offset=0; offset<MAX_PFS_OFFSET; offset+=(MAX_PFS_OFFSET/4)-1) {
                 this.setPFSOffset(offset); 
-                //while (!(getPFSStatus() == Status.FOCUSING)) { Thread.sleep(10); } //Sometimes there is a delay, but at some point the status must chnage to "focusing"
-                //while (!(getPFSStatus() == Status.LOCKED)) { Thread.sleep(10); } //Wait until we are locked gain before measuring z position.
                 if (offset==0) {
                     zOrig = this.getPosUm(); //All um measurement are relative to the measurement at pfsOffset = 0
                 }
                 observations.add(new WeightedObservedPoint(1, this.getPosUm() - zOrig, offset));
-                System.out.println(String.format("%s, %s", this.getPosUm() - zOrig, offset));
             }
         } catch (InterruptedException | MMDeviceException ie) {
             throw ie;
@@ -145,16 +142,24 @@ public class NikonTI1d extends TranslationStage1d {
         return newOffset;
     }
     
+    @Override
     public void setPosRelativeUm(double um) throws MMDeviceException, InterruptedException {
         try {
             if (this.getAutoFocusEnabled()) {
                 if (!calibrated) { this.calibrate(); }
-                double currentOffset = getPFSOffset();
-                double newOffset = this.getOffsetForMicron(currentOffset, um); //TODO, if this doesn't work well enough just recurse it 2 or 3 times.
-                this.setPFSOffset(newOffset);
+                double remainingRelUm = um; //This variable keeps track of how much further we need to go to achieve the original relative movement of `um`
+                for (int i=0; i<5; i++) { //Due to calibration errors the below code is not accurate enough on one iteration. We give it up to 5 iterations to get within `tolerance` of the correct value.
+                    double currentOffset = getPFSOffset();
+                    double currentPos = this.getPosUm();
+                    double newOffset = this.getOffsetForMicron(currentOffset, remainingRelUm);
+                    this.setPFSOffset(newOffset); //This will block until the move is finished.
+                    double newPos = this.getPosUm();
+                    remainingRelUm -= newPos - currentPos; //subtract the delta-z from this iteration from our remaning distance to go.
+                    //System.out.println(String.format("c %f, n %f, r %f, co %f, no %f", currentPos, newPos, remainingRelUm, currentOffset, newOffset));
+                    if (remainingRelUm <= 0.01) { break; }//I'm just not sure how to choose the tolerance. However running through 5 iterations without satisfying this requirement is fine.
+                }
             } else {
                 Globals.core().setRelativePosition(devName, um); 
-                while (busy()) { Thread.sleep(10); }
             }
             while (this.busy()) {Thread.sleep(10); } //wait for it to finish focusing.
         } catch (InterruptedException | MMDeviceException ee) {
@@ -164,7 +169,7 @@ public class NikonTI1d extends TranslationStage1d {
         }         
     }
     
-    public boolean busy() throws MMDeviceException{
+    private boolean busy() throws MMDeviceException{
         boolean zStageBusy;
         try {
             zStageBusy = Globals.core().deviceBusy(this.devName);
@@ -179,7 +184,7 @@ public class NikonTI1d extends TranslationStage1d {
     }
     
     @Override
-    public void setPosUm(double um) throws MMDeviceException {
+    public void setPosUm(double um) throws MMDeviceException, InterruptedException {
         try {
             if (this.getAutoFocusEnabled()) {
                 if (!calibrated) { this.calibrate(); }
@@ -189,7 +194,9 @@ public class NikonTI1d extends TranslationStage1d {
             } else {
                 Globals.core().setPosition(devName, um);
                 while (busy()) { Thread.sleep(10); }
-            }    
+            }
+        } catch (InterruptedException | MMDeviceException ee) {
+            throw ee;
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }
@@ -224,6 +231,24 @@ public class NikonTI1d extends TranslationStage1d {
     public boolean getAutoFocusEnabled() throws MMDeviceException {
         try {
             return Globals.core().isContinuousFocusEnabled();
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
+    }
+    
+    @Override
+    public boolean getAutoFocusLocked() throws MMDeviceException {
+        try {
+            return Globals.core().isContinuousFocusLocked();
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
+    }
+    
+    @Override
+    public void runFullFocus() throws MMDeviceException {
+        try { //TODO add some smart software autofocus here so the image is actually focused.
+            Globals.core().fullFocus();
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }

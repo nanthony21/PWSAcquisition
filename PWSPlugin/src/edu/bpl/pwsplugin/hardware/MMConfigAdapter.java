@@ -10,7 +10,7 @@ import mmcorej.DeviceType;
 
 public class MMConfigAdapter {
     //Scans the Micro-Manager hardware configuration to provide useful information to the PWS plugin.
-    private List<String> filters;
+    private List<String> filters; //TODO add a similar treatment of objectives and imaging configuration. make them special required configuration groups.
     public boolean autoFilterSwitching;
     private final List<ActionListener> onRefreshListeners = new ArrayList<>();
 
@@ -20,7 +20,7 @@ public class MMConfigAdapter {
         this.filters = Arrays.asList(Globals.core().getAvailableConfigs("Filter").toArray());
         if (this.filters.isEmpty()) {
             this.autoFilterSwitching = false;
-            Globals.mm().logs().showMessage("Micromanager is missing a `Filter` config group which is needed for automated fluorescence. The first setting of the group should be the filter block used for PWS");
+            Globals.mm().logs().logMessage("Micromanager is missing a `Filter` config group which is needed for automated fluorescence. The first setting of the group should be the filter block used for PWS");
         } else {
             this.autoFilterSwitching = true;
         }

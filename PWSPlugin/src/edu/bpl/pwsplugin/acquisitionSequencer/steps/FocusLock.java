@@ -10,6 +10,8 @@ import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import edu.bpl.pwsplugin.hardware.MMDeviceException;
+import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
 import java.util.List;
 
 /**
@@ -26,16 +28,21 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
     protected SequencerFunction getCallback() {
         return (status) -> {
             Step[] path = status.coords().getTreePath(); //Indicates our current location in the tree of steps.
-            if (path[path.length - 1].getType() == SequencerConsts.Type.ACQ) {
-                //If the current  step is an acquisition then check for refocus.
-                if (!Globals.core().isContinuousFocusLocked()) { //TODO use stage here
-                    //Check if focused. and log. later we will add refocusing.
-                    Globals.mm().logs().logMessage("PWSPlugin: Focus is unlocked");
-                    Globals.core().fullFocus(); //TODO this can fail and throw an exception, don't let that crash the whole experiment.
-                    Globals.core().enableContinuousFocus(true);
+            if (path[path.length - 1].getType() == SequencerConsts.Type.ACQ) { //If the current  step is an acquisition then check for refocus.
+                TranslationStage1d zStage = Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
+                if (!zStage.hasAutoFocus()) {
+                    status.newStatusMessage("Focus Lock: Error: The current zStage has no autofocus functionality.");
+                    return status;
+                }
+                if (!zStage.getAutoFocusLocked()) { //Check if focused. and log. later we will add refocusing.
+                    status.newStatusMessage("Focus Lock: Focus is unlocked");
+                    try {
+                        zStage.runFullFocus(); // This can fail and throw an exception, don't let that crash the whole experiment.
+                    } catch (MMDeviceException e) {
+                        status.newStatusMessage("Focus Lock: Error: Focus lock failed to recover focus.");
+                    }
+                    zStage.setAutoFocusEnabled(true);
                     Thread.sleep((long) (settings.preDelay * 1000.0)); //Does this actually serve any purpose?
-                } else {
-                    Globals.mm().logs().logMessage("PWSPLugin: Focus is locked");
                 }
             }
             return status;
@@ -46,22 +53,19 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
     public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
         SequencerFunction stepFunction = super.getSubstepsFunction(callbacks);
         SequencerSettings.FocusLockSettings settings = this.getSettings();
-        return new SequencerFunction() {
-            @Override
-            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-                //FocusLock A function that turns on the PFS, runs substep and then turns it off.
-                Globals.core().setAutoFocusOffset(settings.zOffset); //Does this serve any purpose?
-                Globals.core().fullFocus(); //TODO this can fail and throw an exception, don't let that crash the whole experiment.
-                Globals.core().enableContinuousFocus(true);
-                Thread.sleep((long) (settings.preDelay * 1000.0));
-                AcquisitionStatus newstatus = stepFunction.apply(status);
-                if (!Globals.core().isContinuousFocusLocked()) {
-                    Globals.mm().logs().logMessage("Autofocus failed!");
-                    status.newStatusMessage("Autofocus failed!");
-                }
-                Globals.core().enableContinuousFocus(false);
-                return newstatus;
+        return (status) -> {
+            //FocusLock A function that turns on the PFS, runs substep and then turns it off.
+            Globals.core().setAutoFocusOffset(settings.zOffset); //Does this serve any purpose?
+            Globals.core().fullFocus(); //TODO this can fail and throw an exception, don't let that crash the whole experiment.
+            Globals.core().enableContinuousFocus(true);
+            Thread.sleep((long) (settings.preDelay * 1000.0));
+            AcquisitionStatus newstatus = stepFunction.apply(status);
+            if (!Globals.core().isContinuousFocusLocked()) {
+                Globals.mm().logs().logMessage("Autofocus failed!");
+                status.newStatusMessage("Autofocus failed!");
             }
+            Globals.core().enableContinuousFocus(false);
+            return newstatus;
         };
     }
 
