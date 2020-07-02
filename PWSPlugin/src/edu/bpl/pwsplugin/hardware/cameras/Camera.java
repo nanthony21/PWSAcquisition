@@ -44,20 +44,26 @@ public abstract class Camera {
     public abstract List<String> validate(); //Return a list of strings for every error detected in the configuration. return empty list if no errors found.
     
     public static Camera getInstance(CamSettings settings) {
-        if (settings.camType == Types.HamamatsuOrca4V3) {
-            return new HamamatsuOrcaFlash4v3(settings);
-        } else if (settings.camType == Types.HamamatsuEMCCD) {
-            return new HamamatsuEMCCD(settings);
-        } else if (settings.camType == Types.Simulated) {
-            return new SimulatedCamera(settings);
-        } else {
-            return null; //This shouldn't ever happen.
+        if (null == settings.camType) {
+            throw new NullPointerException("This shouldn't ever happen"); //This shouldn't ever happen.
+        } else switch (settings.camType) {
+            case HamamatsuOrca4V3:
+                return new HamamatsuOrcaFlash4v3(settings);
+            case HamamatsuEMCCD:
+                return new HamamatsuEMCCD(settings);
+            case Simulated:
+                return new SimulatedCamera(settings);
+            case HamamatsuOrcaFlash2_8:
+                return new HamamatsuOrcaFlash2_8(settings);
+            default:
+                return null; //This shouldn't ever happen.
         }
     }
     
     public enum Types {
         HamamatsuOrca4V3,
         HamamatsuEMCCD,
-        Simulated;
+        Simulated,
+        HamamatsuOrcaFlash2_8;
     }
 }
