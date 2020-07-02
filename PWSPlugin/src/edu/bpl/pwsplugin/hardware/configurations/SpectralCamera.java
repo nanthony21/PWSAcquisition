@@ -53,6 +53,7 @@ public class SpectralCamera extends ImagingConfiguration {
         errs.addAll(this._cam.validate());
         errs.addAll(this._filt.validate());
         errs.addAll(this._illum.validate());
+        errs.addAll(this.zStage().validate());
         return errs;
     }
     

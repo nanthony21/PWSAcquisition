@@ -43,6 +43,7 @@ public class StandardCamera extends ImagingConfiguration {
         List<String> errs = new ArrayList<>();
         errs.addAll(this._cam.validate());
         errs.addAll(this._illum.validate());
+        errs.addAll(this.zStage().validate());
         return errs;
     }
 }

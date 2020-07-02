@@ -56,21 +56,27 @@ public abstract class TranslationStage1d implements Device {
      
     public enum Types {
         NikonTI,
-        Simulated;
+        Simulated,
+        NikonTI2;
     }
         
     public static TranslationStage1d getInstance(TranslationStage1dSettings settings) {
-        if (settings.stageType == TranslationStage1d.Types.NikonTI) {
-            try {
-                return new NikonTI_zStage(settings);
-            } catch (MMDeviceException e) {
-                Globals.mm().logs().logError(e);
-                return null;
-            }
-        } else if (settings.stageType == TranslationStage1d.Types.Simulated) {
-            return new SimulationStage1d(settings);
-        } else {
-            return null; //This shouldn't ever happen.
+        if (null == settings.stageType) {
+            throw new RuntimeException("This shouldn't ever happen.");
+        } else switch (settings.stageType) {
+            case NikonTI:
+                try {
+                    return new NikonTI_zStage(settings);
+                } catch (MMDeviceException e) {
+                    Globals.mm().logs().logError(e);
+                    return null;
+                }
+            case NikonTI2:
+                return new NikonTI2_zStage(settings);
+            case Simulated:
+                return new SimulationStage1d(settings);
+            default:
+                return null; //This shouldn't ever happen.
         }
     }
     
