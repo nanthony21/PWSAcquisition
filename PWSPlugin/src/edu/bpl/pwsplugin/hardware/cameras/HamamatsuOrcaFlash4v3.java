@@ -19,6 +19,7 @@ import org.micromanager.data.Image;
 public class HamamatsuOrcaFlash4v3 extends Camera{
     String _devName;
     CamSettings _settings;
+    //TODO automatic recognition. How?: Library "HamamatsuHam", property "CameraName" = "C13440-20C"
     
     public HamamatsuOrcaFlash4v3(CamSettings settings) {
         _settings = settings;
