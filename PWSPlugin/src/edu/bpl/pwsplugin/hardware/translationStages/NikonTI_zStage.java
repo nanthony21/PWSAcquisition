@@ -59,6 +59,11 @@ public class NikonTI_zStage extends NikonTIBase {
     }
     
     @Override
+    protected Double getMinimumPFSOffset() {
+        return 0.0;
+    }
+    
+    @Override
     protected void setPFSOffset(double offset) throws MMDeviceException, InterruptedException {
         try {
             Globals.core().setProperty(pfsOffsetName, "Position", offset);

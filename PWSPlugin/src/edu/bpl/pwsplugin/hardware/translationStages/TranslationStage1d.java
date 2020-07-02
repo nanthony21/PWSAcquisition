@@ -20,10 +20,10 @@ import mmcorej.DeviceType;
  */
 public abstract class TranslationStage1d implements Device {
     @Override
-    public void activate() {} //Nothing to do here
+    public void activate() {} //Nothing to do here //TODO set as z device, set as autofocus device.
     
     @Override
-    public void initialize() {} //Nothing to do here
+    public void initialize() {} //Nothing to do here 
     
     public abstract double getPosUm() throws MMDeviceException;
     

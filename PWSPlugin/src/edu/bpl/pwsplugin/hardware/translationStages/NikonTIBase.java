@@ -27,7 +27,7 @@ public abstract class NikonTIBase extends TranslationStage1d {
     private double[] coef_; //Should be 3 elements giving the quadratic fit of x: um, y: offset. stored in order [intercept, linear, quadratic]
     //private final FocusLockWatcher fl;
 
-    public NikonTIBase(TranslationStage1dSettings settings) throws MMDeviceException {
+    public NikonTIBase(TranslationStage1dSettings settings) {
         this.settings = settings;        
     }
     
@@ -38,6 +38,7 @@ public abstract class NikonTIBase extends TranslationStage1d {
     protected abstract Status getPFSStatus() throws MMDeviceException ;
     
     protected abstract Double getMaximumPFSOffset();
+    protected abstract Double getMinimumPFSOffset();
     
     @Override
     public abstract boolean identify();
