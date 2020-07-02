@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.hardware.translationStages;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.hardware.Device;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
 import java.beans.PropertyChangeListener;
@@ -17,12 +18,12 @@ import mmcorej.DeviceType;
  *
  * @author nicke
  */
-public abstract class TranslationStage1d {
+public abstract class TranslationStage1d implements Device {
+    @Override
+    public void activate() {} //Nothing to do here
     
-    //protected abstract double convertValueToUm(double val) throws MMDeviceException;
-    
-    //protected abstract double convertUmToValue(double um) throws MMDeviceException;
-    
+    @Override
+    public void initialize() {} //Nothing to do here
     
     public abstract double getPosUm() throws MMDeviceException;
     
@@ -61,7 +62,7 @@ public abstract class TranslationStage1d {
     public static TranslationStage1d getInstance(TranslationStage1dSettings settings) {
         if (settings.stageType == TranslationStage1d.Types.NikonTI) {
             try {
-                return new NikonTI1d(settings);
+                return new NikonTI_zStage(settings);
             } catch (MMDeviceException e) {
                 Globals.mm().logs().logError(e);
                 return null;
@@ -100,7 +101,7 @@ class StageFactory {
             } else if ((library.equals("NikonTI") || library.equals("NikonTI2")) && name.equals("TIZDrive")) { //TODO is the library name correct? can the same class handle the TI1 and the TI2?
                 settings.stageType = TranslationStage1d.Types.NikonTI;
                 try {
-                    return new NikonTI1d(settings);
+                    return new NikonTI_zStage(settings);
                 } catch (MMDeviceException e) {
                     Globals.mm().logs().logError(e);
                     return null;

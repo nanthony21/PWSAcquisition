@@ -20,19 +20,18 @@ import org.apache.commons.math3.fitting.WeightedObservedPoint;
  *
  * @author nicke
  */
-public class NikonTI1d extends TranslationStage1d {
+public class NikonTI_zStage extends TranslationStage1d {
     private final TranslationStage1dSettings settings;
     private boolean calibrated = false;
     private final String devName;
     private final String pfsStatusName;
     private final String pfsOffsetName;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    private Status PFSStatus_;
     private final int MAX_PFS_OFFSET = 750; //I measured this as 753.025, weird, I'll just use 750
     private double[] coef_; //Should be 3 elements giving the quadratic fit of x: um, y: offset. stored in order [intercept, linear, quadratic]
     //private final FocusLockWatcher fl;
 
-    public NikonTI1d(TranslationStage1dSettings settings) throws MMDeviceException {
+    public NikonTI_zStage(TranslationStage1dSettings settings) throws MMDeviceException {
         this.settings = settings;
         this.devName = settings.deviceName;
         try {
@@ -279,6 +278,26 @@ public class NikonTI1d extends TranslationStage1d {
             }
             return null;
         }
+    }
+    
+    @Override
+    public boolean identify() {
+        try {
+            return ((Globals.core().getDeviceName(settings.deviceName).equals("ZStage"))
+                    &&
+                    (Globals.core().getDeviceLibrary(settings.deviceName).equals("NikonTI")));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    @Override
+    public List<String> validate() {
+        List<String> errs = new ArrayList<>();
+        if (!identify()) {
+            errs.add(String.format("Device %s is not recognized as a Nikon TI Z-stage", settings.deviceName));
+        }
+        return errs;
     }
     
     //TODO check if objective changed. and make sure to recalibrate.

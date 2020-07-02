@@ -8,6 +8,8 @@ package edu.bpl.pwsplugin.hardware.translationStages;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -51,4 +53,24 @@ public class SimulationStage1d extends TranslationStage1d {
     
     @Override
     public boolean hasAutoFocus() { return false; }
+    
+    @Override
+    public boolean identify() {
+        try {
+            return ((Globals.core().getDeviceName(settings.deviceName).equals("DStage"))
+                    &&
+                    (Globals.core().getDeviceLibrary(settings.deviceName).equals("DemoCamera")));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    @Override
+    public List<String> validate() {
+        List<String> errs = new ArrayList<>();
+        if (!identify()) {
+            errs.add(String.format("Device %s is not recognized as a Simulation `Demo` Z-stage", settings.deviceName));
+        }
+        return errs;
+    }
 }
