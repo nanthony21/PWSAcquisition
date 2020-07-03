@@ -21,14 +21,13 @@ import org.apache.commons.math3.fitting.WeightedObservedPoint;
  * @author nicke
  */
 public abstract class NikonTIBase extends TranslationStage1d {
-    protected final TranslationStage1dSettings settings;
     private boolean calibrated = false;
     //private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private double[] coef_; //Should be 3 elements giving the quadratic fit of x: um, y: offset. stored in order [intercept, linear, quadratic]
     //private final FocusLockWatcher fl;
 
-    public NikonTIBase(TranslationStage1dSettings settings) {
-        this.settings = settings;        
+    public NikonTIBase(TranslationStage1dSettings settings) throws IDException {
+        super(settings);
     }
     
     protected abstract Double getMaximumPFSOffset();

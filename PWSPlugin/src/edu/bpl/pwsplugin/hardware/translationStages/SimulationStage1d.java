@@ -16,10 +16,9 @@ import java.util.List;
  * @author nicke
  */
 public class SimulationStage1d extends TranslationStage1d {
-    private final TranslationStage1dSettings settings;
     
-    public  SimulationStage1d(TranslationStage1dSettings settings) {
-        this.settings = settings;
+    public  SimulationStage1d(TranslationStage1dSettings settings) throws IDException {
+        super(settings);
     }
     
     @Override

@@ -20,7 +20,7 @@ public class NikonTI2_zStage extends NikonTIBase {
     private final String offsetDevice; //A stage device with no properties
     private final String pfsDevice; //An autofocus device
             
-    public NikonTI2_zStage(TranslationStage1dSettings settings) throws MMDeviceException {
+    public NikonTI2_zStage(TranslationStage1dSettings settings) throws MMDeviceException, IDException {
         super(settings);
         try {
             String nikonHub = null;

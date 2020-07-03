@@ -10,6 +10,8 @@ import edu.bpl.pwsplugin.hardware.Device;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
 import java.beans.PropertyChangeListener;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import mmcorej.DeviceType;
 
 
@@ -19,11 +21,20 @@ import mmcorej.DeviceType;
  * @author nicke
  */
 public abstract class TranslationStage1d implements Device {
+    protected final TranslationStage1dSettings settings;
+    
     @Override
     public void activate() {} //Nothing to do here //TODO set as z device, set as autofocus device.
     
     @Override
     public void initialize() {} //Nothing to do here 
+    
+    public TranslationStage1d(TranslationStage1dSettings settings) throws IDException {
+        this.settings = settings;
+        if (!this.identify()) {
+            throw new Device.IDException(String.format("Failed to identify class %s for device name %s", this.getClass().toString(), settings.deviceName));
+        }
+    }
     
     public abstract double getPosUm() throws MMDeviceException;
     
@@ -67,51 +78,58 @@ public abstract class TranslationStage1d implements Device {
             case NikonTI:
                 try {
                     return new NikonTI_zStage(settings);
-                } catch (MMDeviceException e) {
+                } catch (Exception e) {
                     Globals.mm().logs().logError(e);
                     return null;
                 }
             case NikonTI2:
                 try {
                     return new NikonTI2_zStage(settings);
-                } catch (MMDeviceException e) {
+                } catch (Exception e) {
                     Globals.mm().logs().logError(e);
                     return null;
                 } 
             case Simulated:
-                return new SimulationStage1d(settings);
+                try {
+                    return new SimulationStage1d(settings);
+                } catch (IDException e) {
+                    Globals.mm().logs().logError(e);
+                    return null;
+                } 
             default:
                 return null; //This shouldn't ever happen.
         }
     }
     
+    protected static TranslationStage1d getAutoInstance(String devName) {
+        TranslationStage1dSettings settings = new TranslationStage1dSettings();
+        settings.deviceName = devName;
+        for (Class clz : Arrays.asList(NikonTI2_zStage.class, NikonTI_zStage.class, SimulationStage1d.class)) {
+            TranslationStage1d stage;
+            try {
+                stage = (TranslationStage1d) clz.getDeclaredConstructor(TranslationStage1dSettings.class).newInstance(settings);
+            } catch (InvocationTargetException e) { 
+                if (e.getCause() instanceof IDException) {
+                    continue; //This just means the device wasn't identified. Try the next device
+                } else {
+                    throw new RuntimeException(e.getCause());
+                }
+            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException me) {
+                throw new RuntimeException(me);
+            }
+            return stage; //We only get this far if the object successfully initializes.
+        }
+        return null; //Nothing was identified.
+    }
+    
     public static TranslationStage1d getAutomaticInstance() {
         //Detect which stage is connected automatically, assumes that only one is connected.
         for (String devLabel : Globals.core().getLoadedDevicesOfType(DeviceType.StageDevice)) {
-            TranslationStage1dSettings settings = new TranslationStage1dSettings();
-            settings.deviceName = devLabel;
-            String library;
-            String name;
-            try {
-                library = Globals.core().getDeviceLibrary(devLabel);
-                name = Globals.core().getDeviceName(devLabel);
-            } catch (Exception e) {
-                Globals.mm().logs().logError(e);
-                continue;
-            } //TODO make use of `identify` here. identify should be static.
-            if (library.equals("DemoCamera")) {
-                settings.stageType = TranslationStage1d.Types.Simulated;
-                return new SimulationStage1d(settings);
-            } else if ((library.equals("NikonTI") || library.equals("NikonTI2")) && name.equals("TIZDrive")) { //TODO is the library name correct? can the same class handle the TI1 and the TI2?
-                settings.stageType = TranslationStage1d.Types.NikonTI;
-                try {
-                    return new NikonTI_zStage(settings);
-                } catch (MMDeviceException e) {
-                    Globals.mm().logs().logError(e);
-                    return null;
-                }
+            TranslationStage1d stage = getAutoInstance(devLabel);
+            if (stage != null) {
+                return stage;
             }
         }
-        return null; // no stages detected
+        return null; //Nothing was identified.
     }
 }

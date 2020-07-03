@@ -20,7 +20,7 @@ public class NikonTI_zStage extends NikonTIBase {
     private final String pfsStatusName;
     private final String pfsOffsetName;
 
-    public NikonTI_zStage(TranslationStage1dSettings settings) throws MMDeviceException {
+    public NikonTI_zStage(TranslationStage1dSettings settings) throws MMDeviceException, IDException {
         super(settings);
         try {
             String nikonHub = null;

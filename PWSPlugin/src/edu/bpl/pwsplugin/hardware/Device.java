@@ -20,4 +20,9 @@ public interface Device {
     
     public void activate() throws MMDeviceException; //Make sure this device is ready for usage, may be run many times.
     
+    public static class IDException extends Exception {
+        public IDException(String s) {
+            super(s);
+        }
+    }
 }
