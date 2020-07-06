@@ -6,7 +6,7 @@
 package edu.bpl.pwsplugin.UI;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.UI.settings.SimpleAdvancedAcquireCellUI;
+import edu.bpl.pwsplugin.UI.settings.AcquireCellUI;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
@@ -38,7 +38,7 @@ class AcquisitionPanel extends JPanel {
     private final JButton acqButton = new JButton("Acquire Now");
     private final DirectorySelector dirSelect = new DirectorySelector(DirectorySelector.DefaultMMFunctions.MMDataSetDirectory);;
     private final ImprovedJSpinner cellNumSpinner = new ImprovedJSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
-    private final SimpleAdvancedAcquireCellUI cellUI = new SimpleAdvancedAcquireCellUI();
+    private final AcquireCellUI cellUI = new AcquireCellUI();
     
     public AcquisitionPanel() {
         super(new MigLayout("insets 0 0 0 0"));

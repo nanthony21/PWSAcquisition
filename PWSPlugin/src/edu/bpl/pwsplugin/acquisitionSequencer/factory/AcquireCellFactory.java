@@ -6,7 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.factory;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
-import edu.bpl.pwsplugin.UI.settings.SimpleAdvancedAcquireCellUI;
+import edu.bpl.pwsplugin.UI.settings.AcquireCellUI;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireCell;
@@ -20,7 +20,7 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 public class AcquireCellFactory extends StepFactory {
     @Override
     public Class<? extends BuilderJPanel> getUI() {
-        return SimpleAdvancedAcquireCellUI.class;
+        return AcquireCellUI.class;
     }
     
     @Override

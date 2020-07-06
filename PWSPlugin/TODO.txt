@@ -4,7 +4,7 @@ test focus lock in realistic situation, ethanol cells and weird dishes.
 test objective switching.
 
 2:
-add simple view for acquisition.
+Seems Done, need to look into how default settings are initialized:add simple view for acquisition.
 
 3:
 Config automatically determine which adapter to use based on MMCore library name.
