@@ -6,19 +6,12 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.factory;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
-import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.UI.settings.AcquireCellUI;
+import edu.bpl.pwsplugin.UI.settings.SimpleAdvancedAcquireCellUI;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
-import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireCell;
-import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
-import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
-import java.nio.file.Paths;
 
 /**
  *
@@ -27,7 +20,7 @@ import java.nio.file.Paths;
 public class AcquireCellFactory extends StepFactory {
     @Override
     public Class<? extends BuilderJPanel> getUI() {
-        return AcquireCellUI.class;
+        return SimpleAdvancedAcquireCellUI.class;
     }
     
     @Override
