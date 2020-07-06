@@ -22,11 +22,11 @@ public class AcquireCellSettings extends JsonableParam {
         fluorSettings.add(new FluorSettings());
     }
     
-    public static AcquireCellSettings getDefaultSettings(PWSSystems sys) {
+    public static AcquireCellSettings getDefaultSettings(PWSSettingsConsts.Systems sys) {
         AcquireCellSettings settings = new AcquireCellSettings();
         PWSSettings pwsSettings = settings.pwsSettings;
         DynSettings dynSettings = settings.dynSettings;
-        List<FluorSettings> fluorSettings = settings.fluorSettings; //We'll just leave these as is.
+        settings.fluorSettings = new ArrayList<>(); //Default to no fluorescence.
         
         //For now we use the same default settings for all systems for dynamics.
         dynSettings.exposure = 50;
