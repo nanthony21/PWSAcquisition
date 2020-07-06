@@ -29,4 +29,11 @@ public class PWSSettingsConsts {
         JsonableParam.registerClass(PWSPluginSettings.class);
         JsonableParam.registerClass(AcquireCellSettings.class);
     }
+    
+    public enum Systems {
+    LCPWS1,
+    LCPWS2,
+    LCPWS3,
+    STORM;
+}
 }
