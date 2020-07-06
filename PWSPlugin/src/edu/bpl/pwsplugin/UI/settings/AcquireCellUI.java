@@ -17,9 +17,7 @@ import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.swing.BorderFactory;
 import net.miginfocom.swing.MigLayout;
 
@@ -91,14 +89,6 @@ public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements
             this.fluorCBPanel.setSelected(true);
             this.fluorSettings.populateFields(settings.fluorSettings);
         }
-    }
-    
-    public Map<String, Object> getPropertyFieldMap() {
-        Map<String, Object> m = new HashMap<>();
-        m.put("pwsSettings", pwsSettings);
-        m.put("dynSettings", dynSettings);
-        m.put("fluorSettings", fluorSettings);
-        return m;
     }
     
     @Override
