@@ -45,7 +45,7 @@ public class PWSPanel extends SingleBuilderJPanel<PWSSettings>{
         wvStepSpinner = new ImprovedJSpinner(new SpinnerNumberModel(2, 1, 50, 1));
         
         ttlTriggerCheckbox.setToolTipText("Whether the camera should be configured to trigger wavelength changes in the filter over TTL. This may not be supported.");
-        ttlTriggerCheckbox.addActionListener((evt)->{
+        ttlTriggerCheckbox.addItemListener((evt) -> {
             boolean checked = ttlTriggerCheckbox.isSelected();
             if (!checked) {
                 externalTriggerCheckBox.setSelected(false);
