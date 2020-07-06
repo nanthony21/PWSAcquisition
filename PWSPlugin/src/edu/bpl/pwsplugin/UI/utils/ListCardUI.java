@@ -45,7 +45,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
      
     
     public ListCardUI(Class<T> clazz,  String msg, S... defaultStepTypes) {
-        super(new MigLayout(), clazz);
+        super(new MigLayout("insets 0"), clazz);
         
         addButton.setIcon(new ImageIcon(getClass().getResource("/org/micromanager/icons/plus.png")));
         remButton.setIcon(new ImageIcon(getClass().getResource("/org/micromanager/icons/minus.png")));       

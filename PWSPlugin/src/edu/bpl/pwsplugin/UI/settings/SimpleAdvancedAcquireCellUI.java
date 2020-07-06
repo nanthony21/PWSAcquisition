@@ -44,10 +44,13 @@ public class SimpleAdvancedAcquireCellUI extends BuilderJPanel<AcquireCellSettin
     JTabbedPane tabs = new JTabbedPane();
     
     public SimpleAdvancedAcquireCellUI() {
-        super(new MigLayout(), AcquireCellSettings.class);
+        super(new MigLayout("insets 0 0 0 0, fill"), AcquireCellSettings.class);
+        
+        JPanel panel = new JPanel(new MigLayout());
+        panel.add(advancedUI);
         
         tabs.add("Simple", simpleUI);
-        tabs.add("Advanced", advancedUI);
+        tabs.add("Advanced", panel);
         currentTab = (BuilderJPanel<AcquireCellSettings>) tabs.getSelectedComponent();
         
         tabs.addChangeListener((evt) -> { //When tab is switched populate the new tab with the settings from the old tab.
@@ -60,7 +63,7 @@ public class SimpleAdvancedAcquireCellUI extends BuilderJPanel<AcquireCellSettin
             currentTab = newTab;
         });
         
-        this.add(tabs);
+        this.add(tabs, "shrinkx");
     }
     
     @Override
@@ -109,6 +112,7 @@ class SimpleAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements 
         
         pwsSettings.setBorder(BorderFactory.createEtchedBorder());
         dynSettings.setBorder(BorderFactory.createEtchedBorder());
+        fluorSettings.setBorder(BorderFactory.createEtchedBorder());
         
         pwsSettings.setExposure(settings.pwsSettings.exposure);
         dynSettings.setExposure(settings.dynSettings.exposure);
