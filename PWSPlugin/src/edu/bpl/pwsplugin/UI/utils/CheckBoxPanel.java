@@ -7,15 +7,11 @@ package edu.bpl.pwsplugin.UI.utils;
 
 import edu.bpl.pwsplugin.UI.utils.disablePanel.DisabledPanel;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Font;
-import java.awt.LayoutManager;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -31,12 +27,12 @@ public class CheckBoxPanel extends JPanel {
 
     public CheckBoxPanel(JPanel contents, String title) {
         super(new MigLayout("insets 0 0 0 0"));
-        checkBox = new JCheckBox(title); //Make this bold
+        checkBox = new JCheckBox(title);
         checkBox.setFont(new Font("serif", Font.BOLD, 11) {
         });
         contentsPanel = new DisabledPanel(contents);
 
-        super.add(checkBox, "wrap, gapy 1px");
+        super.add(checkBox, "wrap 0"); // 0 gap between the components.
         super.add(contentsPanel);
 
         checkBox.addItemListener((evt)-> {
