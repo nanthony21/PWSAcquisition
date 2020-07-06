@@ -55,7 +55,7 @@ public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> {
             try {
                 newTab.populateFields(currentTab.build());
             } catch (Exception e) {
-                Globals.mm().logs().logError(e);
+                Globals.mm().logs().showError(e);
             }
             currentTab = newTab;
         });
@@ -114,10 +114,10 @@ class SimpleAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements 
         pwsSettings.setExposure(settings.pwsSettings.exposure);
         dynSettings.setExposure(settings.dynSettings.exposure);
         
-        this.add(systemDefault, "wrap");
         this.add(pwsCBPanel, "wrap, spanx");
         this.add(dynCBPanel, "wrap, spanx");
         this.add(fluorCBPanel, "spanx");
+        this.add(systemDefault, "wrap");
         
         Globals.addPropertyChangeListener(this);
         this.setConfigNames(new ArrayList()); //We can't yet reference Globals on initialization. at least initialize an empty state. the property change listener should get fired afterward.

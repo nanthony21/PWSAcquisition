@@ -46,7 +46,7 @@ import org.scijava.plugin.Plugin;
 public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
 
     public static String menuName = "PWS Acquisition";
-    public static String versionNumber = "0.4";
+    public static String versionNumber = "0.5";
         
     private Studio studio_;  
     private boolean initialized_ = false;
