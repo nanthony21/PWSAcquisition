@@ -20,23 +20,23 @@ import java.util.List;
  */
 public interface ImagingConfiguration {
 
-    Camera camera();
+    public Camera camera();
 
-    Illuminator illuminator();
+    public Illuminator illuminator();
     
-    ImagingConfigurationSettings settings();
+    public ImagingConfigurationSettings settings();
 
-    boolean hasTunableFilter();
+    public boolean hasTunableFilter();
     
-    TunableFilter tunableFilter();
+    public TunableFilter tunableFilter();
 
-    List<String> validate();
+    public List<String> validate();
 
-    TranslationStage1d zStage();
+    public TranslationStage1d zStage();
     
-    void activateConfiguration() throws MMDeviceException;
+    public void activateConfiguration() throws MMDeviceException;
     
-    void deactivateConfiguration() throws MMDeviceException;
+    public void deactivateConfiguration() throws MMDeviceException;
     
     public static ImagingConfiguration getInstance(ImagingConfigurationSettings settings) {
         if (null == settings.configType) {
