@@ -21,6 +21,8 @@ public interface ImagingConfiguration {
     Camera camera();
 
     Illuminator illuminator();
+    
+    String objectConfigGroup();
 
     ImagingConfigurationSettings settings();
 
@@ -31,5 +33,23 @@ public interface ImagingConfiguration {
     List<String> validate();
 
     TranslationStage1d zStage();
+    
+    public static ImagingConfiguration getInstance(ImagingConfigurationSettings settings) {
+        if (null == settings.configType) {
+            return null; //This shouldn't ever happen.
+        } else switch (settings.configType) {
+            case SpectralCamera:
+                return new SpectralCamera(settings);
+            case StandardCamera:
+                return new StandardCamera(settings);
+            default:
+                return null; //This shouldn't ever happen.
+        }
+    }
+    
+    public enum Types {
+        SpectralCamera,
+        StandardCamera;
+    }
     
 }

@@ -7,13 +7,8 @@ package edu.bpl.pwsplugin.hardware.configurations;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
-import edu.bpl.pwsplugin.hardware.cameras.Camera;
-import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
-import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
-import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
 import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
-import java.util.List;
 
 /**
  *
@@ -101,22 +96,6 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
         }
     }
     
-    public static DefaultImagingConfiguration getInstance(ImagingConfigurationSettings settings) {
-        if (null == settings.configType) {
-            return null; //This shouldn't ever happen.
-        } else switch (settings.configType) {
-            case SpectralCamera:
-                return new SpectralCamera(settings);
-            case StandardCamera:
-                return new StandardCamera(settings);
-            default:
-                return null; //This shouldn't ever happen.
-        }
-    }
-    
-    public enum Types {
-        SpectralCamera,
-        StandardCamera;
-    }
+
 }
 

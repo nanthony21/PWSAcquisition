@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author N2-LiveCell
  */
-public class StandardCamera extends ImagingConfiguration {
+public class StandardCamera extends DefaultImagingConfiguration {
     Camera _cam;
     Illuminator _illum;
     

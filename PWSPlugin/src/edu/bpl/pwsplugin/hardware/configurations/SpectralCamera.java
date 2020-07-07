@@ -17,7 +17,7 @@ import org.micromanager.data.Image;
  *
  * @author N2-LiveCell
  */
-public class SpectralCamera extends ImagingConfiguration {
+public class SpectralCamera extends DefaultImagingConfiguration {
     Camera _cam;
     TunableFilter _filt;
     Illuminator _illum;
