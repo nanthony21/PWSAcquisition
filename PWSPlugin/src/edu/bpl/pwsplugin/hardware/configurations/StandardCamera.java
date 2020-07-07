@@ -40,7 +40,7 @@ public class StandardCamera extends DefaultImagingConfiguration {
     
     @Override
     public List<String> validate() {
-        List<String> errs = new ArrayList<>();
+        List<String> errs = super.validate();
         errs.addAll(this._cam.validate());
         errs.addAll(this._illum.validate());
         errs.addAll(this.zStage().validate());

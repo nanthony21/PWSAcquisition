@@ -5,17 +5,12 @@
  */
 package edu.bpl.pwsplugin.hardware.configurations;
 
-import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
-import org.micromanager.events.ConfigGroupChangedEvent;
 
 /**
  *
@@ -89,6 +84,16 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
     @Override
     public void deactivateConfiguration() {
         activated_ = false;
+    }
+    
+    @Override
+    public List<String> validate() {
+        List<String> errs = new ArrayList<>();
+        if (settings.name.equals("")) {
+            errs.add("Imaging configuration must have a name.");
+        }
+        errs.addAll(zStage.validate());
+        return errs;
     }
     
     /*boolean isActive() throws MMDeviceException {
