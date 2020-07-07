@@ -5,11 +5,13 @@
  */
 package edu.bpl.pwsplugin.hardware.configurations;
 
+import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 /**
@@ -22,8 +24,6 @@ public interface ImagingConfiguration {
 
     Illuminator illuminator();
     
-    String objectConfigGroup();
-
     ImagingConfigurationSettings settings();
 
     boolean hasTunableFilter();
@@ -33,6 +33,10 @@ public interface ImagingConfiguration {
     List<String> validate();
 
     TranslationStage1d zStage();
+    
+    void activateConfiguration() throws MMDeviceException;
+    
+    void deactivateConfiguration() throws MMDeviceException;
     
     public static ImagingConfiguration getInstance(ImagingConfigurationSettings settings) {
         if (null == settings.configType) {

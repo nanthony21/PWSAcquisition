@@ -79,8 +79,6 @@ class ChangeConfigGroupUI extends BuilderJPanel<SequencerSettings.ChangeConfigGr
         this.add(configGroupName, "wrap");
         this.add(new JLabel("Setting:"), "gapleft push");
         this.add(configValue);
-        
-        Globals.mm().events().registerForEvents(this);
     }
     
     private void updateConfigGroupComboBox() {
@@ -107,12 +105,5 @@ class ChangeConfigGroupUI extends BuilderJPanel<SequencerSettings.ChangeConfigGr
         String[] s = Globals.core().getAvailableConfigs((String) evt.getItem()).toArray();
         configValue.setModel(new DefaultComboBoxModel<>(s));
     }
-    
-    @Subscribe
-    public void onConfigGroupChanged(ConfigGroupChangedEvent evt) {
-        updateConfigGroupComboBox();
-    }
-    
-    
 }
 

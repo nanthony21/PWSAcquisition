@@ -8,6 +8,8 @@ package edu.bpl.pwsplugin.hardware.translationStages;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,10 +17,11 @@ import java.util.List;
  *
  * @author nicke
  */
-public class SimulationStage1d extends TranslationStage1d {
+public class SimulationStage1d extends TranslationStage1d implements PropertyChangeListener {
     
     public  SimulationStage1d(TranslationStage1dSettings settings) throws IDException {
         super(settings);
+        Globals.getHardwareConfiguration().addObjectiveChangedListener(this);
     }
     
     @Override
@@ -71,5 +74,12 @@ public class SimulationStage1d extends TranslationStage1d {
             errs.add(String.format("Device %s is not recognized as a Simulation `Demo` Z-stage", settings.deviceName));
         }
         return errs;
+    }
+    
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals("objective")) {
+           Globals.mm().logs().logMessage(String.format("Simulated ZStage detects change in objective to %s", evt.getNewValue()));
+        }
     }
 }

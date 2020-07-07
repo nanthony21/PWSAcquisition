@@ -5,19 +5,26 @@
  */
 package edu.bpl.pwsplugin.hardware.configurations;
 
+import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.List;
+import org.micromanager.events.ConfigGroupChangedEvent;
 
 /**
  *
  * @author N2-LiveCell
  */
 public abstract class DefaultImagingConfiguration implements ImagingConfiguration {
-    ImagingConfigurationSettings settings;
+    protected ImagingConfigurationSettings settings;
     private boolean initialized_ = false;
-    private TranslationStage1d zStage;
+    protected TranslationStage1d zStage;
     private boolean activated_ = false;
     
     protected DefaultImagingConfiguration(ImagingConfigurationSettings settings) {
@@ -49,8 +56,8 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
     }
     
     //We only want the following functions to be accessed by the HWConfigrartion
-    
-    void activateConfiguration() throws MMDeviceException { //Actually configure the hardware to use this configuration.
+    @Override
+    public void activateConfiguration() throws MMDeviceException { //Actually configure the hardware to use this configuration.
         if (!initialized_) {
             this.initialize(); //If we haven't yet then run the one-time initialization for the the devices.
         }
@@ -79,11 +86,12 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
         activated_ = true;
     }
     
-    void deactivateConfiguration() {
+    @Override
+    public void deactivateConfiguration() {
         activated_ = false;
     }
     
-    boolean isActive() throws MMDeviceException {
+    /*boolean isActive() throws MMDeviceException {
         if (!activated_) { return false; }
         try { //Even if the `activated_` flag is true we still check that the configuration group is properly set, just to make sure.
             boolean active = Globals.core().getCurrentConfig(settings.configurationGroup).equals(settings.configurationName);
@@ -94,7 +102,7 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }
-    }
+    }*/
     
 
 }

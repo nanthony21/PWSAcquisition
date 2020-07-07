@@ -12,6 +12,7 @@ import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.List;
 import mmcorej.DeviceType;
 
 
@@ -70,8 +71,15 @@ public abstract class TranslationStage1d implements Device {
         Simulated,
         NikonTI2;
     }
-        
-    public static TranslationStage1d getInstance(TranslationStage1dSettings settings) {
+      
+    private static final List<Class<? extends TranslationStage1d>> subClasses = 
+            Arrays.asList(
+                    NikonTI2_zStage.class,
+                    NikonTI_zStage.class,
+                    SimulationStage1d.class
+            );
+    
+    /*public static TranslationStage1d getInstance(TranslationStage1dSettings settings) {
         if (null == settings.stageType) {
             throw new RuntimeException("This shouldn't ever happen.");
         } else switch (settings.stageType) {
@@ -99,12 +107,14 @@ public abstract class TranslationStage1d implements Device {
             default:
                 return null; //This shouldn't ever happen.
         }
-    }
+    }*/
     
-    protected static TranslationStage1d getAutoInstance(String devName) {
+    private static TranslationStage1d getAutoInstance(String devName) {
+        //this is called from within `getAutomaticInstance`. attempts instantiating subclasses for `devName`.
+        //If it isn't recognized then we get an `IDException` and continue searching. Any other exception gets raised.
         TranslationStage1dSettings settings = new TranslationStage1dSettings();
         settings.deviceName = devName;
-        for (Class clz : Arrays.asList(NikonTI2_zStage.class, NikonTI_zStage.class, SimulationStage1d.class)) {
+        for (Class clz : subClasses) {
             TranslationStage1d stage;
             try {
                 stage = (TranslationStage1d) clz.getDeclaredConstructor(TranslationStage1dSettings.class).newInstance(settings);

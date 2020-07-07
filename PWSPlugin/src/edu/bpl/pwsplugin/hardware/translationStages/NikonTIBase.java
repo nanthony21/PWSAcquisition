@@ -8,10 +8,10 @@ package edu.bpl.pwsplugin.hardware.translationStages;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
-import java.beans.PropertyChangeSupport;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
-import mmcorej.DeviceType;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoint;
@@ -20,7 +20,7 @@ import org.apache.commons.math3.fitting.WeightedObservedPoint;
  *
  * @author nicke
  */
-public abstract class NikonTIBase extends TranslationStage1d {
+public abstract class NikonTIBase extends TranslationStage1d implements PropertyChangeListener {
     private boolean calibrated = false;
     //private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private double[] coef_; //Should be 3 elements giving the quadratic fit of x: um, y: offset. stored in order [intercept, linear, quadratic]
@@ -28,6 +28,7 @@ public abstract class NikonTIBase extends TranslationStage1d {
 
     public NikonTIBase(TranslationStage1dSettings settings) throws IDException {
         super(settings);
+        Globals.getHardwareConfiguration().addObjectiveChangedListener(this);
     }
     
     protected abstract Double getMaximumPFSOffset();
@@ -200,6 +201,13 @@ public abstract class NikonTIBase extends TranslationStage1d {
             Globals.core().fullFocus();
         } catch (Exception e) {
             throw new MMDeviceException(e);
+        }
+    }
+    
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals("objective")) {
+            this.calibrated = false; //objective changed so we need to recalibrate
         }
     }
 }

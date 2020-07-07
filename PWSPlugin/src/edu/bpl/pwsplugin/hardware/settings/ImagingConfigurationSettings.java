@@ -5,8 +5,6 @@
  */
 package edu.bpl.pwsplugin.hardware.settings;
 
-import edu.bpl.pwsplugin.hardware.settings.IlluminatorSettings;
-import edu.bpl.pwsplugin.hardware.settings.CamSettings;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 

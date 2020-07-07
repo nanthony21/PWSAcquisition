@@ -95,6 +95,7 @@ public class Globals {
     
     public static void setHardwareConfigurationSettings(HWConfigurationSettings configg) {
         try {
+            instance().config.dispose(); //If we don't do this then the object will still hang around.
             instance().config = new HWConfiguration(configg);
             instance().pcs.firePropertyChange("config", null, instance().config);
         } catch (MMDeviceException e) {
