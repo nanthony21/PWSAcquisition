@@ -42,7 +42,7 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
                         status.newStatusMessage("Focus Lock: Error: Focus lock failed to recover focus.");
                     }
                     zStage.setAutoFocusEnabled(true);
-                    Thread.sleep((long) (settings.preDelay * 1000.0)); //Does this actually serve any purpose?
+                    Thread.sleep((long) (settings.delay * 1000.0)); //Does this actually serve any purpose?
                 }
             }
             return status;
@@ -55,10 +55,9 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
         SequencerSettings.FocusLockSettings settings = this.getSettings();
         return (status) -> {
             //FocusLock A function that turns on the PFS, runs substep and then turns it off.
-            Globals.core().setAutoFocusOffset(settings.zOffset); //Does this serve any purpose?
             Globals.core().fullFocus(); //TODO this can fail and throw an exception, don't let that crash the whole experiment.
             Globals.core().enableContinuousFocus(true);
-            Thread.sleep((long) (settings.preDelay * 1000.0));
+            Thread.sleep((long) (settings.delay * 1000.0));
             AcquisitionStatus newstatus = stepFunction.apply(status);
             if (!Globals.core().isContinuousFocusLocked()) {
                 Globals.mm().logs().logMessage("Autofocus failed!");

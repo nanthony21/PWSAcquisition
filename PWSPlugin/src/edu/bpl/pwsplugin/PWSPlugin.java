@@ -22,8 +22,6 @@ package edu.bpl.pwsplugin;
 
 //Must Do:
 //Generate camera affine transform
-//Support C11440-10C camera
-//TI2 uses the built in offset functions. It is a double datatype that only accepts integers and ranges from 1 to 32500
 
 //Software autofocus log step?
 //Add sequence logging.

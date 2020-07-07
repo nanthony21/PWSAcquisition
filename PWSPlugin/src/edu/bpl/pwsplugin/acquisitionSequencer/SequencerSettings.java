@@ -26,8 +26,7 @@ public class SequencerSettings {
     }
 
     public static class FocusLockSettings extends JsonableParam {
-        public double zOffset = 0;
-        public double preDelay = 1;
+        public double delay = 1; //Seconds delay after focus
     }
 
     public static class EveryNTimesSettings extends JsonableParam {

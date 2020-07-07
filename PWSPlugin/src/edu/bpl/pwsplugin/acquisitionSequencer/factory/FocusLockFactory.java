@@ -66,19 +66,14 @@ public class FocusLockFactory extends StepFactory {
 }
 
 class FocusLockUI extends SingleBuilderJPanel<SequencerSettings.FocusLockSettings>{
-    ImprovedJSpinner offset;
     ImprovedJSpinner delay;
     
     public FocusLockUI() {
         super(new MigLayout(), SequencerSettings.FocusLockSettings.class);
         
-        offset = new ImprovedJSpinner(new SpinnerNumberModel(0, -1e8, 1e8, 1));
         delay = new ImprovedJSpinner(new SpinnerNumberModel(1.0, 0.0, 30.0, 1.0));
-        ((ImprovedJSpinner.DefaultEditor) offset.getEditor()).getTextField().setColumns(4);
         ((ImprovedJSpinner.DefaultEditor) delay.getEditor()).getTextField().setColumns(4);
         
-        this.add(new JLabel("Z Offset:"), "gapleft push");
-        this.add(offset, "wrap");
         this.add(new JLabel("Delay (s):"), "gapleft push");
         this.add(delay);
     }
@@ -86,7 +81,6 @@ class FocusLockUI extends SingleBuilderJPanel<SequencerSettings.FocusLockSetting
     @Override
     public Map<String, Object> getPropertyFieldMap() {
         Map<String,Object> m = new HashMap<>();
-        m.put("zOffset", offset);
         m.put("preDelay", delay);        
         return m;
     }
