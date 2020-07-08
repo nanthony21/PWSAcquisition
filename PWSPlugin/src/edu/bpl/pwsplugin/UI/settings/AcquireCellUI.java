@@ -160,7 +160,7 @@ class SimpleAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements 
         }
         
         if (dynCBPanel.isSelected()) {
-            settings.dynSettings.exposure = this.dynSettings.getExposure();
+            settings.dynSettings.exposure = this.dynSettings.getExposure(); //TODO this can be null
             settings.dynSettings.imConfigName = this.dynSettings.getConfigName();
         } else {
             settings.dynSettings = null;
