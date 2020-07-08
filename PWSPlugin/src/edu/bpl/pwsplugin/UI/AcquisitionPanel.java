@@ -23,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
+import java.util.List;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -102,6 +103,7 @@ class AcquisitionPanel extends JPanel {
         }
         acqMan.setSavePath(this.dirSelect.getText());
         acqMan.setCellNum((Integer) this.cellNumSpinner.getValue());
+        
         AcquireCellSettings settings;
         try {
             settings = this.cellUI.build();
@@ -110,6 +112,21 @@ class AcquisitionPanel extends JPanel {
             ReportingUtils.showError("Failed to get acquisition settings from UI. See corelog for details.");
             return;
         }
+        
+        
+        List<String> errs = Globals.getHardwareConfiguration().validate();
+        if (!errs.isEmpty()) {
+            String msg = String.format("The following errors were detected. Do you want to proceeed with imaging?: %s", String.join("\n", errs));
+            int result = JOptionPane.showConfirmDialog(this, msg, "Errors!", 
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+                    null);
+
+            if (result == JOptionPane.NO_OPTION) {
+                Globals.mm().logs().logMessage("Aborting due to errors.");
+                return;
+            }
+        }
+        
         ThrowingFunction<Void, Void> f = (nul)->{return null;};
         if (!settings.fluorSettings.isEmpty()) {
             f = f.andThen((nul)->{

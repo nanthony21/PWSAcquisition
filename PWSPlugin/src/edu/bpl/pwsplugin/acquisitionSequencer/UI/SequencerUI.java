@@ -8,16 +8,13 @@ package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 import com.google.gson.JsonIOException;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.awt.Font;
 import java.awt.Window;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -30,6 +27,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -67,11 +65,25 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
                     Globals.mm().logs().showError(String.join("\n", errors));
                     return;
                 }
+                
+                //Validate the hardware state
+                List<String> errs = Globals.getHardwareConfiguration().validate();
+                if (!errs.isEmpty()) {
+                    String msg = String.format("The following errors were detected. Do you want to proceeed with imaging?: %s", String.join("\n", errs));
+                    int result = JOptionPane.showConfirmDialog(this, msg, "Errors!", 
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+                    null);
+
+                    if (result == JOptionPane.NO_OPTION) {
+                        Globals.mm().logs().logMessage("Aborting due to errors.");
+                        return;
+                    }
+                }
+                
                 boolean success = resolveFileConflicts(rootStep);
                 if (!success) { return; }
                 SequencerRunningDlg dlg = new SequencerRunningDlg(SwingUtilities.getWindowAncestor(this), "Acquisition Sequence Running", rootStep);
             } catch (BuilderPanelException | RuntimeException e) {
-                //Globals.mm().logs().showError(e);
                 ReportingUtils.showError(e, this); //This puts the error message over the plugin UI rather than the main Micro-Manager UI
             }
         }); //Run starting at cell 1.
