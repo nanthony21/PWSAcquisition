@@ -92,21 +92,24 @@ class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings>
             imConf.tunableFilter().setWavelength(settings.tfWavelength);
         }
         imConf.zStage().setPosRelativeUm(settings.focusOffset);
-        imSaver.beginSavingThread();
-        imConf.camera().setExposure(settings.exposure);
-        Globals.core().clearCircularBuffer();
-        Image img = imConf.camera().snapImage();
-        metadata.setMicroManagerMetadata((DefaultMetadata) img.getMetadata());
-        Integer wv;
-        if (spectralMode) { wv = settings.tfWavelength; } else { wv = null; }
-        FluorescenceMetadata flmd = new FluorescenceMetadata(metadata, settings.filterConfigName, imConf.camera().getExposure(), wv); //This must happen after we have set our exposure.
-        Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
-        Coords coords = img.getCoords();
-        pipeline.insertImage(img); //Add image to the data pipeline for processing
-        img = pipeline.getDatastore().getImage(coords); //Retrieve the processed image. 
-        imSaver.setMetadata(flmd);
-        this.displayImage(img);
-        imSaver.addImage(img);
-        imConf.zStage().setPosRelativeUm(-settings.focusOffset);
+        try {
+            imSaver.beginSavingThread();
+            imConf.camera().setExposure(settings.exposure);
+            Globals.core().clearCircularBuffer();
+            Image img = imConf.camera().snapImage();
+            metadata.setMicroManagerMetadata((DefaultMetadata) img.getMetadata());
+            Integer wv;
+            if (spectralMode) { wv = settings.tfWavelength; } else { wv = null; }
+            FluorescenceMetadata flmd = new FluorescenceMetadata(metadata, settings.filterConfigName, imConf.camera().getExposure(), wv); //This must happen after we have set our exposure.
+            Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
+            Coords coords = img.getCoords();
+            pipeline.insertImage(img); //Add image to the data pipeline for processing
+            img = pipeline.getDatastore().getImage(coords); //Retrieve the processed image. 
+            imSaver.setMetadata(flmd);
+            this.displayImage(img);
+            imSaver.addImage(img);
+        } finally {
+            imConf.zStage().setPosRelativeUm(-settings.focusOffset);
+        }
     }
 }

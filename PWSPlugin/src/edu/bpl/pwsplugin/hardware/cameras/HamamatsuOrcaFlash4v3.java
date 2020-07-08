@@ -74,7 +74,7 @@ public class HamamatsuOrcaFlash4v3 extends DefaultCamera{
                 Globals.core().setProperty(this._devName, "TRIGGER SOURCE", "MASTER PULSE"); //Make sure that Master Pulse is triggering the camera.
                 Globals.core().setProperty(this._devName, "MASTER PULSE INTERVAL", intervalMs/1000.0); //In units of seconds
             }
-            Globals.core().startSequenceAcquisition(this._devName, numImages, 0, false); //The hamamatsu adapter throws an error if the interval is not 0.
+            Globals.core().startSequenceAcquisition(numImages, 0, false); //The hamamatsu adapter throws an error if the interval is not 0. For some reason using the method signature that takes a device name results in a silence error here.
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }

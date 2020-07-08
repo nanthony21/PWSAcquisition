@@ -173,7 +173,11 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
                     }
                 } finally {
                     conf.stopTTLSequence(); //Got to make sure to stop the sequencing behaviour.         
-                    String timeMsg = "PWSPlugin: Hardware Sequenced Acq: ConfigurationTime:" + (seqStartTime-configStartTime)/1000.0 + "HWAcqTime:"+(seqEndTime-seqStartTime)/1000.0+"ImgCollectionTime:"+(collectionEndTime-seqEndTime)/1000.0;
+                    String timeMsg = String.format(
+                            "PWSPlugin: Hardware Sequenced Acq: ConfigurationTime: %f HWAcqTime: %f ImgCollectionTime: %f",
+                            (seqStartTime-configStartTime)/1000.0,
+                            (seqEndTime-seqStartTime)/1000.0,
+                            (collectionEndTime-seqEndTime)/1000.0);
                     ReportingUtils.logMessage(timeMsg);
                 }
             }

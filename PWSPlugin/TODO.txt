@@ -8,6 +8,7 @@ validate imaging config on instantiation.
 At the end of an acquisition purge all image saver threads.
 external triggering from kurios not working
 kurios switches to wide for triggering
+kurios still goes one item too far in sequencing. Only when external triggering isn't used. Device adapter: starts at 502 instead of 500
 
 2:
 Make special objective and configuration config groups
