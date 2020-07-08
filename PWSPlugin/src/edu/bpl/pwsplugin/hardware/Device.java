@@ -16,7 +16,7 @@ import mmcorej.DeviceType;
  * @author nicke
  */
 public interface Device {
-    public boolean identify(); //Return true if the settings indicate a device that is supported by this class. //TODO use this for automatic class selection..
+    public boolean identify(); //Return true if the settings indicate a device that is supported by this class.
     
     public List<String> validate(); //Return a list of strings for every error detected in the configuration. return empty list if no errors found.  
     

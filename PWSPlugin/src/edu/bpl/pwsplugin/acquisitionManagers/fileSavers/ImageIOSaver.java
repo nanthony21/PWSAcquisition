@@ -71,9 +71,6 @@ public class ImageIOSaver extends SaverExecutor {
                     if (mmImg == null) { 
                         throw new TimeoutException(String.format("ImageIOSaver timed out on receiving image %d of %d", i+1, this.expectedFrames));
                     }
-                    if (mmImg.getBytesPerPixel() != 2) { //TODO get rid of this constraint.
-                        ReportingUtils.showError("PWSPlugin does not support images with other than 16 bit bitdepth.");
-                    }
                     IIOImage image = this.MM2IIO(mmImg);
                     writer.writeToSequence(image, param);
                     
@@ -107,6 +104,9 @@ public class ImageIOSaver extends SaverExecutor {
     
     private IIOImage MM2IIO(Image mmImg) {
         //This implementation will only work for 2byte pixels.
+        if (mmImg.getBytesPerPixel() != 2) { //TODO get rid of this constraint.
+            throw new IllegalArgumentException("PWSPlugin ImageIO saver does not support images with other than 16 bit bitdepth.");
+        }
         BufferedImage bim = ImageIOHelper.arrtoim(mmImg.getWidth(), mmImg.getHeight(),(short[]) mmImg.getRawPixels());
         return new IIOImage(bim ,null, null); // We can set metadata later, or maybe we don't need to, no need for thumbnails.
     }
@@ -130,7 +130,7 @@ public class ImageIOSaver extends SaverExecutor {
     private void writeMetadata(String savePath, String filePrefix, JsonObject md) throws IOException {
         try (FileWriter file = new FileWriter(Paths.get(savePath).resolve(filePrefix + "metadata.json").toString())) {
             file.write(GsonUtils.getGson().toJson(md)); //4 spaces of indentation
-            file.flush(); //TODO is this needed.
+            file.flush(); //is this needed.
         }
     }
 }

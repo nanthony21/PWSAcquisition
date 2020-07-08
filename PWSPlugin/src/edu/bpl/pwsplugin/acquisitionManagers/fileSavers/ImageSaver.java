@@ -18,5 +18,4 @@ public interface ImageSaver {
     public void beginSavingThread() throws InterruptedException, ExecutionException;
     public void setMetadata(MetadataBase md);
     public void addImage(Image img);
-    //public void awaitThreadTermination() throws Exception; //TODO Get rid of this?
 }

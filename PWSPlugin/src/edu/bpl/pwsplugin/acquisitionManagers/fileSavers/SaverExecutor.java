@@ -25,7 +25,7 @@ import org.micromanager.data.Image;
  */
 public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
     private static final ExecutorService ex = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("PWS_ImageIO_Saver_Thread_%d").setPriority(Thread.MAX_PRIORITY).build());
-    private static List<Future<Void>> threadFutures = new ArrayList<>(); //TODO make sure to let all futures complete before exiting.
+    private static final List<Future<Void>> threadFutures = new ArrayList<>();
     private final LinkedBlockingQueue<Image> queue = new LinkedBlockingQueue<>();
     private final LinkedBlockingQueue<MetadataBase> mdQueue = new LinkedBlockingQueue<>(1);
     private boolean initialized = false;
@@ -40,7 +40,7 @@ public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
             throw new RuntimeException("This ImageSaver has already been run once. You must create a new one.");
         }
         initialized = true;
-        int todo = 0;
+        int runningTasks = 0;
         for (Iterator<Future<Void>> it = threadFutures.iterator(); it.hasNext();) { //Using "for-each" looping in this case leads to a "ConcurrentModificationException"
             Future fut = it.next();
             if (fut.isDone()) {
@@ -50,33 +50,14 @@ public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
                     it.remove();
                 }
             }
-            else { todo++; }
+            else { runningTasks++; }
         }
-        Globals.mm().logs().logMessage(String.format("TODO: %d", todo));
+        //Globals.mm().logs().logMessage(String.format("Number running tasks: %d", runningTasks));
         Future future = ex.submit(this);
         threadFutures.add(future); //We used to allow multiple saving threads at once, this led to terrible write speed. Better to feed all tasks to a single thread.
         
     }
-    
-    /*@Override
-    public void awaitThreadTermination() {
-        ex.shutdown(); // Disable new tasks from being submitted
-        try {
-          // Wait a while for existing tasks to terminate
-          if (!ex.awaitTermination(60, TimeUnit.SECONDS)) {
-            ex.shutdownNow(); // Cancel currently executing tasks
-            // Wait a while for tasks to respond to being cancelled
-            if (!ex.awaitTermination(60, TimeUnit.SECONDS))
-                Globals.mm().logs().logError("SaverExecutor thread did not terminate");
-          }
-        } catch (InterruptedException ie) {
-          // (Re-)Cancel if current thread also interrupted
-          ex.shutdownNow();
-          // Preserve interrupt status
-          Thread.currentThread().interrupt();
-        }
-    }*/
-    
+
     @Override
     public abstract Void call() throws Exception;
     
@@ -89,11 +70,6 @@ public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
     public void addImage(Image img) {
         this.queue.add(img);
     }
-    
-//    @Override
-//    public void awaitThreadTermination() throws InterruptedException, ExecutionException {
-//        this.threadFuture.get();
-//    }
     
     //Methods to be used by subclasses.
     protected LinkedBlockingQueue<Image> getImageQueue() {

@@ -5,10 +5,12 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -25,7 +27,7 @@ import javax.swing.tree.TreeNode;
  * @author nick
  */
 public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> {
-    //TODO more initialization: turn off PFS.
+
     public RootStep() {
         super(new SequencerSettings.RootStepSettings(), SequencerConsts.Type.ROOT);
     }
@@ -46,6 +48,8 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
                 }
                 status.setCellNum(0);
                 status.setSavePath(settings.directory);
+                TranslationStage1d zstage = Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
+                if (zstage.hasAutoFocus()) { zstage.setAutoFocusEnabled(false); } //Make sure to start with PFS turned off.
                 RootStep.this.saveToJson(Paths.get(settings.directory, "sequence.pwsseq").toString()); //Save the sequence to file for retrospect.
                 status = subStepFunc.apply(status);
                 return status;
