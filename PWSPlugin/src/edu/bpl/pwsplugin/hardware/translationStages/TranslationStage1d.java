@@ -13,6 +13,7 @@ import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import mmcorej.DeviceType;
 
 
@@ -72,12 +73,12 @@ public abstract class TranslationStage1d implements Device {
         NikonTI2;
     }
       
-    private static final List<Class<? extends TranslationStage1d>> subClasses = 
+    /*private static final List<Class<? extends TranslationStage1d>> subClasses = 
             Arrays.asList(
                     NikonTI2_zStage.class,
                     NikonTI_zStage.class,
                     SimulationStage1d.class
-            );
+            );*/
     
     /*public static TranslationStage1d getInstance(TranslationStage1dSettings settings) {
         if (null == settings.stageType) {
@@ -109,7 +110,7 @@ public abstract class TranslationStage1d implements Device {
         }
     }*/
     
-    private static TranslationStage1d getAutoInstance(String devName) {
+    /*private static TranslationStage1d getAutoInstance(String devName) {
         //this is called from within `getAutomaticInstance`. attempts instantiating subclasses for `devName`.
         //If it isn't recognized then we get an `IDException` and continue searching. Any other exception gets raised.
         TranslationStage1dSettings settings = new TranslationStage1dSettings();
@@ -141,5 +142,26 @@ public abstract class TranslationStage1d implements Device {
             }
         }
         return null; //Nothing was identified.
+    }*/
+    
+    public static TranslationStage1d getAutomaticInstance() {
+        
+        Function<String, TranslationStage1dSettings> generator = (devName) -> {
+            TranslationStage1dSettings settings = new TranslationStage1dSettings();
+            settings.deviceName = devName;
+            return settings;
+        };
+        
+        Device.AutoFinder<TranslationStage1d, TranslationStage1dSettings> finder = 
+                new Device.AutoFinder<>(
+                    TranslationStage1dSettings.class, 
+                    generator,
+                    NikonTI2_zStage.class,
+                    NikonTI_zStage.class,
+                    SimulationStage1d.class
+                );
+                
+        return finder.scanAllDevices(DeviceType.StageDevice);
     }
 }
+
