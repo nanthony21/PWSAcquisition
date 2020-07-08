@@ -45,7 +45,7 @@ public class KuriosLCTF extends DefaultTunableFilter {
             Globals.mm().logs().logError(e);
             errs.add("Error in Kurios LCTF validation. Please see corelog file.");
         }
-        //TODO What do we do about checking bandwidth?
+        //TODO What do we do about checking the bandwidth setting?
         return errs; 
     }
 }

@@ -104,7 +104,7 @@ public class ImageIOSaver extends SaverExecutor {
     
     private IIOImage MM2IIO(Image mmImg) {
         //This implementation will only work for 2byte pixels.
-        if (mmImg.getBytesPerPixel() != 2) { //TODO get rid of this constraint.
+        if (mmImg.getBytesPerPixel() != 2) { //FUTURE get rid of this constraint.
             throw new IllegalArgumentException("PWSPlugin ImageIO saver does not support images with other than 16 bit bitdepth.");
         }
         BufferedImage bim = ImageIOHelper.arrtoim(mmImg.getWidth(), mmImg.getHeight(),(short[]) mmImg.getRawPixels());

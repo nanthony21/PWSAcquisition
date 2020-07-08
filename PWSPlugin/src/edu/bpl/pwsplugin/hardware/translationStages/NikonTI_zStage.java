@@ -132,7 +132,7 @@ public class NikonTI_zStage extends NikonTIBase {
         OUTRANGE; //Could not try to focus, specimen is probably out of search range.
     }
     
-    //TODO check if objective changed. and make sure to recalibrate.
+    //TODO check if objective changed. and make sure to recalibrate. Unfortunately the config group changed event is broken.
     
     /*@Subscribe
     public void focusChanged(PropertyChangedEvent evt) {
@@ -154,7 +154,7 @@ public class NikonTI_zStage extends NikonTIBase {
     
 
     class FocusLockWatcher implements Runnable {
-        //TODO is this actually faster than using the events?
+        //is this actually faster than using the events?
         private final ScheduledExecutorService exc = Executors.newSingleThreadScheduledExecutor();
         private Status currentStatus;
         

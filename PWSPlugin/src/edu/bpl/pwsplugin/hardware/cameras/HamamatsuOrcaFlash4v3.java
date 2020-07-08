@@ -114,5 +114,3 @@ public class HamamatsuOrcaFlash4v3 extends DefaultCamera{
         return errs;
     }
 }
-    //TODO automatic recognition. How?: Library "HamamatsuHam", property "CameraName" = "C13440-20C"
-    

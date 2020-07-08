@@ -26,7 +26,7 @@ public abstract class TranslationStage1d implements Device {
     protected final TranslationStage1dSettings settings;
     
     @Override
-    public void activate() {} //Nothing to do here //TODO set as z device, set as autofocus device.
+    public void activate() {} //Nothing to do here 
     
     @Override
     public void initialize() {} //Nothing to do here 

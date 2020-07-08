@@ -33,7 +33,7 @@ public class AcquireFromPositionList extends ContainerStep<SequencerSettings.Acq
         PositionList list = this.getSettings().posList;
         SequencerFunction stepFunction = super.getSubstepsFunction(callbacks);
         return (status) -> {
-                Globals.core().setTimeoutMs(30000); //TODO put somewhere else. set timeout to 30 seconds. Otherwise we get an error if a position move takes greater than 5 seconds. (default timeout)
+                Globals.core().setTimeoutMs(30000); //set timeout to 30 seconds. Otherwise we get an error if a position move takes greater than 5 seconds. (default timeout)
                 for (int posNum = 0; posNum < list.getNumberOfPositions(); posNum++) {
                     MultiStagePosition pos = list.getPosition(posNum);
                     status.coords().setIterationOfCurrentStep(posNum);
