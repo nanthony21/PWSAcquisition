@@ -3,6 +3,12 @@ test software autofocus, get answers
 test focus lock in realistic situation, ethanol cells and weird dishes.
 test objective switching.
 
+make "filter" config group part of imaging config
+validate imaging config on instantiation.
+At the end of an acquisition purge all image saver threads.
+external triggering from kurios not working
+kurios switches to wide for triggering
+
 2:
 Make special objective and configuration config groups
 Make nikon recalibrate when objective changes.

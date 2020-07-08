@@ -38,7 +38,7 @@ public class XCite120LED implements Illuminator {
     @Override
     public boolean identify() {
         try {
-            return Globals.core().getDeviceName(this.settings.name).equals("XCite-exacte");
+            return Globals.core().getDeviceName(this.settings.name).equals("XCite-Exacte");
         } catch (Exception e) {
             return false;
         }

@@ -24,13 +24,11 @@ import ij.io.FileSaver;
 import ij.plugin.ContrastEnhancer;
 import ij.process.ImageConverter;
 import edu.bpl.pwsplugin.utils.GsonUtils;
-import java.io.BufferedOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.NoSuchElementException;
 
 

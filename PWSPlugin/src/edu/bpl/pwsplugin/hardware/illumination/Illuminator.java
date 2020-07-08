@@ -1,15 +1,10 @@
 package edu.bpl.pwsplugin.hardware.illumination;
 
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.Device;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.IlluminatorSettings;
-import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
-import edu.bpl.pwsplugin.hardware.translationStages.NikonTI2_zStage;
-import edu.bpl.pwsplugin.hardware.translationStages.NikonTI_zStage;
-import edu.bpl.pwsplugin.hardware.translationStages.SimulationStage1d;
-import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
 import java.util.function.Function;
-import mmcorej.DeviceType;
 
 
 public interface Illuminator extends Device {
@@ -44,7 +39,11 @@ public interface Illuminator extends Device {
                     SimulatedIlluminator.class
                 );
                 
-        return finder.getAutoInstance(settings.name);
+        Illuminator illum = finder.getAutoInstance(settings.name);
+        if (illum == null) {
+            Globals.mm().logs().logMessage("Autofinder No illuminator was found.");
+        }
+        return illum;
     }
     
     public enum Types {

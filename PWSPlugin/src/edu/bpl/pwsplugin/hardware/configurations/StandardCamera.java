@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.hardware.configurations;
 
+import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
@@ -38,7 +39,7 @@ public class StandardCamera extends DefaultImagingConfiguration {
     public Illuminator illuminator() { return _illum; }
     
     @Override
-    public List<String> validate() {
+    public List<String> validate() throws MMDeviceException {
         List<String> errs = super.validate();
         errs.addAll(this._cam.validate());
         errs.addAll(this._illum.validate());

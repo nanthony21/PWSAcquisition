@@ -5,11 +5,11 @@
  */
 package edu.bpl.pwsplugin.hardware.configurations;
 
+import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
-import java.util.ArrayList;
 import java.util.List;
 import org.micromanager.data.Image;
 
@@ -48,7 +48,7 @@ public class SpectralCamera extends DefaultImagingConfiguration {
     }
 
     @Override
-    public List<String> validate() {
+    public List<String> validate() throws MMDeviceException {
         List<String> errs = super.validate();
         errs.addAll(this._cam.validate());
         errs.addAll(this._filt.validate());
@@ -61,10 +61,11 @@ public class SpectralCamera extends DefaultImagingConfiguration {
         return (_cam.supportsTriggerOutput() && _filt.supportsSequencing());
     }
     
-    public void startTTLSequence(int numImages, double delayMs, boolean externalTriggering) throws Exception {
+    public void startTTLSequence(int numImages, double delayMs, boolean externalTriggering) throws MMDeviceException {
         if (!supportsTTLSequencing()) {
             throw new UnsupportedOperationException("This imaging configuration does not support TTL sequencing.");
         }
+        _cam.configureTriggerOutput(true);
         if (externalTriggering) {
             _cam.startSequence(numImages, delayMs, true);
             _filt.startSequence(); //This should trigger a pulse which sets the whole thing off. 
@@ -87,5 +88,6 @@ public class SpectralCamera extends DefaultImagingConfiguration {
     public void stopTTLSequence() throws Exception {
         _cam.stopSequence();
         _filt.stopSequence();
+        _cam.configureTriggerOutput(false);
     }
 }

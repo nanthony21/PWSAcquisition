@@ -102,7 +102,7 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
         double finalRelMicron = currentRelMicron + relUm;
         double newOffset = new PolynomialFunction(coef_).value(finalRelMicron);
         if ((newOffset > getMaximumPFSOffset()) || (newOffset < 0)) {
-            throw new IllegalArgumentException(String.format("PFS offset of %f is out of bounds", newOffset));
+            throw new IllegalArgumentException(String.format("PFS offset of %f is out of bounds. Relative movement of %f microns is not achievable.", newOffset, relUm));
         }
         return newOffset;
     }

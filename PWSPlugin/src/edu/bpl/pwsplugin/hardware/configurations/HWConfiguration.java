@@ -31,6 +31,7 @@ public class HWConfiguration {
             ImagingConfigurationSettings s = settings.configs.get(i);
             imConfigs.put(s.name, ImagingConfiguration.getInstance(s));
         }
+        //TODO validate on construction.
         if (imConfigs.size() > 0) {
             ImagingConfiguration conf = Iterables.get(imConfigs.values(), 0);
             this.activeConf_ = conf;
@@ -76,7 +77,7 @@ public class HWConfiguration {
         }
     }
     
-    public List<String> validate() {
+    public List<String> validate() throws MMDeviceException {
         //Check all imaging configurations for any errors
         List<String> errs = new ArrayList<>();
         for (ImagingConfiguration conf : this.imConfigs.values()) {

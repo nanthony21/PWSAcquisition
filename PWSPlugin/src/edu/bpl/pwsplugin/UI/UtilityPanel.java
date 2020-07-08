@@ -16,7 +16,6 @@ import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,10 +26,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
-import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
-import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
-import java.awt.event.ActionListener;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
@@ -127,8 +122,8 @@ class ExposurePanel extends JPanel implements PropertyChangeListener {
             }
             Double initialExposure;
             try {
-                Globals.core().setCameraDevice(this.config.camera().getName()); //We need our camera to be "The Camera" for the next part to work.
-                initialExposure = Globals.core().getExposure();
+                this.config.activateConfiguration(); //We need our camera to be "The Camera" for the next part to work.
+                initialExposure = config.camera().getExposure();
             } catch (Exception e) {
                 throw new MMDeviceException(e);
             }
@@ -169,8 +164,8 @@ class ExposurePanel extends JPanel implements PropertyChangeListener {
             CobylaExitStatus status = Cobyla.FindMinimum(opt, 1, 2, exposure, rhoBegin, rhoEnd, 0, 100);
             Globals.mm().logs().logMessage(String.format("AutoExposure: Finished with status: %s", status.toString()));
             try {
-                Globals.core().setExposure(exposure[0]); //Apply the optimized exposure value.
-                Globals.core().setCameraDevice(origCamDevice); // Set things back the way they were.
+                config.camera().setExposure(exposure[0]); //Apply the optimized exposure value.
+                //Globals.core().setCameraDevice(origCamDevice); // Set things back the way they were.
                 Globals.mm().app().refreshGUI(); //Show the changed exposure in the GUI.
             } catch (Exception e) {
                 throw new MMDeviceException(e);

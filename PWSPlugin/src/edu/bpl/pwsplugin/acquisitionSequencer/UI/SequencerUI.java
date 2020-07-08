@@ -11,6 +11,7 @@ import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.awt.Font;
 import java.awt.Window;
@@ -69,7 +70,7 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
                 //Validate the hardware state
                 List<String> errs = Globals.getHardwareConfiguration().validate();
                 if (!errs.isEmpty()) {
-                    String msg = String.format("The following errors were detected. Do you want to proceeed with imaging?: %s", String.join("\n", errs));
+                    String msg = String.format("The following errors were detected. Do you want to proceeed with imaging?:\n %s", String.join("\n", errs));
                     int result = JOptionPane.showConfirmDialog(this, msg, "Errors!", 
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
                     null);
@@ -83,7 +84,7 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
                 boolean success = resolveFileConflicts(rootStep);
                 if (!success) { return; }
                 SequencerRunningDlg dlg = new SequencerRunningDlg(SwingUtilities.getWindowAncestor(this), "Acquisition Sequence Running", rootStep);
-            } catch (BuilderPanelException | RuntimeException e) {
+            } catch (BuilderPanelException | MMDeviceException | RuntimeException e) {
                 ReportingUtils.showError(e, this); //This puts the error message over the plugin UI rather than the main Micro-Manager UI
             }
         }); //Run starting at cell 1.

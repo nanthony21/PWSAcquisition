@@ -30,7 +30,7 @@ public interface ImagingConfiguration {
     
     public TunableFilter tunableFilter();
 
-    public List<String> validate();
+    public List<String> validate() throws MMDeviceException;
 
     public TranslationStage1d zStage();
     

@@ -23,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
+import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import java.util.List;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
@@ -46,8 +47,12 @@ class AcquisitionPanel extends JPanel {
         
         ((ImprovedJSpinner.DefaultEditor)cellNumSpinner.getEditor()).getTextField().setColumns(4);
         
-        acqButton.addActionListener((e)->{
-            this.acquire();
+        acqButton.addActionListener((evt)->{
+            try {
+                this.acquire();
+            } catch (Exception e) {
+                Globals.mm().logs().showError(e, this);
+            }
         });
         
         this.add(cellUI, "spanx, wrap, shrinky, top");
@@ -85,7 +90,7 @@ class AcquisitionPanel extends JPanel {
         this.cellUI.populateFields(settings);
     }
     
-    private void acquire() { 
+    private void acquire() throws MMDeviceException { 
         AcquisitionManager acqMan = Globals.acqManager();
         Path savePath = FileSpecs.getCellFolderName(Paths.get(this.dirSelect.getText()), (Integer) this.cellNumSpinner.getValue());
         if (Files.exists(savePath)) {
@@ -116,7 +121,7 @@ class AcquisitionPanel extends JPanel {
         
         List<String> errs = Globals.getHardwareConfiguration().validate();
         if (!errs.isEmpty()) {
-            String msg = String.format("The following errors were detected. Do you want to proceeed with imaging?: %s", String.join("\n", errs));
+            String msg = String.format("The following errors were detected. Do you want to proceeed with imaging?:\n %s", String.join("\n", errs));
             int result = JOptionPane.showConfirmDialog(this, msg, "Errors!", 
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
                     null);

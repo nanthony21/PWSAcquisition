@@ -86,8 +86,12 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
     }
     
     @Override
-    public List<String> validate() {
+    public List<String> validate() throws MMDeviceException {
+        if (!initialized_) {
+            this.initialize(); //If we don't do this then many of the device variables will not yet be initialized.
+        }
         List<String> errs = new ArrayList<>();
+        //TODO check for null pointers (zstage, etc.)
         if (settings.name.equals("")) {
             errs.add("Imaging configuration must have a name.");
         }

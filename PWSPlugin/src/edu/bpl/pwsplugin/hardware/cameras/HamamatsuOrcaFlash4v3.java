@@ -51,7 +51,7 @@ public class HamamatsuOrcaFlash4v3 extends DefaultCamera{
             if (enable) {
                 Globals.core().setProperty(_devName, "OUTPUT TRIGGER SOURCE[0]", "READOUT END");
                 Globals.core().setProperty(_devName, "OUTPUT TRIGGER POLARITY[0]", "POSITIVE");
-                Globals.core().setProperty(_devName, "OUTPUT TRIGGER KIND[0]", "PROGRAMMABLE");
+                Globals.core().setProperty(_devName, "OUTPUT TRIGGER KIND[0]", "PROGRAMABLE");
                 Globals.core().setProperty(_devName, "OUTPUT TRIGGER PERIOD[0]", 0.001); //The default is shorter than this and it is often missed by other devices.
             } else {
                 Globals.core().setProperty(_devName, "OUTPUT TRIGGER KIND[0]", "LOW");
@@ -83,7 +83,7 @@ public class HamamatsuOrcaFlash4v3 extends DefaultCamera{
     @Override
     public void stopSequence() throws MMDeviceException {
         try {
-            Globals.core().stopSequenceAcquisition(this._devName);
+            Globals.core().stopSequenceAcquisition(this._devName); //This can hang for a long time when there is an error.
             Globals.core().setProperty(this._devName, "TRIGGER SOURCE", "MASTER PULSE"); //Set the trigger source back ot what it was originally
         } catch (Exception e) {
             throw new MMDeviceException(e);
