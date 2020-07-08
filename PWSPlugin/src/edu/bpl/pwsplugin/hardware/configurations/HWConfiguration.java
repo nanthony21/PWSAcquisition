@@ -76,6 +76,15 @@ public class HWConfiguration {
         }
     }
     
+    public List<String> validate() {
+        //Check all imaging configurations for any errors
+        List<String> errs = new ArrayList<>();
+        for (ImagingConfiguration conf : this.imConfigs.values()) {
+            errs.addAll(conf.validate());
+        }
+        return errs;
+    }
+    
     public void dispose() {
         //This removes references from external objects so that the object is deleted when it's references or lost
         Globals.mm().events().unregisterForEvents(this);

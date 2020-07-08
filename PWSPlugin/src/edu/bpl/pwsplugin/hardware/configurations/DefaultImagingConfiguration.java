@@ -31,7 +31,6 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
         return settings;
     }
     
-    
     @Override
     public TranslationStage1d zStage() {
         return zStage;
