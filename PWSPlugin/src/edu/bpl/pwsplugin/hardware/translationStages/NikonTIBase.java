@@ -11,6 +11,7 @@ import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
@@ -62,7 +63,7 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
     }
     
     
-    private void calibrate() throws MMDeviceException, InterruptedException {
+    private void calibrate() throws MMDeviceException, InterruptedException { //TODO there is a major problem with this on the TI2 primarily because the z position only updates at ~1 hz when pfs is on.
         //move pfs offset and measure zstage to calibrate pfsConversion.
         List<WeightedObservedPoint> observations = new ArrayList<>();
         double origOffset = this.getPFSOffset(); //It is vital that we go back to this settings at the end.
@@ -71,12 +72,15 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
             Globals.core().fullFocus();
             this.setAutoFocusEnabled(true);
             double zOrig = 0; //This will actually get initialized on the first iteration.
-            for (int offset=0; offset<getMaximumPFSOffset(); offset+=(getMaximumPFSOffset()/4)-1) {
+            for (int offset=0; offset<getMaximumPFSOffset(); offset+=(getMaximumPFSOffset()/40)-1) {
                 this.setPFSOffset(offset); 
                 if (offset==0) {
                     zOrig = this.getPosUm(); //All um measurement are relative to the measurement at pfsOffset = 0
                 }
-                observations.add(new WeightedObservedPoint(1, this.getPosUm() - zOrig, this.getPFSOffset()));
+                double x = this.getPosUm() - zOrig;
+                double y = this.getPFSOffset();
+                observations.add(new WeightedObservedPoint(1, x, y));
+                //System.out.println(String.format("%f, %f", x, y));
             }
         } catch (InterruptedException | MMDeviceException ie) {
             throw ie;
@@ -85,6 +89,7 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
         }
         PolynomialCurveFitter regression = PolynomialCurveFitter.create(2);
         this.coef_ = regression.fit(observations);
+        //System.out.println(Arrays.toString(coef_));
         this.setPFSOffset(origOffset);
         calibrated = true;
     }
@@ -121,7 +126,7 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
                     double newPos = this.getPosUm();
                     remainingRelUm -= newPos - currentPos; //subtract the delta-z from this iteration from our remaning distance to go.
                     //System.out.println(String.format("c %f, n %f, r %f, co %f, no %f", currentPos, newPos, remainingRelUm, currentOffset, newOffset));
-                    if (remainingRelUm <= 0.01) { break; }//I'm just not sure how to choose the tolerance. However running through 5 iterations without satisfying this requirement is fine.
+                    if (Math.abs(remainingRelUm) <= 0.01) { break; }//I'm just not sure how to choose the tolerance. However running through 5 iterations without satisfying this requirement is fine.
                 }
             } else {
                 Globals.core().setRelativePosition(settings.deviceName, um); 
