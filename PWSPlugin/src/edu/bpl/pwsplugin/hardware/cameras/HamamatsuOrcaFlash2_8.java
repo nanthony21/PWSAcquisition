@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.hardware.cameras;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.hardware.Device;
 import edu.bpl.pwsplugin.hardware.settings.CamSettings;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 public class HamamatsuOrcaFlash2_8 extends DefaultCamera { 
     
-    public HamamatsuOrcaFlash2_8(CamSettings settings) {
+    public HamamatsuOrcaFlash2_8(CamSettings settings) throws Device.IDException {
         super(settings);
     }
 

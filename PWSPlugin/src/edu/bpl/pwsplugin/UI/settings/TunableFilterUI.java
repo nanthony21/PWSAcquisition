@@ -24,18 +24,14 @@ import net.miginfocom.swing.MigLayout;
  * @author N2-LiveCell
  */
 public class TunableFilterUI extends SingleBuilderJPanel<TunableFilterSettings>{
-    private JComboBox<String> name = new JComboBox<>();
-    private JComboBox<TunableFilter.Types> filterType = new JComboBox<>();
+    private final JComboBox<String> name = new JComboBox<>();
     
     public TunableFilterUI() {
         super(new MigLayout(), TunableFilterSettings.class);
         
-        this.filterType.setModel(new DefaultComboBoxModel<>(TunableFilter.Types.values()));
         
         this.add(new JLabel("Device Name:"), "gapleft push");
         this.add(name, "wrap");
-        this.add(new JLabel("Type:"), "gapleft push");
-        this.add(filterType, "wrap");
         
         this.name.setModel(new DefaultComboBoxModel<>(new Vector<String>(Globals.getMMConfigAdapter().getAllDevices())));
     }
@@ -44,7 +40,6 @@ public class TunableFilterUI extends SingleBuilderJPanel<TunableFilterSettings>{
     public Map<String, Object> getPropertyFieldMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("name", name);
-        map.put("filterType", filterType);
         return map;
     }
 }

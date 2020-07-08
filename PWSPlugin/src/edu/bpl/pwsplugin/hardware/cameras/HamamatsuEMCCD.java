@@ -1,13 +1,14 @@
 package edu.bpl.pwsplugin.hardware.cameras;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.hardware.Device;
 import edu.bpl.pwsplugin.hardware.settings.CamSettings;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HamamatsuEMCCD extends DefaultCamera {
     
-    public HamamatsuEMCCD(CamSettings settings) {
+    public HamamatsuEMCCD(CamSettings settings) throws Device.IDException {
         super(settings);
     }
     

@@ -9,7 +9,6 @@ import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,8 +21,8 @@ public class StandardCamera extends DefaultImagingConfiguration {
     
     protected StandardCamera(ImagingConfigurationSettings settings) {
         super(settings);
-        _cam = Camera.getInstance(settings.camSettings);
-        _illum = Illuminator.getInstance(settings.illuminatorSettings);
+        _cam = Camera.getAutomaticInstance(settings.camSettings);
+        _illum = Illuminator.getAutomaticInstance(settings.illuminatorSettings);
     }
     
     @Override

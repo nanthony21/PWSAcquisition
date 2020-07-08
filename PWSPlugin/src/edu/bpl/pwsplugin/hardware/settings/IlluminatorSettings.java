@@ -14,5 +14,4 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
  */
 public class IlluminatorSettings extends JsonableParam {
     public String name = "";
-    public Illuminator.Types illuminatorType = Illuminator.Types.XCite120LED;
 }

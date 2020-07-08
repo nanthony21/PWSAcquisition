@@ -13,8 +13,5 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class TunableFilterSettings extends JsonableParam {
-    
-    public String name = "";
-    public TunableFilter.Types filterType = TunableFilter.Types.VARISPECLCTF;
-    
+    public String name = "";    
 }

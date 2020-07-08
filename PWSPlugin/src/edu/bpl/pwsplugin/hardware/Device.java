@@ -36,6 +36,7 @@ public interface Device {
         private final Function<String, S> sGen;
 
         public AutoFinder(Class settingsClass, Function<String, S> settingsGenerator, Class<? extends T>... clazz) {
+            //In order for this to work the `clazz` classes must throw an IDException from the constructor if the device is not recognized.
             subClasses = clazz;
             sClass = settingsClass;
             sGen = settingsGenerator;
@@ -58,6 +59,7 @@ public interface Device {
                 } catch (NoSuchMethodException | InstantiationException | IllegalAccessException me) {
                     throw new RuntimeException(me);
                 }
+                Globals.mm().logs().logMessage(String.format("Autofinder found device of type %s for device label %s.", device.getClass().toString(), devName));
                 return device; //We only get this far if the object successfully initializes.
             }
             return null; //Nothing was identified.
@@ -71,6 +73,7 @@ public interface Device {
                     return device;
                 }
             }
+            Globals.mm().logs().logMessage("Autofinder found no devices.");
             return null; //Nothing was identified.
         }
     }

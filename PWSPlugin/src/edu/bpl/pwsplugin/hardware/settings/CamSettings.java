@@ -17,8 +17,7 @@ import java.util.List;
  */
 public class CamSettings extends JsonableParam {
     public String name = "";
-    public Camera.Types camType = Camera.Types.HamamatsuOrca4V3;
     public List<Double> linearityPolynomial = new ArrayList<>();
     public int darkCounts = 0;
-    public String binning = ""; //TODO add this to the UI and use it in Camera initialization.
+    public String binning = "";
 }

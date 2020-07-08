@@ -24,9 +24,9 @@ public class SpectralCamera extends DefaultImagingConfiguration {
     
     protected SpectralCamera(ImagingConfigurationSettings settings) {
         super(settings);
-        _cam = Camera.getInstance(settings.camSettings);
-        _filt = TunableFilter.getInstance(settings.filtSettings);
-        _illum = Illuminator.getInstance(settings.illuminatorSettings);
+        _cam = Camera.getAutomaticInstance(settings.camSettings);
+        _filt = TunableFilter.getAutomaticInstance(settings.filtSettings);
+        _illum = Illuminator.getAutomaticInstance(settings.illuminatorSettings);
     }
     
     @Override

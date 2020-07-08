@@ -5,6 +5,7 @@
  */
 package edu.bpl.pwsplugin.hardware.tunableFilters;
 
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.settings.TunableFilterSettings;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +72,11 @@ public class SimulatedFilter implements TunableFilter {
     
     @Override
     public boolean identify() {
-        return true;
+        try {
+            return Globals.core().getDeviceLibrary(this.settings.name).equals("DCam"); //We don't have a great way to identify a simulation device, just make sure that the device comes from the `demo` library.
+        } catch (Exception e) {
+            return false;
+        }
     }
     
     @Override

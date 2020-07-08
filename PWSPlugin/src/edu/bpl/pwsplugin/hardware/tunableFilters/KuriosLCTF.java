@@ -2,6 +2,7 @@
 package edu.bpl.pwsplugin.hardware.tunableFilters;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.hardware.Device;
 import edu.bpl.pwsplugin.hardware.settings.TunableFilterSettings;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
  */
 public class KuriosLCTF extends DefaultTunableFilter {
     
-    public KuriosLCTF(TunableFilterSettings settings) {
+    public KuriosLCTF(TunableFilterSettings settings) throws Device.IDException {
         super(settings, "Wavelength");
     }
     

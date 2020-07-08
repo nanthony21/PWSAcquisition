@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.hardware.cameras;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.hardware.Device;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.CamSettings;
 import java.util.List;
@@ -19,8 +20,11 @@ import org.micromanager.data.Image;
 public abstract class DefaultCamera implements Camera {
     protected CamSettings settings;
     
-    public DefaultCamera(CamSettings settings) {
+    public DefaultCamera(CamSettings settings) throws Device.IDException {
         this.settings = settings;
+        if (!this.identify()) {
+            throw new Device.IDException(String.format("Failed to identify class %s for device name %s", this.getClass().toString(), settings.name));
+        }
     }
 
     @Override

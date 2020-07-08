@@ -7,9 +7,12 @@ package edu.bpl.pwsplugin.hardware.tunableFilters;
 
 import edu.bpl.pwsplugin.hardware.Device;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
-import edu.bpl.pwsplugin.settings.PWSPluginSettings;
+import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
+import edu.bpl.pwsplugin.hardware.illumination.SimulatedIlluminator;
+import edu.bpl.pwsplugin.hardware.illumination.XCite120LED;
+import edu.bpl.pwsplugin.hardware.settings.IlluminatorSettings;
 import edu.bpl.pwsplugin.hardware.settings.TunableFilterSettings;
-import java.util.List;
+import java.util.function.Function;
 
 
 /**
@@ -37,7 +40,7 @@ public interface TunableFilter extends Device {
     
     public TunableFilterSettings getSettings();
             
-    public static TunableFilter getInstance(TunableFilterSettings settings) {
+    /*public static TunableFilter getInstance(TunableFilterSettings settings) {
         if (null == settings.filterType) {
             throw new RuntimeException("This shouldn't ever happen.");
         } else switch (settings.filterType) {
@@ -50,6 +53,25 @@ public interface TunableFilter extends Device {
             default:
                 return null; //This shouldn't ever happen.
         }
+    }*/
+    
+    public static TunableFilter getAutomaticInstance(TunableFilterSettings settings) {
+        Function<String, TunableFilterSettings> generator = (devName) -> {
+            TunableFilterSettings sets = (TunableFilterSettings) settings.copy();
+            sets.name = devName;
+            return sets;
+        };
+        
+        Device.AutoFinder<TunableFilter, TunableFilterSettings> finder = 
+                new Device.AutoFinder<>(
+                    TunableFilterSettings.class, 
+                    generator,
+                    VarispecLCTF.class,
+                    KuriosLCTF.class,
+                    SimulatedFilter.class
+                );
+                
+        return finder.getAutoInstance(settings.name);
     }
     
     public enum Types {

@@ -2,8 +2,8 @@
 package edu.bpl.pwsplugin.hardware.tunableFilters;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.hardware.Device;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
-import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.hardware.settings.TunableFilterSettings;
 import java.util.List;
 import mmcorej.StrVector;
@@ -15,14 +15,17 @@ import mmcorej.StrVector;
 public abstract class DefaultTunableFilter implements TunableFilter{
     //Provides a default implementation for the abstract methods of `TunableFilter` class.
     //Based on a device name and wavelength property name this class implements methods by calling the corresponding MMCore functions.
-    protected String devName;
-    private TunableFilterSettings _settings;
-    private String wvProp;
+    protected final String devName;
+    private final TunableFilterSettings _settings;
+    private final String wvProp;
     
-    public DefaultTunableFilter(TunableFilterSettings settings, String wvPropertyLabel) {
+    public DefaultTunableFilter(TunableFilterSettings settings, String wvPropertyLabel) throws Device.IDException {
         _settings = settings;
         this.devName = settings.name;
         this.wvProp = wvPropertyLabel;
+        if (!this.identify()) {
+            throw new Device.IDException(String.format("Failed to identify class %s for device name %s", this.getClass().toString(), settings.name));
+        }
     }
     
     @Override

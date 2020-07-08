@@ -1,7 +1,6 @@
 
 package edu.bpl.pwsplugin.UI.settings;
 
-import com.google.common.collect.ImmutableList;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
@@ -34,7 +33,6 @@ public class CamUI extends BuilderJPanel<CamSettings>{
     private final JComboBox<String> camCombo = new JComboBox<>();
     private final ImprovedJSpinner darkCountsSpinner;
     private final DoubleListTextField linEdit = new DoubleListTextField();
-    private final JComboBox<Camera.Types> camType = new JComboBox<>();
     private final JComboBox<String> binningProperty = new JComboBox<>();
     
     public CamUI() {
@@ -51,12 +49,9 @@ public class CamUI extends BuilderJPanel<CamSettings>{
         
         this.linEdit.textField.setColumns(10);
         
-        this.camType.setModel(new DefaultComboBoxModel<>(Camera.Types.values()));
 
         super.add(new JLabel("Device Name:"), "gapleft push");
         super.add(camCombo, "wrap");
-        super.add(new JLabel("Camera Type:"), "gapleft push");
-        super.add(camType, "wrap");
         super.add(new JLabel("Dark Counts:"), "gapleft push");
         super.add(darkCountsSpinner, "wrap");
         super.add(new JLabel("Linearity Polynomial:"), "gapleft push");
@@ -82,7 +77,6 @@ public class CamUI extends BuilderJPanel<CamSettings>{
     @Override
     public void populateFields(CamSettings settings) {
         camCombo.setSelectedItem(settings.name);
-        camType.setSelectedItem(settings.camType);
         darkCountsSpinner.setValue(settings.darkCounts);
         linEdit.populateFields(settings.linearityPolynomial);
         this.binningProperty.setSelectedItem(settings.binning);
@@ -92,7 +86,6 @@ public class CamUI extends BuilderJPanel<CamSettings>{
     public CamSettings build() throws BuilderPanelException {
         CamSettings settings = new CamSettings();
         settings.name = (String) camCombo.getSelectedItem();
-        settings.camType = (Camera.Types) camType.getSelectedItem();
         settings.darkCounts = (Integer) darkCountsSpinner.getValue();
         settings.linearityPolynomial = linEdit.build(); //This can throw an exception.
         settings.binning = (String) binningProperty.getSelectedItem();

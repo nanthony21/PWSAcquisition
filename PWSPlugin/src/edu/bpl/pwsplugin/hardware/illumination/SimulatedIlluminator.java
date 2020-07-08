@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.hardware.illumination;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.hardware.Device;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.IlluminatorSettings;
 import java.util.ArrayList;
@@ -18,8 +19,11 @@ import java.util.List;
 public class SimulatedIlluminator implements Illuminator {
     private IlluminatorSettings settings;
     
-    public SimulatedIlluminator(IlluminatorSettings settings) {
+    public SimulatedIlluminator(IlluminatorSettings settings) throws Device.IDException {
         this.settings = settings;
+        if (!this.identify()) {
+            throw new Device.IDException(String.format("Failed to identify class %s for device name %s", this.getClass().toString(), settings.name));
+        }
     }
     
     @Override

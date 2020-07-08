@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.hardware.cameras;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.hardware.Device;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.CamSettings;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import org.micromanager.data.Image;
 public class HamamatsuOrcaFlash4v3 extends DefaultCamera{
     String _devName;
 
-    public HamamatsuOrcaFlash4v3(CamSettings settings) {
+    public HamamatsuOrcaFlash4v3(CamSettings settings) throws Device.IDException {
         super(settings);
         _devName = settings.name;
     }

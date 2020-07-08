@@ -8,7 +8,7 @@ package edu.bpl.pwsplugin.hardware.cameras;
 import edu.bpl.pwsplugin.hardware.Device;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.CamSettings;
-import java.util.List;
+import java.util.function.Function;
 import org.micromanager.data.Image;
 
 /**
@@ -38,7 +38,7 @@ public interface Camera extends Device{
     //public abstract void configureExternalTriggering(boolean enable, double triggerDelayMs) throws MMDeviceException; //Turn external triggering on or off.
     boolean supportsTriggerOutput(); //True if the camera can send a TTL trigger at the end of each new image it acquires.
 
-    public static Camera getInstance(CamSettings settings) {
+    /*public static Camera getInstance(CamSettings settings) {
         if (null == settings.camType) {
             throw new NullPointerException("This shouldn't ever happen"); //This shouldn't ever happen.
         } else switch (settings.camType) {
@@ -53,6 +53,26 @@ public interface Camera extends Device{
             default:
                 return null; //This shouldn't ever happen.
         }
+    }*/
+    
+    public static Camera getAutomaticInstance(CamSettings settings) {
+        Function<String, CamSettings> generator = (devName) -> {
+            CamSettings sets = (CamSettings) settings.copy();
+            sets.name = devName;
+            return sets;
+        };
+        
+        Device.AutoFinder<Camera, CamSettings> finder = 
+                new Device.AutoFinder<>(
+                    CamSettings.class, 
+                    generator,
+                    HamamatsuEMCCD.class,
+                    HamamatsuOrcaFlash2_8.class,
+                    HamamatsuOrcaFlash4v3.class,
+                    SimulatedCamera.class
+                );
+                
+        return finder.getAutoInstance(settings.name);
     }
     
     public enum Types {
