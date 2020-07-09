@@ -77,7 +77,7 @@ class FocusLockUI extends SingleBuilderJPanel<SequencerSettings.FocusLockSetting
     @Override
     public Map<String, Object> getPropertyFieldMap() {
         Map<String,Object> m = new HashMap<>();
-        m.put("preDelay", delay);        
+        m.put("delay", delay);        
         return m;
     }
 }

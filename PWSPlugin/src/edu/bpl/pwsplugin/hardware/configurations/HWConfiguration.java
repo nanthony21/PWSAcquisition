@@ -31,7 +31,6 @@ public class HWConfiguration {
             ImagingConfigurationSettings s = settings.configs.get(i);
             imConfigs.put(s.name, ImagingConfiguration.getInstance(s));
         }
-        //TODO validate on construction.
         if (imConfigs.size() > 0) {
             ImagingConfiguration conf = Iterables.get(imConfigs.values(), 0);
             this.activeConf_ = conf;
