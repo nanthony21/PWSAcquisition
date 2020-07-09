@@ -56,6 +56,7 @@ public class PWSAlbum {
    public void addImage(Image image) {
         if ((display==null) || (display.isClosed())) {
             display = Globals.mm().displays().createDisplay(store_);
+            //display.getWindow() //todo get window location and arrange in a grid
             try { 
                 display.setZoom(0.25); // Old versions of micromanager don't have this implemented.
             } catch (UnsupportedOperationException uoe) {} //Do nothing.
