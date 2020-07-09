@@ -4,20 +4,18 @@ test focus lock in realistic situation, ethanol cells and weird dishes.
 test objective switching.
 
 make "filter" config group part of imaging config
-validate imaging config on instantiation.
-At the end of an acquisition purge all image saver threads.
-external triggering from kurios not working
-kurios switches to wide for triggering
-kurios still goes one item too far in sequencing. Only when external triggering isn't used. Device adapter: starts at 502 instead of 500
 
 2:
 Make special objective and configuration config groups
 Make nikon recalibrate when objective changes.
 
 3:
-Config automatically determine which adapter to use based on MMCore library name.
 Add autoexposure to sequencer
 Add our own logger that format messages to the mm logger
 Add a cell selection step (AI type stuff)
 Focus lock snaps a single image and tests sharpness
 Z-Drive controller UI
+
+Kurios:
+kurios switches to wide for triggering
+kurios still goes one item too far in sequencing. Only when external triggering isn't used. Device adapter: starts at 502 instead of 500
