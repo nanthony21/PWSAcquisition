@@ -36,8 +36,9 @@ Add our own logger that format messages to the mm logger
 
 Focus lock snaps a single image and tests sharpness
 Add sequence logging.
+PFS set to current position.
 
-
+Don't allow a focus lock within a focus lock
 
 4:
 Transmission imaging
@@ -45,6 +46,7 @@ kurios still goes one item too far in sequencing. Only when external triggering 
 
 Nikon:
     Sometimes TI2 PFS becomes disabled during calibration.
+
 
 Some other day:
     STORM imaging
