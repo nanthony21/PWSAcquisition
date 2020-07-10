@@ -20,13 +20,37 @@ package edu.bpl.pwsplugin;
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-//Must Do:
-//Generate camera affine transform
+/*
+1:
+test software autofocus
+test focus lock in realistic situation, ethanol cells and weird dishes.
+fix nikon TI2 pfs
 
-//Software autofocus log step?
-//Add sequence logging.
-//Transmission imaging
-//STORM imaging
+2:
+Make special objective and configuration config groups. make "filter" config group part of imaging config
+Make nikon recalibrate when objective changes. (fix config group event)
+
+3:
+Add autoexposure to sequencer
+Add our own logger that format messages to the mm logger
+
+Focus lock snaps a single image and tests sharpness
+Add sequence logging.
+
+
+
+4:
+Transmission imaging
+kurios still goes one item too far in sequencing. Only when external triggering isn't used. Device adapter: starts at 502 instead of 500
+
+
+Some other day:
+    STORM imaging
+    Add a cell selection step (AI type stuff)
+    Z-Drive controller UI
+
+
+*/
 
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
