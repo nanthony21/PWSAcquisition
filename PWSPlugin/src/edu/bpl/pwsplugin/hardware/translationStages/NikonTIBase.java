@@ -72,7 +72,7 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
             Globals.core().fullFocus();
             this.setAutoFocusEnabled(true);
             double zOrig = 0; //This will actually get initialized on the first iteration.
-            for (int offset=0; offset<getMaximumPFSOffset(); offset+=(getMaximumPFSOffset()/40)-1) {
+            for (int offset=0; offset<getMaximumPFSOffset(); offset+=(getMaximumPFSOffset()/4)-1) {
                 this.setPFSOffset(offset); 
                 if (offset==0) {
                     zOrig = this.getPosUm(); //All um measurement are relative to the measurement at pfsOffset = 0
