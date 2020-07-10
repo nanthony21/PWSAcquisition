@@ -12,7 +12,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.EveryNTimes;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.JLabel;
-import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
@@ -59,14 +59,14 @@ public class EveryNTimesFactory extends StepFactory {
 
 
 class EveryNTimesUI extends BuilderJPanel<SequencerSettings.EveryNTimesSettings> {
-    private ImprovedJSpinner n;
-    private ImprovedJSpinner offset;
+    private ImprovedComponents.Spinner n;
+    private ImprovedComponents.Spinner offset;
     
     public EveryNTimesUI() {
         super(new MigLayout("insets 0 0 0 0"), SequencerSettings.EveryNTimesSettings.class);
         
-        n = new ImprovedJSpinner(new SpinnerNumberModel(2, 1, 1000, 1));
-        offset = new ImprovedJSpinner(new SpinnerNumberModel(0, 0, 1000, 1));
+        n = new ImprovedComponents.Spinner(new SpinnerNumberModel(2, 1, 1000, 1));
+        offset = new ImprovedComponents.Spinner(new SpinnerNumberModel(0, 0, 1000, 1));
         
         this.add(new JLabel("N:"), "gapleft push");
         this.add(n, "wrap");

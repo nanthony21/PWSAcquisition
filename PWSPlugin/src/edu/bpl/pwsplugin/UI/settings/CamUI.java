@@ -16,7 +16,7 @@ import javax.swing.InputVerifier;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.JTextField;
@@ -31,7 +31,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class CamUI extends BuilderJPanel<CamSettings>{
     private final JComboBox<String> camCombo = new JComboBox<>();
-    private final ImprovedJSpinner darkCountsSpinner;
+    private final ImprovedComponents.Spinner darkCountsSpinner;
     private final DoubleListTextField linEdit = new DoubleListTextField();
     private final JComboBox<String> binningProperty = new JComboBox<>();
     
@@ -40,8 +40,8 @@ public class CamUI extends BuilderJPanel<CamSettings>{
         
 
         SpinnerNumberModel model = new SpinnerNumberModel(0, 0, 100000, 1);
-        this.darkCountsSpinner = new ImprovedJSpinner(model);
-        ((ImprovedJSpinner.DefaultEditor)this.darkCountsSpinner.getEditor()).getTextField().setColumns(4);
+        this.darkCountsSpinner = new ImprovedComponents.Spinner(model);
+        ((ImprovedComponents.Spinner.DefaultEditor)this.darkCountsSpinner.getEditor()).getTextField().setColumns(4);
         
         darkCountsSpinner.setToolTipText("# of counts per pixel when the camera is not exposed to any light. E.g if measuring dark counts with 2x2 binning the number here should be 1/4 of your measurement 2x2 binning pools 4 pixels.");
         linEdit.setToolTipText("Comma separated values representing the polynomial to linearize the counts from the camera. In the form \"A,B,C\" = Ax + Bx^2 + Cx^3. Type \"None\" or \"null\" if correction is not needed.");

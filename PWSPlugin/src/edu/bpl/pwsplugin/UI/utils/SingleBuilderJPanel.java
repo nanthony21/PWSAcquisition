@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents.Spinner;
 import javax.swing.JTextField;
 import org.micromanager.internal.utils.ReportingUtils;
 
@@ -39,8 +39,8 @@ public abstract class SingleBuilderJPanel<T> extends BuilderJPanel<T>{
 
                 if (field instanceof JTextField) {
                     prop.set(t, ((JTextField) field).getText());
-                } else if (field instanceof ImprovedJSpinner) {
-                    prop.set(t, ((ImprovedJSpinner) field).getValue());
+                } else if (field instanceof ImprovedComponents.Spinner) {
+                    prop.set(t, ((ImprovedComponents.Spinner) field).getValue());
                 } else if (field instanceof JCheckBox) {
                     prop.set(t, ((JCheckBox) field).isSelected());
                 } else if (field instanceof BuilderJPanel) {
@@ -79,8 +79,8 @@ public abstract class SingleBuilderJPanel<T> extends BuilderJPanel<T>{
             Object field = entry.getValue();
             if (field instanceof JTextField) {
                 ((JTextField) field).setText((String) property);
-            } else if (field instanceof ImprovedJSpinner) {
-                ((ImprovedJSpinner) field).setValue(property);
+            } else if (field instanceof ImprovedComponents.Spinner) {
+                ((ImprovedComponents.Spinner) field).setValue(property);
             } else if (field instanceof JCheckBox) {
                 ((JCheckBox) field).setSelected((boolean) property);
             } else if (field instanceof BuilderJPanel) {

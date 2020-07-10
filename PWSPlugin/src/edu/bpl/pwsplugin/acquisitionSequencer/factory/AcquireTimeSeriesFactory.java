@@ -6,24 +6,19 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.factory;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireTimeSeries;
-import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JLabel;
-import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
-import org.micromanager.data.Coords;
 
 
 /**
@@ -69,16 +64,16 @@ public class AcquireTimeSeriesFactory extends StepFactory {
 
 
 class TimeSeriesUI extends SingleBuilderJPanel<SequencerSettings.AcquireTimeSeriesSettings> {
-    ImprovedJSpinner numFrames;
-    ImprovedJSpinner frameIntervalMinutes;
+    ImprovedComponents.Spinner numFrames;
+    ImprovedComponents.Spinner frameIntervalMinutes;
     
     public TimeSeriesUI() {
         super(new MigLayout("insets 5 0 0 0"), SequencerSettings.AcquireTimeSeriesSettings.class);
         
-        numFrames = new ImprovedJSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
-        frameIntervalMinutes = new ImprovedJSpinner(new SpinnerNumberModel(1.0, 0.0, 1000000000.0, 1.0));
-        ((ImprovedJSpinner.DefaultEditor) numFrames.getEditor()).getTextField().setColumns(6);
-        ((ImprovedJSpinner.DefaultEditor) frameIntervalMinutes.getEditor()).getTextField().setColumns(6);
+        numFrames = new ImprovedComponents.Spinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
+        frameIntervalMinutes = new ImprovedComponents.Spinner(new SpinnerNumberModel(1.0, 0.0, 1000000000.0, 1.0));
+        ((ImprovedComponents.Spinner.DefaultEditor) numFrames.getEditor()).getTextField().setColumns(6);
+        ((ImprovedComponents.Spinner.DefaultEditor) frameIntervalMinutes.getEditor()).getTextField().setColumns(6);
 
                 
         

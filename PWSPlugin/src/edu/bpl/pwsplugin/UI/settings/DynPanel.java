@@ -7,15 +7,12 @@ package edu.bpl.pwsplugin.UI.settings;
 
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.settings.DynSettings;
-import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
-import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
-import javax.swing.JTextField;
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
@@ -24,9 +21,9 @@ import net.miginfocom.swing.MigLayout;
  * @author nick
  */
 public class DynPanel extends SingleBuilderJPanel<DynSettings>{
-    private final ImprovedJSpinner wvSpinner = new ImprovedJSpinner();
-    private final ImprovedJSpinner framesSpinner = new ImprovedJSpinner();
-    private final ImprovedJSpinner exposureSpinner = new ImprovedJSpinner();
+    private final ImprovedComponents.Spinner wvSpinner = new ImprovedComponents.Spinner();
+    private final ImprovedComponents.Spinner framesSpinner = new ImprovedComponents.Spinner();
+    private final ImprovedComponents.Spinner exposureSpinner = new ImprovedComponents.Spinner();
     private final JComboBox<String> imConfName = new JComboBox<>();
 
     

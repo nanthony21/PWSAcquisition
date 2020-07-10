@@ -16,7 +16,7 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JLabel;
-import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
@@ -62,13 +62,13 @@ public class FocusLockFactory extends StepFactory {
 }
 
 class FocusLockUI extends SingleBuilderJPanel<SequencerSettings.FocusLockSettings>{
-    ImprovedJSpinner delay;
+    ImprovedComponents.Spinner delay;
     
     public FocusLockUI() {
         super(new MigLayout(), SequencerSettings.FocusLockSettings.class);
         
-        delay = new ImprovedJSpinner(new SpinnerNumberModel(1.0, 0.0, 30.0, 1.0));
-        ((ImprovedJSpinner.DefaultEditor) delay.getEditor()).getTextField().setColumns(4);
+        delay = new ImprovedComponents.Spinner(new SpinnerNumberModel(1.0, 0.0, 30.0, 1.0));
+        ((ImprovedComponents.Spinner.DefaultEditor) delay.getEditor()).getTextField().setColumns(4);
         
         this.add(new JLabel("Delay (s):"), "gapleft push");
         this.add(delay);

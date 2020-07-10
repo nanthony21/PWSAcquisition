@@ -22,7 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import java.util.List;
 import javax.swing.SpinnerNumberModel;
@@ -39,13 +39,13 @@ import org.micromanager.internal.utils.ReportingUtils;
 class AcquisitionPanel extends JPanel {
     private final JButton acqButton = new JButton("Acquire Now");
     private final DirectorySelector dirSelect = new DirectorySelector(DirectorySelector.DefaultMMFunctions.MMDataSetDirectory);;
-    private final ImprovedJSpinner cellNumSpinner = new ImprovedJSpinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
+    private final ImprovedComponents.Spinner cellNumSpinner = new ImprovedComponents.Spinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
     private final AcquireCellUI cellUI = new AcquireCellUI();
     
     public AcquisitionPanel() {
         super(new MigLayout("insets 0 0 0 0"));
         
-        ((ImprovedJSpinner.DefaultEditor)cellNumSpinner.getEditor()).getTextField().setColumns(4);
+        ((ImprovedComponents.Spinner.DefaultEditor)cellNumSpinner.getEditor()).getTextField().setColumns(4);
         
         acqButton.addActionListener((evt)->{
             try {
@@ -133,19 +133,19 @@ class AcquisitionPanel extends JPanel {
         }
         
         ThrowingFunction<Void, Void> f = (nul)->{return null;};
-        if (!settings.fluorSettings.isEmpty()) {
+        if ((!settings.fluorSettings.isEmpty()) && settings.fluorEnabled) {
             f = f.andThen((nul)->{
                 acqMan.setFluorescenceSettings(settings.fluorSettings);
                 acqMan.acquireFluorescence(); return null;
             });
         }
-        if (settings.pwsSettings != null) {
+        if (settings.pwsEnabled) {
             f = f.andThen((nul)->{
                 acqMan.setPWSSettings(settings.pwsSettings);
                 acqMan.acquirePWS(); return null;
             });
         }
-        if (settings.dynSettings != null) {
+        if (settings.dynEnabled) {
             f = f.andThen((nul)->{
                 acqMan.setDynamicsSettings(settings.dynSettings);
                 acqMan.acquireDynamics(); return null;

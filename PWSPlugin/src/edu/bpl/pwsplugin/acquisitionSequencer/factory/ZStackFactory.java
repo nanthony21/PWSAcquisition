@@ -13,7 +13,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.ZStackStep;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
@@ -60,9 +60,9 @@ public class ZStackFactory extends StepFactory {
     
 
 class ZStackUI extends BuilderJPanel<SequencerSettings.ZStackSettings> {
-    private final ImprovedJSpinner intervalUm = new ImprovedJSpinner(new SpinnerNumberModel(1.0, -100.0, 100.0, 0.5));
-    private final ImprovedJSpinner numStacks = new ImprovedJSpinner(new SpinnerNumberModel(2, 1, 1000, 1));
-    private final ImprovedJSpinner startingPosition = new ImprovedJSpinner(new SpinnerNumberModel(0.0, -10000.0, 10000.0, 1.0));
+    private final ImprovedComponents.Spinner intervalUm = new ImprovedComponents.Spinner(new SpinnerNumberModel(1.0, -100.0, 100.0, 0.5));
+    private final ImprovedComponents.Spinner numStacks = new ImprovedComponents.Spinner(new SpinnerNumberModel(2, 1, 1000, 1));
+    private final ImprovedComponents.Spinner startingPosition = new ImprovedComponents.Spinner(new SpinnerNumberModel(0.0, -10000.0, 10000.0, 1.0));
     //private final JComboBox<String> deviceName = new JComboBox<>();
     private static final String ABSOLUTE = "Absolute Position";
     private static final String RELATIVE = "Relative Position";

@@ -3,10 +3,10 @@ test software autofocus, get answers
 test focus lock in realistic situation, ethanol cells and weird dishes.
 test objective switching.
 
-make "filter" config group part of imaging config
 
 2:
-Make special objective and configuration config groups
+Make special objective and configuration config groups. make "filter" config group part of imaging config
+
 Make nikon recalibrate when objective changes.
 
 3:

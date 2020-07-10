@@ -8,6 +8,7 @@ package edu.bpl.pwsplugin.UI.settings;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.CheckBoxPanel;
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import edu.bpl.pwsplugin.UI.utils.ListCardUI;
 import edu.bpl.pwsplugin.hardware.configurations.HWConfiguration;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
@@ -37,7 +38,7 @@ import net.miginfocom.swing.MigLayout;
  */
 public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> {
     AdvancedAcquireCellUI advancedUI = new AdvancedAcquireCellUI();
-    SimpleAcquireCellUI simpleUI = new SimpleAcquireCellUI();
+    SimpleAcquireCellUI simpleUI = new SimpleAcquireCellUI(advancedUI);
     BuilderJPanel<AcquireCellSettings> currentTab;
     JTabbedPane tabs = new JTabbedPane();
     
@@ -78,7 +79,7 @@ public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> {
 
 
 class SimpleAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements PropertyChangeListener {
-    private AcquireCellSettings settings = new AcquireCellSettings(); //Since the UI doesn't fully represent all of the settings we need to store this in the background.
+    //Provides a simplified view of the settings in the AdvancedAcquireCellUI
     private final SimplePWSPanel pwsSettings = new SimplePWSPanel();
     private final SimplePWSPanel dynSettings = new SimplePWSPanel();
     private final CheckBoxPanel pwsCBPanel = new CheckBoxPanel(pwsSettings, "PWS");
@@ -86,10 +87,13 @@ class SimpleAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements 
     private final JButton systemDefault = new JButton("Use Defaults");
     private final ListCardUI<List<FluorSettings>, FluorSettings> fluorSettings= new ListCardUI(ArrayList.class, "", new FluorSettings());
     private final CheckBoxPanel fluorCBPanel = new CheckBoxPanel(fluorSettings, "Fluorescence");
+    private final AdvancedAcquireCellUI advancedUI;
 
     
-    public SimpleAcquireCellUI() {
+    public SimpleAcquireCellUI(AdvancedAcquireCellUI advanceUI) {
         super(new MigLayout(), AcquireCellSettings.class);
+        
+        this.advancedUI = advanceUI;
         
         this.systemDefault.addActionListener((evt) -> { //Apply default settings
             JPopupMenu menu = new JPopupMenu();
@@ -111,9 +115,6 @@ class SimpleAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements 
         dynSettings.setBorder(BorderFactory.createEtchedBorder());
         fluorSettings.setBorder(BorderFactory.createEtchedBorder());
         
-        pwsSettings.setExposure(settings.pwsSettings.exposure);
-        dynSettings.setExposure(settings.dynSettings.exposure);
-        
         this.add(pwsCBPanel, "wrap, spanx");
         this.add(dynCBPanel, "wrap, spanx");
         this.add(fluorCBPanel, "spanx");
@@ -125,52 +126,34 @@ class SimpleAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements 
     
     @Override
     public void populateFields(AcquireCellSettings settings) throws BuilderPanelException {
-        this.settings = settings;
-        if (settings.pwsSettings != null) {
-            pwsCBPanel.setSelected(true);
-            pwsSettings.setExposure(settings.pwsSettings.exposure);
-            pwsSettings.setConfigName(settings.pwsSettings.imConfigName);
-        } else {
-            pwsCBPanel.setSelected(false);
-        }
+        pwsCBPanel.setSelected(settings.pwsEnabled);
+        pwsSettings.setExposure(settings.pwsSettings.exposure);
+        pwsSettings.setConfigName(settings.pwsSettings.imConfigName);
+  
+        dynCBPanel.setSelected(settings.dynEnabled);
+        dynSettings.setExposure(settings.dynSettings.exposure);
+        dynSettings.setConfigName(settings.dynSettings.imConfigName);
         
-        if (settings.dynSettings != null) {
-            dynCBPanel.setSelected(true);
-            dynSettings.setExposure(settings.dynSettings.exposure);
-            dynSettings.setConfigName(settings.dynSettings.imConfigName);
-        } else {
-            dynCBPanel.setSelected(false);
-        }
+        fluorCBPanel.setSelected(settings.fluorEnabled);
+        fluorSettings.populateFields(settings.fluorSettings);
         
-        if (settings.fluorSettings.isEmpty()) {
-            this.fluorCBPanel.setSelected(false);
-        } else {
-            this.fluorCBPanel.setSelected(true);
-            this.fluorSettings.populateFields(settings.fluorSettings);
-        }
+        this.advancedUI.populateFields(settings);
     }
     
     @Override
     public AcquireCellSettings build() throws BuilderPanelException {
-        if (pwsCBPanel.isSelected()) {
-            settings.pwsSettings.exposure = this.pwsSettings.getExposure();
-            settings.pwsSettings.imConfigName = this.pwsSettings.getConfigName();
-        } else {
-            settings.pwsSettings = null;
-        }
-        
-        if (dynCBPanel.isSelected()) {
-            settings.dynSettings.exposure = this.dynSettings.getExposure(); //TODO this can be null
-            settings.dynSettings.imConfigName = this.dynSettings.getConfigName();
-        } else {
-            settings.dynSettings = null;
-        }
-        
-        if (fluorCBPanel.isSelected()) {
-            settings.fluorSettings = fluorSettings.build();
-        } else {
-            settings.fluorSettings = new ArrayList();
-        }
+        AcquireCellSettings settings = advancedUI.build();
+
+        settings.pwsEnabled = this.pwsCBPanel.isSelected();
+        settings.pwsSettings.exposure = this.pwsSettings.getExposure();
+        settings.pwsSettings.imConfigName = this.pwsSettings.getConfigName();
+
+        settings.dynEnabled = this.dynCBPanel.isSelected();
+        settings.dynSettings.exposure = this.dynSettings.getExposure();
+        settings.dynSettings.imConfigName = this.dynSettings.getConfigName();
+
+        settings.fluorEnabled = this.fluorCBPanel.isSelected();
+        settings.fluorSettings = fluorSettings.build();
         
         return settings;
     }
@@ -207,7 +190,7 @@ class SimpleAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements 
 
 
 class SimplePWSPanel extends JPanel {
-    private final JFormattedTextField exposure = new JFormattedTextField(NumberFormat.getNumberInstance());
+    private final ImprovedComponents.FormattedTextField exposure = new ImprovedComponents.FormattedTextField(NumberFormat.getNumberInstance());
     private final JComboBox<String> imConfName = new JComboBox<>();
     
     public SimplePWSPanel() {
@@ -250,12 +233,13 @@ class SimplePWSPanel extends JPanel {
 }
 
 class AdvancedAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements PropertyChangeListener {
-    PWSPanel pwsSettings = new PWSPanel();
-    DynPanel dynSettings = new DynPanel();
-    ListCardUI<List<FluorSettings>, FluorSettings> fluorSettings= new ListCardUI(ArrayList.class, "", new FluorSettings());
-    CheckBoxPanel pwsCBPanel = new CheckBoxPanel(pwsSettings, "PWS");
-    CheckBoxPanel dynCBPanel = new CheckBoxPanel(dynSettings, "Dynamics");
-    CheckBoxPanel fluorCBPanel = new CheckBoxPanel(fluorSettings, "Fluorescence");
+    //Allows full configuration of the acquisition settings.
+    private final PWSPanel pwsSettings = new PWSPanel();
+    private final DynPanel dynSettings = new DynPanel();
+    private final ListCardUI<List<FluorSettings>, FluorSettings> fluorSettings= new ListCardUI(ArrayList.class, "", new FluorSettings());
+    private final CheckBoxPanel pwsCBPanel = new CheckBoxPanel(pwsSettings, "PWS");
+    private final CheckBoxPanel dynCBPanel = new CheckBoxPanel(dynSettings, "Dynamics");
+    private final CheckBoxPanel fluorCBPanel = new CheckBoxPanel(fluorSettings, "Fluorescence");
 
     public AdvancedAcquireCellUI() {
         super(new MigLayout("insets 0 0 0 0"), AcquireCellSettings.class);
@@ -275,44 +259,27 @@ class AdvancedAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implement
     @Override
     public AcquireCellSettings build() throws BuilderJPanel.BuilderPanelException {
         AcquireCellSettings settings = new AcquireCellSettings();
-        if (pwsCBPanel.isSelected()) {
-            settings.pwsSettings = pwsSettings.build();
-        } else {
-            settings.pwsSettings = null;
-        }
-        if (dynCBPanel.isSelected()) {
-            settings.dynSettings = dynSettings.build();
-        } else {
-            settings.dynSettings = null;
-        }
-        if (fluorCBPanel.isSelected()) {
-            settings.fluorSettings = fluorSettings.build();
-        } else {
-            settings.fluorSettings = new ArrayList();
-        }
+        settings.pwsEnabled = pwsCBPanel.isSelected();
+        settings.pwsSettings = pwsSettings.build();
+        
+        settings.dynEnabled = dynCBPanel.isSelected();
+        settings.dynSettings = dynSettings.build();
+        
+        settings.fluorEnabled = fluorCBPanel.isSelected();
+        settings.fluorSettings = fluorSettings.build();
         return settings;
     }
     
     @Override
     public void populateFields(AcquireCellSettings settings) throws BuilderJPanel.BuilderPanelException {
-        if (settings.pwsSettings == null) {
-            this.pwsCBPanel.setSelected(false);
-        } else {
-            this.pwsCBPanel.setSelected(true);
-            this.pwsSettings.populateFields(settings.pwsSettings);
-        }
-        if (settings.dynSettings == null) {
-            this.dynCBPanel.setSelected(false);
-        } else {
-            this.dynCBPanel.setSelected(true);
-            this.dynSettings.populateFields(settings.dynSettings);
-        }         
-        if (settings.fluorSettings.isEmpty()) {
-            this.fluorCBPanel.setSelected(false);
-        } else {
-            this.fluorCBPanel.setSelected(true);
-            this.fluorSettings.populateFields(settings.fluorSettings);
-        }
+        this.pwsCBPanel.setSelected(settings.pwsEnabled);
+        this.pwsSettings.populateFields(settings.pwsSettings);
+
+        this.dynCBPanel.setSelected(settings.dynEnabled);
+        this.dynSettings.populateFields(settings.dynSettings);
+
+        this.fluorCBPanel.setSelected(settings.fluorEnabled);
+        this.fluorSettings.populateFields(settings.fluorSettings);
     }
     
     @Override

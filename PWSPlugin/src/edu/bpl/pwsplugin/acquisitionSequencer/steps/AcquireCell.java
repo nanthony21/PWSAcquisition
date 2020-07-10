@@ -43,17 +43,17 @@ public class AcquireCell extends EndpointStep<AcquireCellSettings> {
                 status.newStatusMessage(String.format("Acquiring Cell %d", status.getCellNum()));
                 File directory = FileSpecs.getCellFolderName(Paths.get(status.getSavePath()), status.getCellNum()).toFile();
                 if (!directory.exists()) { directory.mkdirs(); } //The cell folder can be created by the Image saving thread once acquisition begins. In some cases the other thread can get backed up, for safety we just make sure to create the folder right at the beginning.
-                if (!settings.fluorSettings.isEmpty()) {
+                if ((!settings.fluorSettings.isEmpty()) && settings.fluorEnabled) {
                     status.allowPauseHere();
                     acqMan.setFluorescenceSettings(settings.fluorSettings);
                     acqMan.acquireFluorescence();
                 }
-                if (settings.pwsSettings != null) {
+                if (settings.pwsEnabled) {
                     status.allowPauseHere();
                     acqMan.setPWSSettings(settings.pwsSettings);
                     acqMan.acquirePWS();
                 }
-                if (settings.dynSettings != null) {
+                if (settings.dynEnabled) {
                     status.allowPauseHere();
                     acqMan.setDynamicsSettings(settings.dynSettings);
                     acqMan.acquireDynamics();

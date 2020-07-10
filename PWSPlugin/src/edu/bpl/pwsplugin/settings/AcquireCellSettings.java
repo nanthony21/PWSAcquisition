@@ -14,8 +14,13 @@ import java.util.List;
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class AcquireCellSettings extends JsonableParam {
+    public boolean pwsEnabled = true;
     public PWSSettings pwsSettings = new PWSSettings();
+    
+    public boolean dynEnabled = true;
     public DynSettings dynSettings = new DynSettings();
+    
+    public boolean fluorEnabled = true;
     public List<FluorSettings> fluorSettings = new ArrayList<>();
 
     public AcquireCellSettings() {

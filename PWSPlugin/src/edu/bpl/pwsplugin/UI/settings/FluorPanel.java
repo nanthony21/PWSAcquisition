@@ -14,7 +14,7 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import edu.bpl.pwsplugin.UI.utils.ImprovedJSpinner;
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import java.util.NoSuchElementException;
 import javax.swing.SpinnerNumberModel;
@@ -25,9 +25,9 @@ import net.miginfocom.swing.MigLayout;
  * @author nick
  */
 public class FluorPanel extends BuilderJPanel<FluorSettings>{
-    private ImprovedJSpinner wvSpinner;
-    private ImprovedJSpinner exposureSpinner;
-    private ImprovedJSpinner focusOffsetSpinner;
+    private ImprovedComponents.Spinner wvSpinner;
+    private ImprovedComponents.Spinner exposureSpinner;
+    private ImprovedComponents.Spinner focusOffsetSpinner;
     private JComboBox<String> filterCombo = new JComboBox<>();
     private JComboBox<String> imConfName = new JComboBox<>();
 
@@ -35,9 +35,9 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
     public FluorPanel() {
         super(new MigLayout(), FluorSettings.class);
         
-        wvSpinner = new ImprovedJSpinner(new SpinnerNumberModel(550, 400, 1000, 5));
-        exposureSpinner = new ImprovedJSpinner(new SpinnerNumberModel(1000.0, 1.0, 5000.0, 100.0));
-        focusOffsetSpinner = new ImprovedJSpinner(new SpinnerNumberModel(0.0, -50.0, 50.0, 1.0));
+        wvSpinner = new ImprovedComponents.Spinner(new SpinnerNumberModel(550, 400, 1000, 5));
+        exposureSpinner = new ImprovedComponents.Spinner(new SpinnerNumberModel(1000.0, 1.0, 5000.0, 100.0));
+        focusOffsetSpinner = new ImprovedComponents.Spinner(new SpinnerNumberModel(0.0, -50.0, 50.0, 1.0));
         filterCombo.setModel(this.getFilterComboModel());
         
         Globals.getMMConfigAdapter().addRefreshListener((evt)->{
