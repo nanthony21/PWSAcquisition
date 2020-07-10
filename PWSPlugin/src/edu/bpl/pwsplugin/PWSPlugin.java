@@ -36,7 +36,7 @@ Add our own logger that format messages to the mm logger
 
 Focus lock snaps a single image and tests sharpness
 Add sequence logging.
-PFS set to current position.
+PFS set to current position function.
 
 Don't allow a focus lock within a focus lock
 

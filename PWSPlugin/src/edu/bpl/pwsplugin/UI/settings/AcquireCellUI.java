@@ -197,6 +197,7 @@ class SimplePWSPanel extends JPanel {
         super(new MigLayout());
         
         exposure.setColumns(6);
+        exposure.setValue(50.0); //Set a value just so it's not blank. In practice this should be overwritten by saved settings.
         
         this.add(new JLabel("Exposure (ms):"), "gapleft push");
         this.add(exposure, "wrap");

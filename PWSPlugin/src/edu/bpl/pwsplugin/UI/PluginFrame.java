@@ -80,7 +80,7 @@ public class PluginFrame extends MMFrame {
         PWSPluginSettings set = new PWSPluginSettings();
         try {
             set.acquisitionSettings = this.acqPanel.getAcqSettings();
-        } catch (BuilderJPanel.BuilderPanelException e) {
+        } catch (BuilderJPanel.BuilderPanelException | NullPointerException e) {
             ReportingUtils.logError(e);
             ReportingUtils.showError("Failed to get acquisition settings from UI. See CoreLog for details.");
         }
