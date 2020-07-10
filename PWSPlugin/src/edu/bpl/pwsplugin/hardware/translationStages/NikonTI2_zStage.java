@@ -60,7 +60,7 @@ public class NikonTI2_zStage extends NikonTIBase {
     
     @Override
     protected Double getMinimumPFSOffset() {
-        return 1.0;
+        return 101.0; //Behavior below this offset is unreliable even though values down to 1 are technically accepted.
     }
     
     @Override
@@ -68,14 +68,36 @@ public class NikonTI2_zStage extends NikonTIBase {
         return offsetDevice;
     }
     
-    @Override
-    protected boolean busy() throws MMDeviceException {
+    /*@Override
+    protected boolean busy() throws MMDeviceException { //This doesn't work:(
         try {
             return ((Globals.core().deviceBusy(offsetDevice))
                     ||
                     (Globals.core().deviceBusy(pfsDevice))
                     ||
                     (Globals.core().deviceBusy(settings.deviceName)));
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
+        }
+    }*/
+    
+    @Override
+    protected boolean busy() throws MMDeviceException {
+        try {
+            if (getAutoFocusEnabled()) {
+                //Setting the PFS offset blocks until the move is complete. Unfortunately the 
+                //`deviceBusy` method doesn't appear to work for any of the related devices.
+                //Z position only updates at 1hz when pfs is enabled, we slowly poll the position to determine when focusing is done
+                double origz = Globals.core().getPosition(settings.deviceName);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                }
+                return !(Math.abs(origz - Globals.core().getPosition(settings.deviceName)) < 0.1); 
+            } else {
+                return Globals.core().deviceBusy(settings.deviceName);
+            }
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }

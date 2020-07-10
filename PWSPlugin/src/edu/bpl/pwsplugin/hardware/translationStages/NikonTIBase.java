@@ -130,8 +130,8 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
                 }
             } else {
                 Globals.core().setRelativePosition(settings.deviceName, um); 
+                while (this.busy()) {Thread.sleep(10); } //wait for it to finish focusing.
             }
-            while (this.busy()) {Thread.sleep(10); } //wait for it to finish focusing.
         } catch (InterruptedException | MMDeviceException ee) {
             throw ee;
         } catch (Exception e) {

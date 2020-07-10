@@ -43,6 +43,8 @@ Add sequence logging.
 Transmission imaging
 kurios still goes one item too far in sequencing. Only when external triggering isn't used. Device adapter: starts at 502 instead of 500
 
+Nikon:
+    Sometimes TI2 PFS becomes disabled during calibration.
 
 Some other day:
     STORM imaging

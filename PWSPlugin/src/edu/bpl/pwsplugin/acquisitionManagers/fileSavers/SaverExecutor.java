@@ -82,7 +82,7 @@ public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
             } 
         }
         threadFutures = newFutures;
-        Globals.mm().logs().logMessage(String.format("Number running tasks: %d", runningTasks));
+        //Globals.mm().logs().logMessage(String.format("Number running tasks: %d", runningTasks));
     }
 
     @Override
