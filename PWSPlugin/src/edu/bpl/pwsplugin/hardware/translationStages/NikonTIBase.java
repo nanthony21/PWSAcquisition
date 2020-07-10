@@ -193,6 +193,12 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
     
     @Override
     public boolean getAutoFocusLocked() throws MMDeviceException {
+        //Sometimes right after a move this will report that it is not locked. make sure the stage is not considered busy before checking status.
+        try {
+            while (busy()) { Thread.sleep(10); }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
         try {
             return Globals.core().isContinuousFocusLocked();
         } catch (Exception e) {
@@ -203,7 +209,7 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
     @Override
     public void runFullFocus() throws MMDeviceException {
         try { //TODO add some smart software autofocus here so the image is actually focused.
-            Globals.core().fullFocus();
+            Globals.core().fullFocus(); //TODO replace this with Hardware focus extender. which works much better. TODO add logging or something to Hardware focus extender.
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }

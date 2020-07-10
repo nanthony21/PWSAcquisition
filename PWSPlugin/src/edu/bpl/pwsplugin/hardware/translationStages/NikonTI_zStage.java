@@ -81,6 +81,8 @@ public class NikonTI_zStage extends NikonTIBase {
                     return Status.INRANGE;
                 case ("Out of focus search range"):
                     return Status.OUTRANGE;
+                case ("Focus lock failed"):
+                    return Status.LOCKFAILED;
             }
         } catch (Exception e) {
             throw new MMDeviceException(e);
@@ -107,7 +109,7 @@ public class NikonTI_zStage extends NikonTIBase {
     @Override
     public boolean identify() {
         try {
-            return ((Globals.core().getDeviceName(settings.deviceName).equals("ZStage"))
+            return ((Globals.core().getDeviceName(settings.deviceName).equals("TIZDrive"))
                     &&
                     (Globals.core().getDeviceLibrary(settings.deviceName).equals("NikonTI")));
         } catch (Exception e) {
@@ -129,7 +131,8 @@ public class NikonTI_zStage extends NikonTIBase {
         LOCKED, //Locked in focus
         FOCUSING, //Searching for focus
         INRANGE, //Could try to focus but isn't currently
-        OUTRANGE; //Could not try to focus, specimen is probably out of search range.
+        OUTRANGE, //Could not try to focus, specimen is probably out of search range.
+        LOCKFAILED; //This can appear when PFS was locked but movement of the sample broke the lock.
     }
     
     //TODO check if objective changed. and make sure to recalibrate. Unfortunately the config group changed event is broken.
