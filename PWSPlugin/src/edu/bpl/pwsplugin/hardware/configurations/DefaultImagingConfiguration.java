@@ -26,10 +26,10 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
         this.settings = settings;
     }
     
-    @Override
-    public ImagingConfigurationSettings settings() {
+    
+    /*public ImagingConfigurationSettings settings() {
         return settings;
-    }
+    }*/
     
     @Override
     public TranslationStage1d zStage() {
@@ -83,6 +83,15 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
     @Override
     public void deactivateConfiguration() {
         activated_ = false;
+    }
+
+    @Override
+    public String getFluorescenceConfigGroup() {
+        if (settings.fluorescenceConfigGroup.equals(ImagingConfigurationSettings.MANUALFLUORESCENCENAME)) {
+            return null;
+        } else {
+            return settings.fluorescenceConfigGroup;
+        }
     }
     
     @Override

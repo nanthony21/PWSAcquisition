@@ -12,6 +12,7 @@ import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import mmcorej.DeviceType;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -32,7 +33,7 @@ public class IlluminatorUI extends BuilderJPanel<IlluminatorSettings> {
     }
     
     private void updateComboBoxes() {
-        this.deviceName.setModel(new DefaultComboBoxModel<>(new Vector<String>(Globals.getMMConfigAdapter().getConnectedShutters())));
+        this.deviceName.setModel(new DefaultComboBoxModel<>(Globals.core().getLoadedDevicesOfType(DeviceType.ShutterDevice).toArray()));
     }
     
     @Override

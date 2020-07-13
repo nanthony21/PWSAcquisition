@@ -83,11 +83,12 @@ class FluorescenceAcquisition extends SingleAcquisitionBase<FluorSettings>{
     @Override
     protected void _acquireImages(ImageSaver imSaver, MetadataBase metadata) throws Exception {
         String initialFilter = ""; 
+        String fluorConfGroup = imConf.getFluorescenceConfigGroup(); //This will be null if manual filter control is required.
         boolean spectralMode = imConf.hasTunableFilter();
-        if (Globals.getMMConfigAdapter().autoFilterSwitching) {
-            initialFilter = Globals.core().getCurrentConfig("Filter");
-            Globals.core().setConfig("Filter", this.settings.filterConfigName);
-            Globals.core().waitForConfig("Filter", this.settings.filterConfigName); // Wait for the device to be ready.
+        if (fluorConfGroup != null) {
+            initialFilter = Globals.core().getCurrentConfig(fluorConfGroup);
+            Globals.core().setConfig(fluorConfGroup, this.settings.filterConfigName);
+            Globals.core().waitForConfig(fluorConfGroup, this.settings.filterConfigName); // Wait for the device to be ready.
         } else {
             ReportingUtils.showMessage("Set the correct fluorescence filter and click `OK`.");
         }
@@ -114,11 +115,10 @@ class FluorescenceAcquisition extends SingleAcquisitionBase<FluorSettings>{
             album.addImage(img);
             imSaver.addImage(img);
             imConf.zStage().setPosUm(origZ);
-            //imSaver.awaitThreadTermination();
         } finally {
-            if (Globals.getMMConfigAdapter().autoFilterSwitching) {
-                Globals.core().setConfig("Filter", initialFilter);
-                Globals.core().waitForConfig("Filter", initialFilter); // Wait for the device to be ready.
+            if (fluorConfGroup!=null) {
+                Globals.core().setConfig(fluorConfGroup, initialFilter);
+                Globals.core().waitForConfig(fluorConfGroup, initialFilter); // Wait for the device to be ready.
             } else {
                 ReportingUtils.showMessage("Return to the PWS filter block and click `OK`.");
             }

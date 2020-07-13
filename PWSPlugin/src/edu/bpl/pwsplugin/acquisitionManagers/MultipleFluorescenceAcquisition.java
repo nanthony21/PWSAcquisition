@@ -28,7 +28,7 @@ class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings>
     //Acquires multiple fluorescence images from a list of fluorescence settings.
     private FluorSettings settings;
     private ImagingConfiguration imConf;
-    private String initialFilter;
+    private String initialFilter = null; //This should only stay null if we are using manual filter switching.
     
     public MultipleFluorescenceAcquisition(PWSAlbum display) {
         super(display);
@@ -58,35 +58,41 @@ class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings>
     
     @Override
     protected void finalizeAcquisitions() throws MMDeviceException {
-        try {
-            if (Globals.getMMConfigAdapter().autoFilterSwitching) {
-                Globals.core().setConfig("Filter", initialFilter);
-                Globals.core().waitForConfig("Filter", initialFilter); // Wait for the device to be ready.
-            } else {
-                ReportingUtils.showMessage("Return to the PWS filter block and click `OK`.");
+        String fluorConfigGroup = imConf.getFluorescenceConfigGroup();
+        if (fluorConfigGroup != null) {
+            try {
+                Globals.core().setConfig(fluorConfigGroup, initialFilter);
+                Globals.core().waitForConfig(fluorConfigGroup, initialFilter); // Wait for the device to be ready.
+            } catch (Exception e) {
+                throw new MMDeviceException(e);
             }
-        } catch (Exception e) {
-            throw new MMDeviceException(e);
+        } else {
+            ReportingUtils.showMessage("Return to the initial filter block and click `OK`.");
         }
+        initialFilter = null; //Reset this for the next run
     }
     
     @Override
     protected void initializeAcquisitions() throws MMDeviceException {
-        try {
-            initialFilter = Globals.core().getCurrentConfig("Filter");
-        } catch (Exception e) {
-            throw new MMDeviceException(e);
+        String fluorConfigGroup = imConf.getFluorescenceConfigGroup();
+        if (fluorConfigGroup != null) {
+            try {
+                initialFilter = Globals.core().getCurrentConfig(fluorConfigGroup);
+            } catch (Exception e) {
+                throw new MMDeviceException(e);
+            }
         }
     }
 
     @Override
     protected void runSingleImageAcquisition(ImageSaver imSaver, MetadataBase metadata) throws Exception {
         boolean spectralMode = imConf.hasTunableFilter();
-        if (Globals.getMMConfigAdapter().autoFilterSwitching) {
-            Globals.core().setConfig("Filter", this.settings.filterConfigName);
-            Globals.core().waitForConfig("Filter", this.settings.filterConfigName); // Wait for the device to be ready.
+        String fluorConfigGroup = imConf.getFluorescenceConfigGroup();
+        if (fluorConfigGroup != null) {
+            Globals.core().setConfig(fluorConfigGroup, this.settings.filterConfigName);
+            Globals.core().waitForConfig(fluorConfigGroup, this.settings.filterConfigName); // Wait for the device to be ready.
         } else {
-            ReportingUtils.showMessage("Set the correct fluorescence filter and click `OK`."); //This blocks until saving is done.
+            ReportingUtils.showMessage("Set the correct fluorescence filter and click `OK`.");
         }
         if (spectralMode) { 
             imConf.tunableFilter().setWavelength(settings.tfWavelength);

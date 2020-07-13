@@ -11,7 +11,6 @@ import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
-import java.beans.PropertyChangeListener;
 import java.util.List;
 
 /**
@@ -24,7 +23,7 @@ public interface ImagingConfiguration {
 
     public Illuminator illuminator();
     
-    public ImagingConfigurationSettings settings();
+    //public ImagingConfigurationSettings settings();
 
     public boolean hasTunableFilter();
     
@@ -37,6 +36,8 @@ public interface ImagingConfiguration {
     public void activateConfiguration() throws MMDeviceException;
     
     public void deactivateConfiguration() throws MMDeviceException;
+    
+    public String getFluorescenceConfigGroup(); // The name of the configuration group used to control fluorescence filter. Return null if manual control is required.
     
     public static ImagingConfiguration getInstance(ImagingConfigurationSettings settings) {
         if (null == settings.configType) {

@@ -21,6 +21,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import mmcorej.DeviceType;
 import mmcorej.MMCoreJ;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
@@ -68,7 +69,7 @@ public class CamUI extends BuilderJPanel<CamSettings>{
             }              
         });
         
-        this.camCombo.setModel(new DefaultComboBoxModel<>(new Vector<String>(Globals.getMMConfigAdapter().getConnectedCameras())));
+        this.camCombo.setModel(new DefaultComboBoxModel<>(Globals.core().getLoadedDevicesOfType(DeviceType.CameraDevice).toArray()));
         for (ItemListener l : this.camCombo.getItemListeners()) {
             l.itemStateChanged(new ItemEvent(camCombo, ItemEvent.ITEM_STATE_CHANGED, camCombo.getSelectedItem(), ItemEvent.SELECTED)); //Manually fire any item listeners to get everything initialized.
         }

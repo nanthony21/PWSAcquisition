@@ -1,7 +1,6 @@
 
 package edu.bpl.pwsplugin;
 
-import edu.bpl.pwsplugin.hardware.MMConfigAdapter;
 import edu.bpl.pwsplugin.hardware.configurations.HWConfiguration;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.UI.PluginFrame;
@@ -21,7 +20,6 @@ public class Globals {
     private Studio studio_ = null;
     private AcquisitionManager acqMan_;
     private HWConfiguration config;
-    private MMConfigAdapter mmAdapter;
     private PluginFrame frame;
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     
@@ -37,7 +35,6 @@ public class Globals {
     
     public static void init(Studio studio) {
         instance().studio_ = studio;
-        instance().mmAdapter = new MMConfigAdapter();
         instance().acqMan_ = new AcquisitionManager();
         instance().frame = new PluginFrame();
         try {
@@ -114,10 +111,6 @@ public class Globals {
     
     public static HWConfiguration getHardwareConfiguration() {
         return instance().config;
-    }
-    
-    public static MMConfigAdapter getMMConfigAdapter() {
-        return instance().mmAdapter;
     }
     
 }

@@ -24,7 +24,6 @@ package edu.bpl.pwsplugin;
 1:
 test software autofocus
 test focus lock in realistic situation, ethanol cells and weird dishes.
-fix nikon TI2 pfs
 
 2:
 Make special objective and configuration config groups. make "filter" config group part of imaging config
@@ -95,7 +94,6 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
             Globals.init(studio_);       
             initialized_ = true;
         }
-        Globals.getMMConfigAdapter().refresh(); //Checks for the presence of specific config groups. etc.
         Globals.frame().setVisible(true);
     }
     

@@ -38,11 +38,10 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
         wvSpinner = new ImprovedComponents.Spinner(new SpinnerNumberModel(550, 400, 1000, 5));
         exposureSpinner = new ImprovedComponents.Spinner(new SpinnerNumberModel(1000.0, 1.0, 5000.0, 100.0));
         focusOffsetSpinner = new ImprovedComponents.Spinner(new SpinnerNumberModel(0.0, -50.0, 50.0, 1.0));
-        filterCombo.setModel(this.getFilterComboModel());
         
-        Globals.getMMConfigAdapter().addRefreshListener((evt)->{
+        /*Globals.getMMConfigAdapter().addRefreshListener((evt)->{
             filterCombo.setModel(this.getFilterComboModel());
-        });
+        });*/
         
         try {
             List<String> confNames = new ArrayList<>();
@@ -58,6 +57,7 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
                 try {
                     ImagingConfiguration conf = Globals.getHardwareConfiguration().getImagingConfigurationByName(name);
                     wvSpinner.setEnabled(conf.hasTunableFilter());
+                    configureFilterCombo(conf.getFluorescenceConfigGroup());
                 } catch (NoSuchElementException e) {}
             }
         });
@@ -75,13 +75,19 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
     }
     
     
-    private DefaultComboBoxModel<String> getFilterComboModel() {    
-        try { // Allow the panel to show up even if we don't have our connection to micromanager working (useful for testing).
-            List<String> filters = Globals.getMMConfigAdapter().getFilters();
-            return new DefaultComboBoxModel<>(filters.toArray(new String[filters.size()]));
-        } catch (NullPointerException e) {
-            String[] filts = {"None!"};
-            return new DefaultComboBoxModel<>(filts);
+    private void configureFilterCombo(String configGroup) {  
+        if (configGroup != null) {
+            filterCombo.setEnabled(true);
+            String[] filters;
+            try { // Allow the panel to show up even if we don't have our connection to micromanager working (useful for testing).
+                filters = Globals.core().getAvailableConfigs(configGroup).toArray();
+            } catch (NullPointerException e) {
+                filters = new String[] {"None!"};
+            }
+            filterCombo.setModel(new DefaultComboBoxModel<>(filters));
+        } else { //Manual filter switching, disable control
+            filterCombo.setModel(new DefaultComboBoxModel<>());
+            filterCombo.setEnabled(false);
         }
     }  
     

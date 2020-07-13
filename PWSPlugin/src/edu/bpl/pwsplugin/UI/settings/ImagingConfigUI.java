@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
+import org.apache.commons.lang.ArrayUtils;
 
 /**
  *
@@ -32,6 +33,7 @@ public class ImagingConfigUI extends SingleBuilderJPanel<ImagingConfigurationSet
     private final JTextField name = new JTextField(10);
     private final JComboBox<String> configGroup = new JComboBox<>();
     private final JComboBox<String> configState = new JComboBox<>();
+    private final JComboBox<String> fluorescenceConfigGroup = new JComboBox<>();
     
     public ImagingConfigUI() {
         super(new MigLayout(), ImagingConfigurationSettings.class);
@@ -60,9 +62,13 @@ public class ImagingConfigUI extends SingleBuilderJPanel<ImagingConfigurationSet
             this.configState.setModel(new DefaultComboBoxModel<>(confs));
         });
         
-        this.configGroup.setModel(new DefaultComboBoxModel<>(Globals.core().getAvailableConfigGroups().toArray()));
+        String[] configGroups = Globals.core().getAvailableConfigGroups().toArray();
+        
+        this.configGroup.setModel(new DefaultComboBoxModel<>(configGroups));
         this.configGroup.getItemListeners()[0].itemStateChanged(null); // trigger the itemlistener to initialize
         
+        String[] fluorConfigGroups = (String[]) ArrayUtils.addAll(configGroups, new String[] {ImagingConfigurationSettings.MANUALFLUORESCENCENAME});
+        this.fluorescenceConfigGroup.setModel(new DefaultComboBoxModel<>(fluorConfigGroups));
         
         this.add(new JLabel("Name:"), "gapleft push");
         this.add(this.name, "wrap");
@@ -72,6 +78,8 @@ public class ImagingConfigUI extends SingleBuilderJPanel<ImagingConfigurationSet
         this.add(configGroup, "wrap");
         this.add(new JLabel("Config Name:"), "gapleft push");
         this.add(configState, "wrap");
+        this.add(new JLabel("Fluor. Filter Group:"), "gapleft push");
+        this.add(fluorescenceConfigGroup, "wrap");
         this.add(new JLabel("Camera:"), "wrap");
         this.add(this.camSettings, "wrap, span");
         this.add(new JLabel("Illuminator:"), "wrap");

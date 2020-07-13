@@ -5,14 +5,10 @@
  */
 package edu.bpl.pwsplugin.settings;
 
-import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
-import org.micromanager.events.ConfigGroupChangedEvent;
 
 /**
  *

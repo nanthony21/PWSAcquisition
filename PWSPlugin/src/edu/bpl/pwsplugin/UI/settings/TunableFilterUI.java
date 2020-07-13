@@ -17,6 +17,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import mmcorej.DeviceType;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -33,7 +34,7 @@ public class TunableFilterUI extends SingleBuilderJPanel<TunableFilterSettings>{
         this.add(new JLabel("Device Name:"), "gapleft push");
         this.add(name, "wrap");
         
-        this.name.setModel(new DefaultComboBoxModel<>(new Vector<String>(Globals.getMMConfigAdapter().getAllDevices())));
+        this.name.setModel(new DefaultComboBoxModel<>(Globals.core().getLoadedDevicesOfType(DeviceType.AnyType).toArray()));
     }
     
     @Override
