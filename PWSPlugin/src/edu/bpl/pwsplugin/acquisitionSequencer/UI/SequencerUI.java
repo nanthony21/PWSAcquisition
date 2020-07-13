@@ -61,7 +61,7 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
         this.runButton.addActionListener((evt) -> {  
             try {
                 RootStep rootStep = this.build();
-                List<String> errors = verifySequence(rootStep);
+                List<String> errors = verifySequence(rootStep, new ArrayList<>());
                 if (!errors.isEmpty()) {
                     Globals.mm().logs().showError(String.join("\n", errors));
                     return;
@@ -179,18 +179,14 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
     }
     
     private List<String> verifySequence(Step parent, List<String> errs) {
+        //Recursively validate all steps below `parent` and add the errors to `errs`
+        errs.addAll(parent.validate());
         if (parent instanceof ContainerStep) {
-            errs.addAll(parent.validate());
             for (Step substep : ((ContainerStep<?>) parent).getSubSteps()) {
                 errs.addAll(verifySequence(substep, new ArrayList<>()));
             }
         } 
         return errs;
-    }
-    
-    private List<String> verifySequence(RootStep parent) {
-        List<String> errs = new ArrayList<>();
-        return verifySequence(parent, errs);
     }
     
     @Override

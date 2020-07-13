@@ -12,7 +12,10 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import javax.swing.tree.TreeNode;
 
 /**
  *
@@ -81,4 +84,19 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
         };
     }
     
+    @Override
+    public List<String> validate() {
+        List<String> errs = super.validate();
+        
+        //Check that the focus lock doesn't contain any illegal steps such as another focus lock step
+        Enumeration<Step> en = (Enumeration<Step>) (Enumeration<? extends TreeNode>) this.breadthFirstEnumeration();
+        en.nextElement(); //This clears the first item which is just a reference to this very same step.
+        while (en.hasMoreElements()) {
+            Step step = en.nextElement();
+            if (step.getType().equals(SequencerConsts.Type.PFS)) {
+                errs.add(String.format("Optical Focus Lock may not contain a sub-step of type: %s", SequencerConsts.getFactory(SequencerConsts.Type.PFS).getName()));
+            }
+        }
+        return errs;
+    }
 }

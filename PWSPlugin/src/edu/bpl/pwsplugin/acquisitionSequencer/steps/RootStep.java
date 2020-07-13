@@ -57,7 +57,7 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
         };    
     }
     
-    public List<String> getRequiredPaths() {
+    public final List<String> getRequiredPaths() {
         Step.SimulatedStatus status = new Step.SimulatedStatus();
         status.cellNum = 0; //This number is incremented before acquisition so Cell1 is always the first one.
         status.workingDirectory = this.settings.directory;
