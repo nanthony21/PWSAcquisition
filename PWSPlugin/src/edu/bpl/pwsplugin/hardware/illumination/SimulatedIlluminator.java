@@ -16,23 +16,10 @@ import java.util.List;
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class SimulatedIlluminator implements Illuminator {
-    private IlluminatorSettings settings;
+public class SimulatedIlluminator extends DefaultIlluminator {
     
     public SimulatedIlluminator(IlluminatorSettings settings) throws Device.IDException {
-        this.settings = settings;
-        if (!this.identify()) {
-            throw new Device.IDException(String.format("Failed to identify class %s for device name %s", this.getClass().toString(), settings.name));
-        }
-    }
-    
-    @Override
-    public void setShutter(boolean on) throws MMDeviceException {
-        try {
-            Globals.core().setShutterOpen(this.settings.name, on);
-        } catch (Exception e) {
-            throw new MMDeviceException(e);
-        }
+        super(settings);
     }
     
     @Override
@@ -57,11 +44,4 @@ public class SimulatedIlluminator implements Illuminator {
         }
         return errs;
     }
-
-    @Override
-    public void initialize() {}//Not sure what to do here
-    
-    @Override
-    public void activate() {}//Not sure what to do here
-    
 }

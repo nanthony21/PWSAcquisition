@@ -36,7 +36,8 @@ public interface Illuminator extends Device {
                     IlluminatorSettings.class, 
                     generator,
                     XCite120LED.class,
-                    SimulatedIlluminator.class
+                    SimulatedIlluminator.class,
+                    DefaultIlluminator.class
                 );
                 
         Illuminator illum = finder.getAutoInstance(settings.name);

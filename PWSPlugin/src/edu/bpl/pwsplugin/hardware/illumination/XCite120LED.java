@@ -7,7 +7,6 @@ package edu.bpl.pwsplugin.hardware.illumination;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.Device;
-import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.IlluminatorSettings;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,23 +15,10 @@ import java.util.List;
  *
  * @author nick
  */
-public class XCite120LED implements Illuminator {
-    private final IlluminatorSettings settings;
+public class XCite120LED extends DefaultIlluminator {
     
     public XCite120LED(IlluminatorSettings settings) throws Device.IDException {
-        this.settings = settings;
-        if (!this.identify()) {
-            throw new Device.IDException(String.format("Failed to identify class %s for device name %s", this.getClass().toString(), settings.name));
-        }
-    }
-    
-    @Override
-    public void setShutter(boolean on) throws MMDeviceException {
-        try {
-            Globals.core().setShutterOpen(this.settings.name, on);
-        } catch (Exception e) {
-            throw new MMDeviceException(e);
-        }
+        super(settings);
     }
     
     @Override
@@ -63,10 +49,4 @@ public class XCite120LED implements Illuminator {
         }
         return errs;
     }
-
-    @Override
-    public void initialize() {}//Not sure what to do here
-    
-    @Override
-    public void activate() {}//Not sure what to do here
 }
