@@ -38,7 +38,7 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>>{
     @Override
     public void acquireImages(String savePath, int cellNum) throws Exception {
         this.display.clear(); //The implementation of `runSingleImageAcquisition` call `displayImage` to add images to the display throughout the imaging process.
-        this.initializeAcquisitions();
+        this.initializeAcquisitions(settingsList);
         try {
             for (int i=0; i< this.settingsList.size(); i++) {
                 S settings = this.settingsList.get(i);
@@ -86,7 +86,7 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>>{
     protected abstract void setCurrentSettings(S settings);
     protected abstract ImagingConfiguration getImgConfig();
     protected abstract void finalizeAcquisitions() throws Exception;
-    protected abstract void initializeAcquisitions() throws Exception;
+    protected abstract void initializeAcquisitions(List<S> settings) throws Exception;
     protected abstract void runSingleImageAcquisition(ImageSaver saver, MetadataBase md) throws Exception;
     protected abstract FileSpecs.Type getFileType(); //Return the type enumerator for this acquisition, used for file saving information.
     protected abstract Integer numFrames();

@@ -11,9 +11,13 @@ import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
 import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
+import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.metadata.FluorescenceMetadata;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.FluorSettings;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.micromanager.data.Coords;
 import org.micromanager.data.Image;
 import org.micromanager.data.Pipeline;
@@ -28,7 +32,7 @@ class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings>
     //Acquires multiple fluorescence images from a list of fluorescence settings.
     private FluorSettings settings;
     private ImagingConfiguration imConf;
-    private String initialFilter = null; //This should only stay null if we are using manual filter switching.
+    private Map<String, String> initialFilters; //This map contains all initial configuration states for the the configuration groups to adjust fluorescence filter. This is populated during initialization and then used during finalization.
     
     public MultipleFluorescenceAcquisition(PWSAlbum display) {
         super(display);
@@ -58,28 +62,40 @@ class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings>
     
     @Override
     protected void finalizeAcquisitions() throws MMDeviceException {
-        String fluorConfigGroup = imConf.getFluorescenceConfigGroup();
-        if (fluorConfigGroup != null) {
-            try {
-                Globals.core().setConfig(fluorConfigGroup, initialFilter);
-                Globals.core().waitForConfig(fluorConfigGroup, initialFilter); // Wait for the device to be ready.
-            } catch (Exception e) {
-                throw new MMDeviceException(e);
+        //Re-set all fluorescence filters to initial state.
+        for (Map.Entry<String, String> entry : initialFilters.entrySet()) {
+            String fluorConfigGroup = entry.getKey();
+            String configState = entry.getValue();
+            if (fluorConfigGroup.equals(ImagingConfigurationSettings.MANUALFLUORESCENCENAME)) { //Manual filter control
+                ReportingUtils.showMessage("Return to the initial filter block and click `OK`.", Globals.frame()); 
+            } else { //Automatic filter control
+                try {
+                    Globals.core().setConfig(fluorConfigGroup, configState);
+                    Globals.core().waitForConfig(fluorConfigGroup, configState); // Wait for the device to be ready.
+                } catch (Exception e) {
+                    throw new MMDeviceException(e);
+                }
             }
-        } else {
-            ReportingUtils.showMessage("Return to the initial filter block and click `OK`.");
         }
-        initialFilter = null; //Reset this for the next run
     }
     
     @Override
-    protected void initializeAcquisitions() throws MMDeviceException {
-        String fluorConfigGroup = imConf.getFluorescenceConfigGroup();
-        if (fluorConfigGroup != null) {
-            try {
-                initialFilter = Globals.core().getCurrentConfig(fluorConfigGroup);
-            } catch (Exception e) {
-                throw new MMDeviceException(e);
+    protected void initializeAcquisitions(List<FluorSettings> settingsList) throws MMDeviceException {
+        //Imaging configuration isn't set at this point. A single set of acquisitions may contain multiple imaging configurations so we need to consider initialization for each one.
+        initialFilters = new HashMap<>();
+        for (FluorSettings settings : settingsList) {
+            ImagingConfiguration imagingConf = Globals.getHardwareConfiguration().getImagingConfigurationByName(settings.imConfigName);
+            String confGroup = imagingConf.getFluorescenceConfigGroup();
+            if (confGroup != null) {
+                String filt;
+                try {
+                    filt = Globals.core().getCurrentConfig(confGroup);
+                } catch (Exception e) {
+                    throw new MMDeviceException(e);
+                }
+                initialFilters.put(confGroup, filt);
+            } else {
+                initialFilters.put(ImagingConfigurationSettings.MANUALFLUORESCENCENAME, null);
             }
         }
     }

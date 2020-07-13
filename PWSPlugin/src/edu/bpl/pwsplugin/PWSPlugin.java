@@ -26,7 +26,6 @@ test software autofocus
 test focus lock in realistic situation, ethanol cells and weird dishes.
 
 2:
-Make special objective and configuration config groups. make "filter" config group part of imaging config
 Make nikon recalibrate when objective changes. (fix config group event)
 
 3:
@@ -38,6 +37,8 @@ Add sequence logging.
 PFS set to current position function.
 
 Don't allow a focus lock within a focus lock
+
+comments and tooltips
 
 4:
 Transmission imaging

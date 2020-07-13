@@ -97,6 +97,7 @@ public class ImagingConfigUI extends SingleBuilderJPanel<ImagingConfigurationSet
         map.put("illuminatorSettings", illumSettings);
         map.put("configurationGroup", configGroup);
         map.put("configurationName", configState);
+        map.put("fluorescenceConfigGroup", fluorescenceConfigGroup);
         return map;
     }
 }

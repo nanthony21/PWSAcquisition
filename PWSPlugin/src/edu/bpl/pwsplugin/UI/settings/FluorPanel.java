@@ -39,10 +39,6 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
         exposureSpinner = new ImprovedComponents.Spinner(new SpinnerNumberModel(1000.0, 1.0, 5000.0, 100.0));
         focusOffsetSpinner = new ImprovedComponents.Spinner(new SpinnerNumberModel(0.0, -50.0, 50.0, 1.0));
         
-        /*Globals.getMMConfigAdapter().addRefreshListener((evt)->{
-            filterCombo.setModel(this.getFilterComboModel());
-        });*/
-        
         try {
             List<String> confNames = new ArrayList<>();
             for (ImagingConfigurationSettings setting : Globals.getHardwareConfiguration().getSettings().configs) {
