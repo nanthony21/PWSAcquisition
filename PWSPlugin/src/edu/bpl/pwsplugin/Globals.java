@@ -7,6 +7,7 @@ import edu.bpl.pwsplugin.UI.PluginFrame;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
+import edu.bpl.pwsplugin.utils.PWSLogger;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
@@ -19,9 +20,10 @@ public class Globals {
     private static Globals instance = null;
     private Studio studio_ = null;
     private AcquisitionManager acqMan_;
+    private PWSLogger logger_;
     private HWConfiguration config;
     private PluginFrame frame;
-    private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     
     private Globals() {}
     
@@ -35,6 +37,11 @@ public class Globals {
     
     public static void init(Studio studio) {
         instance().studio_ = studio;
+        try {
+            instance().logger_ = new PWSLogger(studio);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         instance().acqMan_ = new AcquisitionManager();
         instance().frame = new PluginFrame();
         try {
@@ -90,6 +97,10 @@ public class Globals {
     
     public static PluginFrame frame() {
         return instance().frame;
+    }
+    
+    public static PWSLogger logger() {
+        return instance().logger_;
     }
     
     public static void setHardwareConfigurationSettings(HWConfigurationSettings configg) {

@@ -49,6 +49,7 @@ public class AcquisitionStatus {
         Integer indentation = this.coords.getTreePath().length - 2; //The length of the treepath controls the indentation of messages for more readable log. The rootstep doesn't log anything so a 2 length treepath should have no indentation.
         String indent = StringUtils.repeat("  ", indentation);
         this.statusMsg.add(indent + message);
+        Globals.logger().logMsg(message);
         this.publish();
         return this.statusMsg.size()-1; //This can be used as a pointer to update the message later.
     }
