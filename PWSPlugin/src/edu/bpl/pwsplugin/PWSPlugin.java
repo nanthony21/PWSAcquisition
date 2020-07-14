@@ -26,17 +26,15 @@ test software autofocus
 test focus lock in realistic situation, ethanol cells and weird dishes.
 
 2:
-Make nikon recalibrate when objective changes. (fix config group event)
+Make nikon recalibrate when objective changes. (fix config group event). Make objective a `Device`?
 
 3:
-Add autoexposure to sequencer
 Add our own logger that format messages to the mm logger
+hardware autofocus extender in nikon adapter
 
 Focus lock snaps a single image and tests sharpness
 Add sequence logging.
 PFS set to current position function.
-
-Don't allow a focus lock within a focus lock
 
 comments and tooltips
 
@@ -49,6 +47,7 @@ Nikon:
 
 
 Some other day:
+    Add autoexposure to sequencer
     STORM imaging
     Add a cell selection step (AI type stuff)
     Z-Drive controller UI
