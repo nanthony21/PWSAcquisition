@@ -59,7 +59,10 @@ public abstract class TranslationStage1d implements Device {
         throw new UnsupportedOperationException();
     }
     
-    public void runFullFocus() throws MMDeviceException {
+    public double runFullFocus() throws MMDeviceException {
+        //Search for a zStage position where the continuous focus can be locked.
+        //Returns the position (microns) where lock is achievable. Throws an exception
+        //if no lock is possible.
         throw new UnsupportedOperationException();
     }
     

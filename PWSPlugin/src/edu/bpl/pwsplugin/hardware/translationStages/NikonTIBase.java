@@ -11,11 +11,11 @@ import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoint;
+import org.micromanager.AutofocusPlugin;
 
 /**
  *
@@ -35,6 +35,8 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
     protected abstract Double getMaximumPFSOffset();
     protected abstract Double getMinimumPFSOffset();
     protected abstract String getPFSOffsetDeviceName();
+    protected abstract String getZDriveDeviceName();
+    protected abstract String getPFSDeviceName();
     protected abstract boolean busy() throws MMDeviceException;
     
     @Override
@@ -61,8 +63,7 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
             throw new MMDeviceException(e);
         }
     }
-    
-    
+      
     private void calibrate() throws MMDeviceException, InterruptedException { //TODO there is a major problem with this on the TI2 primarily because the z position only updates at ~1 hz when pfs is on.
         //move pfs offset and measure zstage to calibrate pfsConversion.
         List<WeightedObservedPoint> observations = new ArrayList<>();
@@ -207,12 +208,29 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
     }
     
     @Override
-    public void runFullFocus() throws MMDeviceException {
+    public double runFullFocus() throws MMDeviceException {
+        //Throws MMDevice exception if focus is not found.
+        AutofocusPlugin hfe;
+        double result;
         try { //TODO add some smart software autofocus here so the image is actually focused.
-            Globals.core().fullFocus(); //TODO replace this with Hardware focus extender. which works much better. TODO add logging or something to Hardware focus extender.
+            //Rather than simply run the PFS `fullFocus` method we call the "HardwareFocusExtender" 
+            //plugin which will repeatedly move Z and then try to enable PFS, this can be slow 
+            //but is much more reliable than any other alternative.
+            Globals.mm().getAutofocusManager().setAutofocusMethodByName("HardwareFocusExtender");
+            hfe = Globals.mm().getAutofocusManager().getAutofocusMethod();
+            hfe.setPropertyValue("HardwareFocusDevice", this.getPFSDeviceName());
+            hfe.setPropertyValue("ZDrive", this.getZDriveDeviceName());
+            hfe.setPropertyValue("StepSize (um)", "5"); //These are the default values of the plugin. are they ok?
+            hfe.setPropertyValue("Lower limit (relative, um)", "300");
+            hfe.setPropertyValue("Upper limit (relative, um)", "100");
+            result = hfe.fullFocus();
         } catch (Exception e) {
-            throw new MMDeviceException(e);
+            throw new RuntimeException(e); //This shouldn't happen.
         }
+        if (result == 0.0) { //HFE returns 0 if no focus was found, otherwise it returns the absolute position of the Z stage when focused.
+            throw new MMDeviceException("Nikon PFS: No focus lock was found.");
+        }
+        return result;
     }
     
     @Override

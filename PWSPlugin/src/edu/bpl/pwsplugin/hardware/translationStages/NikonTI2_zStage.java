@@ -68,6 +68,16 @@ public class NikonTI2_zStage extends NikonTIBase {
         return offsetDevice;
     }
     
+    @Override
+    protected String getZDriveDeviceName() {
+        return settings.deviceName;
+    }
+    
+    @Override
+    protected String getPFSDeviceName() {
+        return pfsDevice;
+    }
+    
     /*@Override
     protected boolean busy() throws MMDeviceException { //This doesn't work:(
         try {

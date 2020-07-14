@@ -62,7 +62,7 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
             TranslationStage1d zstage = Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
             try {
                 zstage.runFullFocus();
-                Thread.sleep(1000); //Without this we will sometime not actually re-enable pfs for some reason.
+                Thread.sleep(1000); //Without this we will sometimes not actually re-enable pfs for some reason.
                 zstage.setAutoFocusEnabled(true);
                 Thread.sleep((long) (settings.delay * 1000.0));
             } catch (MMDeviceException e) {
