@@ -209,6 +209,7 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
     
     @Override
     public double runFullFocus() throws MMDeviceException {
+        //Move Z in search of a lock for PFS. Note, this is just where PFS locks, it may not mean that the image is focused.
         //Throws MMDevice exception if focus is not found.
         AutofocusPlugin hfe;
         double result;

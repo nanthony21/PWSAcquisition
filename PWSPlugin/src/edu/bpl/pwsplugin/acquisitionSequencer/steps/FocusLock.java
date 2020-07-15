@@ -61,10 +61,13 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
             //FocusLock A function that turns on the PFS, runs substep and then turns it off.
             TranslationStage1d zstage = Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
             try {
+                double startingZ = zstage.getPosUm(); //After finding focus lock we will move back to this z position.
                 zstage.runFullFocus();
                 Thread.sleep(1000); //Without this we will sometimes not actually re-enable pfs for some reason.
                 zstage.setAutoFocusEnabled(true);
+                zstage.setPosUm(startingZ); //Move back to our starting position, except now PFS should be locked.
                 Thread.sleep((long) (settings.delay * 1000.0));
+                
             } catch (MMDeviceException e) {
                 status.newStatusMessage("Focus Lock: Error: Focus lock failed to find initial focus.");
                 zstage.setAutoFocusEnabled(false); //If we failed then make sure to completely disable autofocus.
