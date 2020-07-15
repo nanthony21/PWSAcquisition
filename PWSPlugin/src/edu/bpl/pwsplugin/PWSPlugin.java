@@ -29,13 +29,8 @@ test focus lock in realistic situation, ethanol cells and weird dishes.
 Make nikon recalibrate when objective changes. (fix config group event). Make objective a `Device`?
 
 3:
-Add our own logger that format messages to the mm logger
-hardware autofocus extender in nikon adapter
-
 Focus lock snaps a single image and tests sharpness
-Add sequence logging.
 PFS set to current position function.
-
 comments and tooltips
 
 4:
