@@ -10,15 +10,18 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SoftwareAutofocus;
 import edu.bpl.pwsplugin.utils.JsonableParam;
+import java.text.NumberFormat;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.text.NumberFormatter;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -63,26 +66,31 @@ public class SoftwareAutofocusFactory extends StepFactory {
 }
 
 class SoftwareAutoFocusUI extends BuilderJPanel<SequencerSettings.SoftwareAutoFocusSettings> {
-    JComboBox<String> afNames = new JComboBox<>();
+    //JComboBox<String> afNames = new JComboBox<>();
+    ImprovedComponents.FormattedTextField exposure = new ImprovedComponents.FormattedTextField(NumberFormat.getNumberInstance());
     
     public SoftwareAutoFocusUI() {
         super(new MigLayout(), SequencerSettings.SoftwareAutoFocusSettings.class);
-        afNames.setModel(new DefaultComboBoxModel<>(Globals.mm().getAutofocusManager().getAllAutofocusMethods().toArray(new String[0])));
-        
-        this.add(new JLabel("Autofocus Method:"));
-        this.add(afNames);
+        //afNames.setModel(new DefaultComboBoxModel<>(Globals.mm().getAutofocusManager().getAllAutofocusMethods().toArray(new String[0])));   
+        //this.add(new JLabel("Autofocus Method:"));
+        //this.add(afNames);
+        exposure.setColumns(6);
+        this.add(new JLabel("Exposure (ms):"));
+        this.add(exposure);
     }
     
     @Override
     public SequencerSettings.SoftwareAutoFocusSettings build() {
         SequencerSettings.SoftwareAutoFocusSettings afs = new SequencerSettings.SoftwareAutoFocusSettings();
-        afs.afPluginName = (String) afNames.getSelectedItem();
+        //afs.afPluginName = (String) afNames.getSelectedItem();
+        afs.exposureMs = (Double) exposure.getValue();
         return afs;
     }
     
     @Override
     public void populateFields(SequencerSettings.SoftwareAutoFocusSettings settings) {
-        afNames.setSelectedItem(settings.afPluginName);
+        //afNames.setSelectedItem(settings.afPluginName);
+        exposure.setValue(settings.exposureMs);
     }
 }
 

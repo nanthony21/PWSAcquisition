@@ -14,7 +14,8 @@ import org.micromanager.PositionList;
  */
 public class SequencerSettings {
     public static class SoftwareAutoFocusSettings extends JsonableParam {
-        public String afPluginName = "OughtaFocus";
+        //public String afPluginName = "OughtaFocus";
+        public double exposureMs = 30;
     }
 
     public static class RootStepSettings extends JsonableParam {
