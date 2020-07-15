@@ -95,6 +95,8 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
             Step step = en.nextElement();
             if (step.getType().equals(SequencerConsts.Type.PFS)) {
                 errs.add(String.format("Optical Focus Lock may not contain a sub-step of type: %s", SequencerConsts.getFactory(SequencerConsts.Type.PFS).getName()));
+            } else if (step.getType().equals(SequencerConsts.Type.AF)) { //The autofocus step makes calls that move z without using our custom zStage devices, this will break the focus lock.
+                errs.add(String.format("Optical Focus Lock may not contain a sub-step of type: %s", SequencerConsts.getFactory(SequencerConsts.Type.AF).getName()));
             }
         }
         return errs;
