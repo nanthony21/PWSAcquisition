@@ -24,7 +24,7 @@ import edu.bpl.pwsplugin.fileSavers.ImSaverRaw;
 import edu.bpl.pwsplugin.PWSAlbum;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.concurrent.LinkedBlockingQueue;
-import org.json.JSONObject;
+import mmcorej.org.json.JSONObject;
 
 
 public interface AcquisitionManager {

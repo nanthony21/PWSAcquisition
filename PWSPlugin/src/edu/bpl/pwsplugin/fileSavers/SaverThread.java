@@ -5,7 +5,7 @@
  */
 package edu.bpl.pwsplugin.fileSavers;
 
-import org.json.JSONObject;
+import mmcorej.org.json.JSONObject;
 
 /**
  *
