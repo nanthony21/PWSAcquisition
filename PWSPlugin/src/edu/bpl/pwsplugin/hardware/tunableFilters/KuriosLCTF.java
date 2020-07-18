@@ -43,12 +43,12 @@ public class KuriosLCTF extends DefaultTunableFilter {
             }
             prop = Globals.core().getProperty(devName, "Bandwidth");
             if (!prop.equals("Narrow")) {
-                errs.add("Kurios LCTF must be set to `Narrow` bandwidth."); //TODO this was decided arbitrarily.
+                errs.add("Kurios LCTF `Bandwidth` must be set to `Narrow` bandwidth."); //TODO this was decided arbitrarily.
             }
             
             prop = Globals.core().getProperty(devName, "Sequence Bandwidth");
             if (!prop.equals("Narrow")) {
-                errs.add("Kurios LCTF must be set to `Narrow` bandwidth."); //TODO this was decided arbitrarily.
+                errs.add("Kurios LCTF `Sequencing Bandwidth` must be set to `Narrow` bandwidth."); //TODO this was decided arbitrarily.
             }
         } catch (Exception e) {
             Globals.mm().logs().logError(e);
