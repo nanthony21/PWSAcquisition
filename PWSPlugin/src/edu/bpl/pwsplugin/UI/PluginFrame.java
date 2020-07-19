@@ -108,6 +108,12 @@ public class PluginFrame extends MMFrame {
         try{ this.acqPanel.setCellNumber(set.cellNum); } catch(NullPointerException e) {ReportingUtils.logError(e); }
         try{ this.sequencePanel.populateFields(set.sequenceRoot); } catch(NullPointerException e) {ReportingUtils.logError(e); }
     }
+    
+    public void setActionButtonsEnabled(boolean enable) {
+        utilityPanel.setActionButtonsEnabled(enable);
+        acqPanel.setActionButtonsEnabled(enable);
+        sequencePanel.setActionButtonsEnabled(enable);
+    }
 }
 
 

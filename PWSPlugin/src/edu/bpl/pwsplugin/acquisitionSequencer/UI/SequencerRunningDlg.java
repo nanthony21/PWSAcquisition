@@ -47,7 +47,8 @@ class SequencerRunningDlg extends JDialog {
     AcquisitionThread acqThread;
 
     public SequencerRunningDlg(Window owner, String title, Step rootStep) {
-        super(owner, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        super(owner, title, Dialog.ModalityType.MODELESS);
+        this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE); //Must close by interrupting
         this.setLocationRelativeTo(owner);
         statusMsg.setEditable(false);
         ((DefaultCaret) statusMsg.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE); // this should prevent automatic scrollin got the bottom of the textarea when it updates
@@ -106,6 +107,7 @@ class SequencerRunningDlg extends JDialog {
                 SequencerRunningDlg.this.pauseButton.pausePoint();
                 return nullInput;
             };
+            Globals.frame().setActionButtonsEnabled(false);
             startingStatus = new AcquisitionStatus(publishCallback, pauseCallback);
             this.execute();
         }
@@ -130,7 +132,7 @@ class SequencerRunningDlg extends JDialog {
             btn.setText("Finish");
             for (ActionListener l : btn.getActionListeners()) { btn.removeActionListener(l); } //clear action listeners
             btn.addActionListener((evt)->{ SequencerRunningDlg.this.dispose(); });
-            
+            Globals.frame().setActionButtonsEnabled(true);
             SequencerRunningDlg.this.pauseButton.setEnabled(false);
         }
 

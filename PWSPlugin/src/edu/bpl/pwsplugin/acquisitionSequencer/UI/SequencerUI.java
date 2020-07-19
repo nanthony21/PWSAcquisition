@@ -200,6 +200,9 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
         ((DefaultTreeModel) seqTree.tree().getModel()).setRoot(rootStep);
     }
     
+    public void setActionButtonsEnabled(boolean enable) {
+        runButton.setEnabled(enable);
+    }
 }
 
 class FileConflictDlg extends JDialog {

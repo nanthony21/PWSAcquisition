@@ -39,14 +39,18 @@ import org.micromanager.data.Image;
  */
 
 class UtilityPanel extends JPanel {
+    ExposurePanel expPanel = new ExposurePanel();
     public UtilityPanel() {
         super(new MigLayout());
         
-        ExposurePanel exp = new ExposurePanel();
-        exp.setBorder(BorderFactory.createEtchedBorder());
+        expPanel.setBorder(BorderFactory.createEtchedBorder());
         
         this.add(new JLabel("<html><B>Auto Exposure</B></html>"), "wrap");
-        this.add(exp);
+        this.add(expPanel);
+    }
+    
+    public void setActionButtonsEnabled(boolean enable) {
+        expPanel.runBtn.setEnabled(enable);
     }
 }
 

@@ -87,7 +87,11 @@ class AcquisitionPanel extends JPanel {
     }
     
     public void setAcqSettings(AcquireCellSettings settings) throws BuilderJPanel.BuilderPanelException {
-        this.cellUI.populateFields(settings);
+        cellUI.populateFields(settings);
+    }
+    
+    public void setActionButtonsEnabled(boolean enable) {
+        acqButton.setEnabled(enable);
     }
     
     private void acquire() throws MMDeviceException { 
