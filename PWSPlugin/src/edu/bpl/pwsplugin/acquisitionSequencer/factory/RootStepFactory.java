@@ -68,6 +68,7 @@ class RootStepUI extends BuilderJPanel<SequencerSettings.RootStepSettings> {
         super(new MigLayout("insets 0 0 0 0"), SequencerSettings.RootStepSettings.class);
         
         description.setEditable(true);
+        description.setLineWrap(true);
         description.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         
         
@@ -80,12 +81,16 @@ class RootStepUI extends BuilderJPanel<SequencerSettings.RootStepSettings> {
     @Override
     public void populateFields(SequencerSettings.RootStepSettings settings) {
         directory.setText(settings.directory);
+        if (!settings.description.equals("")) { //No point populating an empty string, just leave the default.
+            description.setText(settings.description);
+        }
     }
     
     @Override
     public SequencerSettings.RootStepSettings build() {
         SequencerSettings.RootStepSettings settings = new SequencerSettings.RootStepSettings();
         settings.directory = this.directory.getText();
+        settings.description = description.getText();
         return settings;
     }
 }

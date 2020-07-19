@@ -44,9 +44,6 @@ Dialogs:
     Autofocus: open timed dialog for if retry should happen
     Same for focus lock and it's callback
 
-word wrap experiment description
-descripiton is neither saved nor loaded
-
 Some other day:
     Focus lock snaps a single image and tests sharpness
     Add autoexposure to sequencer
