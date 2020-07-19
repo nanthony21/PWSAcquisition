@@ -35,8 +35,8 @@ public class AutoShutterStep extends ContainerStep<SequencerSettings.AutoShutter
             while ((System.currentTimeMillis() - startTime) / 60000.0 < settings.warmupTimeMinutes) {
                 //Wait for the warmup time to expire.
                 String msg = String.format(
-                        "Illuminator is warming up. Waiting %.1f minutes before proceeding.", 
-                        (System.currentTimeMillis() - startTime) / 60000.0 - settings.warmupTimeMinutes);
+                        "Illuminator warming up. Waiting %.1f minutes before proceeding.", 
+                        settings.warmupTimeMinutes - ((System.currentTimeMillis() - startTime) / 60000.0));
                 if (!msg.equals(oldMsg)) {
                     if (msgId == -1) {
                         msgId = status.newStatusMessage(msg);
