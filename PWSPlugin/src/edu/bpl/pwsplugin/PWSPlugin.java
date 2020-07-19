@@ -36,7 +36,6 @@ Transmission imaging
 kurios still goes one item too far in sequencing. Only when external triggering isn't used. Device adapter: starts at 502 instead of 500
 
 Allow user to check settings and stuff while acquisition is running, just block `action buttons`.
-Autoshutter step
 Positions not recoverable from metadata: Save custom MM metadata with coords. like z position
 
 Nikon:
