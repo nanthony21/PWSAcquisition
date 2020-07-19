@@ -66,7 +66,7 @@ class SequencerRunningDlg extends JDialog {
         acqThread = new AcquisitionThread(rootStep.getFunction(new ArrayList<>()), 1); //This starts the thread.
         cancelButton.addActionListener((evt) -> {
             //The acquisition engine doesn't deal well with InterruptedException. Manually cancel any acquisitions before trying to cancel the thread.
-            if (Globals.mm().acquisitions().isAcquisitionRunning()) {
+            /*if (Globals.mm().acquisitions().isAcquisitionRunning()) { #If we use MDA this will be useful, right now it's pointless.
                 Globals.mm().acquisitions().haltAcquisition();
                 do {
                     try {
@@ -75,10 +75,12 @@ class SequencerRunningDlg extends JDialog {
                         Thread.currentThread().interrupt(); // reset the interrupt flag.
                     }
                 } while (Globals.mm().acquisitions().isAcquisitionRunning());
-            }
+            }*/
             acqThread.cancel(true);
+            cancelButton.setText("Awaiting...");
         });
-        this.setVisible(true); // this blocks.
+        
+        this.setVisible(true); // this blocks while the dialog executes.
     }
 
     public void updateStatus(AcquisitionStatus status) {

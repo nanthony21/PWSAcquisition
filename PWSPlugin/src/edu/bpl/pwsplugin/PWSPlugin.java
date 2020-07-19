@@ -41,7 +41,7 @@ Add a description field to initialization
 Allow user to check settings and stuff while acquisition is running, just block `action buttons`.
 Positions not recoverable from metadata.
 Autoshutter step
-Sequencer mark cancel button when waiting for cancel
+Save custom MM metadata with coords. like z position
 
 Nikon:
     Sometimes TI2 PFS becomes disabled during calibration.
