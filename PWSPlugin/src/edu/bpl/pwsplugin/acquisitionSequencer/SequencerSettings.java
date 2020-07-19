@@ -61,4 +61,9 @@ public class SequencerSettings {
         public boolean absolute = false;
         public double startingPosition = 0; //Only used if absolute is true
     }
+    
+    public static class AutoShutterSettings extends JsonableParam {
+        public String configName = "";
+        public Double warmupTimeMinutes = 0.;
+    }
 }

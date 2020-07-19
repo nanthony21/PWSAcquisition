@@ -16,6 +16,8 @@ import javax.swing.text.DefaultFormatter;
  * @author nicke
  */
 public class ImprovedComponents {
+    private ImprovedComponents() {} //Make private 
+    
     public static class Spinner extends JSpinner {
     //By default the JSpinner `getValue` does not update when a valid value is typed in unless focus is then changed to another component.
     //This class makes it so that the value updates as soon as a valid value is typed in. this fixes an annoying bug with many of th settings in the UI

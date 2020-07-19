@@ -8,6 +8,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.AcquireCellFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.AcquireFromPositionListFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.AcquireTimeSeriesFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.factory.AutoShutterStepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.BrokenStepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.ChangeConfigGroupFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.EnterSubfolderFactory;
@@ -37,7 +38,8 @@ public class SequencerConsts {
         ROOT,
         SUBFOLDER,
         ZSTACK,
-        BROKEN;
+        BROKEN,
+        AUTOSHUTTER;
     }
     
     public enum Category {
@@ -87,6 +89,8 @@ public class SequencerConsts {
                 return new ZStackFactory();
             case BROKEN:
                 return new BrokenStepFactory();
+            case AUTOSHUTTER:
+                return new AutoShutterStepFactory();
         } 
         throw new RuntimeException("Shouldn't get here.");
     }

@@ -29,8 +29,6 @@ test focus lock in realistic situation, ethanol cells and weird dishes.
 Make nikon recalibrate when objective changes. (fix config group event). Make objective a `Device`?
 
 3:
-Focus lock snaps a single image and tests sharpness
-PFS set to current position function.
 comments and tooltips
 
 4:
@@ -38,15 +36,18 @@ Transmission imaging
 kurios still goes one item too far in sequencing. Only when external triggering isn't used. Device adapter: starts at 502 instead of 500
 
 Allow user to check settings and stuff while acquisition is running, just block `action buttons`.
-Positions not recoverable from metadata.
 Autoshutter step
-Save custom MM metadata with coords. like z position
+Positions not recoverable from metadata: Save custom MM metadata with coords. like z position
 
 Nikon:
     Sometimes TI2 PFS becomes disabled during calibration.
 
+Dialogs:
+    Autofocus: open timed dialog for if retry should happen
+    Same for focus lock and it's callback
 
 Some other day:
+    Focus lock snaps a single image and tests sharpness
     Add autoexposure to sequencer
     STORM imaging
     Add a cell selection step (AI type stuff)
