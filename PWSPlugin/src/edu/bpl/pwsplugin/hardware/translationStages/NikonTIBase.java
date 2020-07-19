@@ -177,7 +177,14 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
     @Override
     public void setAutoFocusEnabled(boolean enable) throws MMDeviceException {
         try {
-            Globals.core().enableContinuousFocus(enable);
+            Globals.core().enableContinuousFocus(enable); //This returns immediately.
+            double stime = System.currentTimeMillis();
+            while ((System.currentTimeMillis() - stime) < 1000) {//block until it's completed, with a limit of one second.
+                if (Globals.core().isContinuousFocusEnabled() == enable) {
+                    return;
+                }
+            }
+            throw new MMDeviceException("AutoFocus failed to enable to: " + enable); //If we got this far then waiting for continuous focus timed out
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }

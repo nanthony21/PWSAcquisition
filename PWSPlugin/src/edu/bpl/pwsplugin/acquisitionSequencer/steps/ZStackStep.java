@@ -42,9 +42,10 @@ public class ZStackStep extends ContainerStep<SequencerSettings.ZStackSettings> 
                 for (int i = 0; i < settings.numStacks; i++) {
                     status.coords().setIterationOfCurrentStep(i); //Update the coordinates to indicate which iteration of this step we are on.
                     status.newStatusMessage(String.format("Moving to z-slice %d of %d", i + 1, settings.numStacks));
-                    zStage.setPosRelativeUm(settings.intervalUm * i);
+                    zStage.setPosUm(initialPos + (settings.intervalUm * i));
                     status = subStepFunc.apply(status);
                 }
+                zStage.setPosUm(initialPos); //Make sure to return to the initial position before finishing.
                 return status;
             }
         };
