@@ -20,6 +20,7 @@ public class SequencerSettings {
 
     public static class RootStepSettings extends JsonableParam {
         public String directory = "";
+        public String description = "";
     }
 
     public static class PauseStepSettings extends JsonableParam {

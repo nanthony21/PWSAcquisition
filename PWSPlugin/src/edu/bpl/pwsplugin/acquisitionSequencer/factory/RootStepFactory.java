@@ -13,7 +13,9 @@ import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JTextArea;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -60,12 +62,19 @@ public class RootStepFactory extends StepFactory{
 
 class RootStepUI extends BuilderJPanel<SequencerSettings.RootStepSettings> {
     DirectorySelector directory = new DirectorySelector(DirectorySelector.DefaultMMFunctions.MMDataSetDirectory);
+    JTextArea description = new JTextArea("Experiment description here.");
     
     public RootStepUI() {
         super(new MigLayout("insets 0 0 0 0"), SequencerSettings.RootStepSettings.class);
         
-        this.add(new JLabel("Root Directory:"), "gapleft push");
-        this.add(directory);
+        description.setEditable(true);
+        description.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+        
+        
+        this.add(new JLabel("Root Directory:"), "wrap");
+        this.add(directory, "wrap, growx");
+        this.add(new JLabel("Description:"), "wrap");
+        this.add(description, "grow, push, spanx");
     }
     
     @Override
