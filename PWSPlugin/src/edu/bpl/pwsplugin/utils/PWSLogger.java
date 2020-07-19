@@ -41,20 +41,8 @@ public class PWSLogger {
         mainCoreLogHandle = studio.core().startSecondaryLogFile(Paths.get(logDir.toString(), "CoreLog" + new Date().getTime() + ".txt").toString(), true); // The whole reason we pass the Studio instance to the constructor here is so we can access it without a circular dependency on Globals.mm() which isn't initialized yet.
     }
     
-    public synchronized void logMsg(String msg) {
-        String datetime = LocalDateTime.now().toString();
-        try {
-            String message = datetime + "::MSG::" + msg;
-            logWriter.write(message + LS);
-            logWriter.flush();
-            if (acqWriter != null) {
-                acqWriter.write(message + LS);
-                acqWriter.flush();
-            }
-            System.out.println(message);
-        } catch (IOException e) {
-            ReportingUtils.showError(e);
-        }
+    public void logMsg(String msg) {
+        logAtLevel(msg, Level.MSG);
     }
     
     public void logError(Throwable e) {
@@ -63,17 +51,28 @@ public class PWSLogger {
         this.logError(e.toString() + " in " + Thread.currentThread().toString() + LS + stackTrace);
     }
     
-    public synchronized void logError(String msg) {  
-        String datetime = LocalDateTime.now().toString();
+    public void logError(String msg) {  
+        logAtLevel(msg, Level.ERR);
+    }
+    
+    public void logDebug(String msg) {
+        logAtLevel(msg, Level.DBG);
+    }
+    
+    public void logSequence(String msg) {
+        logAtLevel(msg, Level.SEQUENCE);
+    }
+    
+    private synchronized void logAtLevel(String msg, Level lvl) {
+        String message = formatLine(msg, lvl);
         try {
-            String message = datetime + "::ERROR::" + msg;
-            logWriter.write(message + LS);
+            logWriter.write(message);
             logWriter.flush();
             if (acqWriter!=null) {
-                acqWriter.write(message + LS);
+                acqWriter.write(message);
                 acqWriter.flush();
             }
-            System.out.println(message);
+            System.out.print(message);
         } catch (IOException e) {
             ReportingUtils.showError(e);
         }
@@ -126,6 +125,19 @@ public class PWSLogger {
         } else { 
            return result;
         }
+    }
+    
+    private String formatLine(String msg, Level lvl) {
+        String datetime = LocalDateTime.now().toString();
+        String message = datetime + "::" + lvl.name() + "::" + msg + LS;
+        return message;
+    }
+    
+    public enum Level {
+        MSG,
+        DBG,
+        ERR,
+        SEQUENCE;
     }
 }
 

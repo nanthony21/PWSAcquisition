@@ -11,6 +11,7 @@ import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
@@ -81,7 +82,7 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
                 double x = this.getPosUm() - zOrig;
                 double y = this.getPFSOffset();
                 observations.add(new WeightedObservedPoint(1, x, y));
-                //System.out.println(String.format("%f, %f", x, y));
+                Globals.logger().logDebug(String.format("Nikon Calibrate: position: %f, offset: %f", x, y));
             }
         } catch (InterruptedException | MMDeviceException ie) {
             throw ie;
@@ -90,7 +91,7 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
         }
         PolynomialCurveFitter regression = PolynomialCurveFitter.create(2);
         this.coef_ = regression.fit(observations);
-        //System.out.println(Arrays.toString(coef_));
+        Globals.logger().logDebug("Nikon Calibrate: coefficients: " + Arrays.toString(coef_));
         this.setPFSOffset(origOffset);
         calibrated = true;
     }
@@ -115,6 +116,7 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
     
     @Override
     public void setPosRelativeUm(double um) throws MMDeviceException, InterruptedException {
+        Globals.logger().logDebug(String.format("Nikon Move Relative Begin: %.2f", um));
         try {
             if (this.getAutoFocusEnabled()) {
                 if (!calibrated) { this.calibrate(); }
@@ -126,7 +128,7 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
                     this.setPFSOffset(newOffset); //This will block until the move is finished.
                     double newPos = this.getPosUm();
                     remainingRelUm -= newPos - currentPos; //subtract the delta-z from this iteration from our remaning distance to go.
-                    //System.out.println(String.format("c %f, n %f, r %f, co %f, no %f", currentPos, newPos, remainingRelUm, currentOffset, newOffset));
+                    Globals.logger().logDebug(String.format("Nikon PFS Movement: currentPos %f, newPos %f, remainingRelUm %f, currentOffset %f, newOffset %f", currentPos, newPos, remainingRelUm, currentOffset, newOffset));
                     if (Math.abs(remainingRelUm) <= 0.01) { break; }//I'm just not sure how to choose the tolerance. However running through 5 iterations without satisfying this requirement is fine.
                 }
             } else {
@@ -137,11 +139,13 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
             throw ee;
         } catch (Exception e) {
             throw new MMDeviceException(e);
-        }         
+        }   
+        Globals.logger().logDebug("Nikon Move Relative End.");
     }
     
     @Override
     public void setPosUm(double um) throws MMDeviceException, InterruptedException {
+        Globals.logger().logDebug(String.format("Nikon Move Absolute Begin: %.2f", um));
         try {
             if (this.getAutoFocusEnabled()) {
                 if (!calibrated) { this.calibrate(); }
@@ -157,7 +161,7 @@ public abstract class NikonTIBase extends TranslationStage1d implements Property
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }
-
+        Globals.logger().logDebug("Nikon Move Absolute End.");
     }
     
     @Override
