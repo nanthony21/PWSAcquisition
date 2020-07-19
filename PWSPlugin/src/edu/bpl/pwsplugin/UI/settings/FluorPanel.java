@@ -16,6 +16,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.NoSuchElementException;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
@@ -39,14 +41,6 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
         exposureSpinner = new ImprovedComponents.Spinner(new SpinnerNumberModel(1000.0, 1.0, 5000.0, 100.0));
         focusOffsetSpinner = new ImprovedComponents.Spinner(new SpinnerNumberModel(0.0, -50.0, 50.0, 1.0));
         
-        try {
-            List<String> confNames = new ArrayList<>();
-            for (ImagingConfigurationSettings setting : Globals.getHardwareConfiguration().getSettings().configs) {
-                confNames.add(setting.name);
-            }
-            imConfName.setModel(new DefaultComboBoxModel<String>(confNames.toArray(new String[confNames.size()])));
-        } catch (NullPointerException e) {} //This will often fail during plugin initialization. that's ok, the PropertyChangeListener should also set this once initialization is completed.
-        
         imConfName.addItemListener((evt) -> {
             String name = (String) imConfName.getSelectedItem();
             if (Globals.getHardwareConfiguration() != null) { //It can be null on startup
@@ -57,6 +51,19 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
                 } catch (NoSuchElementException e) {}
             }
         });
+        
+        try {
+            List<String> confNames = new ArrayList<>();
+            for (ImagingConfigurationSettings setting : Globals.getHardwareConfiguration().getSettings().configs) {
+                confNames.add(setting.name);
+            }
+            imConfName.setModel(new DefaultComboBoxModel<String>(confNames.toArray(new String[confNames.size()])));
+        } catch (NullPointerException e) {} //This will often fail during plugin initialization. that's ok, the PropertyChangeListener should also set this once initialization is completed.
+        
+        for (ItemListener list : imConfName.getItemListeners()) { //Manually fire the listener to complete initialization
+            list.itemStateChanged(new ItemEvent(imConfName, ItemEvent.ITEM_STATE_CHANGED, imConfName.getSelectedItem(), ItemEvent.SELECTED));
+        }
+        
                 
         super.add(new JLabel("Wavelength (nm)"));
         super.add(new JLabel("Exposure (ms)"));
