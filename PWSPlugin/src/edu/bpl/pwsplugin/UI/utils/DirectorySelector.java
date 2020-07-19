@@ -61,7 +61,7 @@ public class DirectorySelector extends JPanel {
     }
     
     private DirectorySelector() {
-        super(new MigLayout("fill"));
+        super(new MigLayout("fill, insets 0"));
         super.add(textField, "growx");
         super.add(browseButton);
     }
