@@ -4,9 +4,9 @@ package edu.bpl.pwsplugin;
 //
 //-----------------------------------------------------------------------------
 //
-// AUTHOR:      Nick Anthony 2019
+// AUTHOR:      Nick Anthony 2020
 //
-// COPYRIGHT:    Northwestern University, Evanston, IL 2019
+// COPYRIGHT:    Northwestern University, Evanston, IL 2020
 //
 // LICENSE:      This file is distributed under the BSD license.
 //               License text is included with the source distribution.
@@ -50,8 +50,6 @@ Some other day:
     STORM imaging
     Add a cell selection step (AI type stuff)
     Z-Drive controller UI
-
-
 */
 
 import com.google.common.eventbus.Subscribe;
@@ -62,7 +60,6 @@ import edu.bpl.pwsplugin.settings.PWSSettingsConsts;
 import org.micromanager.Studio;
 import org.micromanager.MenuPlugin;
 import org.micromanager.events.ShutdownCommencingEvent;
-
 import org.scijava.plugin.SciJavaPlugin;
 import org.scijava.plugin.Plugin;
    
@@ -81,7 +78,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     } 
     
     @Override
-    public void onPluginSelected() {
+    public void onPluginSelected() { //This is fired when the user requests to open the plugin.
         if (!initialized_) {
             //In order for json serial/deserialization to work, each class must be 
             //registered with Gson. Let's do that now to make sure.
@@ -122,7 +119,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     }
     
     @Subscribe
-    public void closeRequested( ShutdownCommencingEvent sce){
+    public void closeRequested( ShutdownCommencingEvent sce){ //This is fired when micro-manager indicates that it is closing.
       if (Globals.frame() != null) {
          if (!sce.getIsCancelled()) {
             Globals.frame().dispose();

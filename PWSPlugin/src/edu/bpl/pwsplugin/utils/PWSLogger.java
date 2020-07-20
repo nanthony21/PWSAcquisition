@@ -19,6 +19,10 @@ import org.micromanager.internal.utils.ReportingUtils;
 /**
  *
  * @author nick
+ * This logger is responsible for writing log files. I saves it's own "PWSLog", it also redirects micro-managers CoreLog to be saved in custom locations.
+ * A single file will be saved to during a single session of Micro-Manager.
+    A copy of the log file will also be saved to the acquisition directory when
+    an acquisition is being run.
  */
 public class PWSLogger {
     private final FileWriter logWriter; //This writer always writes to the `logPath` that SGILogger is constructed with
@@ -28,10 +32,6 @@ public class PWSLogger {
     private Integer acqCoreLogHandle = null;
     
     public PWSLogger(Studio studio) throws Exception {
-        //logPath should be the directory that the log and error files will be saved to.
-        //A single file will be saved to during a single session of Micro-Manager.
-        //A copy of the log file will also be saved to the acquisition directory when
-        //an acquisition is being run.
         String homeDir = System.getProperty("user.home");
         Path logDir = Paths.get(homeDir, "PWSAcquisitionLogs");
         if (!logDir.toFile().exists()) {
@@ -41,11 +41,11 @@ public class PWSLogger {
         mainCoreLogHandle = studio.core().startSecondaryLogFile(Paths.get(logDir.toString(), "CoreLog" + new Date().getTime() + ".txt").toString(), true); // The whole reason we pass the Studio instance to the constructor here is so we can access it without a circular dependency on Globals.mm() which isn't initialized yet.
     }
     
-    public void logMsg(String msg) {
+    public void logMsg(String msg) { //Log a message
         logAtLevel(msg, Level.MSG);
     }
     
-    public void logError(Throwable e) {
+    public void logError(Throwable e) { // Log an error
         //Convert a throwable to a String trace and log it.
         String stackTrace = PWSLogger.getStackTraceAsString(e);
         this.logError(e.toString() + " in " + Thread.currentThread().toString() + LS + stackTrace);
@@ -55,15 +55,22 @@ public class PWSLogger {
         logAtLevel(msg, Level.ERR);
     }
     
-    public void logDebug(String msg) {
+    public void logDebug(String msg) { //Log a debug message
         logAtLevel(msg, Level.DBG);
     }
     
-    public void logSequence(String msg) {
+    public void logSequence(String msg) { //Log a message related to the sequencer status.
         logAtLevel(msg, Level.SEQUENCE);
     }
     
-    private synchronized void logAtLevel(String msg, Level lvl) {
+    private String formatLine(String msg, Level lvl) { //Decorate a line of text with other information
+        String datetime = LocalDateTime.now().toString();
+        String message = datetime + "::" + lvl.name() + "::" + msg + LS;
+        return message;
+    }
+    
+    
+    private synchronized void logAtLevel(String msg, Level lvl) { //Other functions call this to perform the actual file writing.
         String message = formatLine(msg, lvl);
         try {
             logWriter.write(message);
@@ -127,13 +134,8 @@ public class PWSLogger {
         }
     }
     
-    private String formatLine(String msg, Level lvl) {
-        String datetime = LocalDateTime.now().toString();
-        String message = datetime + "::" + lvl.name() + "::" + msg + LS;
-        return message;
-    }
-    
-    public enum Level {
+
+    public enum Level { //The possible types of log message.
         MSG,
         DBG,
         ERR,

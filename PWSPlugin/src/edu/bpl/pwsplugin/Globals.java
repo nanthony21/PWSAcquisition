@@ -17,7 +17,9 @@ import org.micromanager.Studio;
 import org.micromanager.internal.utils.ReportingUtils;
 
 public class Globals {
-    private static Globals instance = null;
+    //This class is used to provide access to various parts of the plugin in a way that is practically global. This stops us from having to pass them around as variables everywhere.
+    
+    private static Globals instance = null; //A singleton instance of the class is stored here.
     private Studio studio_ = null;
     private AcquisitionManager acqMan_;
     private PWSLogger logger_;
@@ -35,7 +37,7 @@ public class Globals {
         return instance;
     }
     
-    public static void init(Studio studio) {
+    public static void init(Studio studio) { //This must be called before anything else to initialize all the variables.
         instance().studio_ = studio;
         try {
             instance().logger_ = new PWSLogger(studio);
@@ -57,11 +59,11 @@ public class Globals {
         }
     }
     
-    public static void saveSettings(PWSPluginSettings settings) {
+    public static void saveSettings(PWSPluginSettings settings) { //Save plugin settings to Micr-Manager's settings system.
         Globals.mm().profile().getSettings(PWSPlugin.class).putString("settings", settings.toJsonString());
     }
     
-    private static PWSPluginSettings loadSettings() {
+    private static PWSPluginSettings loadSettings() { //Load and apply the saved settings.
         String settingsStr = Globals.mm().profile().getSettings(PWSPlugin.class).getString("settings", "");
         PWSPluginSettings set = null;
         try {
@@ -75,7 +77,7 @@ public class Globals {
         return set;
     }
     
-    public static void addPropertyChangeListener(PropertyChangeListener l) {
+    public static void addPropertyChangeListener(PropertyChangeListener l) { //Objects can listen for when a global property has been changed. Right now only `config` is handled.
         instance().pcs.addPropertyChangeListener(l);
     }
     
@@ -83,27 +85,31 @@ public class Globals {
         instance().pcs.removePropertyChangeListener(l);
     }
             
-    public static Studio mm() {
+    public static Studio mm() { //Convenient way to access the instance of Micro-Manager Studio that we are running within.
         return instance().studio_;
     }
     
-    public static CMMCore core() {
+    public static CMMCore core() { // Convenient access to the MMCore for device control
         return instance().studio_.core();
     }
     
-    public static AcquisitionManager acqManager() {
+    public static AcquisitionManager acqManager() { //Access to the PWSPlugin Acquisition Manager.
         return instance().acqMan_;
     }
     
-    public static PluginFrame frame() {
+    public static PluginFrame frame() { //Access to the top level JFrame of the plugin.
         return instance().frame;
     }
     
-    public static PWSLogger logger() {
+    public static PWSLogger logger() { //Access to the logger object used to save log files.
         return instance().logger_;
     }
     
-    public static void setHardwareConfigurationSettings(HWConfigurationSettings configg) {
+    public static HWConfiguration getHardwareConfiguration() { //Access to the current hardware configuration.
+        return instance().config;
+    }
+    
+    public static void setHardwareConfigurationSettings(HWConfigurationSettings configg) { //Update the hardware configuration with new settings. Fires an event to property change listeners.
         try {
             instance().config.dispose(); //If we don't do this then the object will still hang around.
             instance().config = new HWConfiguration(configg);
@@ -118,10 +124,5 @@ public class Globals {
         } catch (MMDeviceException e) {
             Globals.mm().logs().showError(e);
         }
-    }
-    
-    public static HWConfiguration getHardwareConfiguration() {
-        return instance().config;
-    }
-    
+    }   
 }
