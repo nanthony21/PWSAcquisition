@@ -5,21 +5,17 @@
  */
 package edu.bpl.pwsplugin.metadata;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.util.List;
-import mmcorej.org.json.JSONArray;
-import mmcorej.org.json.JSONException;
-import mmcorej.org.json.JSONObject;
 
 /**
  *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class PWSMetadata extends MetadataBase{
-    private final List<Double> wavelengths;
-    private final Double exposure;
+    private final List<Double> wavelengths; //The wavelengths associated with each image in the image cube.
+    private final Double exposure; //The exposure time that was used. milliseconds.
     
     public PWSMetadata(MetadataBase base, List<Double> wavelengths, Double exposure) {
         super(base);

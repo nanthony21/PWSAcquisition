@@ -14,12 +14,12 @@ import org.micromanager.internal.utils.ReportingUtils;
 
 
 public class MetadataBase { //All images should have this metadata.
-    private final List<Double> linearityPoly;
-    private final String system;
-    private final Integer darkCounts;
-    private final String time;
-    private final List<Double> affineTransform;
-    private DefaultMetadata MMmd;
+    private final List<Double> linearityPoly; //A polynomial describing how to transform from camera counts to intensity. Most, but not all, cameras are linera so this isn't needed.
+    private final String system; //the name of the system this acquisition was performed on.
+    private final Integer darkCounts; //The darkcounts of the camera. this is the number measured when no binning is used.
+    private final String time; //A datetime string indicating the time of acquisition.
+    private final List<Double> affineTransform; //A 2x3 array indication the affine transform of the camera relative to the translation stage.
+    private DefaultMetadata MMmd; //the micro-manager metadata object containing all sorts of other information.
                     
     public MetadataBase(List<Double> linearityPoly, String systemName, Integer darkCounts, List<Double> afTransform) {
         this.linearityPoly = linearityPoly;
