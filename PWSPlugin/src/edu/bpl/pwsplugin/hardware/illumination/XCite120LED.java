@@ -42,7 +42,7 @@ public class XCite120LED extends DefaultIlluminator {
             String lampTimeProp = "Lamp-On Time (s)";
             double lampOnTime = Double.valueOf(Globals.core().getProperty(this.settings.name, lampTimeProp));
             if (lampOnTime < 600) { //less than ten minutes
-                errs.add("LED has only been allowed " + String.valueOf(lampOnTime/60) + " minutes (10 is recommended) to warm up");
+                errs.add(String.format("LED has only been allowed %.2f minutes (10 is recommended) to warm up", lampOnTime/60));
             }
         } catch (Exception e) {
             errs.add(e.getMessage());
