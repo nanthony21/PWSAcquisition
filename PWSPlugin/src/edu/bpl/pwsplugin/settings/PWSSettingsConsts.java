@@ -6,18 +6,18 @@ import edu.bpl.pwsplugin.hardware.settings.IlluminatorSettings;
 import edu.bpl.pwsplugin.hardware.settings.CamSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  *
  * @author nick
  */
 public class PWSSettingsConsts {
+    /* this class contains constant information that is relevant to the settings
+    
+    */
     public static void registerGson() {
+        /* this convenient function provides a singl function to register all settings with GSON. make sure to call this somewhere during initialization.
+        
+        */
         JsonableParam.registerClass(FluorSettings.class);
         JsonableParam.registerClass(PWSSettings.class);
         JsonableParam.registerClass(DynSettings.class);

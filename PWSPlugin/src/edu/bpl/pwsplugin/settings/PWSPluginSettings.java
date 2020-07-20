@@ -41,6 +41,7 @@ public class PWSPluginSettings extends JsonableParam {
 }
 
 final class PWSSettingsGson implements JsonDeserializer<PWSPluginSettings>, JsonSerializer<PWSPluginSettings> {
+    //This defines custom behavior to save and load these settings using GSON.
     @Override
     public PWSPluginSettings deserialize(final JsonElement jsonElement, final java.lang.reflect.Type type, final JsonDeserializationContext context) throws JsonParseException {
         final JsonObject obj = jsonElement.getAsJsonObject();

@@ -12,9 +12,11 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class DynSettings extends JsonableParam {
-    public String imConfigName = "";
-    public double exposure = 50;
-    public int wavelength = 550;
-    public int numFrames = 200;
+    //Settings for a single Dynamics acquisition.
+    
+    public String imConfigName = ""; //The name of the "Imaging Configuration" used.
+    public double exposure = 50; //The exposure time of the camera in milliseconds.
+    public int wavelength = 550; //The wavelength that the tunable filter should be set to in nanometers.
+    public int numFrames = 200; //The number of images to take.
     
 }

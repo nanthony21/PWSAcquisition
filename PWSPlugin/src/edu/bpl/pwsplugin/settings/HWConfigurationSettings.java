@@ -15,10 +15,14 @@ import java.util.List;
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class HWConfigurationSettings extends JsonableParam {
+    /*
+    These settings describe the hardware configuration of the plugin. It may contain multiple "Imaging Configurations"
+    The program only can use a single hardware configuration.
+    */
     
-    public String systemName = "";
-    public String objectiveConfigurationGroupName = "";
-    public List<ImagingConfigurationSettings> configs = new ArrayList<>();
+    public String systemName = ""; //The name of this microscope system. This will be saved in metadata.
+    public String objectiveConfigurationGroupName = ""; //The name of the Micro-Manager "configuration group" that adjusts which objective is used.
+    public List<ImagingConfigurationSettings> configs = new ArrayList<>(); //A list of settings for various "Imaging Configurations"
 
     public ImagingConfigurationSettings getConfigurationByName(String name) {
         for (int i = 0; i < this.configs.size(); i++) {

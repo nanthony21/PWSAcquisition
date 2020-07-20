@@ -7,6 +7,7 @@ package edu.bpl.pwsplugin.settings;
 
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -14,6 +15,10 @@ import java.util.List;
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class AcquireCellSettings extends JsonableParam {
+    /*Contains all settings for a single "Cell" folder acquisition. Can include
+    One PWS acquisition, one Dynamics acquisition, and multiple fluorescence acquisitions.
+    */
+    
     public boolean pwsEnabled = true;
     public PWSSettings pwsSettings = new PWSSettings();
     
@@ -21,17 +26,19 @@ public class AcquireCellSettings extends JsonableParam {
     public DynSettings dynSettings = new DynSettings();
     
     public boolean fluorEnabled = true;
-    public List<FluorSettings> fluorSettings = new ArrayList<>();
-
-    public AcquireCellSettings() {
-        fluorSettings.add(new FluorSettings());
-    }
+    public List<FluorSettings> fluorSettings = Arrays.asList(new FluorSettings());
+    
+    
     
     public static AcquireCellSettings getDefaultSettings(PWSSettingsConsts.Systems sys) {
+        //This convenience function is used to generate the default settings for various systems used by Northwestern.
         AcquireCellSettings settings = new AcquireCellSettings();
         PWSSettings pwsSettings = settings.pwsSettings;
         DynSettings dynSettings = settings.dynSettings;
-        settings.fluorSettings = new ArrayList<>(); //Default to no fluorescence.
+        
+        settings.pwsEnabled = true;
+        settings.dynEnabled = false;
+        settings.fluorEnabled = false;
         
         //For now we use the same default settings for all systems for dynamics.
         dynSettings.exposure = 50;
