@@ -153,7 +153,7 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
                         if (remaining) {    //Process images
                             Image im = Globals.mm().data().convertTaggedImage(Globals.core().popNextTaggedImage());
                             if (i==0) {
-                                pmd.setMicroManagerMetadata((DefaultMetadata) im.getMetadata()); 
+                                pmd.setMicroManagerMetadata(im); 
                                 saver.setMetadata(pmd);
                             }
                             addImage(im, i, pipeline, saver);
@@ -184,7 +184,7 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
                 for (int i=0; i<wv.length; i++) {
                     Image im = conf.snapImage(wv[i]);
                     if (i==0) {
-                        pmd.setMicroManagerMetadata((DefaultMetadata) im.getMetadata()); 
+                        pmd.setMicroManagerMetadata(im); 
                         saver.setMetadata(pmd);
                     }
                     addImage(im, i, pipeline, saver);

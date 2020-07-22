@@ -4,10 +4,13 @@ package edu.bpl.pwsplugin.metadata;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import org.micromanager.data.Image;
+import org.micromanager.data.Metadata;
 import org.micromanager.data.internal.DefaultMetadata;
 import org.micromanager.internal.propertymap.PropertyMapJSONSerializer;
 import org.micromanager.internal.utils.ReportingUtils;
@@ -46,8 +49,13 @@ public class MetadataBase { //All images should have this metadata.
         this.MMmd = base.MMmd;
     }
     
-    public void setMicroManagerMetadata(DefaultMetadata md) { //This must be called before saving.
-        this.MMmd = md;
+    public void setMicroManagerMetadata(Image im) { //This must be called before saving.
+        try {
+            Metadata md = Globals.mm().acquisitions().generateMetadata(im, true);  
+            this.MMmd = (DefaultMetadata) md; //This line populates the metadata with information like z position, binning, xy position, etc. very important in some cases.
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
     
     /*public final List<Double> linearityPoly() { return linearityPoly; }

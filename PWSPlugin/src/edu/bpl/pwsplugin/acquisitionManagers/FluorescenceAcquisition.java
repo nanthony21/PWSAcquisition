@@ -102,7 +102,7 @@ class FluorescenceAcquisition extends SingleAcquisitionBase<FluorSettings>{
             this.camera.setExposure(settings.exposure);
             Globals.core().clearCircularBuffer();
             Image img = this.camera.snapImage();
-            metadata.setMicroManagerMetadata((DefaultMetadata) img.getMetadata());
+            metadata.setMicroManagerMetadata(img);
             Integer wv;
             if (spectralMode) { wv = settings.tfWavelength; } else { wv = null; }
             FluorescenceMetadata flmd = new FluorescenceMetadata(metadata, settings.filterConfigName, camera.getExposure(), wv); //This must happen after we have set our exposure.

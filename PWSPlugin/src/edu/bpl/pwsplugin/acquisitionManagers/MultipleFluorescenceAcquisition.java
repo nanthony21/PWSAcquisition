@@ -119,7 +119,7 @@ class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings>
             imConf.camera().setExposure(settings.exposure);
             Globals.core().clearCircularBuffer();
             Image img = imConf.camera().snapImage();
-            metadata.setMicroManagerMetadata((DefaultMetadata) img.getMetadata());
+            metadata.setMicroManagerMetadata(img);
             Integer wv;
             if (spectralMode) { wv = settings.tfWavelength; } else { wv = null; }
             FluorescenceMetadata flmd = new FluorescenceMetadata(metadata, settings.filterConfigName, imConf.camera().getExposure(), wv); //This must happen after we have set our exposure.
