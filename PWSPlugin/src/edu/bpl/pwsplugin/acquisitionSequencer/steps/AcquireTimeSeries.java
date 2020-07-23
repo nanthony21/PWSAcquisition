@@ -16,7 +16,8 @@ import org.micromanager.data.Coords;
  *
  * @author nick
  */
-public class AcquireTimeSeries extends ContainerStep<SequencerSettings.AcquireTimeSeriesSettings> {
+public class AcquireTimeSeries extends IteratingContainerStep<SequencerSettings.AcquireTimeSeriesSettings> {
+    private Integer currentIteration = 0;
     
     public AcquireTimeSeries() {
         super(new SequencerSettings.AcquireTimeSeriesSettings(), SequencerConsts.Type.TIME);
@@ -33,10 +34,10 @@ public class AcquireTimeSeries extends ContainerStep<SequencerSettings.AcquireTi
                 //interval. the handle must take as input the Cell number to start at. It
                 //will return the number of new acquisitions that it tood.
                 double lastAcqTime = 0;
-                for (int k = 0; k < settings.numFrames; k++) {
+                for (currentIteration = 0; currentIteration < settings.numFrames; currentIteration++) {
                     // wait for the specified frame interval before proceeding to next frame
-                    status.coords().setIterationOfCurrentStep(k);
-                    if (k != 0) {
+                    status.coords().setIterationOfCurrentStep(currentIteration);
+                    if (currentIteration != 0) {
                         //No pause for the first iteration
                         Integer msgId = status.newStatusMessage("Waiting"); //This will be updated below.
                         int count = 0;
@@ -52,7 +53,7 @@ public class AcquireTimeSeries extends ContainerStep<SequencerSettings.AcquireTi
                     }
                     lastAcqTime = System.currentTimeMillis(); //Save the current time so we can figure out when to start the next acquisition.
                     status = stepFunction.apply(status);
-                    status.newStatusMessage(String.format("Finished time step %d of %d", k + 1, settings.numFrames));
+                    status.newStatusMessage(String.format("Finished time step %d of %d", currentIteration + 1, settings.numFrames));
                 }
                 return status;
             }
@@ -71,4 +72,13 @@ public class AcquireTimeSeries extends ContainerStep<SequencerSettings.AcquireTi
         };
     }
     
+    @Override
+    public Integer getCurrentIteration() {
+        return currentIteration;
+    }
+    
+    @Override
+    public Integer getTotalIterations() {
+        return settings.numFrames;
+    }
 }

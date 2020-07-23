@@ -6,7 +6,6 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
@@ -15,15 +14,15 @@ import java.util.concurrent.Callable;
 import org.micromanager.AutofocusPlugin;
 import org.micromanager.MultiStagePosition;
 import org.micromanager.PositionList;
-import org.micromanager.data.Coords;
 
 /**
  *
  * @author nick
  */
-public class AcquireFromPositionList extends ContainerStep<SequencerSettings.AcquirePositionsSettings> {
-    
+public class AcquireFromPositionList extends IteratingContainerStep<SequencerSettings.AcquirePositionsSettings> {
     //Executes `step` at each position in the positionlist and increments the cell number each time.
+    private Integer currentIteration = 0;
+    
     public AcquireFromPositionList() {
         super(new SequencerSettings.AcquirePositionsSettings(), SequencerConsts.Type.POS);
     }
@@ -34,9 +33,9 @@ public class AcquireFromPositionList extends ContainerStep<SequencerSettings.Acq
         SequencerFunction stepFunction = super.getSubstepsFunction(callbacks);
         return (status) -> {
                 Globals.core().setTimeoutMs(30000); //set timeout to 30 seconds. Otherwise we get an error if a position move takes greater than 5 seconds. (default timeout)
-                for (int posNum = 0; posNum < list.getNumberOfPositions(); posNum++) {
-                    MultiStagePosition pos = list.getPosition(posNum);
-                    status.coords().setIterationOfCurrentStep(posNum);
+                for (currentIteration = 0; currentIteration < list.getNumberOfPositions(); currentIteration++) {
+                    MultiStagePosition pos = list.getPosition(currentIteration);
+                    status.coords().setIterationOfCurrentStep(currentIteration);
                     String label = pos.getLabel();
                     status.newStatusMessage(String.format("Moving to position %s", label));
                     Callable<Void> preMoveRoutine = () -> {
@@ -103,6 +102,15 @@ public class AcquireFromPositionList extends ContainerStep<SequencerSettings.Acq
         return errs;
     }
     
+    @Override
+    public Integer getCurrentIteration() {
+        return currentIteration;
+    }
+    
+    @Override
+    public Integer getTotalIterations() {
+        return settings.posList.getNumberOfPositions();
+    }
 }
 
 

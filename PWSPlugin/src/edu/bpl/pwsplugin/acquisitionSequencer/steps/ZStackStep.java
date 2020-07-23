@@ -19,7 +19,8 @@ import org.micromanager.data.Coords;
  *
  * @author nick
  */
-public class ZStackStep extends ContainerStep<SequencerSettings.ZStackSettings> {
+public class ZStackStep extends IteratingContainerStep<SequencerSettings.ZStackSettings> {
+    private Integer currentIteration = 0;
     
     public ZStackStep() {
         super(new SequencerSettings.ZStackSettings(), SequencerConsts.Type.ZSTACK);
@@ -39,10 +40,10 @@ public class ZStackStep extends ContainerStep<SequencerSettings.ZStackSettings> 
                 }
                 //double initialPos = Globals.core().getPosition(settings.deviceName);
                 double initialPos = zStage.getPosUm();
-                for (int i = 0; i < settings.numStacks; i++) {
-                    status.coords().setIterationOfCurrentStep(i); //Update the coordinates to indicate which iteration of this step we are on.
-                    status.newStatusMessage(String.format("Moving to z-slice %d of %d", i + 1, settings.numStacks));
-                    zStage.setPosUm(initialPos + (settings.intervalUm * i));
+                for (currentIteration = 0; currentIteration < settings.numStacks; currentIteration++) {
+                    status.coords().setIterationOfCurrentStep(currentIteration); //Update the coordinates to indicate which iteration of this step we are on.
+                    status.newStatusMessage(String.format("Moving to z-slice %d of %d", currentIteration + 1, settings.numStacks));
+                    zStage.setPosUm(initialPos + (settings.intervalUm * currentIteration));
                     status = subStepFunc.apply(status);
                 }
                 zStage.setPosUm(initialPos); //Make sure to return to the initial position before finishing.
@@ -61,6 +62,16 @@ public class ZStackStep extends ContainerStep<SequencerSettings.ZStackSettings> 
             }
             return status;
         };
+    }
+    
+    @Override
+    public Integer getCurrentIteration() {
+        return currentIteration;
+    }
+    
+    @Override
+    public Integer getTotalIterations() {
+        return settings.numStacks;
     }
     
 }
