@@ -40,6 +40,7 @@ public class EnterSubfolderStep extends ContainerStep<SequencerSettings.EnterSub
                 status.setSavePath(Paths.get(origPath).resolve(settings.relativePath).toString());
                 status.setCellNum(cellNum); // Even if we exit and enter this subfolder multiple times we should still remember which cell num we're on.
                 status = stepFunction.apply(status);
+                cellNum = status.getCellNum(); //Update our placeholder with whatever we left off on.
                 status.setSavePath(origPath);
                 status.setCellNum(origCellNum);
                 return status;
@@ -58,6 +59,7 @@ public class EnterSubfolderStep extends ContainerStep<SequencerSettings.EnterSub
             status.cellNum = simCellNum; // Even if we exit and enter this subfolder multiple times we should still remember which cell num we're on.
             status.workingDirectory = Paths.get(status.workingDirectory, path).toString();
             status = subStepSimFn.apply(status);
+            simCellNum = status.cellNum;
             status.workingDirectory = origDir;
             status.cellNum = origCellNum;
             return status;
