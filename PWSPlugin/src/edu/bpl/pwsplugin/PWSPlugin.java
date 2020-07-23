@@ -76,6 +76,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     @Override
     public void setContext(Studio studio) {
         studio_ = studio;
+        studio.events().registerForEvents(this); //This allows us to run cleanup when shutdown begins, see `closeRequested`
     } 
     
     @Override
@@ -121,11 +122,11 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     
     @Subscribe
     public void closeRequested( ShutdownCommencingEvent sce){ //This is fired when micro-manager indicates that it is closing.
-      if (Globals.frame() != null) {
-         if (!sce.getIsCancelled()) {
-            Globals.frame().dispose();
-         }
-      }
+        if (Globals.frame() != null) {
+            if (!sce.getIsCancelled()) {
+                Globals.frame().dispose(); //This should also cause settings to be saved.
+            }
+        }
    }
     
     public void dispose() { //Close the frame.
