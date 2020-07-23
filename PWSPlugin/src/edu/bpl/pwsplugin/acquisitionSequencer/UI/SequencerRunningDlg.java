@@ -150,10 +150,13 @@ class SequencerRunningDlg extends JDialog {
 class DisplayTree extends JPanel {
     TreeDragAndDrop tree = new TreeDragAndDrop(); //This tree is used to display the current status of the sequence, it is not user interactive.
     DisabledPanel disPan = new DisabledPanel(tree, new Color(1, 1, 1, 1)); // Disabled panel with a transparent glass pane to block interaction with the tree.
+    private final Step rootStep;
     
     public DisplayTree(Step rootStep) {
         super(new BorderLayout());
         super.add(disPan);
+        
+        this.rootStep = rootStep;
         
         disPan.setEnabled(false); //Disable mouse interaction with the tree.
         
@@ -164,5 +167,7 @@ class DisplayTree extends JPanel {
     
     public void updateCurrentCoords(SequencerCoordinate coord) {
         tree.tree().setSelectionPath(new TreePath(coord.getTreePath()));
+        ((DefaultTreeModel) tree.tree().getModel()).nodeStructureChanged(rootStep); //This re-renders the tree which is needed for iteration numbers of each step to be up to date.
+        tree.expandTree(); //calling `nodeStructureChanged` causes everything to collapse.
     }
 }
