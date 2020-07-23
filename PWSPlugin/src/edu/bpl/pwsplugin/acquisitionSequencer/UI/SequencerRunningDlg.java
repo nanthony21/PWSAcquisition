@@ -8,6 +8,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.disablePanel.DisabledPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerCoordinate;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
@@ -89,7 +90,7 @@ class SequencerRunningDlg extends JDialog {
         this.statusMsg.setText(String.join("\n", status.getStatusMessage()));
         Step[] treePath = status.coords().getTreePath();
         if (treePath.length > 0) { //The only time this shouldn't be true is when we're at the root step, the beginning or the end.
-            this.tree.setSelectionPath(new TreePath(status.coords().getTreePath()));
+            this.tree.updateCurrentCoords(status.coords());
         }
     }
 
@@ -148,7 +149,7 @@ class SequencerRunningDlg extends JDialog {
 
 class DisplayTree extends JPanel {
     TreeDragAndDrop tree = new TreeDragAndDrop(); //This tree is used to display the current status of the sequence, it is not user interactive.
-    DisabledPanel disPan = new DisabledPanel(tree, new Color(1, 1, 1, 1)); // Disabled panel with a transparent glass pane to block interaction.
+    DisabledPanel disPan = new DisabledPanel(tree, new Color(1, 1, 1, 1)); // Disabled panel with a transparent glass pane to block interaction with the tree.
     
     public DisplayTree(Step rootStep) {
         super(new BorderLayout());
@@ -158,10 +159,10 @@ class DisplayTree extends JPanel {
         
         ((DefaultTreeModel) tree.tree().getModel()).setRoot(rootStep);
         tree.expandTree();
-        tree.tree().setCellRenderer(new TreeRenderers.SequenceTreeRenderer() );
+        tree.tree().setCellRenderer(new TreeRenderers.SequenceRunningTreeRenderer() );
     }
     
-    public void setSelectionPath(TreePath path) {
-        tree.tree().setSelectionPath(path);
+    public void updateCurrentCoords(SequencerCoordinate coord) {
+        tree.tree().setSelectionPath(new TreePath(coord.getTreePath()));
     }
 }
