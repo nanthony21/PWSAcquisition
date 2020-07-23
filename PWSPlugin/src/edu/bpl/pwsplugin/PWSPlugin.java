@@ -30,6 +30,7 @@ Make nikon recalibrate when objective changes. (fix config group event). Make ob
 
 3:
 comments and tooltips
+Config group needs to listen for changes to the config groups defined. Not sure how to do this.
 
 4:
 Transmission imaging

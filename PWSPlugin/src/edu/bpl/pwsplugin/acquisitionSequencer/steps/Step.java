@@ -86,6 +86,10 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
         return (status) -> {
             //Update the status object with information about the current step.
             status.coords().moveDownTree(Step.this); //Append this step to the end of our coordinate path.
+            status.allowPauseHere(); //Every step can be paused before starting.
+            if (Thread.currentThread().isInterrupted()) { //This makes sure that every step allows for cancellation.
+                throw new InterruptedException("Thread interrupt detected");
+            }
             //Run any callbacks that have been set for this step.
             for (SequencerFunction func : rcvdCallbacks) {
                 status = func.apply(status);
