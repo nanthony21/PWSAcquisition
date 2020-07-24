@@ -109,7 +109,7 @@ public class TreeRenderers {
                 String initText = comp.getText();
                 int currentIteration = ((IteratingContainerStep) value).getCurrentIteration();
                 int totalIterations = ((IteratingContainerStep) value).getTotalIterations();
-                initText = String.format("%s (%d/%d)", initText, currentIteration, totalIterations);
+                initText = String.format("%s (%d/%d)", initText, currentIteration + 1, totalIterations);
                 comp.setText(initText);
                 return comp;
             } else {
