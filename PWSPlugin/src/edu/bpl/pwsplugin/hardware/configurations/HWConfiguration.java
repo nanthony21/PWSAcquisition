@@ -29,7 +29,11 @@ public class HWConfiguration {
         imConfigs = new HashMap<>();
         for (int i=0; i < settings.configs.size(); i++) {
             ImagingConfigurationSettings s = settings.configs.get(i);
-            imConfigs.put(s.name, ImagingConfiguration.getInstance(s));
+            try {
+                imConfigs.put(s.name, ImagingConfiguration.getInstance(s));
+            } catch (MMDeviceException e) {
+                Globals.mm().logs().showMessage(String.format("Failed to initialize imaging configuration %s", s.name));
+            }
         }
         if (imConfigs.size() > 0) {
             ImagingConfiguration conf = Iterables.get(imConfigs.values(), 0);

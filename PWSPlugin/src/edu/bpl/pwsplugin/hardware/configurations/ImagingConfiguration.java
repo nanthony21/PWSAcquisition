@@ -39,7 +39,7 @@ public interface ImagingConfiguration {
     
     public String getFluorescenceConfigGroup(); // The name of the configuration group used to control fluorescence filter. Return null if manual control is required.
     
-    public static ImagingConfiguration getInstance(ImagingConfigurationSettings settings) {
+    public static ImagingConfiguration getInstance(ImagingConfigurationSettings settings) throws MMDeviceException {
         if (null == settings.configType) {
             return null; //This shouldn't ever happen.
         } else switch (settings.configType) {

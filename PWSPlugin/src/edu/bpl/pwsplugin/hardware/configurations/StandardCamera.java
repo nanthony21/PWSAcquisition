@@ -20,10 +20,13 @@ public class StandardCamera extends DefaultImagingConfiguration {
     Camera _cam;
     Illuminator _illum;
     
-    protected StandardCamera(ImagingConfigurationSettings settings) {
+    protected StandardCamera(ImagingConfigurationSettings settings) throws MMDeviceException {
         super(settings);
         _cam = Camera.getAutomaticInstance(settings.camSettings);
         _illum = Illuminator.getAutomaticInstance(settings.illuminatorSettings);
+        if ((_illum==null) || (_cam==null)) {
+            throw new MMDeviceException("StandardCamera failed to initialize");
+        }
     }
     
     @Override
