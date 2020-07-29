@@ -12,8 +12,6 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
 import java.util.List;
-import jdk.nashorn.internal.objects.Global;
-import org.micromanager.data.Coords;
 
 /**
  *
@@ -35,18 +33,15 @@ public class ZStackStep extends IteratingContainerStep<SequencerSettings.ZStackS
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 TranslationStage1d zStage = Globals.getHardwareConfiguration().getImagingConfigurations().get(0).zStage();
                 if (settings.absolute) {
-                    //Globals.core().setPosition(settings.deviceName, settings.startingPosition);
                     zStage.setPosUm(settings.startingPosition);
                 }
-                //double initialPos = Globals.core().getPosition(settings.deviceName);
-                double initialPos = zStage.getPosUm();
                 for (currentIteration = 0; currentIteration < settings.numStacks; currentIteration++) {
                     status.coords().setIterationOfCurrentStep(currentIteration); //Update the coordinates to indicate which iteration of this step we are on.
                     status.newStatusMessage(String.format("Moving to z-slice %d of %d", currentIteration + 1, settings.numStacks));
-                    zStage.setPosUm(initialPos + (settings.intervalUm * currentIteration));
+                    zStage.setPosRelativeUm(settings.intervalUm);
                     status = subStepFunc.apply(status);
                 }
-                zStage.setPosUm(initialPos); //Make sure to return to the initial position before finishing.
+                zStage.setPosRelativeUm(-settings.intervalUm * settings.numStacks); //Make sure to return to the initial position before finishing. The reason we use relative movement is that in the case of a hardware autofocus (PFS) the absolute value may change, expecially if we have moved to difference XY positions.
                 return status;
             }
         };
