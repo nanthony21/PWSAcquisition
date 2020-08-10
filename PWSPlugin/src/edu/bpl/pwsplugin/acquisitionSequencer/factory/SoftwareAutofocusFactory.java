@@ -83,7 +83,7 @@ class SoftwareAutoFocusUI extends BuilderJPanel<SequencerSettings.SoftwareAutoFo
     public SequencerSettings.SoftwareAutoFocusSettings build() {
         SequencerSettings.SoftwareAutoFocusSettings afs = new SequencerSettings.SoftwareAutoFocusSettings();
         //afs.afPluginName = (String) afNames.getSelectedItem();
-        afs.exposureMs = (Double) exposure.getValue();
+        afs.exposureMs = ((Number) exposure.getValue()).doubleValue();
         return afs;
     }
     

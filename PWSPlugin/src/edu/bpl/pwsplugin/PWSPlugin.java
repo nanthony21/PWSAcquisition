@@ -22,6 +22,9 @@ package edu.bpl.pwsplugin;
 
 /*
 1:
+ZStage autofocus routine bumps the sample? It seems like it shouldn't though. Maybe I'm wrong.
+write tree instructions (delete and control for copy buttons.)
+
 test software autofocus
 test focus lock in realistic situation, ethanol cells and weird dishes.
 
