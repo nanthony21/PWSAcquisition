@@ -154,6 +154,7 @@ public class NikonTI_zStage extends TranslationStage1d implements PropertyChange
     public void setPosRelativeUm(double um) throws MMDeviceException, InterruptedException {
         Globals.logger().logDebug(String.format("Nikon Move Relative Begin: %.2f", um));
         try {
+            double initialPos = this.getPosUm();
             if (this.getAutoFocusEnabled()) {
                 if (!calibrated) { this.calibrate(); }
                 double remainingRelUm = um; //This variable keeps track of how much further we need to go to achieve the original relative movement of `um`
@@ -171,6 +172,8 @@ public class NikonTI_zStage extends TranslationStage1d implements PropertyChange
                 Globals.core().setRelativePosition(settings.deviceName, um); 
                 while (this.busy()) {Thread.sleep(10); } //wait for it to finish focusing.
             }
+            double finalPos = this.getPosUm();
+            Globals.logger().logDebug(String.format("Nikon PFS Movement: initialPos: %f, finalPos: %f, achievedMovement: %f", initialPos, finalPos, finalPos - initialPos));
         } catch (InterruptedException | MMDeviceException ee) {
             throw ee;
         } catch (Exception e) {
