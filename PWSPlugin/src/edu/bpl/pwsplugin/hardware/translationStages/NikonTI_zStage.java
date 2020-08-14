@@ -158,7 +158,7 @@ public class NikonTI_zStage extends TranslationStage1d implements PropertyChange
             if (this.getAutoFocusEnabled()) {
                 if (!calibrated) { this.calibrate(); }
                 double remainingRelUm = um; //This variable keeps track of how much further we need to go to achieve the original relative movement of `um`
-                for (int i=0; i<5; i++) { //Due to calibration errors the below code is not accurate enough on one iteration. We give it up to 5 iterations to get within `tolerance` of the correct value.
+                for (int i=0; i<10; i++) { //Due to calibration errors the below code is not accurate enough on one iteration. We give it up to 10 iterations to get within `tolerance` of the correct value.
                     double currentOffset = getPFSOffset();
                     double currentPos = this.getPosUm();
                     double newOffset = this.getOffsetForMicron(currentOffset, remainingRelUm);
@@ -166,7 +166,7 @@ public class NikonTI_zStage extends TranslationStage1d implements PropertyChange
                     double newPos = this.getPosUm();
                     remainingRelUm -= newPos - currentPos; //subtract the delta-z from this iteration from our remaning distance to go.
                     Globals.logger().logDebug(String.format("Nikon PFS Movement: currentPos %f, newPos %f, remainingRelUm %f, currentOffset %f, newOffset %f", currentPos, newPos, remainingRelUm, currentOffset, newOffset));
-                    if (Math.abs(remainingRelUm) <= 0.01) { break; }//I'm just not sure how to choose the tolerance. However running through 5 iterations without satisfying this requirement is fine.
+                    if (Math.abs(remainingRelUm) <= 0.01) { break; }//position is reported in .025 um increments. This won't break unless we get to 0 which is good since little errors can accumulate
                 }
             } else {
                 Globals.core().setRelativePosition(settings.deviceName, um); 

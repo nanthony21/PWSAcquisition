@@ -217,7 +217,7 @@ public class NikonTI2_zStage extends TranslationStage1d implements PropertyChang
             if (this.getAutoFocusEnabled()) {
                 if (!calibrated) { this.calibrate(); }
                 double remainingRelUm = um; //This variable keeps track of how much further we need to go to achieve the original relative movement of `um`
-                for (int i=0; i<5; i++) { //Due to calibration errors the below code is not accurate enough on one iteration. We give it up to 5 iterations to get within `tolerance` of the correct value.
+                for (int i=0; i<10; i++) { //Due to calibration errors the below code is not accurate enough on one iteration. We give it up to 10 iterations to get within `tolerance` of the correct value.
                     double currentOffset = getPFSOffset();
                     double currentPos = this.getPosUm();
                     double newOffset = this.getOffsetForMicron(currentOffset, remainingRelUm);
