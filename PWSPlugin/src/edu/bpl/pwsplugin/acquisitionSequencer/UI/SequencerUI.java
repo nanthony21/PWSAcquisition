@@ -14,6 +14,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.Window;
 import java.io.File;
 import java.io.FileReader;
@@ -45,9 +46,12 @@ import org.micromanager.internal.utils.ReportingUtils;
  * @author nick
  */
 public class SequencerUI extends BuilderJPanel<RootStep> {
-    SequenceTree seqTree = new SequenceTree();
-    NewStepsTree newStepsTree = new NewStepsTree();
-    SettingsPanel settingsPanel = new SettingsPanel(seqTree, newStepsTree);
+    /*
+    This is the main UI for the sequencer. It incorporates the other components into a panel for the user.
+    */
+    SequenceTree seqTree = new SequenceTree(); // The tree containing the steps defining a sequence.
+    NewStepsTree newStepsTree = new NewStepsTree(); // The tree containing all available steps. Drag from here to the sequence tree.
+    SettingsPanel settingsPanel = new SettingsPanel(seqTree, newStepsTree); //A panel displaying the settings for each selected step type.
     JButton runButton = new JButton("Run");
     JButton saveButton = new JButton("Save");
     JButton loadButton = new JButton("Load");
@@ -58,6 +62,7 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
 
         this.settingsPanel.setBorder(BorderFactory.createEtchedBorder());
         
+        //Button action handlers.
         this.runButton.addActionListener((evt) -> {  
             try {
                 RootStep rootStep = this.build();
@@ -123,9 +128,23 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
             }
         });
         
+        //Layout the panel
         JLabel l = new JLabel("Sequence");
         l.setFont(new Font("serif", Font.BOLD, 12));
-        this.add(l, "wrap");
+        this.add(l);
+        JButton info = new JButton("?");
+        info.setMargin(new Insets(1, 1, 1, 1));
+        info.setFont(new Font("serif", Font.BOLD, 12));
+        info.addActionListener((evt)->{
+            JOptionPane.showMessageDialog(info,
+                    "`Ctrl`+Drag: copy selected step.\n`Del`: delete step.",
+                    "Sequence Tree Info",
+                    JOptionPane.INFORMATION_MESSAGE);
+        });
+        JPanel labelPanel = new JPanel(new MigLayout("insets 0 0 0 0"));
+        labelPanel.add(l);
+        labelPanel.add(info);
+        this.add(labelPanel, "wrap");
         this.add(seqTree, "growy, pushy, wrap");
         l = new JLabel("Available Step Types");
         l.setFont(new Font("serif", Font.BOLD, 12));

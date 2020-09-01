@@ -1,4 +1,3 @@
-package edu.bpl.pwsplugin;
 ///////////////////////////////////////////////////////////////////////////////
 //PROJECT:       PWS Plugin for Micro-Manager
 //
@@ -23,7 +22,6 @@ package edu.bpl.pwsplugin;
 /*
 1:
 ZStage autofocus routine bumps the sample? It seems like it shouldn't though. Maybe I'm wrong.
-write tree instructions (delete and control for copy buttons.)
 Make system name selectable from enum. Automatically initialize defaults based on this choice.
 
 test software autofocus
@@ -56,6 +54,8 @@ Some other day:
     Add a cell selection step (AI type stuff)
     Z-Drive controller UI
 */
+
+package edu.bpl.pwsplugin;
 
 import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;

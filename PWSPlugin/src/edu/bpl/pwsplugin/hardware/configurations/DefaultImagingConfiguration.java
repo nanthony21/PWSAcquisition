@@ -71,9 +71,9 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
             if (liveMode) {
                 Globals.mm().live().setLiveMode(true); //Reenable live mode if it was on.
             }
-        } catch (InterruptedException ie) {
+        /*} catch (InterruptedException ie) { //Exception no longer thrown in the body here?
             Thread.currentThread().interrupt();
-            throw new MMDeviceException(ie);
+            throw new MMDeviceException(ie);*/
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }
