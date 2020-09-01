@@ -8,14 +8,21 @@ package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 import com.google.gson.JsonIOException;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
+import edu.bpl.pwsplugin.hardware.configurations.HWConfiguration;
+import edu.bpl.pwsplugin.settings.AcquireCellSettings;
+import edu.bpl.pwsplugin.settings.PWSSettingsConsts;
 import edu.bpl.pwsplugin.utils.GsonUtils;
+import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Window;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -45,7 +52,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  *
  * @author nick
  */
-public class SequencerUI extends BuilderJPanel<RootStep> {
+public class SequencerUI extends BuilderJPanel<RootStep> implements PropertyChangeListener {
     /*
     This is the main UI for the sequencer. It incorporates the other components into a panel for the user.
     */
@@ -59,6 +66,7 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
     
     public SequencerUI() {
         super(new MigLayout("fill"), RootStep.class);
+        Globals.addPropertyChangeListener(this); //Register to receive updates to hardware configuration.
 
         this.settingsPanel.setBorder(BorderFactory.createEtchedBorder());
         
@@ -221,6 +229,26 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
     
     public void setActionButtonsEnabled(boolean enable) {
         runButton.setEnabled(enable);
+    }
+    
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        //We subscribe to the Globals property changes. This gets fired when a change in hardware configuration is detected.
+        //Update the default acquisition settings based on system name.
+        //TODO if the acquisition step is already selected then the change of settings here will be overwritten by the settings panel.
+        if (evt.getPropertyName().equals("config")) {
+            HWConfiguration cfg = (HWConfiguration) evt.getNewValue();
+            String sysName = cfg.getSettings().systemName;
+            for (PWSSettingsConsts.Systems sys : PWSSettingsConsts.Systems.values()) { //Check if the system name is in our enum of official system names.
+                if (sys.name().toLowerCase().equals(sysName.toLowerCase())) { //Check if noncapitalized names match
+                    JsonableParam settings = newStepsTree.setDefaultAcquisitionSettings(sys);
+                    settingsPanel.forceUpdateSettings(SequencerConsts.Type.ACQ, settings); //Make sure the settings UI is also updated. (Only needed when the acquisition UI is already visible.
+                    Globals.logger().logMsg(String.format("Set default sequencer acquisition settings to %s based on system name of %s", sys.name(), sysName));
+                    return;
+                }
+            }
+            Globals.logger().logMsg(String.format("System name %s did not match any default acquisition settings", sysName)); //We only get here if no match is found.
+        }
     }
 }
 
