@@ -22,8 +22,6 @@
 /*
 1:
 ZStage autofocus routine bumps the sample? It seems like it shouldn't though. Maybe I'm wrong.
-Make system name selectable from enum. Automatically initialize defaults based on this choice.
-
 test software autofocus
 test focus lock in realistic situation, ethanol cells and weird dishes.
 
