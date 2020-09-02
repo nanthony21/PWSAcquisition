@@ -82,6 +82,15 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         showPanelForType(SequencerConsts.Type.ACQ);
     }
     
+    public void forceUpdateSettings(SequencerConsts.Type type, JsonableParam settings) {
+        //Used to force an update to the settings represeting by the UI outside the operation handled by other methods of this class.
+        try {
+            panelTypeMapping.get(type).populateFields(settings);
+        } catch (BuilderJPanel.BuilderPanelException e) {
+            Globals.mm().logs().logError(e);
+        }
+    }
+    
     @Override
     public void valueChanged(TreeSelectionEvent e) { //When a new node is selected in a tree, show the settings for the node.
         Object node = e.getPath().getLastPathComponent();
@@ -91,7 +100,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         }
     }
     
-    public void saveSettingsOfLastNode() {
+    private void saveSettingsOfLastNode() {
         if (this.lastSelectedNode != null) {
             JsonableParam settings;
             try {
@@ -104,8 +113,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         } 
     }
     
-    private void updateSettingsFromNewNode(Step node) { 
-        Step n = (Step) node;
+    private void updateSettingsFromNewNode(Step n) { 
         this.lastSelectedNode = n;
         BuilderJPanel panel = showPanelForType(n.getType());
         try {

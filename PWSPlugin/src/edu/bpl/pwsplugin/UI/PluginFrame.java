@@ -77,6 +77,7 @@ public class PluginFrame extends MMFrame {
     }
     
     public PWSPluginSettings getSettings() {
+        //Produce an instance of PWSPluginSettings describing the current status of the UI.
         PWSPluginSettings set = new PWSPluginSettings();
         try {
             set.acquisitionSettings = this.acqPanel.getAcqSettings();
@@ -102,6 +103,7 @@ public class PluginFrame extends MMFrame {
     }
     
     public final void populateFields(PWSPluginSettings set) {
+        //Update the UI to match the provided settings.
         try{ this.acqPanel.setAcqSettings(set.acquisitionSettings); } catch(NullPointerException | BuilderJPanel.BuilderPanelException e) {ReportingUtils.logError(e); } //Sometimes a bit of settings will be missing if the code is changed. Don't let that crash the program.
         try{ this.configDialog.populateFields(set.hwConfiguration); } catch(NullPointerException e) {ReportingUtils.logError(e); }
         try{ this.acqPanel.setDirectory(set.saveDir); } catch(NullPointerException e) {ReportingUtils.logError(e); }

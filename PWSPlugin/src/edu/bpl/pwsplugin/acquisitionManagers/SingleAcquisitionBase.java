@@ -10,7 +10,7 @@ import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageIOSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
-import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
+import edu.bpl.pwsplugin.FileSpecs;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import java.nio.file.FileAlreadyExistsException;

@@ -15,7 +15,7 @@ public class PWSSettingsConsts {
     
     */
     public static void registerGson() {
-        /* this convenient function provides a singl function to register all settings with GSON. make sure to call this somewhere during initialization.
+        /* this convenient function provides a single function to register all settings with GSON. make sure to call this somewhere during initialization.
         
         */
         JsonableParam.registerClass(FluorSettings.class);
@@ -31,9 +31,9 @@ public class PWSSettingsConsts {
     }
     
     public enum Systems {
-    LCPWS1,
-    LCPWS2,
-    LCPWS3,
-    STORM;
-}
+        LCPWS1,
+        LCPWS2,
+        LCPWS3,
+        STORM;
+    }
 }

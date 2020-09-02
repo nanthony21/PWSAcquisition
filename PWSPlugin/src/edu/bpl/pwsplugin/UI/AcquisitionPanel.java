@@ -11,7 +11,7 @@ import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
-import edu.bpl.pwsplugin.fileSpecs.FileSpecs;
+import edu.bpl.pwsplugin.FileSpecs;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import java.io.IOException;
 import java.nio.file.Files;
