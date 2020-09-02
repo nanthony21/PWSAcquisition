@@ -50,7 +50,6 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
                 status.setCellNum(0);
                 status.setSavePath(settings.directory);
                 TranslationStage1d zstage = Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
-                if (zstage.hasAutoFocus()) { zstage.setAutoFocusEnabled(false); } //Make sure to start with PFS turned off. A focus lock step needs to be used to enable focus again.
                 RootStep.this.saveToJson(Paths.get(settings.directory, "sequence.pwsseq").toString()); //Save the sequence to file for retrospect.
                 status = subStepFunc.apply(status);
                 //Experiment is now finished
