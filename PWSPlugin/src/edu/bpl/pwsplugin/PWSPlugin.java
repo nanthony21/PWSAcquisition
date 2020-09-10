@@ -68,6 +68,7 @@ import org.scijava.plugin.Plugin;
    
 @Plugin(type = MenuPlugin.class)
 public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
+    //This class implements the functionality that Micro-Manager needs in order to accept our code as a plugin.
 
     public static String menuName = "PWS Acquisition";
     public static String versionNumber = "0.5";

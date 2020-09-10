@@ -37,7 +37,8 @@ public class Globals {
         return instance;
     }
     
-    public static void init(Studio studio) { //This must be called before anything else to initialize all the variables.
+    public static void init(Studio studio) {
+        //This must be called before anything else to initialize all the variables.
         instance().studio_ = studio;
         try {
             instance().logger_ = new PWSLogger(studio);
@@ -59,7 +60,7 @@ public class Globals {
         }
     }
     
-    public static void saveSettings(PWSPluginSettings settings) { //Save plugin settings to Micr-Manager's settings system.
+    public static void saveSettings(PWSPluginSettings settings) { //Save plugin settings to Micro-Manager's settings system.
         Globals.mm().profile().getSettings(PWSPlugin.class).putString("settings", settings.toJsonString());
     }
     
