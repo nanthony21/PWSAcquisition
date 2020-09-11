@@ -25,6 +25,7 @@ TODO
 ZStage autofocus routine bumps the sample? It seems like it shouldn't though. Maybe I'm wrong.
 test software autofocus
 test focus lock in realistic situation, ethanol cells and weird dishes.
+save/load config to file
 
 2:
 Make nikon recalibrate when objective changes. (fix config group event). Make objective a `Device`?
