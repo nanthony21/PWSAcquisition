@@ -20,6 +20,7 @@
 //
 
 /*
+TODO
 1:
 ZStage autofocus routine bumps the sample? It seems like it shouldn't though. Maybe I'm wrong.
 test software autofocus
@@ -30,13 +31,12 @@ Make nikon recalibrate when objective changes. (fix config group event). Make ob
 
 3:
 comments and tooltips
-Config group needs to listen for changes to the config groups defined. Not sure how to do this.
+Config group needs to listen for changes to the config groups defined. Not sure how to do this. (Not sure what was meant by this comment)
 
 4:
 Transmission imaging
 kurios still goes one item too far in sequencing. Only when external triggering isn't used. Device adapter: starts at 502 instead of 500
 
-Positions not recoverable from metadata: Save custom MM metadata with coords. like z position
 
 Nikon:
     Sometimes TI2 PFS becomes disabled during calibration.
