@@ -6,14 +6,17 @@
 package edu.bpl.imgSharpnessPlugin;
 
 import com.google.common.base.Preconditions;
+import ij.gui.Roi;
+import java.awt.Rectangle;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import org.micromanager.Studio;
 import org.micromanager.data.Coords;
+import org.micromanager.data.internal.DefaultImage;
+import org.micromanager.data.internal.DefaultNewImageEvent;
 import org.micromanager.display.DataViewer;
+import org.micromanager.display.DisplayWindow;
 import org.micromanager.display.inspector.AbstractInspectorPanelController;
-import org.micromanager.display.inspector.InspectorPanelListener;
 import org.micromanager.display.inspector.internal.panels.intensity.ImageStatsPublisher;
 import org.micromanager.display.inspector.internal.panels.intensity.IntensityInspectorPanelController;
 import static org.micromanager.display.inspector.internal.panels.intensity.IntensityInspectorPanelController.HISTOGRAM_UPDATE_FREQUENCY;
@@ -25,7 +28,7 @@ import org.micromanager.internal.utils.MustCallOnEDT;
  */
 public class SharpnessInspectorPanelController extends AbstractInspectorPanelController {
     private boolean expanded_ = true;
-    private final JPanel panel_ = new JPanel();
+    private final SharpnessInspectorPanel panel_ = new SharpnessInspectorPanel();
     private DataViewer viewer_;
 
     private SharpnessInspectorPanelController(Studio studio) {
@@ -58,9 +61,6 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
        viewer.registerForEvents(this);
        viewer.getDataProvider().registerForEvents(this);
        SwingUtilities.invokeLater(() -> {
-          if (viewer_ == null) {
-             return;
-          }
           setUpChannelHistogramsPanel(
                   viewer_.getDataProvider().getAxisLength(Coords.CHANNEL));
           newDisplaySettings(viewer_.getDisplaySettings());
@@ -68,9 +68,6 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
           String updateRate = studio_.profile().
                   getSettings(IntensityInspectorPanelController.class).
                   getString(HISTOGRAM_UPDATE_FREQUENCY, "1 Hz");
-          if (histogramMenuMap_.get(updateRate) != null) {
-             handleHistogramUpdateRate(histogramMenuMap_.get(updateRate));
-          }
        });
     }
 
@@ -82,7 +79,7 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
        }
        viewer_.getDataProvider().unregisterForEvents(this);
        viewer_.unregisterForEvents(this);
-       setUpChannelHistogramsPanel(0);
+       //setUpChannelHistogramsPanel(0);
        viewer_ = null;
     }
 
@@ -100,5 +97,19 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
     @Override
     public boolean initiallyExpand() {
        return expanded_;
+    }
+    
+    public void onNewImage(DefaultNewImageEvent evt) {
+        ///This is fired when we register for the dataprovider events.
+        DefaultImage img = (DefaultImage) evt.getImage();
+        Roi roi = ((DisplayWindow) viewer_).getImagePlus().getRoi();
+        Rectangle r = roi.getBounds();
+        
+    }
+    
+    private double evaluateGradient(DefaultImage img) {
+        Roi roi = ((DisplayWindow) viewer_).getImagePlus().getRoi();
+        Rectangle r = roi.getBounds();
+        img.
     }
 }
