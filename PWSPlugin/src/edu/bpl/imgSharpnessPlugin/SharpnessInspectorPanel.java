@@ -6,10 +6,14 @@
 package edu.bpl.imgSharpnessPlugin;
 
 import java.awt.Color;
+import java.beans.PropertyChangeListener;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.text.NumberFormatter;
 import net.miginfocom.swing.MigLayout;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -17,6 +21,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.DefaultXYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 /**
  *
@@ -24,11 +30,13 @@ import org.jfree.data.xy.DefaultXYDataset;
  */
 public class SharpnessInspectorPanel extends JPanel {
     
+    private final static String SERIES_NAME = "DATA";
+
     private final JFreeChart chart = ChartFactory.createXYLineChart(
             null, //title
             "Z", // xlabel
             "Gradient", // ylabel
-            new DefaultXYDataset(),
+            new XYSeriesCollection(new XYSeries(SERIES_NAME, true, false)),
             PlotOrientation.VERTICAL,
             false, // legend
             false, //tooltips
@@ -36,9 +44,8 @@ public class SharpnessInspectorPanel extends JPanel {
     
     );
 
-    
-    private final JLabel sharpnessLabel = new JLabel("Sharpness:");
     private final JLabel zLabel = new JLabel("Z: ");
+    private final JFormattedTextField denoiseRadius = new JFormattedTextField(NumberFormat.getIntegerInstance());
     private final JButton resetButton = new JButton("Reset Data");
     private final ChartPanel chartPanel = new ChartPanel(
             chart,
@@ -57,20 +64,16 @@ public class SharpnessInspectorPanel extends JPanel {
             true// boolean tooltips
     );
     
-    private final DefaultXYDataset dset = (DefaultXYDataset) chartPanel.getChart().getXYPlot().getDataset();
-    
-    
-    private final String SERIES_NAME = "DATA";
-    
-    private ArrayList<Double> xData = new ArrayList<>();
-    private ArrayList<Double> yData = new ArrayList<>();
+    private final XYSeriesCollection dset = (XYSeriesCollection) chartPanel.getChart().getXYPlot().getDataset();
 
     public SharpnessInspectorPanel() {
         super(new MigLayout("fill"));
+        this.denoiseRadius.setColumns(3);
         
         resetButton.addActionListener((evt) -> {
             this.clearData();
         });
+        
         
         this.chart.getXYPlot().setDomainCrosshairVisible(true); // An overlay to display the current z position.
         this.chart.getXYPlot().setDomainCrosshairPaint(new Color(0, 0, 0)); // black crosshair
@@ -80,35 +83,34 @@ public class SharpnessInspectorPanel extends JPanel {
         chart.getXYPlot().setBackgroundPaint(trans);
         ((NumberAxis) chart.getXYPlot().getRangeAxis()).setAutoRangeIncludesZero(false);  //Don't always include 0 in the vertical autoranging.
         
-        super.add(resetButton, "wrap");
+        super.add(resetButton);
+        super.add(new JLabel("Denoise Blur:"), "gapleft push");
+        super.add(denoiseRadius, "wrap");
         super.add(chartPanel, "wrap, spanx, grow, pushy");
-        super.add(sharpnessLabel);
         super.add(zLabel);
     }
     
+    public void addDenoiseRadiusValueChangedListener(PropertyChangeListener listener) {
+        denoiseRadius.addPropertyChangeListener("value", listener);
+    }
+    
+    public void setDenoiseRadius(int radius) {
+        this.denoiseRadius.setValue(radius);
+    }
+    
     public void setValue(double x, double y) {
-        xData.add(x);
-        yData.add(y);
-        this.updateDataset();
-        this.sharpnessLabel.setText(String.format("Sharpness: %.2f", y));
+        //Add an XY value to the plot. if the x value already exists the old value will be replaced.
+        this.dset.getSeries(SERIES_NAME).addOrUpdate(x, y);
         this.setZPos(x);
     }
     
     public void setZPos(double z) {
+        //Set the currect z position for the cursor to be set to.
         this.zLabel.setText(String.format("Z: %.2f", z));
         this.chart.getXYPlot().setDomainCrosshairValue(z);
     }
     
     public void clearData() {
-        xData = new ArrayList<>();
-        yData = new ArrayList<>();
-        this.updateDataset();
-    }
-    
-    private void updateDataset() {
-        double[][] data = new double[2][xData.size()];
-        data[0] = xData.stream().mapToDouble(Double::doubleValue).toArray();
-        data[1] = yData.stream().mapToDouble(Double::doubleValue).toArray();
-        this.dset.addSeries(SERIES_NAME, data);
+        this.dset.getSeries(SERIES_NAME).clear();
     }
 }

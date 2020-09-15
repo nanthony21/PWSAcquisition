@@ -37,9 +37,16 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
     private final SharpnessInspectorPanel panel_ = new SharpnessInspectorPanel();
     private DataViewer viewer_;
     private final Studio studio_;
-
+    private int denoiseRadius = 3; 
+    
     private SharpnessInspectorPanelController(Studio studio) {
         studio_ = studio;
+        studio_.events().registerForEvents(this);
+        
+        panel_.setDenoiseRadius(denoiseRadius);
+        panel_.addDenoiseRadiusValueChangedListener((evt) -> {
+            this.denoiseRadius = ((Long) evt.getNewValue()).intValue();
+        });
     }
     
     public static SharpnessInspectorPanelController create(Studio studio) {
@@ -67,22 +74,11 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
        viewer_ = viewer;
        viewer.registerForEvents(this);
        viewer.getDataProvider().registerForEvents(this);
-       studio_.events().registerForEvents(this);
-       /*SwingUtilities.invokeLater(() -> {
-          setUpChannelHistogramsPanel(
-                  viewer_.getDataProvider().getAxisLength(Coords.CHANNEL));
-          newDisplaySettings(viewer_.getDisplaySettings());
-          updateImageStats(((ImageStatsPublisher) viewer_).getCurrentImagesAndStats());
-          String updateRate = studio_.profile().
-                  getSettings(IntensityInspectorPanelController.class).
-                  getString(HISTOGRAM_UPDATE_FREQUENCY, "1 Hz");
-       });*/
     }
 
     @Override
     @MustCallOnEDT
     public void detachDataViewer() {
-        studio_.events().unregisterForEvents(this);
        if (viewer_ == null) {
           return;
        }
@@ -141,12 +137,11 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
                 im.set(i, j, (int) intensity);
             }
         }
-        int blurRadius = 3;
-        GrayF32 blurred = BlurImageOps.gaussian(im, null, -1, blurRadius, null);
+        GrayF32 blurred = BlurImageOps.gaussian(im, null, -1, denoiseRadius, null);
         GrayF32 dx = new GrayF32(im.width, im.height);
         GrayF32 dy = new GrayF32(im.width, im.height);
         GImageDerivativeOps.gradient(DerivativeType.THREE, blurred, dx, dy, BorderType.EXTENDED);
-        //Calculate magnitude of gradient
+        //Calculate magnitude of the gradient
         PixelMath.pow2(dx, dx);
         PixelMath.pow2(dy, dy);
         GrayF32 mag = new GrayF32(dx.width, dx.height);
@@ -154,8 +149,7 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
         PixelMath.sqrt(mag, mag);
         float[] arr = mag.getData();
         double[] dubArr = new double[arr.length];
-        for (int i = 0; i < arr.length; i++)
-        {
+        for (int i = 0; i < arr.length; i++) { // must convert from float[] to double[]
             dubArr[i] = arr[i];
         }
         return new Percentile().evaluate(dubArr, 95);
