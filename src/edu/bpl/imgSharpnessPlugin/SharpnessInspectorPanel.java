@@ -8,19 +8,16 @@ package edu.bpl.imgSharpnessPlugin;
 import java.awt.Color;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.text.NumberFormatter;
 import net.miginfocom.swing.MigLayout;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -44,7 +41,6 @@ public class SharpnessInspectorPanel extends JPanel {
     
     );
 
-    private final JLabel zLabel = new JLabel("Z: ");
     private final JFormattedTextField denoiseRadius = new JFormattedTextField(NumberFormat.getIntegerInstance());
     private final JButton resetButton = new JButton("Reset Data");
     private final ChartPanel chartPanel = new ChartPanel(
@@ -87,7 +83,6 @@ public class SharpnessInspectorPanel extends JPanel {
         super.add(new JLabel("Denoise Blur:"), "gapleft push");
         super.add(denoiseRadius, "wrap");
         super.add(chartPanel, "wrap, spanx, grow, pushy");
-        super.add(zLabel);
     }
     
     public void addDenoiseRadiusValueChangedListener(PropertyChangeListener listener) {
@@ -106,7 +101,6 @@ public class SharpnessInspectorPanel extends JPanel {
     
     public void setZPos(double z) {
         //Set the currect z position for the cursor to be set to.
-        this.zLabel.setText(String.format("Z: %.2f", z));
         this.chart.getXYPlot().setDomainCrosshairValue(z);
     }
     
