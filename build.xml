@@ -1,0 +1,18 @@
+<project name="PWSPlugin" >
+	<property name="build.dir" value="build"/>
+	<property name="dist.dir" value="dist"/>
+	<property name="output.name" value="PWSPlugin"/>
+	<target name = "build">
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+		<javac srcdir="src" destdir="${build.dir}"/>
+		
+	   <jar destfile = "${dist.dir}/${output.name}.jar"
+		  basedir = "${build.dir}">
+		  
+		  <manifest>
+			 <attribute name = "Main-Class" value = "org.micromanager.internal.MMStudio"/>
+		  </manifest>
+	   </jar>
+	</target>
+</project>
