@@ -1,0 +1,46 @@
+offsetDevice = "PFSOffset";
+pfsDevice = "PFS";
+devName = "ZDrive";
+/*public boolean bussy(double currentOffset) throws Exception {
+		offbusy = mmc.deviceBusy(offsetDevice);
+                 
+     pfsbusy = mmc.deviceBusy(pfsDevice);
+                 
+     devbusy = mmc.deviceBusy(devName);
+                 
+     offmatch = (mmc.getAutoFocusOffset() != currentOffset);
+		String stat = offbusy + "," + pfsbusy + "," + devbusy + "," + offmatch;
+		print(stat);
+     return (offbusy || pfsbusy || devbusy || offmatch);
+}*/
+
+boolean busssy() {
+	origz = mmc.getPosition();
+	print(origz);
+	Thread.sleep(1000);
+	return !(Math.abs(origz - mmc.getPosition()) < 0.1); 
+}
+
+double setPos(pos) {	
+	mmc.setPosition("PFSOffset", offset);
+	mmc.enableContinuousFocus(false);
+	Thread.sleep(500);
+	mmc.setRelativePosition(0);
+	z = mmc.getPosition();
+	print(z);
+	mmc.enableContinuousFocus(true);
+	return z;
+}
+
+offset=30000;
+checkz = setPos(offset);
+print(checkz);
+//mmc.setPosition("PFSOffset", offset);
+for (int i=0; i<100; i++) {
+	//print(mmc.getPosition());
+	//bussy(offset);
+	b = busssy();
+	print(b);
+	if (!b) { break; }
+	//Thread.sleep(50);
+}
