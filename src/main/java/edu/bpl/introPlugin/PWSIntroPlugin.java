@@ -23,7 +23,7 @@ public class PWSIntroPlugin implements IntroPlugin {
     }
     
     public Icon getSplashImage() {
-        return new ImageIcon(getClass().getResource("/edu/bpl/introPlugin/icons/splash.png"));
+        return new ImageIcon(getClass().getResource("/edu/bpl/icons/splash.png"));
     }
     
     public String getCopyright() {

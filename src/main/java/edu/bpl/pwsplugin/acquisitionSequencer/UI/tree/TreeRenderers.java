@@ -36,7 +36,7 @@ public class TreeRenderers {
             if (value instanceof ContainerStep) {
                 ContainerStep node = (ContainerStep) value;
                 if (node.getChildCount() == 0) { //The container step is empty, set the icon to draw attention to this issue.
-                    ImageIcon image = new ImageIcon(getClass().getResource("/edu/bpl/pwsplugin/acquisitionSequencer/UI/tree/icons/emptyContainerNode.png"));
+                    ImageIcon image = new ImageIcon(getClass().getResource("/edu/bpl/icons/emptyContainerNode.png"));
                     if (image == null) {
                         throw new RuntimeException("Icon failed to load");
                     }
@@ -44,7 +44,7 @@ public class TreeRenderers {
                     comp.setText("<html>" + comp.getText() + "<font color=red> (empty)</font></html>");
                     return comp;
                 } else {
-                    ImageIcon image = new ImageIcon(getClass().getResource("/edu/bpl/pwsplugin/acquisitionSequencer/UI/tree/icons/containerNode.png"));
+                    ImageIcon image = new ImageIcon(getClass().getResource("/edu/bpl/icons/containerNode.png"));
                     if (image == null) {
                         throw new RuntimeException("Icon failed to load");
                     }
@@ -52,7 +52,7 @@ public class TreeRenderers {
                     return comp;
                 }
             } else if (value instanceof EndpointStep) {
-                ImageIcon image = new ImageIcon(getClass().getResource("/edu/bpl/pwsplugin/acquisitionSequencer/UI/tree/icons/endpointNode.png"));
+                ImageIcon image = new ImageIcon(getClass().getResource("/edu/bpl/icons/endpointNode.png"));
                 if (image == null) {
                     throw new RuntimeException("Icon failed to load");
                 }
@@ -76,14 +76,14 @@ public class TreeRenderers {
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean isLeaf, int row, boolean focused) {
             JLabel comp = (JLabel) super.getTreeCellRendererComponent(tree, value, selected, expanded, isLeaf, row, focused);
             if (value instanceof ContainerStep) {
-                ImageIcon image = new ImageIcon(getClass().getResource("/edu/bpl/pwsplugin/acquisitionSequencer/UI/tree/icons/containerNode.png"));
+                ImageIcon image = new ImageIcon(getClass().getResource("/edu/bpl/icons/containerNode.png"));
                 if (image == null) {
                     throw new RuntimeException("Icon failed to load");
                 }
                 comp.setIcon(image);
                 return comp;
             } else if (value instanceof EndpointStep) {
-                ImageIcon image = new ImageIcon(getClass().getResource("/edu/bpl/pwsplugin/acquisitionSequencer/UI/tree/icons/endpointNode.png"));
+                ImageIcon image = new ImageIcon(getClass().getResource("/edu/bpl/icons/endpointNode.png"));
                 if (image == null) {
                     throw new RuntimeException("Icon failed to load");
                 }
