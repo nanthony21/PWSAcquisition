@@ -17,6 +17,10 @@ public class DataFlavors {
     private final static String CopiedNodeDataFlavorMime = DataFlavor.javaJVMLocalObjectMimeType +  ";class=\"" + CopyableMutableTreeNode.class.getName() + "\"";
     
     static {
-        CopiedNodeDataFlavor = new DataFlavor(CopyableMutableTreeNode.class, "CopyableMutableTreeNode");
+        try {
+            CopiedNodeDataFlavor = new DataFlavor(CopiedNodeDataFlavorMime);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
