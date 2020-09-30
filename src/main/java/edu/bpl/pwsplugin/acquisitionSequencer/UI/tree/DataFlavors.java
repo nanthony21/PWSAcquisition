@@ -18,7 +18,7 @@ public class DataFlavors {
     
     static {
         try {
-            CopiedNodeDataFlavor = new DataFlavor(CopiedNodeDataFlavorMime);
+            CopiedNodeDataFlavor = new DataFlavor(CopiedNodeDataFlavorMime, "CopyableMutableTreeNode", CopyableMutableTreeNode.class.getClassLoader()); // If we don's specify this classloader we get a classdefnotfounderror when running from a .JAR.
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
