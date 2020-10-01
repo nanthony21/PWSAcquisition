@@ -73,7 +73,7 @@ public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
                 try {
                     fut.get(); //If an exception was thrown in the thread this will cause it to be thrown here as an ExecutionException.
                 } catch (ExecutionException ee) {
-                    Globals.mm().logs().showError((Exception) ee.getCause());
+                    Globals.mm().logs().showError(ee.getCause());
                 }
             }
             else { 

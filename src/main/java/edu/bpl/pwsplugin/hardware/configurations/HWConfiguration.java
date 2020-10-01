@@ -75,6 +75,7 @@ public class HWConfiguration {
     
     @Subscribe
     public void onConfigGroupChanged(ConfigGroupChangedEvent evt) {
+        //If we detect a change in the "Objective" configuration group then send a property change to anybody listening for configuration changes.
         if (evt.getGroupName().equals(settings.objectiveConfigurationGroupName)) {
             pcs.firePropertyChange("objective", null, evt.getNewConfig());
         }

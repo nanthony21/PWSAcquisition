@@ -29,6 +29,7 @@ Allow selecting "None" for objective config group.
 
 2:
 Make nikon recalibrate when objective changes. (fix config group event). Make objective a `Device`?
+remove "configuration" from simple PWS/ dynamics view.
 
 3:
 comments and tooltips
