@@ -27,12 +27,15 @@ test software autofocus
 test focus lock in realistic situation, ethanol cells and weird dishes.
 Allow selecting "None" for objective config group.
 
+Add checkbox to enable sharpness measurement. Add label when no ROI is drawn.
+
+
 2:
 Make nikon recalibrate when objective changes. (fix config group event). Make objective a `Device`?
 remove "configuration" from simple PWS/ dynamics view.
 
 3:
-comments and tooltips
+comments and tooltips. Fix "external TTL" tooltip
 Config group needs to listen for changes to the config groups defined. Not sure how to do this. (Not sure what was meant by this comment)
 
 4:
