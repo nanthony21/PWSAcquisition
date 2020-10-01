@@ -5,14 +5,10 @@
  */
 package edu.bpl.pwsplugin.hardware.translationStages;
 
-import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.Device;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
 import java.beans.PropertyChangeListener;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.function.Function;
 import mmcorej.DeviceType;
 
@@ -73,7 +69,8 @@ public abstract class TranslationStage1d implements Device {
     public enum Types {
         NikonTI,
         Simulated,
-        NikonTI2;
+        NikonTI2,
+        PriorProscan3
     }
       
     /*private static final List<Class<? extends TranslationStage1d>> subClasses = 
@@ -161,7 +158,8 @@ public abstract class TranslationStage1d implements Device {
                     generator,
                     NikonTI2_zStage.class,
                     NikonTI_zStage.class,
-                    SimulationStage1d.class
+                    SimulationStage1d.class,
+                    PriorProscan3.class
                 );
                 
         return finder.scanAllDevices(DeviceType.StageDevice);
