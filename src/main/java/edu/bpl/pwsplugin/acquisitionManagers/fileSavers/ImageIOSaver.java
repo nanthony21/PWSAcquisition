@@ -29,15 +29,17 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.NoSuchElementException;
-
+import javax.imageio.spi.IIORegistry;
 
 public class ImageIOSaver extends SaverExecutor {
     private String savePath;
     private String fileName;
     private Integer expectedFrames;
+    
+    static {
+        IIORegistry.getDefaultInstance().registerServiceProvider(new com.twelvemonkeys.imageio.plugins.tiff.TIFFImageWriterSpi()); // When Micro-Manager is build the dependencies are not on the Classpath. We need to explicitly register the twelvemonkeys tiff plugin with ImageIO
+    }
     
     @Override
     public void configure(String savePath, String fileNamePrefix, Integer expectedFrames) {
@@ -51,11 +53,6 @@ public class ImageIOSaver extends SaverExecutor {
     public Void call() throws Exception { //This was tested using the TwelveMonkeys imageIO plugin for TIFF. In theory it should work for any ImageIO tiff plugin.
         ImageWriter writer;
         try {
-            ClassLoader cl = ClassLoader.getSystemClassLoader();
-            URL[] urls = ((URLClassLoader) cl).getURLs();
-            for (URL url: urls) {
-                Globals.mm().logs().logMessage(String.format("ClassPAth: %s", url.getFile().toString()));
-            }
             writer = ImageIO.getImageWritersBySuffix("tif").next();
         } catch (NoSuchElementException e) { //This will throw an error if a Tiff plugin can't be found. The default java version for Micro-Manager is version 8 which doesn't have  a plugin by default. One solution is just to make sure to use java 9 or higher.   
             throw new NoSuchElementException("An ImageIO plugin for saving TIFF files could not be found. Please install the TwelveMonkeys TIFF plugin.");
