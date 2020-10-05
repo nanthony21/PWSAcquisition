@@ -30,6 +30,7 @@ Allow selecting "None" for objective config group.
 Add checkbox to enable sharpness measurement. Add label when no ROI is drawn.
 auto-scan z for focus sharpness.
 clear autoexposure display when re-running
+LCPWS2 turned off TTL when using quick acquire.
 
 
 
