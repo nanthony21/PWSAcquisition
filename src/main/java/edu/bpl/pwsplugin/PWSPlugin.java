@@ -28,6 +28,9 @@ test focus lock in realistic situation, ethanol cells and weird dishes.
 Allow selecting "None" for objective config group.
 
 Add checkbox to enable sharpness measurement. Add label when no ROI is drawn.
+auto-scan z for focus sharpness.
+clear autoexposure display when re-running
+
 
 
 2:
