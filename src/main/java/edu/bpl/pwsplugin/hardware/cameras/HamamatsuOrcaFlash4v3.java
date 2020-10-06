@@ -93,9 +93,9 @@ public class HamamatsuOrcaFlash4v3 extends DefaultCamera{
     @Override
     public boolean identify() {
         try {
-            String camModel = Globals.core().getProperty(this.settings.name, "CameraName");
-            boolean isSupported = (camModel.equals("C13440-20C") || camModel.equals("C11440-20C")); //This was initally written just for the C13440. I think it should work for the C11440 as well though.
-            return isSupported;
+            return ((Globals.core().getDeviceName(this.settings.name).equals("HamamatsuHam_DCAM"))
+                && 
+                (Globals.core().getProperty(this.settings.name, "CameraName").equals("C13440-20C")));
         } catch (Exception e) {
             return false;
         }
