@@ -32,7 +32,8 @@ public class HWConfiguration {
             try {
                 imConfigs.put(s.name, ImagingConfiguration.getInstance(s));
             } catch (MMDeviceException e) {
-                Globals.mm().logs().showMessage(String.format("Failed to initialize imaging configuration %s", s.name));
+                Globals.logger().logError(e);
+                Globals.mm().logs().showMessage(String.format("Failed to initialize imaging configuration %s. See log.", s.name));
             }
         }
         if (imConfigs.size() > 0) {
