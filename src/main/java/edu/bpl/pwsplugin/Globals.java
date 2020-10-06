@@ -115,13 +115,6 @@ public class Globals {
             instance().config.dispose(); //If we don't do this then the object will still hang around.
             instance().config = new HWConfiguration(configg);
             instance().pcs.firePropertyChange("config", null, instance().config);
-            
-            //Validate the hardware state
-            List<String> errs = instance().config.validate();
-            if (!errs.isEmpty()) {
-                String msg = String.format("The following configuration errors were detected:\n %s", String.join("\n", errs));
-                JOptionPane.showMessageDialog(instance.frame, msg); 
-            }
         } catch (MMDeviceException e) {
             Globals.mm().logs().showError(e);
         }
