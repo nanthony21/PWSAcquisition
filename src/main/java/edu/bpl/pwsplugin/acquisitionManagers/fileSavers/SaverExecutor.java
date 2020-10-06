@@ -19,6 +19,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import javax.management.RuntimeErrorException;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import org.micromanager.data.Image;
@@ -66,23 +67,23 @@ public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
     }
     
     private static void processRunningFutures() throws InterruptedException, ExecutionException {
-        int runningTasks = 0;
-        List<Future<Void>> newFutures = new ArrayList<>();
-        for (Future fut : threadFutures) {
+        List<Future<Void>> newFutures = new ArrayList<>(); //Holds all futures that are still alive on this iteration.
+        for (Future fut : threadFutures) { //Check if futures are done
             if (fut.isDone()) {
                 try {
                     fut.get(); //If an exception was thrown in the thread this will cause it to be thrown here as an ExecutionException.
                 } catch (ExecutionException ee) {
-                    Globals.mm().logs().showError(ee.getCause());
+                    if (ee.getCause() instanceof Exception) {
+                        Globals.mm().logs().showError((Exception) ee.getCause());
+                    } else {
+                        throw new RuntimeErrorException((Error) ee.getCause());
+                    }
                 }
-            }
-            else { 
-                runningTasks++; 
+            } else { 
                 newFutures.add(fut);
             } 
         }
         threadFutures = newFutures;
-        //Globals.mm().logs().logMessage(String.format("Number running tasks: %d", runningTasks));
     }
 
     @Override
