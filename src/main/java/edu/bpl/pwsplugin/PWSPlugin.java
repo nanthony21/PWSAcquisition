@@ -69,6 +69,8 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.PWSSettingsConsts;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import org.micromanager.Studio;
 import org.micromanager.MenuPlugin;
 import org.micromanager.events.ShutdownCommencingEvent;
@@ -89,6 +91,20 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
     public void setContext(Studio studio) {
         studio_ = studio;
         studio.events().registerForEvents(this); //This allows us to run cleanup when shutdown begins, see `closeRequested`
+        Timer t = new Timer(1000, null);
+        t.addActionListener((evt) -> {
+            try {
+                if (studio_.app().getMainWindow() != null) {
+                    this.onPluginSelected();
+                    t.stop();
+                }
+            } catch (Exception e) {
+                System.out.print(e);
+            }
+
+        });
+        t.setRepeats(true);
+        t.start();
     } 
     
     @Override
