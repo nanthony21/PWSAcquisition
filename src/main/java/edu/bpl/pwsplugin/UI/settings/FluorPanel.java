@@ -72,7 +72,7 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
         super.add(exposureSpinner);
         super.add(filterCombo, "wrap");
         super.add(new JLabel("Z Offset (um)"));
-        super.add(new JLabel("Imaging Configuration"), "span, wrap");
+        super.add(new JLabel("Imaging Configuration:"), "span, wrap");
         super.add(focusOffsetSpinner);
         super.add(imConfName, "span");
     }

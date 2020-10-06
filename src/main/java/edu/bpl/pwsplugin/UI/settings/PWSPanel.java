@@ -66,7 +66,7 @@ public class PWSPanel extends SingleBuilderJPanel<PWSSettings>{
         super.add(exposureSpinner, "wrap");
         super.add(ttlTriggerCheckbox, "wrap, span");
         super.add(externalTriggerCheckBox, "wrap, span");
-        super.add(new JLabel("Imaging Configuration"), "span");
+        super.add(new JLabel("Imaging Configuration:"), "span");
         super.add(imConfName, "span");        
     }
     

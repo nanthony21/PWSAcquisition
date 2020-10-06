@@ -40,7 +40,7 @@ public class DynPanel extends SingleBuilderJPanel<DynSettings>{
         super.add(exposureSpinner, "wrap, growx");
         super.add(new JLabel("# of Frames"), "gapleft push");
         super.add(framesSpinner, "wrap");
-        super.add(new JLabel("Imaging Configuration"), "span");
+        super.add(new JLabel("Imaging Configuration:"), "span");
         super.add(imConfName, "span");
     }
     

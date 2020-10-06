@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -128,11 +126,9 @@ class SimpleAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements 
     public void populateFields(AcquireCellSettings settings) throws BuilderPanelException {
         pwsCBPanel.setSelected(settings.pwsEnabled);
         pwsSettings.setExposure(settings.pwsSettings.exposure);
-        pwsSettings.setConfigName(settings.pwsSettings.imConfigName);
   
         dynCBPanel.setSelected(settings.dynEnabled);
         dynSettings.setExposure(settings.dynSettings.exposure);
-        dynSettings.setConfigName(settings.dynSettings.imConfigName);
         
         fluorCBPanel.setSelected(settings.fluorEnabled);
         fluorSettings.populateFields(settings.fluorSettings);
@@ -146,11 +142,9 @@ class SimpleAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements 
 
         settings.pwsEnabled = this.pwsCBPanel.isSelected();
         settings.pwsSettings.exposure = this.pwsSettings.getExposure();
-        settings.pwsSettings.imConfigName = this.pwsSettings.getConfigName();
 
         settings.dynEnabled = this.dynCBPanel.isSelected();
         settings.dynSettings.exposure = this.dynSettings.getExposure();
-        settings.dynSettings.imConfigName = this.dynSettings.getConfigName();
 
         settings.fluorEnabled = this.fluorCBPanel.isSelected();
         settings.fluorSettings = fluorSettings.build();
@@ -177,8 +171,6 @@ class SimpleAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements 
                 spectralNames.add(setting.name);
             }
         }
-        this.pwsSettings.setAvailableConfigNames(spectralNames);
-        this.dynSettings.setAvailableConfigNames(spectralNames);
         List<String> allNames = new ArrayList<>();
         allNames.addAll(normalNames);
         allNames.addAll(spectralNames);
@@ -191,7 +183,6 @@ class SimpleAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements 
 
 class SimplePWSPanel extends JPanel {
     private final ImprovedComponents.FormattedTextField exposure = new ImprovedComponents.FormattedTextField(NumberFormat.getNumberInstance());
-    private final JComboBox<String> imConfName = new JComboBox<>();
     
     public SimplePWSPanel() {
         super(new MigLayout());
@@ -201,8 +192,6 @@ class SimplePWSPanel extends JPanel {
         
         this.add(new JLabel("Exposure (ms):"), "gapleft push");
         this.add(exposure, "wrap");
-        this.add(new JLabel("Configuration:"), "gapleft push");
-        this.add(imConfName, "wrap");
     }
     
     public double getExposure() {
@@ -211,25 +200,6 @@ class SimplePWSPanel extends JPanel {
     
     public void setExposure(double exp) {
         exposure.setValue(exp);
-    }
-    
-    public String getConfigName() {
-        return (String) this.imConfName.getSelectedItem();
-    }
-    
-    public void setConfigName(String name) {
-        this.imConfName.setSelectedItem(name);
-    }
-    
-    public void setAvailableConfigNames(List<String> names) {
-        this.imConfName.removeAllItems();
-        if (names.isEmpty()) {
-            this.imConfName.addItem("NONE!"); //Prevent a null pointer error.
-        } else {
-            for (String name : names) {
-                this.imConfName.addItem(name);
-            }
-        }
     }
 }
 
