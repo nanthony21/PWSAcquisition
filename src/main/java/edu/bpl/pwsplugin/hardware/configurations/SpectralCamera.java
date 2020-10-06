@@ -28,7 +28,7 @@ public class SpectralCamera extends DefaultImagingConfiguration {
         _filt = TunableFilter.getAutomaticInstance(settings.filtSettings);
         _illum = Illuminator.getAutomaticInstance(settings.illuminatorSettings);
         if ((_illum==null) || (_filt==null) || (_cam==null)) {
-            throw new MMDeviceException("SpectralCamera failed to initialize");
+            throw new MMDeviceException(String.format("SpectralCamera failed to initialize. Camera: %s. Filter: %s. Illuminator: %s.", String.valueOf(_cam), String.valueOf(_filt), String.valueOf(_illum)));
         }
     }
     
