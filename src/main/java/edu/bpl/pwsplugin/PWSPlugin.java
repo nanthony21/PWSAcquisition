@@ -22,30 +22,31 @@
 /*
 TODO
 1:
+LCPWS2 turned off TTL when using quick acquire.
+Remove validate at system start.
+kurios still goes one item too far in sequencing. Only when external triggering isn't used. Device adapter: starts at 502 instead of 500
+Same is happening to varispec LCTF!!
+
+
 ZStage autofocus routine bumps the sample? It seems like it shouldn't though. Maybe I'm wrong.
 test software autofocus
 test focus lock in realistic situation, ethanol cells and weird dishes.
-Allow selecting "None" for objective config group.
-
-Add checkbox to enable sharpness measurement. Add label when no ROI is drawn.
-auto-scan z for focus sharpness.
-clear autoexposure display when re-running
-LCPWS2 turned off TTL when using quick acquire.
-
+Remove objective config group. -> Allow selecting "None" for objective config group.
 
 
 2:
+Add checkbox to enable sharpness measurement. Add label when no ROI is drawn.
+auto-scan z for focus sharpness.
 Make nikon recalibrate when objective changes. (fix config group event). Make objective a `Device`?
 remove "configuration" from simple PWS/ dynamics view.
 
 3:
 comments and tooltips. Fix "external TTL" tooltip
-Config group needs to listen for changes to the config groups defined. Not sure how to do this. (Not sure what was meant by this comment)
+clear autoexposure display when re-running
+
 
 4:
 Transmission imaging
-kurios still goes one item too far in sequencing. Only when external triggering isn't used. Device adapter: starts at 502 instead of 500
-
 
 Nikon:
     Sometimes TI2 PFS becomes disabled during calibration.
