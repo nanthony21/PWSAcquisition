@@ -37,8 +37,6 @@ Remove objective config group. -> Allow selecting "None" for objective config gr
 2:
 Add checkbox to enable sharpness measurement. Add label when no ROI is drawn.
 auto-scan z for focus sharpness.
-Make nikon recalibrate when objective changes. (fix config group event). Make objective a `Device`?
-remove "configuration" from simple PWS/ dynamics view.
 
 3:
 comments and tooltips. Fix "external TTL" tooltip
