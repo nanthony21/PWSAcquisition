@@ -69,6 +69,7 @@ public interface Camera extends Device{
                     HamamatsuEMCCD.class,
                     HamamatsuOrcaFlash2_8.class,
                     HamamatsuOrcaFlash4v3.class,
+                    HamamatsuOrcaFlash4v1.class,
                     SimulatedCamera.class
                 );
                 
@@ -79,7 +80,8 @@ public interface Camera extends Device{
         HamamatsuOrca4V3,
         HamamatsuEMCCD,
         Simulated,
-        HamamatsuOrcaFlash2_8;
+        HamamatsuOrcaFlash2_8,
+        HamamatsuOrcaFlash4v1;
     }
     
 }

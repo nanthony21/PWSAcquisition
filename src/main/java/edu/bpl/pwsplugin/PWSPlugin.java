@@ -139,8 +139,4 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
             }
         }
    }
-    
-    public void dispose() { //Close the frame.
-        Globals.frame().dispose();
-    }
 }
