@@ -21,7 +21,7 @@ public abstract class StepFactory {
     public abstract Class<? extends Step> getStep();
     public abstract String getDescription();
     public abstract String getName();
-    public abstract SequencerConsts.Category getCategory();
+    public abstract String getCategory();
     public abstract SequencerConsts.Type getType();
     
     public BuilderJPanel createUI() {

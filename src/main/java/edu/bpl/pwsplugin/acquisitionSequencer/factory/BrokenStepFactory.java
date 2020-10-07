@@ -41,7 +41,7 @@ public class BrokenStepFactory extends StepFactory {
     public String getName() { return "BROKEN"; }
     
     @Override
-    public SequencerConsts.Category getCategory() {
+    public String getCategory() {
         throw new UnsupportedOperationException();
     }
     

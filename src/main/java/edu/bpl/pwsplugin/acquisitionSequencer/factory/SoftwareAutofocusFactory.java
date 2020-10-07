@@ -5,23 +5,15 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.factory;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
-import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
-import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.SoftwareAutofocus;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.text.NumberFormat;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.text.NumberFormatter;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -55,8 +47,8 @@ public class SoftwareAutofocusFactory extends StepFactory {
     }
     
     @Override
-    public SequencerConsts.Category getCategory() {
-        return SequencerConsts.Category.UTIL;
+    public String getCategory() {
+        return "Utility";
     }
 
     @Override

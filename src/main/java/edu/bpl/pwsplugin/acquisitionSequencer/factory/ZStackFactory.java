@@ -48,8 +48,8 @@ public class ZStackFactory extends StepFactory {
     }
     
     @Override
-    public SequencerConsts.Category getCategory() {
-        return SequencerConsts.Category.SEQ;
+    public String getCategory() {
+        return "Sequencing";
     }
     
     @Override 

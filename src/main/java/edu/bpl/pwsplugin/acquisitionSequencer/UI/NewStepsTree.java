@@ -5,19 +5,16 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
-import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyOnlyTransferHandler;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeRenderers;
+import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
-import edu.bpl.pwsplugin.hardware.configurations.HWConfiguration;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.settings.PWSSettingsConsts;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -36,28 +33,30 @@ class NewStepsTree extends TreeDragAndDrop {
         this.tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
         
-        Map<SequencerConsts.Category, DefaultMutableTreeNode> categories = new HashMap<>();
-        for (SequencerConsts.Category cat : SequencerConsts.Category.values()) { //Add folder treenodes for each `Category` we have defined.
-            String name = SequencerConsts.getCategoryName(cat);
-            DefaultMutableTreeNode node = new DefaultMutableTreeNode(name);
-            root.add(node);
-            categories.put(cat, node);
-        }
+        Map<String, DefaultMutableTreeNode> categories = new HashMap<>();
         
         for (SequencerConsts.Type type : SequencerConsts.Type.values()) { //Add a node for each step type to the appropriate category folder.
             if (type == SequencerConsts.Type.ROOT || type == SequencerConsts.Type.BROKEN) { continue; }//ignore this special case
             JsonableParam settings;
+            StepFactory factory = SequencerConsts.getFactory(type);
             try {
-                settings = SequencerConsts.getFactory(type).getSettings().newInstance();
+                settings = factory.getSettings().newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
-            Step node = SequencerConsts.getFactory(type).createStep();
+            Step node = factory.createStep();
             if (type == SequencerConsts.Type.ACQ) {
                 acquisitionStep = node; //Save a reference to the acquisition step.
             }
             node.setSettings(settings);
-            categories.get(SequencerConsts.getFactory(type).getCategory()).add(node);
+            
+            String categoryName = factory.getCategory();
+            if (!categories.keySet().contains(categoryName)) { //If the category by this name does not yet exist then create it.
+                DefaultMutableTreeNode categoryNode = new DefaultMutableTreeNode(categoryName);
+                root.add(categoryNode);
+                categories.put(categoryName, categoryNode);
+            }
+            categories.get(categoryName).add(node); //Add the new Step node to a category folder
         } 
         
         model.setRoot(root);

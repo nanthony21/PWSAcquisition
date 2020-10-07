@@ -47,8 +47,8 @@ public class EveryNTimesFactory extends StepFactory {
     }
     
     @Override
-    public SequencerConsts.Category getCategory() {
-        return SequencerConsts.Category.LOGIC;
+    public String getCategory() {
+        return"Logical";
     }
 
     @Override

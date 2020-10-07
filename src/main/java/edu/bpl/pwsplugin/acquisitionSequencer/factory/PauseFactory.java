@@ -5,7 +5,6 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.factory;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
@@ -48,8 +47,8 @@ public class PauseFactory extends StepFactory {
     }
     
     @Override
-    public SequencerConsts.Category getCategory() {
-        return SequencerConsts.Category.UTIL;
+    public String getCategory() {
+        return "Utility";
     }
 
     @Override

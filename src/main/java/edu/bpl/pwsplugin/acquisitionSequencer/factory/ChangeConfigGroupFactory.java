@@ -5,7 +5,6 @@
  */
 package edu.bpl.pwsplugin.acquisitionSequencer.factory;
 
-import com.google.common.eventbus.Subscribe;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
@@ -54,8 +53,8 @@ public class ChangeConfigGroupFactory extends StepFactory {
     }
     
     @Override
-    public SequencerConsts.Category getCategory() {
-        return SequencerConsts.Category.UTIL;
+    public String getCategory() {
+        return "Utility";
     }
 
     @Override

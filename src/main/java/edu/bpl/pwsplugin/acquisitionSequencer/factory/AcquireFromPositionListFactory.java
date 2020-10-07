@@ -49,8 +49,8 @@ public class AcquireFromPositionListFactory extends StepFactory {
     }
     
     @Override
-    public SequencerConsts.Category getCategory() {
-        return SequencerConsts.Category.SEQ;
+    public String getCategory() {
+        return "Sequencing";
     }
 
     @Override

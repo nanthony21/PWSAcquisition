@@ -18,7 +18,6 @@ import edu.bpl.pwsplugin.acquisitionSequencer.factory.PauseFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.RootStepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.SoftwareAutofocusFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.ZStackFactory;
 
 /**
@@ -28,9 +27,9 @@ import edu.bpl.pwsplugin.acquisitionSequencer.factory.ZStackFactory;
 public class SequencerConsts {
     public enum Type {
         ACQ,
-        PFS,
         POS,
         TIME,
+        PFS,
         AF,
         CONFIG,
         PAUSE,
@@ -41,28 +40,7 @@ public class SequencerConsts {
         BROKEN,
         AUTOSHUTTER;
     }
-    
-    public enum Category {
-        ACQ,
-        SEQ,
-        UTIL,
-        LOGIC;
-    }
-    
-    public static String getCategoryName(Category cat) {
-        switch (cat) {
-            case ACQ:
-                return "Acquisitions";
-            case SEQ:
-                return "Sequencing";
-            case UTIL:
-                return "Utility";
-            case LOGIC:
-                return "Logical";
-        }
-        throw new RuntimeException("Shouldn't get here");
-    }
-    
+
     public static StepFactory getFactory(Type type) {
         if (null != type) switch (type) {
             case ACQ:

@@ -44,8 +44,8 @@ public class AcquireCellFactory extends StepFactory {
     }
     
     @Override
-    public SequencerConsts.Category getCategory() {
-        return SequencerConsts.Category.ACQ;
+    public String getCategory() {
+        return "Acquisition";
     }
 
     @Override

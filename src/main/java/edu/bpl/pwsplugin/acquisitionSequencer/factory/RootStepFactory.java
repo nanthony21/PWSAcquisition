@@ -6,7 +6,6 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.factory;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStep;
-import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
@@ -50,7 +49,7 @@ public class RootStepFactory extends StepFactory{
     }
     
     @Override
-    public SequencerConsts.Category getCategory() {
+    public String getCategory() {
         throw new UnsupportedOperationException();
     }
 

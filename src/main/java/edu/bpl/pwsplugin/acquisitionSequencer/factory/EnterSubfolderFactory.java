@@ -58,8 +58,8 @@ public class EnterSubfolderFactory extends StepFactory {
     }
     
     @Override
-    public SequencerConsts.Category getCategory() {
-        return SequencerConsts.Category.UTIL;
+    public String getCategory() {
+        return "Utility";
     }
 
     @Override
