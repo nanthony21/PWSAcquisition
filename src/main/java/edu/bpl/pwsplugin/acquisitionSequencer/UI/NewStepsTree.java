@@ -37,6 +37,7 @@ class NewStepsTree extends TreeDragAndDrop {
         
         for (SequencerConsts.Type type : SequencerConsts.Type.values()) { //Add a node for each step type to the appropriate category folder.
             if (type == SequencerConsts.Type.ROOT || type == SequencerConsts.Type.BROKEN) { continue; }//ignore this special case
+            if (type == SequencerConsts.Type.EVERYN) { continue; } // This step is too complicated and will never be used, just leave it out.
             JsonableParam settings;
             StepFactory factory = SequencerConsts.getFactory(type);
             try {
