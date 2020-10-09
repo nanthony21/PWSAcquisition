@@ -11,7 +11,6 @@ import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.CamSettings;
 import java.util.ArrayList;
 import java.util.List;
-import org.micromanager.data.Image;
 
 /**
  *
@@ -29,7 +28,7 @@ public class HamamatsuOrcaFlash4v3 extends DefaultCamera{
     public void initialize() throws MMDeviceException { 
         super.initialize();
         try {
-            Globals.core().setProperty(this._devName, "TRIGGER SOURCE", "INTERNAL");
+            Globals.core().setProperty(this._devName, "TRIGGER SOURCE", "SOFTWARE"); //This gives by far the best performance when acquiring PWS in non-TTL triggered mode.
             Globals.core().setProperty(this._devName, "MASTER PULSE TRIGGER SOURCE", "SOFTWARE");
             Globals.core().setProperty(this._devName, "MASTER PULSE MODE", "CONTINUOUS");
             Globals.core().setProperty(this._devName, "OUTPUT TRIGGER SOURCE[0]", "READOUT END");
@@ -84,7 +83,7 @@ public class HamamatsuOrcaFlash4v3 extends DefaultCamera{
     public void stopSequence() throws MMDeviceException {
         try {
             Globals.core().stopSequenceAcquisition(this._devName); //This can hang for a long time when there is an error.
-            Globals.core().setProperty(this._devName, "TRIGGER SOURCE", "MASTER PULSE"); //Set the trigger source back ot what it was originally
+            Globals.core().setProperty(this._devName, "TRIGGER SOURCE", "SOFTWARE"); //Set the trigger source back ot what it was originally
         } catch (Exception e) {
             throw new MMDeviceException(e);
         }
