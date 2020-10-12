@@ -17,11 +17,10 @@ import java.util.List;
  *
  * @author nicke
  */
-public class SimulationStage1d extends TranslationStage1d implements PropertyChangeListener {
+public class SimulationStage1d extends TranslationStage1d {
     
     public  SimulationStage1d(TranslationStage1dSettings settings) throws IDException {
         super(settings);
-        Globals.getHardwareConfiguration().addObjectiveChangedListener(this);
     }
     
     @Override
@@ -74,12 +73,5 @@ public class SimulationStage1d extends TranslationStage1d implements PropertyCha
             errs.add(String.format("Device %s is not recognized as a Simulation `Demo` Z-stage", settings.deviceName));
         }
         return errs;
-    }
-    
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("objective")) {
-           Globals.mm().logs().logMessage(String.format("Simulated ZStage detects change in objective to %s", evt.getNewValue()));
-        }
     }
 }

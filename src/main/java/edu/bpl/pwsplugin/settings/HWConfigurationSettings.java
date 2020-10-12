@@ -21,7 +21,6 @@ public class HWConfigurationSettings extends JsonableParam {
     */
     
     public String systemName = ""; //The name of this microscope system. This will be saved in metadata.
-    public String objectiveConfigurationGroupName = ""; //The name of the Micro-Manager "configuration group" that adjusts which objective is used.
     public List<ImagingConfigurationSettings> configs = new ArrayList<>(); //A list of settings for various "Imaging Configurations"
 
     public ImagingConfigurationSettings getConfigurationByName(String name) {

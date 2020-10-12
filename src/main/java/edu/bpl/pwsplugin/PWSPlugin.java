@@ -31,7 +31,6 @@ Same is happening to varispec LCTF!!
 ZStage autofocus routine bumps the sample? It seems like it shouldn't though. Maybe I'm wrong.
 test software autofocus
 test focus lock in realistic situation, ethanol cells and weird dishes.
-Remove objective config group. -> Allow selecting "None" for objective config group.
 
 
 2:

@@ -34,7 +34,6 @@ public class HWConfPanel extends BuilderJPanel<HWConfigurationSettings>{
     private final JLabel configsFoundLabel = new JLabel("Imaging Configurations: 0");
     private final JButton editConfigsButton = new JButton("Edit Imaging Configurations");
     private List<ImagingConfigurationSettings> configs = new ArrayList<>();
-    private final JComboBox<String> objectiveConfigGroup = new JComboBox<>();
 
     
     public HWConfPanel() {
@@ -50,12 +49,9 @@ public class HWConfPanel extends BuilderJPanel<HWConfigurationSettings>{
             }
         });
         
-        this.objectiveConfigGroup.setModel(new DefaultComboBoxModel<>(Globals.core().getAvailableConfigGroups().toArray()));
         
         this.add(new JLabel("System Name:"), "gapleft push");
         this.add(this.sysNameEdit, "wrap");
-        this.add(new JLabel("Objective Config Group:"), "gapleft push");
-        this.add(objectiveConfigGroup, "wrap");
         this.add(configsFoundLabel);
         this.add(this.editConfigsButton, "span");
     }
@@ -65,7 +61,6 @@ public class HWConfPanel extends BuilderJPanel<HWConfigurationSettings>{
         HWConfigurationSettings conf = new HWConfigurationSettings();
         conf.systemName = this.sysNameEdit.getText();
         conf.configs = this.configs;
-        conf.objectiveConfigurationGroupName = (String) this.objectiveConfigGroup.getSelectedItem();
         return conf;
     }
     
@@ -74,7 +69,6 @@ public class HWConfPanel extends BuilderJPanel<HWConfigurationSettings>{
         this.sysNameEdit.setText(config.systemName);
         this.configs = config.configs;
         this.configsFoundLabel.setText("Imaging Configurations: " + config.configs.size());
-        this.objectiveConfigGroup.setSelectedItem(config.objectiveConfigurationGroupName);
     }
     
 }

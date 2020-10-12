@@ -8,8 +8,6 @@ package edu.bpl.pwsplugin.hardware.translationStages;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +21,7 @@ import org.micromanager.AutofocusPlugin;
  *
  * @author nicke
  */
-public class NikonTI_zStage extends TranslationStage1d implements PropertyChangeListener {
+public class NikonTI_zStage extends TranslationStage1d {
     private final String pfsStatusName;
     private final String pfsOffsetName;
     private boolean calibrated = false;
@@ -282,13 +280,6 @@ public class NikonTI_zStage extends TranslationStage1d implements PropertyChange
             throw new MMDeviceException("Nikon PFS: No focus lock was found.");
         }
         return result;
-    }
-    
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("objective")) {
-            this.calibrated = false; //objective changed so we need to recalibrate
-        }
     }
     
     private Status getPFSStatus() throws MMDeviceException {
