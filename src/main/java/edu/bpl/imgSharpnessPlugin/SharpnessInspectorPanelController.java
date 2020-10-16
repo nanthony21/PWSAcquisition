@@ -20,7 +20,6 @@ import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.micromanager.Studio;
 import org.micromanager.data.DataProviderHasNewImageEvent;
 import org.micromanager.data.internal.DefaultImage;
-import org.micromanager.data.internal.DefaultNewImageEvent;
 import org.micromanager.display.DataViewer;
 import org.micromanager.display.DisplayWindow;
 import org.micromanager.display.inspector.AbstractInspectorPanelController;
@@ -110,7 +109,15 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
         DefaultImage img = (DefaultImage) evt.getImage();
         Roi roi = ((DisplayWindow) viewer_).getImagePlus().getRoi();
         if (roi == null || !roi.isArea()) {
+            if (!this.panel_.noRoiOverlay.isVisible()) {
+                this.panel_.noRoiOverlay.setVisible(true);
+                this.panel_.repaint(); // Make sure the change in visibility is rendered.
+            }
             return;
+        }
+        if (this.panel_.noRoiOverlay.isVisible()) {
+            this.panel_.noRoiOverlay.setVisible(false);
+            this.panel_.repaint(); // Make sure the change in visibility is rendered.
         }
         Rectangle r = roi.getBounds();
         if (r.width < 5 || r.height < 5) {

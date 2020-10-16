@@ -32,6 +32,10 @@ class JFreeTextOverlay extends AbstractOverlay implements Overlay {
         this._vis = visible;
     }
     
+    public boolean isVisible() {
+        return this._vis;
+    }
+    
     @Override
     public void paintOverlay(Graphics2D g2, ChartPanel chartPanel) {
         if (this._vis) {

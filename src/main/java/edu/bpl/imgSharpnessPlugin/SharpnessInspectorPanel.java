@@ -62,7 +62,7 @@ public class SharpnessInspectorPanel extends JPanel {
             true // boolean tooltips
     );
     
-    private final JFreeTextOverlay noRoiOverlay = new JFreeTextOverlay("No Roi Drawn");
+    public final JFreeTextOverlay noRoiOverlay = new JFreeTextOverlay("No Roi Drawn");
     
     private final XYSeriesCollection dset = (XYSeriesCollection) chartPanel.getChart().getXYPlot().getDataset();
 
