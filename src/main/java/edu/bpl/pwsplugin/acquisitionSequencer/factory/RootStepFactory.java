@@ -68,6 +68,7 @@ class RootStepUI extends BuilderJPanel<SequencerSettings.RootStepSettings> {
         
         description.setEditable(true);
         description.setLineWrap(true);
+        description.setWrapStyleWord(true);
         description.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         
         
