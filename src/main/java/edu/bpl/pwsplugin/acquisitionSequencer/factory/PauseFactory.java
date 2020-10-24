@@ -13,6 +13,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import net.miginfocom.swing.MigLayout;
 
@@ -68,8 +69,12 @@ class PauseStepUI extends BuilderJPanel<SequencerSettings.PauseStepSettings>{
         message.setLineWrap(true);
         message.setWrapStyleWord(true);
         
+        JScrollPane scroll = new JScrollPane(message);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        
+        
         this.add(new JLabel("Message:"), "wrap");
-        this.add(message, "w 100%, h 100%"); //This does the same as "grow" except that grow wasn't working for some reason here.
+        this.add(scroll, "w 100%, h 100%"); //This does the same as "grow" except that grow wasn't working for some reason here.
     }
     
     @Override

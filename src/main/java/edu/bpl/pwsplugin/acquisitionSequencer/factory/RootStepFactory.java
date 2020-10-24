@@ -14,6 +14,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import net.miginfocom.swing.MigLayout;
 
@@ -71,11 +72,12 @@ class RootStepUI extends BuilderJPanel<SequencerSettings.RootStepSettings> {
         description.setWrapStyleWord(true);
         description.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         
-        
+        JScrollPane scroll = new JScrollPane(description);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         this.add(new JLabel("Root Directory:"), "wrap");
         this.add(directory, "wrap, growx");
         this.add(new JLabel("Description:"), "wrap");
-        this.add(description, "grow, push, spanx");
+        this.add(scroll, "grow, push, spanx");
     }
     
     @Override
