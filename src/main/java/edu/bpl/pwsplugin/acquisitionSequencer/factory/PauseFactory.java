@@ -65,6 +65,8 @@ class PauseStepUI extends BuilderJPanel<SequencerSettings.PauseStepSettings>{
         
         //message.setPreferredSize(new Dimension(100, 100));
         message.setBorder(BorderFactory.createLoweredBevelBorder());
+        message.setLineWrap(true);
+        message.setWrapStyleWord(true);
         
         this.add(new JLabel("Message:"), "wrap");
         this.add(message, "w 100%, h 100%"); //This does the same as "grow" except that grow wasn't working for some reason here.
