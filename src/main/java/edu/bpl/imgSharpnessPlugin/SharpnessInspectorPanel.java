@@ -6,6 +6,7 @@
 package edu.bpl.imgSharpnessPlugin;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import javax.swing.JButton;
@@ -16,11 +17,11 @@ import net.miginfocom.swing.MigLayout;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-
 /**
  *
  * @author nick
@@ -43,6 +44,7 @@ public class SharpnessInspectorPanel extends JPanel {
 
     private final JFormattedTextField denoiseRadius = new JFormattedTextField(NumberFormat.getIntegerInstance());
     private final JButton resetButton = new JButton("Reset Data");
+    
     private final ChartPanel chartPanel = new ChartPanel(
             chart,
             200, // int width,
@@ -57,8 +59,10 @@ public class SharpnessInspectorPanel extends JPanel {
             true, // boolean save,
             true, // boolean print,
             true, // boolean zoom,
-            true// boolean tooltips
+            true // boolean tooltips
     );
+    
+    public final JFreeTextOverlay noRoiOverlay = new JFreeTextOverlay("No Roi Drawn");
     
     private final XYSeriesCollection dset = (XYSeriesCollection) chartPanel.getChart().getXYPlot().getDataset();
 
@@ -70,10 +74,12 @@ public class SharpnessInspectorPanel extends JPanel {
             this.clearData();
         });
         
-        
         this.chart.getXYPlot().setDomainCrosshairVisible(true); // An overlay to display the current z position.
         this.chart.getXYPlot().setDomainCrosshairPaint(new Color(0, 0, 0)); // black crosshair
-        //make plot transparent
+        this.chart.getXYPlot().setRangeCrosshairVisible(true); // An overlay to display the current sharpness.
+        this.chart.getXYPlot().setRangeCrosshairPaint(new Color(0, 0, 0)); // black crosshair
+        this.chartPanel.addOverlay(noRoiOverlay);
+        //make plot background transparent
         Color trans = new Color(0xFF, 0xFF, 0xFF, 0);
         chart.setBackgroundPaint(trans);
         chart.getXYPlot().setBackgroundPaint(trans);
@@ -96,6 +102,7 @@ public class SharpnessInspectorPanel extends JPanel {
     public void setValue(double x, double y) {
         //Add an XY value to the plot. if the x value already exists the old value will be replaced.
         this.dset.getSeries(SERIES_NAME).addOrUpdate(x, y);
+        this.chart.getXYPlot().setRangeCrosshairValue(y); //Set the vertical crosshair to the current sharpness value.
         this.setZPos(x);
     }
     
@@ -108,3 +115,4 @@ public class SharpnessInspectorPanel extends JPanel {
         this.dset.getSeries(SERIES_NAME).clear();
     }
 }
+
