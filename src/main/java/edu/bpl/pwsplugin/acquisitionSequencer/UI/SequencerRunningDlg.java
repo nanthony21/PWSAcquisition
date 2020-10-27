@@ -132,7 +132,7 @@ class SequencerRunningDlg extends JDialog {
             JButton btn = SequencerRunningDlg.this.cancelButton;
             btn.setText("Finish");
             for (ActionListener l : btn.getActionListeners()) { btn.removeActionListener(l); } //clear action listeners
-            btn.addActionListener((evt)->{ SequencerRunningDlg.this.dispose(); });
+            btn.addActionListener((evt)->{ SequencerRunningDlg.this.dispose(); }); //The old cancel button now causes the dialog to close.
             Globals.frame().setActionButtonsEnabled(true);
             SequencerRunningDlg.this.pauseButton.setEnabled(false);
         }
