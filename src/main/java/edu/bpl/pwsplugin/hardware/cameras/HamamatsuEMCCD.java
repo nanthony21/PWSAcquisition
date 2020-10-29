@@ -47,8 +47,8 @@ public class HamamatsuEMCCD extends DefaultCamera {
             String spProp = "Temperature Set Point";
             double temp = Double.valueOf(Globals.core().getProperty(this.settings.name, tempProp));
             double tempset = Double.valueOf(Globals.core().getProperty(this.settings.name, spProp));
-            if (temp-tempset > 0.1) {
-                errs.add("Camera temperature is " + String.valueOf(temp-tempset) + "(>0.1C) off from setpoint.");
+            if (Math.abs(temp-tempset) > 0.1) {
+                errs.add("Camera temperature is " + String.valueOf(temp-tempset) + "C (>0.1C) off from setpoint.");
             }
         } catch (Exception e) {
             errs.add(e.getMessage());
