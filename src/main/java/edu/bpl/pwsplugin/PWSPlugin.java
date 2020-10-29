@@ -22,11 +22,9 @@
 /*
 TODO
 1:
-LCPWS2 turned off TTL when using quick acquire.
-Remove validate at system start.
 kurios still goes one item too far in sequencing. Only when external triggering isn't used. Device adapter: starts at 502 instead of 500
-Same is happening to varispec LCTF!!
 
+sharpness plugin. auto zscan. clicking on graph of sharpness go to position. Disable click and drag to zoom. Disable right click. secretly poll z position in the background
 
 ZStage autofocus routine bumps the sample? It seems like it shouldn't though. Maybe I'm wrong.
 test software autofocus

@@ -129,7 +129,7 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
     }
     
     @Subscribe
-    public void onZPosChanged(StagePositionChangedEvent evt) {
+    public void onZPosChanged(StagePositionChangedEvent evt) { //Many z stages don't fire this. use polling instead
         if (!studio_.core().getFocusDevice().equals(evt.getDeviceName())) {
             return; //Stage device names don't match. We only want to use the default focus device.
         }
