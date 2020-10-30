@@ -11,6 +11,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
+import java.util.ArrayList;
 import java.util.List;
 import org.micromanager.AutofocusPlugin;
 
@@ -46,6 +47,12 @@ public class SoftwareAutofocus extends EndpointStep<SequencerSettings.SoftwareAu
         };
     }
 
+        
+    @Override
+    public List<String> validate() {
+        return new ArrayList<>(); // I can't think of anything to validate here.
+    }
+    
     private AutofocusPlugin initializeAFPlugin(double exposureMs) throws Exception {
         Globals.mm().getAutofocusManager().setAutofocusMethodByName("OughtaFocus");
         AutofocusPlugin of = Globals.mm().getAutofocusManager().getAutofocusMethod();

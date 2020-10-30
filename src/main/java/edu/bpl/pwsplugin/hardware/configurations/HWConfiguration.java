@@ -41,7 +41,7 @@ public class HWConfiguration {
         return this.settings;
     }
     
-    public ImagingConfiguration getImagingConfigurationByName(String name) {
+    public ImagingConfiguration getImagingConfigurationByName(String name) throws NoSuchElementException {
         ImagingConfiguration conf = this.imConfigs.get(name);
         if (conf==null) {
             throw new NoSuchElementException("Could not find Imaging Configuration by the name " + name);

@@ -11,6 +11,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import java.awt.Dialog;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -60,6 +61,11 @@ public class PauseStep extends EndpointStep<SequencerSettings.PauseStepSettings>
         };
     }
     
+        
+    @Override
+    public List<String> validate() {
+        return new ArrayList<>(); //No errors are really possible here.
+    }
 }
 
 class PauseDlg extends JDialog {

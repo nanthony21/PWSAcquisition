@@ -26,9 +26,4 @@ public abstract class EndpointStep<T extends JsonableParam> extends Step<T> {
         super(step);
         this.setAllowsChildren(false);
     }
-    
-    @Override
-    public List<String> validate() {
-        return new ArrayList<>(); //Assume that the endpoint steps are always valid. this can always be overridenn if this is not the case.
-    }
 }

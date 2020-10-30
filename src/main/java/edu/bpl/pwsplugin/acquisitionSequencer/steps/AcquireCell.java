@@ -12,14 +12,18 @@ import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.FileSpecs;
+import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
+import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  *
@@ -83,4 +87,34 @@ public class AcquireCell extends EndpointStep<AcquireCellSettings> {
         };
     }
     
+        
+    @Override
+    public List<String> validate() {
+        List<String> errs = new ArrayList<>();
+        if (settings.pwsEnabled) {
+            String confName = settings.pwsSettings.imConfigName;
+            try {
+                Globals.getHardwareConfiguration().getImagingConfigurationByName(confName);
+            } catch (NoSuchElementException nsee) {
+                errs.add(String.format("PWS Acquisition: No imaging configuration by the name `%s` was found in the hardware configuration.", confName));
+            }
+        } if (settings.dynEnabled) {
+            String confName = settings.dynSettings.imConfigName;
+            try {
+                Globals.getHardwareConfiguration().getImagingConfigurationByName(confName);
+            } catch (NoSuchElementException nsee) {
+                errs.add(String.format("Dynamics Acquisition: No imaging configuration by the name `%s` was found in the hardware configuration.", confName));
+            }
+        } if ((!settings.fluorSettings.isEmpty()) && settings.fluorEnabled) {
+            for (FluorSettings flSettings : settings.fluorSettings) {
+                String confName = flSettings.imConfigName;
+                try {
+                    Globals.getHardwareConfiguration().getImagingConfigurationByName(confName);
+                } catch (NoSuchElementException nsee) {
+                    errs.add(String.format("Fluorescence Acquisition: No imaging configuration by the name `%s` was found in the hardware configuration.", confName));
+                }
+            }
+        }
+        return errs;
+    }
 }

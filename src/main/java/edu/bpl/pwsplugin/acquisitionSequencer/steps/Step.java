@@ -31,10 +31,11 @@ import java.util.function.Function;
  * @author nick
  */
 public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeNode {
+    //Base class for a single step in the acquisition sequencer.
     protected T settings; 
     private final SequencerConsts.Type stepType;
     private static final AtomicInteger counter = new AtomicInteger(); //This static counter makes sure that each Step object has it's own uid during runtime.
-    private Integer uid = counter.getAndIncrement();
+    private final Integer uid = counter.getAndIncrement();
 
     
     public Step(T settings, SequencerConsts.Type type) {
@@ -48,14 +49,19 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
         this((T) step.settings.copy(), step.stepType);        
     }
     
-    public Integer getID() { return this.uid; }
+    public Integer getID() {
+        //Return the unique ID of this object. It is unique during a single session of the program. ID's reset when the software is restarted.
+        return this.uid; 
+    }
         
     public final SequencerConsts.Type getType() {
+        //An enumerator indicating which type of sequence step this is.
         return stepType;
     }
 
     @Override
-    public Step copy() { //Use json to safely copy the object
+    public Step copy() { 
+        //Use json to safely copy the object
         Gson gson = GsonUtils.getGson();
         return (Step) gson.fromJson(gson.toJson(this), this.getClass());
     }
@@ -64,20 +70,25 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
     
     public final void setSettings(T settings) { this.settings = settings; }
     
-    protected abstract SequencerFunction getStepFunction(List<SequencerFunction> callbacks); //Return  function to run for this step during execution. Does not include callbacks and mandatory changes to the status object which are handled automatically by `getFunction`. This should initialize any variables that are used for context during runtime.
-          
-    protected abstract SimFn getSimulatedFunction(); //return a function that simulates how folder usage and cell number changes through the run.
+    //Return  function to run for this step during execution. Does not include callbacks and mandatory changes to the status object which are handled automatically by `getFunction`. This should initialize any variables that are used for context during runtime.
+    protected abstract SequencerFunction getStepFunction(List<SequencerFunction> callbacks); 
+
+    //return a function that simulates how folder usage and cell number changes through the run.
+    protected abstract SimFn getSimulatedFunction(); 
+    
+    public abstract List<String> validate(); //Return a list of any errors for this step.
     
     protected static class SimulatedStatus {
-        public Integer cellNum = 1;
-        public List<String> requiredPaths = new ArrayList<>();
-        public String workingDirectory = "";
+        //A single instance of this class is passed between the simulation functions to keep track of multiple parameters.
+        public Integer cellNum = 1; // The "Cell{X}" number that the acquisition is on.
+        public List<String> requiredPaths = new ArrayList<>(); // A list of file paths that will be saved. Used to determine if there are any file conflicts.
+        public String workingDirectory = ""; // The current folder we are in.
     }
     
     @FunctionalInterface
-    protected static interface SimFn extends Function<SimulatedStatus, SimulatedStatus> {} 
+    protected static interface SimFn extends Function<SimulatedStatus, SimulatedStatus> {} //Recieves a SimulatedStatus and returns the same object.
     
-    protected SequencerFunction getCallback() { return null; } //Subclasses can override to define a callback function that will be run before each child step.
+    protected SequencerFunction getCallback() { return null; } //Subclasses can override to define a callback function that will be run before each child step. For example, the optical focus lock checks that PFS is still locked. If not, then it goes through search routine.
     
     public final SequencerFunction getFunction(List<SequencerFunction> rcvdCallbacks) {
         final List<SequencerFunction> callbacks = new ArrayList<>(rcvdCallbacks); //To avoid confusion due to the mutable nature of the List we make sure that each time a sequencer function is created it has it's own copy of callbacks to work with, other wise all steps end up sharing a single callback list.
@@ -105,9 +116,7 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
     public String toString() { //this determines how its labeled in a JTree
         return SequencerConsts.getFactory(this.getType()).getName();
     }
-    
-    public abstract List<String> validate(); //Return a list of any errors for this step.
-    
+        
     public static void registerGsonType() { //This must be called for GSON loading/saving to work.
         GsonUtils.builder().registerTypeAdapterFactory(StepTypeAdapter.FACTORY);
     }
@@ -125,7 +134,7 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
 }
 
 class StepTypeAdapter extends TypeAdapter<Step> {
-    //This custom adapter enables Steps to be Jsonified even though they have a circular parent/child reference.
+    //This custom adapter enables Steps to be Jsonified by GSON even though they have a circular parent/child reference.
     public static final TypeAdapterFactory FACTORY = new TypeAdapterFactory() {
         @Override
         @SuppressWarnings("unchecked") // we use a runtime check to make sure the 'T's equal
