@@ -34,6 +34,7 @@ public class AutoShutterStep extends ContainerStep<SequencerSettings.AutoShutter
             String oldMsg = "";
             while ((System.currentTimeMillis() - startTime) / 60000.0 < settings.warmupTimeMinutes) {
                 //Wait for the warmup time to expire.
+                Thread.sleep(1000); //This pause allows the thread to be cancelled
                 String msg = String.format(
                         "Illuminator warming up. Waiting %.1f minutes before proceeding.", 
                         settings.warmupTimeMinutes - ((System.currentTimeMillis() - startTime) / 60000.0));
