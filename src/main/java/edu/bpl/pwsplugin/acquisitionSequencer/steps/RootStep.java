@@ -51,9 +51,25 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
                 status.setSavePath(settings.directory);
                 TranslationStage1d zstage = Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
                 RootStep.this.saveToJson(Paths.get(settings.directory, "sequence.pwsseq").toString()); //Save the sequence to file for retrospect.
-                status = subStepFunc.apply(status);
-                //Experiment is now finished
-                Globals.logger().closeAcquisition(); //Close the additional log files saved to the acquisition directory.
+                try {
+                    status = subStepFunc.apply(status);
+                } catch (RuntimeException e) {
+                    Throwable exc = e.getCause();
+                    if (exc instanceof Exception) {
+                        if (e.getCause() instanceof InterruptedException) {
+                            status.newStatusMessage("User cancelled acquisition");
+                            Globals.logger().logMsg("User cancelled acquisition");
+                        } else {
+                            Globals.logger().logError(e.getCause());
+                        }
+                    } else {
+                        Globals.logger().logError(e);
+                    }
+                    throw e;
+                } finally {
+                    //Experiment is now finished
+                    Globals.logger().closeAcquisition(); //Close the additional log files saved to the acquisition directory.
+                }
                 return status;
             }
         };    
