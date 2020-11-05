@@ -78,7 +78,11 @@ public class SharpnessInspectorPanel extends JPanel {
         this.chart.getXYPlot().setDomainCrosshairPaint(new Color(0, 0, 0)); // black crosshair
         this.chart.getXYPlot().setRangeCrosshairVisible(true); // An overlay to display the current sharpness.
         this.chart.getXYPlot().setRangeCrosshairPaint(new Color(0, 0, 0)); // black crosshair
-        this.chartPanel.addOverlay(noRoiOverlay);
+        this.chartPanel.addOverlay(noRoiOverlay); // An overlay that tells the user that there needs to be a roi selected.
+        this.chartPanel.setPopupMenu(null); // disable the right-click menu
+        this.chartPanel.setDomainZoomable(false); // disale zooming by click-drag
+        this.chartPanel.setRangeZoomable(false);
+        
         //make plot background transparent
         Color trans = new Color(0xFF, 0xFF, 0xFF, 0);
         chart.setBackgroundPaint(trans);
