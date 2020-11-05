@@ -43,7 +43,7 @@ public class SharpnessInspectorPanel extends JPanel {
     );
 
     private final JFormattedTextField denoiseRadius = new JFormattedTextField(NumberFormat.getIntegerInstance());
-    private final JButton resetButton = new JButton("Reset Data");
+    private final JButton resetButton = new JButton("Reset Plot");
     
     private final ChartPanel chartPanel = new ChartPanel(
             chart,
@@ -62,7 +62,7 @@ public class SharpnessInspectorPanel extends JPanel {
             true // boolean tooltips
     );
     
-    public final JFreeTextOverlay noRoiOverlay = new JFreeTextOverlay("No Roi Drawn");
+    private final JFreeTextOverlay noRoiOverlay = new JFreeTextOverlay("No Roi Drawn");
     
     private final XYSeriesCollection dset = (XYSeriesCollection) chartPanel.getChart().getXYPlot().getDataset();
 
@@ -85,10 +85,10 @@ public class SharpnessInspectorPanel extends JPanel {
         chart.getXYPlot().setBackgroundPaint(trans);
         ((NumberAxis) chart.getXYPlot().getRangeAxis()).setAutoRangeIncludesZero(false);  //Don't always include 0 in the vertical autoranging.
         
-        super.add(resetButton);
-        super.add(new JLabel("Denoise Blur:"), "gapleft push");
-        super.add(denoiseRadius, "wrap");
         super.add(chartPanel, "wrap, spanx, grow, pushy");
+        super.add(resetButton);
+        super.add(new JLabel("Denoise Blur (px):"), "gapleft push");
+        super.add(denoiseRadius, "wrap");
     }
     
     public void addDenoiseRadiusValueChangedListener(PropertyChangeListener listener) {
@@ -113,6 +113,21 @@ public class SharpnessInspectorPanel extends JPanel {
     
     public void clearData() {
         this.dset.getSeries(SERIES_NAME).clear();
+    }
+    
+    public void setRoiSelected(boolean hasRoi) {
+        //If there is no roi selected use this method to make an overlay visible that tells this to the user.
+        if (!hasRoi) {
+            if (!this.noRoiOverlay.isVisible()) {
+                this.noRoiOverlay.setVisible(true);
+                this.repaint(); // Make sure the change in visibility is rendered.
+            }
+        } else {
+            if (this.noRoiOverlay.isVisible()) {
+                this.noRoiOverlay.setVisible(false);
+                this.repaint(); // Make sure the change in visibility is rendered.
+            }
+        }
     }
 }
 
