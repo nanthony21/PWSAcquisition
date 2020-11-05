@@ -5,19 +5,24 @@
  */
 package edu.bpl.imgSharpnessPlugin;
 
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import net.miginfocom.swing.MigLayout;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
@@ -44,6 +49,8 @@ public class SharpnessInspectorPanel extends JPanel {
 
     private final JFormattedTextField denoiseRadius = new JFormattedTextField(NumberFormat.getIntegerInstance());
     private final JButton resetButton = new JButton("Reset Plot");
+    private final JButton scanButton = new JButton("Scan...");
+    private List<RequestScanListener> scanRequestedListeners = new ArrayList<>();
     
     private final ChartPanel chartPanel = new ChartPanel(
             chart,
@@ -74,6 +81,11 @@ public class SharpnessInspectorPanel extends JPanel {
             this.clearData();
         });
         
+        scanButton.addActionListener((evt) -> {
+            ScanDialog dlg = new ScanDialog();
+            dlg.setVisible(true);
+        });
+        
         this.chart.getXYPlot().setDomainCrosshairVisible(true); // An overlay to display the current z position.
         this.chart.getXYPlot().setDomainCrosshairPaint(new Color(0, 0, 0)); // black crosshair
         this.chart.getXYPlot().setRangeCrosshairVisible(true); // An overlay to display the current sharpness.
@@ -90,6 +102,7 @@ public class SharpnessInspectorPanel extends JPanel {
         ((NumberAxis) chart.getXYPlot().getRangeAxis()).setAutoRangeIncludesZero(false);  //Don't always include 0 in the vertical autoranging.
         
         super.add(chartPanel, "wrap, spanx, grow, pushy");
+        super.add(scanButton);
         super.add(resetButton);
         super.add(new JLabel("Denoise Blur (px):"), "gapleft push");
         super.add(denoiseRadius, "wrap");
@@ -133,5 +146,43 @@ public class SharpnessInspectorPanel extends JPanel {
             }
         }
     }
-}
+    
+    public void addScanRequestedListener(RequestScanListener listener) {
+        //Add a listener that will be fired when the `scan` button is pressed.
+        this.scanRequestedListeners.add(listener);
+    }
 
+    private class ScanDialog extends JDialog {
+        private final ImprovedComponents.FormattedTextField interval = new ImprovedComponents.FormattedTextField(NumberFormat.getNumberInstance());
+        private final ImprovedComponents.FormattedTextField range = new ImprovedComponents.FormattedTextField(NumberFormat.getNumberInstance());
+        private final JButton startButton = new JButton("Start");
+
+        public ScanDialog() {
+            super(SwingUtilities.getWindowAncestor(SharpnessInspectorPanel.this));
+            this.setLayout(new MigLayout());
+            this.setLocationRelativeTo(SharpnessInspectorPanel.this);
+            this.setTitle("Scan Parameters");
+
+            
+            this.interval.setColumns(5);
+            this.interval.setValue(0.1);
+            this.range.setColumns(5);
+            this.range.setValue(5);
+            
+            this.startButton.addActionListener((evt) -> {
+                RequestScanEvent event = new RequestScanEvent(this, ((Number) interval.getValue()).doubleValue(), ((Number) range.getValue()).doubleValue());
+                for (RequestScanListener listener : SharpnessInspectorPanel.this.scanRequestedListeners) {
+                    listener.actionPerformed(event);
+                }
+                this.setVisible(false);
+            });
+
+            this.add(new JLabel("Interval (um):"));
+            this.add(interval, "wrap");
+            this.add(new JLabel("Range (um):"));
+            this.add(range, "wrap");
+            this.add(startButton, "spanx, align center");
+            this.pack();
+        }
+    }
+}

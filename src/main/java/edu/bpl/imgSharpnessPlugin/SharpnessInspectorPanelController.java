@@ -15,6 +15,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.eventbus.Subscribe;
 import ij.gui.Roi;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.micromanager.Studio;
@@ -45,6 +47,10 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
         panel_.setDenoiseRadius(denoiseRadius);
         panel_.addDenoiseRadiusValueChangedListener((evt) -> {
             this.denoiseRadius = ((Long) evt.getNewValue()).intValue();
+        });
+        
+        panel_.addScanRequestedListener((evt) -> {
+            this.beginScan(evt.intervalUm(), evt.rangeUm());
         });
     }
     
@@ -155,4 +161,31 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
         }
         return new Percentile().evaluate(dubArr, 95);
     }
+    
+    private void beginScan(double intervalUm, double rangeUm) {
+        this.panel_.clearData();
+        System.out.println(intervalUm);
+        System.out.println(rangeUm);
+    }
+}
+
+
+class RequestScanEvent extends ActionEvent {
+    private final double interval;
+    private final double range;
+    
+    public RequestScanEvent(Object source, double intervalUm, double rangeUm) {
+        super(source, 0, "startScan");
+        
+        interval = intervalUm;
+        range = rangeUm;
+    }
+    
+    public double intervalUm() { return interval; }
+    public double rangeUm() { return range; }
+}
+
+
+interface RequestScanListener {
+    public void actionPerformed(RequestScanEvent evt);
 }
