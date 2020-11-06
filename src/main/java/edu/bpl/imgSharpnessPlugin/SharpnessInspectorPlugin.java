@@ -21,7 +21,7 @@ import org.scijava.plugin.Plugin;
     priority = Priority.VERY_HIGH,
     name = "Focus Sharpness",
     description = "View quantitative image sharpness.")
-public class SharpnessInspectorPanelPlugin implements InspectorPanelPlugin {
+public class SharpnessInspectorPlugin implements InspectorPanelPlugin {
     @Override
     public boolean isApplicableToDataViewer(DataViewer viewer) {
         return viewer.getDataProvider() != null && viewer instanceof ImageStatsPublisher;
@@ -29,6 +29,6 @@ public class SharpnessInspectorPanelPlugin implements InspectorPanelPlugin {
 
     @Override
     public InspectorPanelController createPanelController(Studio studio) {
-        return SharpnessInspectorPanelController.create(studio);
+        return SharpnessInspectorController.create(studio);
     }
 }

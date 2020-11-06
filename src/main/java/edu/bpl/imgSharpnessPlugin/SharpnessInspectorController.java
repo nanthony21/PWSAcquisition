@@ -35,7 +35,7 @@ import org.micromanager.internal.utils.MustCallOnEDT;
  *
  * @author N2-LiveCell
  */
-public class SharpnessInspectorPanelController extends AbstractInspectorPanelController {
+public class SharpnessInspectorController extends AbstractInspectorPanelController {
     private boolean expanded_ = true;
     private final SharpnessInspectorPanel panel_ = new SharpnessInspectorPanel();
     private DataViewer viewer_;
@@ -43,7 +43,7 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
     private int denoiseRadius = 3; 
     private boolean autoImageEvaluation_ = true;
     
-    private SharpnessInspectorPanelController(Studio studio) {
+    private SharpnessInspectorController(Studio studio) {
         studio_ = studio;
         studio_.events().registerForEvents(this);
         
@@ -56,7 +56,7 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
             SwingWorker worker = new SwingWorker() {
                 @Override
                 protected Object doInBackground() throws Exception {
-                    SharpnessInspectorPanelController.this.beginScan(evt.intervalUm(), evt.rangeUm());
+                    SharpnessInspectorController.this.beginScan(evt.intervalUm(), evt.rangeUm());
                     return null;
                 }
             };
@@ -66,8 +66,8 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
         });
     }
     
-    public static SharpnessInspectorPanelController create(Studio studio) {
-        return new SharpnessInspectorPanelController(studio);
+    public static SharpnessInspectorController create(Studio studio) {
+        return new SharpnessInspectorController(studio);
     }
 
     @Override
