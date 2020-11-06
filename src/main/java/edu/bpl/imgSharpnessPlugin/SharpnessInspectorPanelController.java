@@ -18,9 +18,11 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.micromanager.Studio;
 import org.micromanager.data.DataProviderHasNewImageEvent;
+import org.micromanager.data.Image;
 import org.micromanager.data.internal.DefaultImage;
 import org.micromanager.display.DataViewer;
 import org.micromanager.display.DisplayWindow;
@@ -39,6 +41,7 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
     private DataViewer viewer_;
     private final Studio studio_;
     private int denoiseRadius = 3; 
+    private boolean autoImageEvaluation_ = true;
     
     private SharpnessInspectorPanelController(Studio studio) {
         studio_ = studio;
@@ -50,7 +53,16 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
         });
         
         panel_.addScanRequestedListener((evt) -> {
-            this.beginScan(evt.intervalUm(), evt.rangeUm());
+            SwingWorker worker = new SwingWorker() {
+                @Override
+                protected Object doInBackground() throws Exception {
+                    SharpnessInspectorPanelController.this.beginScan(evt.intervalUm(), evt.rangeUm());
+                    return null;
+                }
+            };
+            
+            worker.execute();
+            
         });
     }
     
@@ -112,6 +124,9 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
     @Subscribe
     public void onNewImage(DataProviderHasNewImageEvent evt) {
         ///This is fired because we register for the dataprovider events. Happens each time a new image is available from the provider.
+        if (!this.autoImageEvaluation_) {
+            return;
+        }
         DefaultImage img = (DefaultImage) evt.getImage();
         Roi roi = ((DisplayWindow) viewer_).getImagePlus().getRoi();
         if (roi == null || !roi.isArea()) {
@@ -129,14 +144,14 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
     }
     
     @Subscribe
-    public void onZPosChanged(StagePositionChangedEvent evt) { //Many z stages don't fire this. use polling instead
+    public void onZPosChanged(StagePositionChangedEvent evt) { //TODO Many z stages don't fire this. use polling instead
         if (!studio_.core().getFocusDevice().equals(evt.getDeviceName())) {
             return; //Stage device names don't match. We only want to use the default focus device.
         }
         this.panel_.setZPos(evt.getPos());
     }
     
-    private double evaluateGradient(DefaultImage img, Rectangle r) {
+    private double evaluateGradient(Image img, Rectangle r) {
         GrayF32 im = new GrayF32(r.width, r.height);
         for (int i=0; i<r.width; i++) {
             for (int j=0; j<r.height; j++) {
@@ -144,7 +159,7 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
                 im.set(i, j, (int) intensity);
             }
         }
-        GrayF32 blurred = BlurImageOps.gaussian(im, null, -1, denoiseRadius, null);
+        GrayF32 blurred = BlurImageOps.gaussian(im, null, -1, this.denoiseRadius, null);
         GrayF32 dx = new GrayF32(im.width, im.height);
         GrayF32 dy = new GrayF32(im.width, im.height);
         GImageDerivativeOps.gradient(DerivativeType.THREE, blurred, dx, dy, BorderType.EXTENDED);
@@ -164,19 +179,50 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
     
     private void beginScan(double intervalUm, double rangeUm) {
         this.panel_.clearData();
-        // Move down by half of the range so that the scan is centered at the starting point.
+        this.autoImageEvaluation_ = false;
+        
+        if (studio_.live().getIsLiveModeOn()) {
+            studio_.live().setLiveMode(false);
+        }
+        
+        Roi roi = ((DisplayWindow) viewer_).getImagePlus().getRoi();
+        Rectangle r;
+        if (roi == null || !roi.isArea()) {
+            r = new Rectangle(  // use full image fov
+                    ((DisplayWindow) viewer_).getImagePlus().getWidth(),
+                    ((DisplayWindow) viewer_).getImagePlus().getHeight());
+        } else {
+            r = roi.getBounds();
+            //Rectangle must be larger than the kernel used to calculate gradient which is 1x3
+            if (r.width < 5) {
+                r.setSize(5, r.height);
+            } if (r.height < 5) {
+                r.setSize(r.width, 5);
+            }
+        }
         //TODO we should use the PWS Plugin ZStage not the default one. How is that going to work?
-        
-        long numSteps = Math.round(rangeUm / intervalUm);
-        //double startingPos = zStage.getPosition();
-        zStage.moveRelative(-(rangeUm/2.0));
-        
-        
-        for (int i=0; i<numSteps; i++) {
-            zStage.moveRelative(intervalUm);
-            //TODO make sure we moved
-            //TODO snap image and analyze
-            //TODO add x y values to plot.
+        try {
+            long numSteps = Math.round(rangeUm / intervalUm);
+            double startingPos = studio_.core().getPosition();
+            studio_.core().setRelativePosition(-(rangeUm/2.0)); // Move down by half of the range so that the scan is centered at the starting point.
+
+            for (int i=0; i<numSteps; i++) {
+                studio_.core().setRelativePosition(intervalUm);
+                while (studio_.core().deviceBusy(studio_.core().getFocusDevice())) { // make sure we moved
+                    Thread.sleep(50);
+                }
+                
+                Image img = studio_.live().snap(true).get(0);
+                double sharpness = this.evaluateGradient(img, r);
+                
+                double pos = studio_.core().getPosition();
+                panel_.setValue(pos, sharpness);
+            }
+            studio_.core().setPosition(startingPos);
+        } catch (Exception e) {
+            studio_.logs().showError(e);
+        } finally {
+            this.autoImageEvaluation_ = true;
         }
     }
 }
