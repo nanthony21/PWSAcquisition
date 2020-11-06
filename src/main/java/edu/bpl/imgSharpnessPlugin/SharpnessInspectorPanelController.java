@@ -164,8 +164,20 @@ public class SharpnessInspectorPanelController extends AbstractInspectorPanelCon
     
     private void beginScan(double intervalUm, double rangeUm) {
         this.panel_.clearData();
-        System.out.println(intervalUm);
-        System.out.println(rangeUm);
+        // Move down by half of the range so that the scan is centered at the starting point.
+        //TODO we should use the PWS Plugin ZStage not the default one. How is that going to work?
+        
+        long numSteps = Math.round(rangeUm / intervalUm);
+        //double startingPos = zStage.getPosition();
+        zStage.moveRelative(-(rangeUm/2.0));
+        
+        
+        for (int i=0; i<numSteps; i++) {
+            zStage.moveRelative(intervalUm);
+            //TODO make sure we moved
+            //TODO snap image and analyze
+            //TODO add x y values to plot.
+        }
     }
 }
 
@@ -176,7 +188,6 @@ class RequestScanEvent extends ActionEvent {
     
     public RequestScanEvent(Object source, double intervalUm, double rangeUm) {
         super(source, 0, "startScan");
-        
         interval = intervalUm;
         range = rangeUm;
     }

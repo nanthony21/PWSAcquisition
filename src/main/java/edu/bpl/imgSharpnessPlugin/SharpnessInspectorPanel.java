@@ -82,6 +82,7 @@ public class SharpnessInspectorPanel extends JPanel {
         });
         
         scanButton.addActionListener((evt) -> {
+            //TODO check that a roi is selected. Or, maybe just allow it to work without a ROI (Use full FOV)
             ScanDialog dlg = new ScanDialog();
             dlg.setVisible(true);
         });
