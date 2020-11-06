@@ -50,7 +50,8 @@ public class SharpnessInspectorPanel extends JPanel {
     private final JFormattedTextField denoiseRadius = new JFormattedTextField(NumberFormat.getIntegerInstance());
     private final JButton resetButton = new JButton("Reset Plot");
     private final JButton scanButton = new JButton("Scan...");
-    private List<RequestScanListener> scanRequestedListeners = new ArrayList<>();
+    private final List<RequestScanListener> scanRequestedListeners = new ArrayList<>();
+    private final ScanDialog scanDlg = new ScanDialog();
     
     private final ChartPanel chartPanel = new ChartPanel(
             chart,
@@ -82,9 +83,7 @@ public class SharpnessInspectorPanel extends JPanel {
         });
         
         scanButton.addActionListener((evt) -> {
-            //TODO check that a roi is selected. Or, maybe just allow it to work without a ROI (Use full FOV)
-            ScanDialog dlg = new ScanDialog();
-            dlg.setVisible(true);
+            this.scanDlg.setVisible(true);
         });
         
         this.chart.getXYPlot().setDomainCrosshairVisible(true); // An overlay to display the current z position.
