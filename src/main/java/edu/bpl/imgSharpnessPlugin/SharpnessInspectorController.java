@@ -200,12 +200,14 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
                 r.setSize(r.width, 5);
             }
         }
-        //TODO we should use the PWS Plugin ZStage not the default one. How is that going to work?
+        //TODO we should use the PWS Plugin ZStage device not the default one. How is that going to work?
         try {
             long numSteps = Math.round(rangeUm / intervalUm);
             double startingPos = studio_.core().getPosition();
             studio_.core().setRelativePosition(-(rangeUm/2.0)); // Move down by half of the range so that the scan is centered at the starting point.
-
+            while (studio_.core().deviceBusy(studio_.core().getFocusDevice())) { // make sure we moved
+                Thread.sleep(50);
+            }
             for (int i=0; i<numSteps; i++) {
                 studio_.core().setRelativePosition(intervalUm);
                 while (studio_.core().deviceBusy(studio_.core().getFocusDevice())) { // make sure we moved
