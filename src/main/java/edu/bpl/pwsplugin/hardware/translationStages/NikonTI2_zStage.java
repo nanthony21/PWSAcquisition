@@ -93,7 +93,7 @@ public class NikonTI2_zStage extends TranslationStage1d {
         }
     }*/
     
-    private boolean busy() throws MMDeviceException {
+    private boolean busy() throws MMDeviceException, InterruptedException {
         try {
             if (getAutoFocusEnabled()) {
                 //Setting the PFS offset blocks until the move is complete. Unfortunately the 
@@ -104,6 +104,7 @@ public class NikonTI2_zStage extends TranslationStage1d {
                     Thread.sleep(1000);
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
+                    throw ie;
                 }
                 return !(Math.abs(origz - Globals.core().getPosition(settings.deviceName)) < 0.1); 
             } else {
@@ -182,7 +183,7 @@ public class NikonTI2_zStage extends TranslationStage1d {
         Globals.logger().logDebug("Nikon Calibrate: coefficients: " + Arrays.toString(coef_));
         
         double offsetStep = (this.getPFSOffset() - origOffset) / 3.0;
-        for (int i=3; i>=0; i++) { //Going all the way back to the original offset in one step often causes us to lose lock, take it slow.
+        for (int i=3; i>=0; i--) { //Going all the way back to the original offset in one step often causes us to lose lock, take it slow.
             this.setPFSOffset(origOffset + offsetStep * i);
         }
         this.setPFSOffset(origOffset);
