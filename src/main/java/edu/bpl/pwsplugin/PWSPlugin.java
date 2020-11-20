@@ -23,21 +23,11 @@
 TODO
 1:
 kurios still goes one item too far in sequencing. Only when external triggering isn't used. Device adapter: starts at 502 instead of 500
+Add an optional timeout to pause step  so it can be used as a delay.
 
-sharpness plugin. auto zscan. clicking on graph of sharpness go to position. Disable click and drag to zoom. Disable right click. secretly poll z position in the background
-
-ZStage autofocus routine bumps the sample? It seems like it shouldn't though. Maybe I'm wrong.
-test software autofocus
-test focus lock in realistic situation, ethanol cells and weird dishes.
-
-
-2:
-Add checkbox to enable sharpness measurement. Add label when no ROI is drawn.
-auto-scan z for focus sharpness.
 
 3:
 comments and tooltips. Fix "external TTL" tooltip
-clear autoexposure display when re-running
 
 
 4:
