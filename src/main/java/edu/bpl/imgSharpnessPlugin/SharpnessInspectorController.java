@@ -5,6 +5,7 @@
  */
 package edu.bpl.imgSharpnessPlugin;
 
+import edu.bpl.imgSharpnessPlugin.ui.SharpnessInspectorPanel;
 import boofcv.alg.filter.blur.BlurImageOps;
 import boofcv.alg.filter.derivative.DerivativeType;
 import boofcv.alg.filter.derivative.GImageDerivativeOps;
@@ -40,16 +41,16 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
     private final SharpnessInspectorPanel panel_ = new SharpnessInspectorPanel();
     private DataViewer viewer_;
     private final Studio studio_;
-    private int denoiseRadius = 3; 
     private boolean autoImageEvaluation_ = true;
+    private final SharpnessEvaluator eval_ = new SharpnessEvaluator(); ; 
     
     private SharpnessInspectorController(Studio studio) {
         studio_ = studio;
         studio_.events().registerForEvents(this);
-        
-        panel_.setDenoiseRadius(denoiseRadius);
+                
+        panel_.setDenoiseRadius(eval_.denoiseRadius);
         panel_.addDenoiseRadiusValueChangedListener((evt) -> {
-            this.denoiseRadius = ((Long) evt.getNewValue()).intValue();
+            eval_.denoiseRadius = ((Long) evt.getNewValue()).intValue();
         });
         
         panel_.addScanRequestedListener((evt) -> {
@@ -138,7 +139,7 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
         if (r.width < 5 || r.height < 5) {
             return; //Rectangle must be larger than the kernel used to calculate gradient which is 1x3
         }
-        double grad = evaluateGradient(img, r);
+        double grad = eval_.evaluateGradient(img, r);
         double z = img.getMetadata().getZPositionUm();
         this.panel_.setValue(z, grad);
     }
@@ -151,31 +152,6 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
         this.panel_.setZPos(evt.getPos());
     }
     
-    private double evaluateGradient(Image img, Rectangle r) {
-        GrayF32 im = new GrayF32(r.width, r.height);
-        for (int i=0; i<r.width; i++) {
-            for (int j=0; j<r.height; j++) {
-                long intensity = img.getIntensityAt(r.x + i, r.y + j);
-                im.set(i, j, (int) intensity);
-            }
-        }
-        GrayF32 blurred = BlurImageOps.gaussian(im, null, -1, this.denoiseRadius, null);
-        GrayF32 dx = new GrayF32(im.width, im.height);
-        GrayF32 dy = new GrayF32(im.width, im.height);
-        GImageDerivativeOps.gradient(DerivativeType.THREE, blurred, dx, dy, BorderType.EXTENDED);
-        //Calculate magnitude of the gradient
-        PixelMath.pow2(dx, dx);
-        PixelMath.pow2(dy, dy);
-        GrayF32 mag = new GrayF32(dx.width, dx.height);
-        PixelMath.add(dx, dy, mag);
-        PixelMath.sqrt(mag, mag);
-        float[] arr = mag.getData();
-        double[] dubArr = new double[arr.length];
-        for (int i = 0; i < arr.length; i++) { // must convert from float[] to double[]
-            dubArr[i] = arr[i];
-        }
-        return new Percentile().evaluate(dubArr, 95);
-    }
     
     private void beginScan(double intervalUm, double rangeUm) {
         this.panel_.clearData();
@@ -215,7 +191,7 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
                 }
                 
                 Image img = studio_.live().snap(true).get(0);
-                double sharpness = this.evaluateGradient(img, r);
+                double sharpness = eval_.evaluateGradient(img, r);
                 
                 double pos = studio_.core().getPosition();
                 panel_.setValue(pos, sharpness);

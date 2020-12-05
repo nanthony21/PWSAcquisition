@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.imgSharpnessPlugin;
+package edu.bpl.imgSharpnessPlugin.ui;
 
+import edu.bpl.imgSharpnessPlugin.RequestScanEvent;
+import edu.bpl.imgSharpnessPlugin.RequestScanListener;
 import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import java.awt.Color;
 import java.awt.event.ActionEvent;

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.bpl.imgSharpnessPlugin;
+package edu.bpl.imgSharpnessPlugin.ui;
 
 import java.awt.Font;
 import java.awt.FontMetrics;
