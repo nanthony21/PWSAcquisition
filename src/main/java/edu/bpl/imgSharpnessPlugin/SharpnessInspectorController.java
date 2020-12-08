@@ -6,21 +6,14 @@
 package edu.bpl.imgSharpnessPlugin;
 
 import edu.bpl.imgSharpnessPlugin.ui.SharpnessInspectorPanel;
-import boofcv.alg.filter.blur.BlurImageOps;
-import boofcv.alg.filter.derivative.DerivativeType;
-import boofcv.alg.filter.derivative.GImageDerivativeOps;
-import boofcv.alg.misc.PixelMath;
-import boofcv.struct.border.BorderType;
-import boofcv.struct.image.GrayF32;
+
 import com.google.common.base.Preconditions;
 import com.google.common.eventbus.Subscribe;
 import ij.gui.Roi;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
-import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.micromanager.Studio;
 import org.micromanager.data.DataProviderHasNewImageEvent;
 import org.micromanager.data.Image;
@@ -42,7 +35,8 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
     private DataViewer viewer_;
     private final Studio studio_;
     private boolean autoImageEvaluation_ = true;
-    private final SharpnessEvaluator eval_ = new SharpnessEvaluator(); ; 
+    private final SharpnessEvaluator eval_ = new SharpnessEvaluator();
+    private PlotMode mode_ = PlotMode.Time;
     
     private SharpnessInspectorController(Studio studio) {
         studio_ = studio;
@@ -221,5 +215,10 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
 
    public interface RequestScanListener {
        public void actionPerformed(RequestScanEvent evt);
+   }
+   
+   private static enum PlotMode {
+      Time,
+      Z;
    }
 }
