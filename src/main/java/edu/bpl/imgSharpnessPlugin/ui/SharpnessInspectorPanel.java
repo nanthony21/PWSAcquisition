@@ -34,7 +34,7 @@ public class SharpnessInspectorPanel extends JPanel {
     
     private final static String SERIES_NAME = "DATA";
 
-    private final JFreeChart chart = ChartFactory.createXYLineChart(
+    private final JFreeChart zChart = ChartFactory.createXYLineChart(
             null, //title
             "Z", // xlabel
             "Gradient", // ylabel
@@ -43,35 +43,46 @@ public class SharpnessInspectorPanel extends JPanel {
             false, // legend
             false, //tooltips
             false //urls
+    );
     
+    private final JFreeChart tChart = ChartFactory.createXYLineChart(
+                null, //title
+            "Time", // xlabel
+            "Gradient", // ylabel
+            new XYSeriesCollection(new XYSeries(SERIES_NAME, true, false)),
+            PlotOrientation.VERTICAL,
+            false, // legend
+            false, //tooltips
+            false //urls
     );
 
+    private final ChartPanel chartPanel = new ChartPanel(
+        zChart,
+        200, // int width,
+        200, // int height,
+        100, // int minimumDrawWidth,
+        100, // int minimumDrawHeight,
+        10000, // int maximumDrawWidth,
+        10000, // int maximumDrawHeight,
+        true, // boolean useBuffer,
+        true, // boolean properties,
+        true, // boolean copy,
+        true, // boolean save,
+        true, // boolean print,
+        true, // boolean zoom,
+        true // boolean tooltips
+    );
+        
     private final JFormattedTextField denoiseRadius = new JFormattedTextField(NumberFormat.getIntegerInstance());
     private final JButton resetButton = new JButton("Reset Plot");
     private final JButton scanButton = new JButton("Scan...");
     private final List<SharpnessInspectorController.RequestScanListener> scanRequestedListeners = new ArrayList<>();
     private final ScanDialog scanDlg = new ScanDialog();
     
-    private final ChartPanel chartPanel = new ChartPanel(
-            chart,
-            200, // int width,
-            200, // int height,
-            100, // int minimumDrawWidth,
-            100, // int minimumDrawHeight,
-            10000, // int maximumDrawWidth,
-            10000, // int maximumDrawHeight,
-            true, // boolean useBuffer,
-            true, // boolean properties,
-            true, // boolean copy,
-            true, // boolean save,
-            true, // boolean print,
-            true, // boolean zoom,
-            true // boolean tooltips
-    );
-    
     private final JFreeTextOverlay noRoiOverlay = new JFreeTextOverlay("No Roi Drawn");
     
-    private final XYSeriesCollection dset = (XYSeriesCollection) chartPanel.getChart().getXYPlot().getDataset();
+    private final XYSeries zDataSeries = ((XYSeriesCollection) zChart.getXYPlot().getDataset()).getSeries(SERIES_NAME);
+    private final XYSeries tDataSeries = ((XYSeriesCollection) tChart.getXYPlot().getDataset()).getSeries(SERIES_NAME);
 
     public SharpnessInspectorPanel() {
         super(new MigLayout("fill"));
@@ -85,10 +96,10 @@ public class SharpnessInspectorPanel extends JPanel {
             this.scanDlg.setVisible(true);
         });
         
-        this.chart.getXYPlot().setDomainCrosshairVisible(true); // An overlay to display the current z position.
-        this.chart.getXYPlot().setDomainCrosshairPaint(new Color(0, 0, 0)); // black crosshair
-        this.chart.getXYPlot().setRangeCrosshairVisible(true); // An overlay to display the current sharpness.
-        this.chart.getXYPlot().setRangeCrosshairPaint(new Color(0, 0, 0)); // black crosshair
+        this.zChart.getXYPlot().setDomainCrosshairVisible(true); // An overlay to display the current z position.
+        this.zChart.getXYPlot().setDomainCrosshairPaint(new Color(0, 0, 0)); // black crosshair
+        this.zChart.getXYPlot().setRangeCrosshairVisible(true); // An overlay to display the current sharpness.
+        this.zChart.getXYPlot().setRangeCrosshairPaint(new Color(0, 0, 0)); // black crosshair
         this.chartPanel.addOverlay(noRoiOverlay); // An overlay that tells the user that there needs to be a roi selected.
         this.chartPanel.setPopupMenu(null); // disable the right-click menu
         this.chartPanel.setDomainZoomable(false); // disale zooming by click-drag
@@ -96,9 +107,9 @@ public class SharpnessInspectorPanel extends JPanel {
         
         //make plot background transparent
         Color trans = new Color(0xFF, 0xFF, 0xFF, 0);
-        chart.setBackgroundPaint(trans);
-        chart.getXYPlot().setBackgroundPaint(trans);
-        ((NumberAxis) chart.getXYPlot().getRangeAxis()).setAutoRangeIncludesZero(false);  //Don't always include 0 in the vertical autoranging.
+        zChart.setBackgroundPaint(trans);
+        zChart.getXYPlot().setBackgroundPaint(trans);
+        ((NumberAxis) zChart.getXYPlot().getRangeAxis()).setAutoRangeIncludesZero(false);  //Don't always include 0 in the vertical autoranging.
         
         super.add(chartPanel, "wrap, spanx, grow, pushy");
         super.add(scanButton);
@@ -117,18 +128,18 @@ public class SharpnessInspectorPanel extends JPanel {
     
     public void setValue(double x, double y) {
         //Add an XY value to the plot. if the x value already exists the old value will be replaced.
-        this.dset.getSeries(SERIES_NAME).addOrUpdate(x, y);
-        this.chart.getXYPlot().setRangeCrosshairValue(y); //Set the vertical crosshair to the current sharpness value.
+        this.zDataSeries.addOrUpdate(x, y);
+        this.zChart.getXYPlot().setRangeCrosshairValue(y); //Set the vertical crosshair to the current sharpness value.
         this.setZPos(x);
     }
     
     public void setZPos(double z) {
         //Set the currect z position for the cursor to be set to.
-        this.chart.getXYPlot().setDomainCrosshairValue(z);
+        this.zChart.getXYPlot().setDomainCrosshairValue(z);
     }
     
     public void clearData() {
-        this.dset.getSeries(SERIES_NAME).clear();
+        this.zDataSeries.clear();
     }
     
     public void setRoiSelected(boolean hasRoi) {
@@ -151,6 +162,18 @@ public class SharpnessInspectorPanel extends JPanel {
         this.scanRequestedListeners.add(listener);
     }
 
+    public void setPlotMode(SharpnessInspectorController.PlotMode mode) {
+        //this.clearData();
+        switch (mode) {
+            case Time:
+                this.chartPanel.setChart(tChart);
+                break;
+            case Z:
+                this.chartPanel.setChart(zChart);
+                break;
+        }
+    }
+        
     private class ScanDialog extends JDialog {
         private final ImprovedComponents.FormattedTextField interval = new ImprovedComponents.FormattedTextField(NumberFormat.getNumberInstance());
         private final ImprovedComponents.FormattedTextField range = new ImprovedComponents.FormattedTextField(NumberFormat.getNumberInstance());

@@ -30,7 +30,7 @@ import org.micromanager.internal.utils.MustCallOnEDT;
  * @author N2-LiveCell
  */
 public class SharpnessInspectorController extends AbstractInspectorPanelController {
-    private boolean expanded_ = true;
+    private static boolean expanded_ = true;  //For some reason a whole new instance of this class is created each time we switch display viewers. Having this variable static allows it's value to stay unchanged between instances.
     private final SharpnessInspectorPanel panel_ = new SharpnessInspectorPanel();
     private DataViewer viewer_;
     private final Studio studio_;
@@ -55,10 +55,10 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
                     return null;
                 }
             };
-            
             worker.execute();
-            
         });
+        
+        panel_.
     }
     
     public static SharpnessInspectorController create(Studio studio) {
@@ -96,7 +96,6 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
        }
        viewer_.getDataProvider().unregisterForEvents(this);
        viewer_.unregisterForEvents(this);
-       //setUpChannelHistogramsPanel(0);
        viewer_ = null;
     }
 
@@ -104,7 +103,6 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
     public boolean isVerticallyResizableByUser() {
        return true;
     }
-
 
     @Override
     public void setExpanded(boolean status) {
@@ -217,7 +215,7 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
        public void actionPerformed(RequestScanEvent evt);
    }
    
-   private static enum PlotMode {
+   public static enum PlotMode {
       Time,
       Z;
    }
