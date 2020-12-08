@@ -20,10 +20,7 @@ import org.micromanager.data.Image;
  * @author nicke
  */
 public class SharpnessEvaluator {
-    public int denoiseRadius = 3;
-    
-    //public SharpnessEvaluator() {}
-    
+    public int denoiseRadius = 3;    
     
     public double evaluateGradient(Image img, Rectangle r) {
         GrayF32 im = new GrayF32(r.width, r.height);

@@ -5,12 +5,9 @@
  */
 package edu.bpl.imgSharpnessPlugin.ui;
 
-import edu.bpl.imgSharpnessPlugin.RequestScanEvent;
-import edu.bpl.imgSharpnessPlugin.RequestScanListener;
+import edu.bpl.imgSharpnessPlugin.SharpnessInspectorController;
 import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -52,7 +49,7 @@ public class SharpnessInspectorPanel extends JPanel {
     private final JFormattedTextField denoiseRadius = new JFormattedTextField(NumberFormat.getIntegerInstance());
     private final JButton resetButton = new JButton("Reset Plot");
     private final JButton scanButton = new JButton("Scan...");
-    private final List<RequestScanListener> scanRequestedListeners = new ArrayList<>();
+    private final List<SharpnessInspectorController.RequestScanListener> scanRequestedListeners = new ArrayList<>();
     private final ScanDialog scanDlg = new ScanDialog();
     
     private final ChartPanel chartPanel = new ChartPanel(
@@ -149,7 +146,7 @@ public class SharpnessInspectorPanel extends JPanel {
         }
     }
     
-    public void addScanRequestedListener(RequestScanListener listener) {
+    public void addScanRequestedListener(SharpnessInspectorController.RequestScanListener listener) {
         //Add a listener that will be fired when the `scan` button is pressed.
         this.scanRequestedListeners.add(listener);
     }
@@ -172,8 +169,8 @@ public class SharpnessInspectorPanel extends JPanel {
             this.range.setValue(5);
             
             this.startButton.addActionListener((evt) -> {
-                RequestScanEvent event = new RequestScanEvent(this, ((Number) interval.getValue()).doubleValue(), ((Number) range.getValue()).doubleValue());
-                for (RequestScanListener listener : SharpnessInspectorPanel.this.scanRequestedListeners) {
+                SharpnessInspectorController.RequestScanEvent event = new SharpnessInspectorController.RequestScanEvent(this, ((Number) interval.getValue()).doubleValue(), ((Number) range.getValue()).doubleValue());
+                for (SharpnessInspectorController.RequestScanListener listener : SharpnessInspectorPanel.this.scanRequestedListeners) {
                     listener.actionPerformed(event);
                 }
                 this.setVisible(false);

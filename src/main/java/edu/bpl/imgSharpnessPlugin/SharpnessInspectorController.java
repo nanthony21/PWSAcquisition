@@ -203,24 +203,23 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
             this.autoImageEvaluation_ = true;
         }
     }
-}
+
+   public static class RequestScanEvent extends ActionEvent {
+       private final double interval;
+       private final double range;
+
+       public RequestScanEvent(Object source, double intervalUm, double rangeUm) {
+           super(source, 0, "startScan");
+           interval = intervalUm;
+           range = rangeUm;
+       }
+
+       public double intervalUm() { return interval; }
+       public double rangeUm() { return range; }
+   }
 
 
-class RequestScanEvent extends ActionEvent {
-    private final double interval;
-    private final double range;
-    
-    public RequestScanEvent(Object source, double intervalUm, double rangeUm) {
-        super(source, 0, "startScan");
-        interval = intervalUm;
-        range = rangeUm;
-    }
-    
-    public double intervalUm() { return interval; }
-    public double rangeUm() { return range; }
-}
-
-
-interface RequestScanListener {
-    public void actionPerformed(RequestScanEvent evt);
+   public interface RequestScanListener {
+       public void actionPerformed(RequestScanEvent evt);
+   }
 }
