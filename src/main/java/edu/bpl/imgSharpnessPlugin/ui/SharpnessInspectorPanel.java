@@ -9,10 +9,13 @@ import edu.bpl.imgSharpnessPlugin.SharpnessInspectorController;
 import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import java.awt.Color;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
@@ -24,6 +27,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.ui.RectangleInsets;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 /**
@@ -57,7 +61,7 @@ public class SharpnessInspectorPanel extends JPanel {
     );
 
     private final ChartPanel chartPanel = new ChartPanel(
-        zChart,
+        tChart,
         200, // int width,
         200, // int height,
         100, // int minimumDrawWidth,
@@ -78,12 +82,15 @@ public class SharpnessInspectorPanel extends JPanel {
     private final JButton scanButton = new JButton("Scan...");
     private final List<SharpnessInspectorController.RequestScanListener> scanRequestedListeners = new ArrayList<>();
     private final ScanDialog scanDlg = new ScanDialog();
+    private final JComboBox<SharpnessInspectorController.PlotMode> plotModeBox = new JComboBox<>(new DefaultComboBoxModel<>(SharpnessInspectorController.PlotMode.values()));
     
     private final JFreeTextOverlay noRoiOverlay = new JFreeTextOverlay("No Roi Drawn");
     
     private final XYSeries zDataSeries = ((XYSeriesCollection) zChart.getXYPlot().getDataset()).getSeries(SERIES_NAME);
     private final XYSeries tDataSeries = ((XYSeriesCollection) tChart.getXYPlot().getDataset()).getSeries(SERIES_NAME);
 
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    
     public SharpnessInspectorPanel() {
         super(new MigLayout("fill"));
         this.denoiseRadius.setColumns(3);
@@ -96,10 +103,11 @@ public class SharpnessInspectorPanel extends JPanel {
             this.scanDlg.setVisible(true);
         });
         
-        this.zChart.getXYPlot().setDomainCrosshairVisible(true); // An overlay to display the current z position.
+        this.zChart.getXYPlot().setDomainCrosshairVisible(true); // A crosshair overlay to display the current z position.
         this.zChart.getXYPlot().setDomainCrosshairPaint(new Color(0, 0, 0)); // black crosshair
-        this.zChart.getXYPlot().setRangeCrosshairVisible(true); // An overlay to display the current sharpness.
+        this.zChart.getXYPlot().setRangeCrosshairVisible(true); // A crosshair overlay to display the current sharpness.
         this.zChart.getXYPlot().setRangeCrosshairPaint(new Color(0, 0, 0)); // black crosshair
+        this.tChart.getXYPlot().getDomainAxis().setTickLabelsVisible(false); // hide the values for `time`
         this.chartPanel.addOverlay(noRoiOverlay); // An overlay that tells the user that there needs to be a roi selected.
         this.chartPanel.setPopupMenu(null); // disable the right-click menu
         this.chartPanel.setDomainZoomable(false); // disale zooming by click-drag
@@ -110,27 +118,64 @@ public class SharpnessInspectorPanel extends JPanel {
         zChart.setBackgroundPaint(trans);
         zChart.getXYPlot().setBackgroundPaint(trans);
         ((NumberAxis) zChart.getXYPlot().getRangeAxis()).setAutoRangeIncludesZero(false);  //Don't always include 0 in the vertical autoranging.
+        tChart.setBackgroundPaint(trans);
+        tChart.getXYPlot().setBackgroundPaint(trans);
+        ((NumberAxis) tChart.getXYPlot().getRangeAxis()).setAutoRangeIncludesZero(false);  //Don't always include 0 in the vertical autoranging.
+        
+        this.plotModeBox.addItemListener((evt) -> {
+            SharpnessInspectorController.PlotMode mode = (SharpnessInspectorController.PlotMode) this.plotModeBox.getSelectedItem();
+            this.setPlotMode(mode);         
+        });
+        
+        this.denoiseRadius.addPropertyChangeListener("value", (evt) -> { // relay this property change event
+            this.pcs.firePropertyChange("denoiseRadius", evt.getOldValue(), evt.getNewValue());
+        });
         
         super.add(chartPanel, "wrap, spanx, grow, pushy");
         super.add(scanButton);
         super.add(resetButton);
         super.add(new JLabel("Denoise Blur (px):"), "gapleft push");
-        super.add(denoiseRadius, "wrap");
+        super.add(denoiseRadius);
+        super.add(plotModeBox);
     }
     
-    public void addDenoiseRadiusValueChangedListener(PropertyChangeListener listener) {
-        denoiseRadius.addPropertyChangeListener("value", listener);
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(listener);
+    }
+    
+    @Override
+    public void addPropertyChangeListener(String property, PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(property, listener);
     }
     
     public void setDenoiseRadius(int radius) {
         this.denoiseRadius.setValue(radius);
     }
     
-    public void setValue(double x, double y) {
+    public void setValue(double z, double time, double sharpness) {
         //Add an XY value to the plot. if the x value already exists the old value will be replaced.
-        this.zDataSeries.addOrUpdate(x, y);
-        this.zChart.getXYPlot().setRangeCrosshairValue(y); //Set the vertical crosshair to the current sharpness value.
-        this.setZPos(x);
+        this.zDataSeries.addOrUpdate(z, sharpness);
+        this.zChart.getXYPlot().setRangeCrosshairValue(sharpness); //Set the vertical crosshair to the current sharpness value.
+        this.setZPos(z);
+        
+        //Find the index associated with data that is more than `timeLimit` seconds old and delete it.
+        double timeLimit = 30;
+        int i;
+        for (i=0; i<tDataSeries.getItemCount(); i++) {
+            Double t = (Double) tDataSeries.getX(i);
+            if (((time - t) / 1000) < timeLimit) {
+                break;
+            }
+        }
+        if (i!=0) {
+            tDataSeries.delete(0, i);
+        }
+//        while (this.tDataSeries. ) {
+  //          this.tDataSeries.remove(0);
+    //    }
+        this.tDataSeries.addOrUpdate(time, sharpness);
+
     }
     
     public void setZPos(double z) {
@@ -140,6 +185,7 @@ public class SharpnessInspectorPanel extends JPanel {
     
     public void clearData() {
         this.zDataSeries.clear();
+        this.tDataSeries.clear();
     }
     
     public void setRoiSelected(boolean hasRoi) {
@@ -163,7 +209,6 @@ public class SharpnessInspectorPanel extends JPanel {
     }
 
     public void setPlotMode(SharpnessInspectorController.PlotMode mode) {
-        //this.clearData();
         switch (mode) {
             case Time:
                 this.chartPanel.setChart(tChart);
@@ -172,6 +217,7 @@ public class SharpnessInspectorPanel extends JPanel {
                 this.chartPanel.setChart(zChart);
                 break;
         }
+        this.pcs.firePropertyChange("plotMode", null, mode);
     }
         
     private class ScanDialog extends JDialog {

@@ -43,8 +43,12 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
         studio_.events().registerForEvents(this);
                 
         panel_.setDenoiseRadius(eval_.denoiseRadius);
-        panel_.addDenoiseRadiusValueChangedListener((evt) -> {
+        panel_.addPropertyChangeListener("denoiseRadius", (evt) -> {
             eval_.denoiseRadius = ((Long) evt.getNewValue()).intValue();
+        });
+        
+        panel_.addPropertyChangeListener("plotMode", (evt) -> {
+            this.setPlotMode((PlotMode) evt.getNewValue());
         });
         
         panel_.addScanRequestedListener((evt) -> {
@@ -58,7 +62,6 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
             worker.execute();
         });
         
-        panel_.
     }
     
     public static SharpnessInspectorController create(Studio studio) {
@@ -133,7 +136,7 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
         }
         double grad = eval_.evaluateGradient(img, r);
         double z = img.getMetadata().getZPositionUm();
-        this.panel_.setValue(z, grad);
+        this.panel_.setValue(z, System.currentTimeMillis(), grad);
     }
     
     @Subscribe
@@ -144,6 +147,9 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
         this.panel_.setZPos(evt.getPos());
     }
     
+    private void setPlotMode(PlotMode mode) {
+        this.mode_ = mode;
+    }
     
     private void beginScan(double intervalUm, double rangeUm) {
         this.panel_.clearData();
@@ -186,7 +192,7 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
                 double sharpness = eval_.evaluateGradient(img, r);
                 
                 double pos = studio_.core().getPosition();
-                panel_.setValue(pos, sharpness);
+                panel_.setValue(pos, System.currentTimeMillis(), sharpness);
             }
             studio_.core().setPosition(startingPos);
         } catch (Exception e) {
