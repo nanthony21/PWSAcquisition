@@ -27,7 +27,6 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.ui.RectangleInsets;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 /**
@@ -216,6 +215,9 @@ public class SharpnessInspectorPanel extends JPanel {
             case Z:
                 this.chartPanel.setChart(zChart);
                 break;
+        }
+        if (plotModeBox.getSelectedItem() != mode) {
+            plotModeBox.setSelectedItem(mode);
         }
         this.pcs.firePropertyChange("plotMode", null, mode);
     }

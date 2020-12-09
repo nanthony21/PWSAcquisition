@@ -36,7 +36,6 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
     private final Studio studio_;
     private boolean autoImageEvaluation_ = true;
     private final SharpnessEvaluator eval_ = new SharpnessEvaluator();
-    private PlotMode mode_ = PlotMode.Time;
     
     private SharpnessInspectorController(Studio studio) {
         studio_ = studio;
@@ -45,10 +44,6 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
         panel_.setDenoiseRadius(eval_.denoiseRadius);
         panel_.addPropertyChangeListener("denoiseRadius", (evt) -> {
             eval_.denoiseRadius = ((Long) evt.getNewValue()).intValue();
-        });
-        
-        panel_.addPropertyChangeListener("plotMode", (evt) -> {
-            this.setPlotMode((PlotMode) evt.getNewValue());
         });
         
         panel_.addScanRequestedListener((evt) -> {
@@ -147,12 +142,9 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
         this.panel_.setZPos(evt.getPos());
     }
     
-    private void setPlotMode(PlotMode mode) {
-        this.mode_ = mode;
-    }
-    
     private void beginScan(double intervalUm, double rangeUm) {
         this.panel_.clearData();
+        this.panel_.setPlotMode(PlotMode.Z);
         this.autoImageEvaluation_ = false;
         
         if (studio_.live().getIsLiveModeOn()) {
