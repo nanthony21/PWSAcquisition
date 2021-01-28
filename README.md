@@ -19,6 +19,3 @@ are:
   - imageio-metadata
   - imageio-tiff
 
-
-These files can also be found in the `bindist` folder.
-These extra dependencies should be placed in `Micro-Manager-2.0gamma\plugins\micro-manager`.
