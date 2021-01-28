@@ -35,6 +35,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+/**
+A Transfer handler that allows nodes to be moved around and well as to be copied
+*/
 public class CopyMoveTransferHandler extends TransferHandler {
     DataFlavor nodesFlavor;
     List<CopyableMutableTreeNode> nodesToRemove;
@@ -46,29 +49,32 @@ public class CopyMoveTransferHandler extends TransferHandler {
     @Override
     public boolean canImport(TransferHandler.TransferSupport support) {
         if(!support.isDrop() || !support.isDataFlavorSupported(nodesFlavor)) {
-            return false; //Not A drop action, no supported
+            return false; //Not A drop action, not supported
         }
         support.setShowDropLocation(true);
 
         JTree.DropLocation dl = (JTree.DropLocation)support.getDropLocation();
         JTree tree = (JTree)support.getComponent();
-        List<CopyableMutableTreeNode> nodes;
+        List<CopyableMutableTreeNode> nodes; // The tree nodes that are being dropped.
         try {
             nodes = (List<CopyableMutableTreeNode>) support.getTransferable().getTransferData(nodesFlavor);
         } catch (UnsupportedFlavorException | IOException e) {
             throw new RuntimeException(e);
         }       
-        
-        // Do not allow a drop on the drag source selections. or a child of the source selections.
-        DefaultMutableTreeNode dropNode;
+                
+        DefaultMutableTreeNode dropNode; // The node at the end of the treepath for the requested drop location.
         try {
             dropNode = (DefaultMutableTreeNode) dl.getPath().getLastPathComponent();
         } catch (NullPointerException e) {
             dropNode = (DefaultMutableTreeNode) tree.getModel().getRoot();// In some cases the path can be null. Treat this as though dropping to the root.
         }
+        
+        //If the node we are trying to drop into doesn't allow children then we have a problem.
         if (!dropNode.getAllowsChildren()) {
-            return false;
+            return true;
         }
+        
+        // Do not allow a drop on the drag source selections or a child of the source selections since that wouldn't make any sense.
         for (CopyableMutableTreeNode node : nodes) {
             if (node.equals(dropNode)) {
                 return false;

@@ -30,11 +30,11 @@ import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 /**
- *
+ * This class contains a collection of renderers that determine how the items of a JTree will look.
+ * 
  * @author nick
  */
 public class TreeRenderers {
-    //This class contains a collection of renderers that determine how the items of a JTree will look.
     
     public static class SequenceTreeRenderer extends DefaultTreeCellRenderer {
         //Empty ContainerSteps that are empty are rendered as red text with a special icon.
