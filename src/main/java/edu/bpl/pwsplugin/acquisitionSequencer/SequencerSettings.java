@@ -84,5 +84,6 @@ public class SequencerSettings {
     public static class SimpleAcquisitionSettings extends JsonableParam {
         public int numFrames = 1;
         public double exposureMs = 100;
+        public String namingFormat = "image{i}"; // {i} a number that iterates upon each acquisition. {p} each position. {t} time
     }
 }

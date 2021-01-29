@@ -29,6 +29,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.text.NumberFormat;
 import javax.swing.JLabel;
+import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
@@ -37,30 +38,37 @@ import net.miginfocom.swing.MigLayout;
  * @author nick
  */
 public class SimpleAcquisitionFactory extends StepFactory {
+    @Override
     public  Class<? extends BuilderJPanel> getUI() {
-        SimpleAcquisitionUI.class;
+        return SimpleAcquisitionUI.class;
     }
     
+    @Override
     public  Class<? extends JsonableParam> getSettings() {
         return SequencerSettings.SimpleAcquisitionSettings.class;
     }
     
+    @Override
     public  Class<? extends Step> getStep() {
         return SimpleAcquisition.class;
     }
     
+    @Override
     public  String getDescription() {
        return "A basic image or video acquisition." ;
     }
     
+    @Override
     public  String getName() {
         return "Standard Acquisition";
     }
     
+    @Override
     public  String getCategory() {
         return "Acquisition";
     }
     
+    @Override
     public  SequencerConsts.Type getType() {
         return SequencerConsts.Type.STD_ACQ;
     }
@@ -69,7 +77,8 @@ public class SimpleAcquisitionFactory extends StepFactory {
 
 class SimpleAcquisitionUI extends BuilderJPanel<SequencerSettings.SimpleAcquisitionSettings>{
     private final ImprovedComponents.Spinner numFrames_ = new ImprovedComponents.Spinner(new SpinnerNumberModel(1, 1, 999999999, 1));
-    private final ImprovedComponents.FormattedTextField exposure_ = new ImprovedComponents.FormattedTextField(//TODO add format);
+    private final ImprovedComponents.FormattedTextField exposure_ = new ImprovedComponents.FormattedTextField(NumberFormat.getIntegerInstance());
+    private final JTextField format_ = new JTextField();
     
     public SimpleAcquisitionUI() {
         super(new MigLayout(), SequencerSettings.SimpleAcquisitionSettings.class);
@@ -77,17 +86,27 @@ class SimpleAcquisitionUI extends BuilderJPanel<SequencerSettings.SimpleAcquisit
         super.add(numFrames_, "wrap");
         super.add(new JLabel("Exposure (ms):"));
         super.add(exposure_, "wrap");
+        super.add(new JLabel("Naming Format:"));
+        super.add(format_);
+        
+        format_.setToolTipText("{i} a number that iterates upon each acquisition. {p} each position. {t} time");
     }
     
 
     @Override
     public SequencerSettings.SimpleAcquisitionSettings build() throws BuilderPanelException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        SequencerSettings.SimpleAcquisitionSettings settings = new SequencerSettings.SimpleAcquisitionSettings();
+        settings.numFrames = (Integer) numFrames_.getValue();
+        settings.exposureMs = (Double) exposure_.getValue();
+        settings.namingFormat = format_.getText();
+        return settings;
     }
 
     @Override
-    public void populateFields(SequencerSettings.SimpleAcquisitionSettings t) throws BuilderPanelException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void populateFields(SequencerSettings.SimpleAcquisitionSettings settings) throws BuilderPanelException {
+        numFrames_.setValue(settings.numFrames);
+        exposure_.setValue(settings.exposureMs);
+        format_.setText(settings.namingFormat);
     }
     
 }
