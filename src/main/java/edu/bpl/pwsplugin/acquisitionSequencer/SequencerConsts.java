@@ -31,6 +31,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.factory.EveryNTimesFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.FocusLockFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.PauseFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.RootStepFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.factory.SimpleAcquisitionFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.SoftwareAutofocusFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.ZStackFactory;
@@ -42,6 +43,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.factory.ZStackFactory;
 public class SequencerConsts {
     public enum Type {
         ACQ,
+        STD_ACQ,
         POS,
         TIME,
         PFS,
@@ -60,6 +62,8 @@ public class SequencerConsts {
         if (null != type) switch (type) {
             case ACQ:
                 return new AcquireCellFactory();
+            case STD_ACQ:
+                return new SimpleAcquisitionFactory();
             case AF:
                 return new SoftwareAutofocusFactory();
             case PFS:

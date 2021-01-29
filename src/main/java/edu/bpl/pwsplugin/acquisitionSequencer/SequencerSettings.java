@@ -59,7 +59,6 @@ public class SequencerSettings {
     public static class AcquireTimeSeriesSettings extends JsonableParam {
         public int numFrames = 1;
         public double frameIntervalMinutes = 1;
-
     }
 
     public static class AcquirePositionsSettings extends JsonableParam {
@@ -80,5 +79,10 @@ public class SequencerSettings {
     public static class AutoShutterSettings extends JsonableParam {
         public String configName = "";
         public Double warmupTimeMinutes = 0.;
+    }
+    
+    public static class SimpleAcquisitionSettings extends JsonableParam {
+        public int numFrames = 1;
+        public double exposureMs = 100;
     }
 }
