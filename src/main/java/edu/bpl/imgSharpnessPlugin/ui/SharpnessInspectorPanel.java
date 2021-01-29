@@ -94,10 +94,11 @@ public class SharpnessInspectorPanel extends JPanel {
     private final JFormattedTextField denoiseRadius = new JFormattedTextField(NumberFormat.getIntegerInstance());
     private final JButton resetButton = new JButton("Reset Plot");
     private final JButton scanButton = new JButton("Scan...");
+    private final JButton autofocusButton = new JButton("AutoFocus");
+
     private final List<SharpnessInspectorController.RequestScanListener> scanRequestedListeners = new ArrayList<>();
     private final ScanDialog scanDlg = new ScanDialog();
     private final JComboBox<SharpnessInspectorController.PlotMode> plotModeBox = new JComboBox<>(new DefaultComboBoxModel<>(SharpnessInspectorController.PlotMode.values()));
-    
     private final JFreeTextOverlay noRoiOverlay = new JFreeTextOverlay("No Roi Drawn");
     
     private final XYSeries zDataSeries = ((XYSeriesCollection) zChart.getXYPlot().getDataset()).getSeries(SERIES_NAME);
@@ -115,6 +116,10 @@ public class SharpnessInspectorPanel extends JPanel {
         
         scanButton.addActionListener((evt) -> {
             this.scanDlg.setVisible(true);
+        });
+        
+        autofocusButton.addActionListener((evt) -> {
+           // TODO
         });
         
         this.zChart.getXYPlot().setDomainCrosshairVisible(true); // A crosshair overlay to display the current z position.
@@ -150,7 +155,8 @@ public class SharpnessInspectorPanel extends JPanel {
         super.add(resetButton);
         super.add(new JLabel("Denoise Blur (px):"), "gapleft push");
         super.add(denoiseRadius);
-        super.add(plotModeBox);
+        super.add(plotModeBox, "wrap");
+        super.add(autofocusButton);
     }
     
     @Override
@@ -185,9 +191,7 @@ public class SharpnessInspectorPanel extends JPanel {
         if (i!=0) {
             tDataSeries.delete(0, i);
         }
-//        while (this.tDataSeries. ) {
-  //          this.tDataSeries.remove(0);
-    //    }
+
         this.tDataSeries.addOrUpdate(time, sharpness);
 
     }

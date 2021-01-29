@@ -134,7 +134,12 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
             return;
         }
         DefaultImage img = (DefaultImage) evt.getImage();
-        Roi roi = ((DisplayWindow) viewer_).getImagePlus().getRoi();
+        Roi roi;
+        try {
+            roi = ((DisplayWindow) viewer_).getImagePlus().getRoi();
+        } catch (RuntimeException rte) { // Sometimes when the display window is just getting initialized this occurs due to a nullpointer in trying to get the ImagePlus
+           return;
+        }
         if (roi == null || !roi.isArea()) {
             this.panel_.setRoiSelected(false);
             return;
