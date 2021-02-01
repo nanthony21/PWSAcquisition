@@ -20,10 +20,33 @@
 //
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import java.util.List;
+
 /**
  *
  * @author nick
  */
-public class SimpleAcquisition extends Step {
+public class SimpleAcquisition extends EndpointStep<SequencerSettings.SimpleAcquisitionSettings> {
+    public SimpleAcquisition() {
+        super(new SequencerSettings.SimpleAcquisitionSettings(), SequencerConsts.Type.STD_ACQ);
+    }
+
+    @Override
+    protected SequencerFunction getStepFunction(List callbacks) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    protected SimFn getSimulatedFunction() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List validate() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
    
 }
