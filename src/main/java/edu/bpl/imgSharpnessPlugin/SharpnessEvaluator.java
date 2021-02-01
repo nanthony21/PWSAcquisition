@@ -32,7 +32,7 @@ import org.micromanager.data.Image;
 
 /**
  *
- * @author nicke
+ * @author Nick Anthony
  */
 public class SharpnessEvaluator {
     public int denoiseRadius = 3;    
