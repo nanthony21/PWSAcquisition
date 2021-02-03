@@ -66,7 +66,7 @@ public class FocusLockFactory extends StepFactory {
     
     @Override
     public String getCategory() {
-        return "Utility";
+        return "Focus";
     }
 
     @Override
