@@ -75,12 +75,16 @@ class NewStepsTree extends TreeDragAndDrop {
             node.setSettings(settings);
             
             String categoryName = factory.getCategory();
-            if (!categories.keySet().contains(categoryName)) { //If the category by this name does not yet exist then create it.
-                DefaultMutableTreeNode categoryNode = new DefaultMutableTreeNode(categoryName);
-                root.add(categoryNode);
-                categories.put(categoryName, categoryNode);
+            if (categoryName == null) {
+               root.add(node);
+            } else {
+               if (!categories.keySet().contains(categoryName)) { //If the category by this name does not yet exist then create it.
+                  DefaultMutableTreeNode categoryNode = new DefaultMutableTreeNode(categoryName);
+                  root.add(categoryNode);
+                  categories.put(categoryName, categoryNode);
+               }
+               categories.get(categoryName).add(node); //Add the new Step node to a category folder
             }
-            categories.get(categoryName).add(node); //Add the new Step node to a category folder
         } 
         
         model.setRoot(root);

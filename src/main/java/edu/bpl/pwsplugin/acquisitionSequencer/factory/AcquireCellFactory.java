@@ -60,7 +60,7 @@ public class AcquireCellFactory extends StepFactory {
     
     @Override
     public String getCategory() {
-        return "Acquisition";
+        return null;
     }
 
     @Override
