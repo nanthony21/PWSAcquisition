@@ -30,6 +30,7 @@ import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.settings.PWSSettingsConsts;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.Dimension;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -41,6 +42,7 @@ import javax.swing.tree.TreeSelectionModel;
  */
 class NewStepsTree extends TreeDragAndDrop {
     private Step acquisitionStep;
+    private static final SequencerConsts.Type[] EXCLUDED_TYPES = {SequencerConsts.Type.EVERYN, SequencerConsts.Type.CONFIG};
     
     public NewStepsTree() {
         super();
@@ -51,8 +53,14 @@ class NewStepsTree extends TreeDragAndDrop {
         Map<String, DefaultMutableTreeNode> categories = new HashMap<>();
         
         for (SequencerConsts.Type type : SequencerConsts.Type.values()) { //Add a node for each step type to the appropriate category folder.
-            if (type == SequencerConsts.Type.ROOT || type == SequencerConsts.Type.BROKEN) { continue; }//ignore this special case
-            if (type == SequencerConsts.Type.EVERYN) { continue; } // This step is too complicated and will never be used, just leave it out.
+            if (type == SequencerConsts.Type.ROOT || type == SequencerConsts.Type.BROKEN) {
+               continue; // ignore this special case
+            }
+            
+            if (Arrays.stream(EXCLUDED_TYPES).anyMatch(type::equals)) {
+               continue;
+            }
+            
             JsonableParam settings;
             StepFactory factory = SequencerConsts.getFactory(type);
             try {
