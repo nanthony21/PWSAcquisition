@@ -53,7 +53,12 @@ public class ImageIOSaver extends SaverExecutor {
     private Integer expectedFrames;
     
     static {
-        IIORegistry.getDefaultInstance().registerServiceProvider(new com.twelvemonkeys.imageio.plugins.tiff.TIFFImageWriterSpi()); // When Micro-Manager is build the dependencies are not on the Classpath. We need to explicitly register the twelvemonkeys tiff plugin with ImageIO
+      try {
+         IIORegistry.getDefaultInstance().registerServiceProvider(new com.twelvemonkeys.imageio.plugins.tiff.TIFFImageWriterSpi()); // When Micro-Manager is built the dependencies are not on the Classpath. We need to explicitly register the twelvemonkeys tiff plugin with ImageIO
+      } catch (Throwable th) {
+         System.out.println(th.toString());
+         throw new RuntimeException(th);
+      }
     }
     
     @Override

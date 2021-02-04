@@ -72,7 +72,7 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
                 } catch (RuntimeException e) {
                     Throwable exc = e.getCause();
                     if (exc instanceof Exception) {
-                        if (e.getCause() instanceof InterruptedException) {
+                        if (exc instanceof InterruptedException) {
                             status.newStatusMessage("User cancelled acquisition");
                             Globals.logger().logMsg("User cancelled acquisition");
                         } else {
