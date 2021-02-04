@@ -55,6 +55,10 @@ public class ImgCornerAutofocus {
         }
         return sharpMap;
     } 
+    
+    public double fullFocus() {
+        
+    }
 }
 
 
