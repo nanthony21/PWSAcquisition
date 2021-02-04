@@ -28,6 +28,8 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,7 +66,6 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
                 Globals.logger().setAcquisitionPath(startingDir.toPath()); //Begin saving additional log files to the acquisition directory.
                 status.setCellNum(0);
                 status.setSavePath(settings.directory);
-                TranslationStage1d zstage = Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
                 RootStep.this.saveToJson(Paths.get(settings.directory, "sequence.pwsseq").toString()); //Save the sequence to file for retrospect.
                 try {
                     status = subStepFunc.apply(status);
@@ -110,6 +111,17 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
     @Override
     public List<String> validate() {
         List<String> errs = super.validate();
+        
+        if (!Files.exists(Paths.get(this.settings.directory)) || (this.settings.directory.length()==0)) {
+            errs.add(String.format("File path not valid: %s", settings.directory));
+        }
+        if (this.settings.author.isEmpty()) {
+            errs.add("`Author` field is blank");
+        }
+        if (this.settings.project.isEmpty()) {
+            errs.add("`Project` field is blank");
+        }
+
         errs.addAll(this.validateSubfolderSteps());
         return errs;
     }

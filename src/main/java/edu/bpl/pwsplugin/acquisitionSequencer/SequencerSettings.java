@@ -21,6 +21,8 @@
 package edu.bpl.pwsplugin.acquisitionSequencer;
 
 import edu.bpl.pwsplugin.utils.JsonableParam;
+import java.sql.Timestamp;
+import java.util.Date;
 import org.micromanager.PositionList;
 
 /**
@@ -35,7 +37,16 @@ public class SequencerSettings {
 
     public static class RootStepSettings extends JsonableParam {
         public String directory = "";
+        public String author = "";
+        public String date = "";
+        public String project = "";
+        
         public String description = "";
+        
+        public RootStepSettings() {
+           super();
+           this.date = new Timestamp(new Date().getTime()).toString(); // Set the date
+        }
     }
 
     public static class PauseStepSettings extends JsonableParam {
