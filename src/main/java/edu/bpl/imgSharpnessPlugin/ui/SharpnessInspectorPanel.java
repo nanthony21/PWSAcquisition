@@ -109,7 +109,7 @@ public class SharpnessInspectorPanel extends JPanel {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     
     public SharpnessInspectorPanel() {
-        super(new MigLayout("fill"));
+        super(new MigLayout("fill, nogrid"));
         this.denoiseRadius.setColumns(3);
         
         resetButton.addActionListener((evt) -> {
@@ -160,7 +160,7 @@ public class SharpnessInspectorPanel extends JPanel {
         super.add(chartPanel, "wrap, spanx, grow, pushy");
         super.add(scanButton);
         super.add(resetButton);
-        super.add(new JLabel("Denoise Blur (px):"), "gapleft push");
+        super.add(new JLabel("Denoise Blur (px):"));
         super.add(denoiseRadius);
         super.add(plotModeBox, "wrap");
         super.add(evaluationMode);
