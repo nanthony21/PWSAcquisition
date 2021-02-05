@@ -188,12 +188,12 @@ public class SharpnessInspectorPanel extends JPanel {
                 break;
             }
         }
-        if (i!=0) {
+        if (i == tDataSeries.getItemCount()) {
+            tDataSeries.clear();
+        } else if (i > 0) {
             tDataSeries.delete(0, i);
         }
-
         this.tDataSeries.addOrUpdate(time, sharpness);
-
     }
     
     public void setZPos(double z) {

@@ -24,6 +24,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
@@ -31,6 +32,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -78,21 +80,30 @@ public class RootStepFactory extends StepFactory{
 class RootStepUI extends BuilderJPanel<SequencerSettings.RootStepSettings> {
     DirectorySelector directory = new DirectorySelector(DirectorySelector.DefaultMMFunctions.MMDataSetDirectory);
     JTextArea description = new JTextArea("Experiment description here.");
-    
+    JTextField author = new JTextField("");
+    JTextField project = new JTextField("");
+   
     public RootStepUI() {
         super(new MigLayout("insets 0 0 0 0"), SequencerSettings.RootStepSettings.class);
+        
+        
+
+        JScrollPane scroll = new JScrollPane(description);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        this.add(new JLabel("Root Folder:"), "wrap, spanx");
+        this.add(directory, "wrap, growx, spanx");
+        this.add(new JLabel("Author:"), "wrap");
+        this.add(author, "wrap, pushx, growx");
+        this.add(new JLabel("Project:"), "wrap");
+        this.add(project, "wrap, pushx, growx");
+        this.add(new JLabel("Description:"), "wrap, spanx");
+        this.add(scroll, "grow, push, spanx");
         
         description.setEditable(true);
         description.setLineWrap(true);
         description.setWrapStyleWord(true);
         description.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         
-        JScrollPane scroll = new JScrollPane(description);
-        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        this.add(new JLabel("Root Directory:"), "wrap");
-        this.add(directory, "wrap, growx");
-        this.add(new JLabel("Description:"), "wrap");
-        this.add(scroll, "grow, push, spanx");
     }
     
     @Override
@@ -101,6 +112,8 @@ class RootStepUI extends BuilderJPanel<SequencerSettings.RootStepSettings> {
         if (!settings.description.equals("")) { //No point populating an empty string, just leave the default.
             description.setText(settings.description);
         }
+        project.setText(settings.project);
+        author.setText(settings.author);
     }
     
     @Override
@@ -108,6 +121,8 @@ class RootStepUI extends BuilderJPanel<SequencerSettings.RootStepSettings> {
         SequencerSettings.RootStepSettings settings = new SequencerSettings.RootStepSettings();
         settings.directory = this.directory.getText();
         settings.description = description.getText();
+        settings.project  = project.getText();
+        settings.author = author.getText();
         return settings;
     }
 }

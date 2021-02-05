@@ -141,10 +141,14 @@ class SequencerRunningDlg extends JDialog {
                 } else {
                     Globals.mm().logs().showError("Acquisition threw a throwable that was not an exception! How?");
                 }
+            } catch (Throwable th) {
+               Globals.mm().logs().showError("Unexpected Throwable thrown from acquisition. Programming error");
+               Globals.mm().logs().logError(th);
+            } finally {
+               SwingUtilities.invokeLater(() -> {
+                   finished();
+               });
             }
-            SwingUtilities.invokeLater(() -> {
-                finished();
-            });
             return null;
         }
 
