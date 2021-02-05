@@ -50,14 +50,14 @@ public class ImgCornerAutofocus {
     public Map<Corners, Double> evaluateGradient(Image img) {
         Map<Corners, Double> sharpMap = new HashMap<>();
         for (Map.Entry<Corners, Rectangle> entry : rois_.entrySet()) {
-            double sharpness = evaluator_.evaluateGradient(img, entry.getValue());
+            double sharpness = evaluator_.evaluate(img, entry.getValue());
             sharpMap.put(entry.getKey(), sharpness);
         }
         return sharpMap;
     } 
     
     public double fullFocus() {
-        
+        return 0;
     }
 }
 

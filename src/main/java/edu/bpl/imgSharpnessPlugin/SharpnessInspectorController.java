@@ -61,6 +61,11 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
             eval_.denoiseRadius = ((Long) evt.getNewValue()).intValue();
         });
         
+        panel_.setEvaluationMethod(eval_.getMethod());
+        panel_.addPropertyChangeListener("evalMethod", (evt) -> {
+           eval_.setMethod((SharpnessEvaluator.Method) evt.getNewValue());
+        });
+        
         panel_.addScanRequestedListener((evt) -> {
             SwingWorker worker = new SwingWorker() {
                 @Override
@@ -149,7 +154,7 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
         if (r.width < 5 || r.height < 5) {
             return; //Rectangle must be larger than the kernel used to calculate gradient which is 1x3
         }
-        double grad = eval_.evaluateGradient(img, r);
+        double grad = eval_.evaluate(img, r);
         double z = img.getMetadata().getZPositionUm();
         this.panel_.setValue(z, System.currentTimeMillis(), grad);
     }
@@ -201,7 +206,7 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
                 }
                 
                 Image img = studio_.live().snap(true).get(0);
-                double sharpness = eval_.evaluateGradient(img, r);
+                double sharpness = eval_.evaluate(img, r);
                 
                 double pos = studio_.core().getPosition();
                 panel_.setValue(pos, System.currentTimeMillis(), sharpness);
@@ -237,4 +242,5 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
       Time,
       Z;
    }
+   
 }

@@ -20,6 +20,7 @@
 //
 package edu.bpl.imgSharpnessPlugin.ui;
 
+import edu.bpl.imgSharpnessPlugin.SharpnessEvaluator;
 import edu.bpl.imgSharpnessPlugin.SharpnessInspectorController;
 import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import java.awt.Color;
@@ -99,6 +100,7 @@ public class SharpnessInspectorPanel extends JPanel {
     private final List<SharpnessInspectorController.RequestScanListener> scanRequestedListeners = new ArrayList<>();
     private final ScanDialog scanDlg = new ScanDialog();
     private final JComboBox<SharpnessInspectorController.PlotMode> plotModeBox = new JComboBox<>(new DefaultComboBoxModel<>(SharpnessInspectorController.PlotMode.values()));
+    private final JComboBox<SharpnessEvaluator.Method> evaluationMode = new JComboBox<>(new DefaultComboBoxModel<>(SharpnessEvaluator.Method.values()));
     private final JFreeTextOverlay noRoiOverlay = new JFreeTextOverlay("No Roi Drawn");
     
     private final XYSeries zDataSeries = ((XYSeriesCollection) zChart.getXYPlot().getDataset()).getSeries(SERIES_NAME);
@@ -150,12 +152,18 @@ public class SharpnessInspectorPanel extends JPanel {
             this.pcs.firePropertyChange("denoiseRadius", evt.getOldValue(), evt.getNewValue());
         });
         
+        evaluationMode.addActionListener((evt) -> {
+           this.pcs.firePropertyChange("evalMethod", null, (SharpnessEvaluator.Method) evaluationMode.getSelectedItem());
+        });
+        
+        
         super.add(chartPanel, "wrap, spanx, grow, pushy");
         super.add(scanButton);
         super.add(resetButton);
         super.add(new JLabel("Denoise Blur (px):"), "gapleft push");
         super.add(denoiseRadius);
         super.add(plotModeBox, "wrap");
+        super.add(evaluationMode);
         super.add(autofocusButton);
     }
     
@@ -273,5 +281,9 @@ public class SharpnessInspectorPanel extends JPanel {
             this.add(startButton, "spanx, align center");
             this.pack();
         }
+    }
+    
+    public void setEvaluationMethod(SharpnessEvaluator.Method method) {
+        evaluationMode.setSelectedItem(method);
     }
 }
