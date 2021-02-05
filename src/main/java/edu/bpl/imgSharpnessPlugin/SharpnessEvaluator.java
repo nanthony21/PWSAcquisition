@@ -23,6 +23,7 @@ package edu.bpl.imgSharpnessPlugin;
 import boofcv.alg.filter.blur.BlurImageOps;
 import boofcv.alg.filter.derivative.DerivativeType;
 import boofcv.alg.filter.derivative.GImageDerivativeOps;
+import boofcv.alg.misc.ImageStatistics;
 import boofcv.alg.misc.PixelMath;
 import boofcv.struct.border.BorderType;
 import boofcv.struct.image.GrayF32;
@@ -83,6 +84,7 @@ public class SharpnessEvaluator {
             }
         }
         GrayF32 blurred = BlurImageOps.gaussian(im, null, -1, this.denoiseRadius, null);
+        PixelMath.divide(blurred, ImageStatistics.mean(blurred), blurred); //Normalize?
         GrayF32 dx = new GrayF32(im.width, im.height);
         GrayF32 dy = new GrayF32(im.width, im.height);
         GImageDerivativeOps.gradient(DerivativeType.THREE, blurred, dx, dy, BorderType.EXTENDED);
