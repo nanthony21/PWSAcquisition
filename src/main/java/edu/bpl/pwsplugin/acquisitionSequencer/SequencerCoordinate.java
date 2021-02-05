@@ -26,7 +26,6 @@ import com.google.gson.JsonPrimitive;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -39,8 +38,11 @@ public class SequencerCoordinate {
     //some steps also have multiple iterations which must be accounted for.
     private final List<Step> treePath = new ArrayList<>();
     private final List<Integer> iterations = new ArrayList<>();
+    private final String sequenceRunUUID;
     
-    public SequencerCoordinate() {}
+    public SequencerCoordinate(String uuid_) {
+        sequenceRunUUID = uuid_; // Save the UUID that should be specific to this run of the sequencer. Allows us to later link acquisitions with the proper sequence file during analysis.
+    }
     
     public void moveDownTree(Step newStep) {
         //Add a new node to the end of the current path
@@ -60,12 +62,13 @@ public class SequencerCoordinate {
     }
     
     public JsonObject toJson() {
-        //Conver the tree path to be just the ID numbers of each step.
+        //Convert the tree path to be just the ID numbers of each step.
         JsonObject obj1 = new JsonObject();
         JsonArray arr = new JsonArray();
         for (Step s : treePath) {
             arr.add(new JsonPrimitive(s.getID()));
         }
+        obj1.add("uuid", new JsonPrimitive(sequenceRunUUID));
         obj1.add("treeIdPath", arr);    
         obj1.add("stepIterations", (JsonArray) GsonUtils.getGson().toJsonTree(iterations));
         return obj1;
