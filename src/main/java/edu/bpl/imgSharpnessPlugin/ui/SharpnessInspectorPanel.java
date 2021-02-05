@@ -22,6 +22,7 @@ package edu.bpl.imgSharpnessPlugin.ui;
 
 import edu.bpl.imgSharpnessPlugin.SharpnessEvaluator;
 import edu.bpl.imgSharpnessPlugin.SharpnessInspectorController;
+import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import java.awt.Color;
 import java.beans.PropertyChangeListener;
@@ -45,6 +46,7 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.micromanager.Studio;
 /**
  *
  * @author nick
@@ -107,9 +109,12 @@ public class SharpnessInspectorPanel extends JPanel {
     private final XYSeries tDataSeries = ((XYSeriesCollection) tChart.getXYPlot().getDataset()).getSeries(SERIES_NAME);
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private final Studio studio_;
     
-    public SharpnessInspectorPanel() {
+    public SharpnessInspectorPanel(Studio studio) {
         super(new MigLayout("fill, nogrid"));
+        studio_ = studio;
+        
         this.denoiseRadius.setColumns(3);
         
         resetButton.addActionListener((evt) -> {
@@ -121,7 +126,7 @@ public class SharpnessInspectorPanel extends JPanel {
         });
         
         autofocusButton.addActionListener((evt) -> {
-           // TODO
+           studio_.logs().showMessage("AutoFocus not yet implemented.", this);
         });
         
         this.zChart.getXYPlot().setDomainCrosshairVisible(true); // A crosshair overlay to display the current z position.

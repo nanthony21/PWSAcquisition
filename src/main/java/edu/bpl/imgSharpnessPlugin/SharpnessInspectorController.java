@@ -46,7 +46,7 @@ import org.micromanager.internal.utils.MustCallOnEDT;
  */
 public class SharpnessInspectorController extends AbstractInspectorPanelController {
     private static boolean expanded_ = true;  //For some reason a whole new instance of this class is created each time we switch display viewers. Having this variable static allows it's value to stay unchanged between instances.
-    private final SharpnessInspectorPanel panel_ = new SharpnessInspectorPanel();
+    private final SharpnessInspectorPanel panel_;
     private DataViewer viewer_;
     private final Studio studio_;
     private boolean autoImageEvaluation_ = true;
@@ -55,6 +55,7 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
     private SharpnessInspectorController(Studio studio) {
         studio_ = studio;
         studio_.events().registerForEvents(this);
+        panel_ = new SharpnessInspectorPanel(studio_);
                 
         panel_.setDenoiseRadius(eval_.denoiseRadius);
         panel_.addPropertyChangeListener("denoiseRadius", (evt) -> {
