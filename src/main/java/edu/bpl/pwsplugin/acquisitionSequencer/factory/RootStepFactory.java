@@ -93,17 +93,17 @@ class RootStepUI extends BuilderJPanel<SequencerSettings.RootStepSettings> {
         
         JScrollPane scroll = new JScrollPane(description);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        this.add(new JLabel("Folder:"));
-        this.add(directory, "wrap, growx, spanx");
-        this.add(new JLabel("Author:"));
-        this.add(author, "wrap, pushx, growx");
-        this.add(new JLabel("Project:"));
-        this.add(project, "wrap, pushx, growx");
-        this.add(new JLabel("Cell Line:"));
-        this.add(cellLine, "wrap, pushx, growx");
-        this.add(new JLabel("Description:"), "wrap, spanx");
-        this.add(scroll, "grow, push, spanx, wrap");
-        this.add(defaultButton);
+        super.add(new JLabel("Folder:"));
+        super.add(directory, "wrap, growx, spanx");
+        super.add(new JLabel("Author:"));
+        super.add(author, "wrap, pushx, growx");
+        super.add(new JLabel("Project:"));
+        super.add(project, "wrap, pushx, growx");
+        super.add(new JLabel("Cell Line:"));
+        super.add(cellLine, "wrap, pushx, growx");
+        super.add(new JLabel("Description:"), "wrap, spanx");
+        super.add(scroll, "grow, push, spanx, wrap");
+        super.add(defaultButton);
         
         description.setEditable(true);
         description.setLineWrap(true);
