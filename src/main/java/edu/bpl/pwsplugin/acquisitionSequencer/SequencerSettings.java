@@ -38,7 +38,8 @@ public class SequencerSettings {
     public static class RootStepSettings extends JsonableParam {
         public String directory = "";
         public String author = "";
-        public String project = "";  
+        public String project = "";
+        public String cellLine = "";
         public String description = "";
 
     }

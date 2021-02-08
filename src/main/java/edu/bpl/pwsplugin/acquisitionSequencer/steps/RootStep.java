@@ -114,12 +114,15 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
             errs.add(String.format("File path not valid: %s", settings.directory));
         }
         if (this.settings.author.isEmpty()) {
-            errs.add("`Author` field is blank");
+            errs.add("`Author` field is blank.");
         }
         if (this.settings.project.isEmpty()) {
-            errs.add("`Project` field is blank");
+            errs.add("`Project` field is blank.");
         }
-
+        if (this.settings.cellLine.isEmpty()) {
+            errs.add("`Cell Line` field is blank.");
+        }
+        
         errs.addAll(this.validateSubfolderSteps());
         return errs;
     }
