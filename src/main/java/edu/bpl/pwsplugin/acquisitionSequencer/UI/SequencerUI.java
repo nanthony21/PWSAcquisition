@@ -23,13 +23,13 @@ package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 import com.google.gson.JsonIOException;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
+import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.HWConfiguration;
-import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.settings.PWSSettingsConsts;
 import edu.bpl.pwsplugin.utils.GsonUtils;
 import edu.bpl.pwsplugin.utils.JsonableParam;
@@ -78,6 +78,7 @@ public class SequencerUI extends BuilderJPanel<RootStep> implements PropertyChan
     JButton saveButton = new JButton("Save");
     JButton loadButton = new JButton("Load");
     private static final FileDialogs.FileType STEPFILETYPE = new FileDialogs.FileType("PWS Acquisition Sequence", "Sequence (.pwsseq)", "newAcqSequence.pwsseq", true, "pwsseq"); // The specification for how to save a Step to a file.
+    private static final FileDialogs.FileType LOADSTEPFILETYPE = new FileDialogs.FileType("PWS Acquisition Sequence", "Sequence (.(rt)pwsseq)", "sequence.rtpwsseq", true, "rtpwsseq", "pwsseq");
     
     public SequencerUI() {
         super(new MigLayout("fill"), RootStep.class);
@@ -134,13 +135,18 @@ public class SequencerUI extends BuilderJPanel<RootStep> implements PropertyChan
         this.loadButton.addActionListener((evt) -> {
             try {
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-                String path = FileDialogs.openFile(topFrame, "Load Sequence", STEPFILETYPE).getPath();
+                String path = FileDialogs.openFile(topFrame, "Load Sequence", LOADSTEPFILETYPE).getPath();
                 if (path == null) {
                     return; // file dialog must have been cancelled.
                 }
+     
                 RootStep rootStep;
                 try (FileReader reader = new FileReader(path)) {
-                    rootStep = GsonUtils.getGson().fromJson(reader, RootStep.class);
+                    if (path.endsWith("rtpwsseq")) { //Loading from a runtime settings file (the kind automatically saved when an acquisition is run.
+                        rootStep = (RootStep) GsonUtils.getGson().fromJson(reader, AcquisitionStatus.RuntimeSettings.class).getRootStep();
+                    } else {
+                        rootStep = GsonUtils.getGson().fromJson(reader, RootStep.class);
+                    }
                 } catch (IOException ioe) {
                     Globals.mm().logs().showError(ioe);
                     return;
