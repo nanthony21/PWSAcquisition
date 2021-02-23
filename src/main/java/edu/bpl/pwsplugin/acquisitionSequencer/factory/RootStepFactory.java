@@ -24,11 +24,11 @@ import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
-import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -78,31 +78,41 @@ public class RootStepFactory extends StepFactory{
 }
 
 class RootStepUI extends BuilderJPanel<SequencerSettings.RootStepSettings> {
+    private final String TEMPLATEDESCRIPTION = 
+            "Experiment Description: ?\n\nTemperature: ?C    Humidity: ?%\n\nIncubator Status: ?\n\nEstimated Confluency: ?%\n\nIncubationPeriod: ?hrs\n\n"
+            +"Where to find project information: ?\n\nOil Type: Type 37";
     DirectorySelector directory = new DirectorySelector(DirectorySelector.DefaultMMFunctions.MMDataSetDirectory);
-    JTextArea description = new JTextArea("Experiment description here.");
+    JTextArea description = new JTextArea(TEMPLATEDESCRIPTION);
     JTextField author = new JTextField("");
     JTextField project = new JTextField("");
+    JTextField cellLine = new JTextField("");
+    JButton defaultButton = new JButton("Reset Description");
    
     public RootStepUI() {
-        super(new MigLayout("insets 0 0 0 0"), SequencerSettings.RootStepSettings.class);
+        super(new MigLayout("insets 0 0 0 0, nogrid"), SequencerSettings.RootStepSettings.class);
         
-        
-
         JScrollPane scroll = new JScrollPane(description);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        this.add(new JLabel("Root Folder:"), "wrap, spanx");
-        this.add(directory, "wrap, growx, spanx");
-        this.add(new JLabel("Author:"), "wrap");
-        this.add(author, "wrap, pushx, growx");
-        this.add(new JLabel("Project:"), "wrap");
-        this.add(project, "wrap, pushx, growx");
-        this.add(new JLabel("Description:"), "wrap, spanx");
-        this.add(scroll, "grow, push, spanx");
+        super.add(new JLabel("Folder:"));
+        super.add(directory, "wrap, growx, spanx");
+        super.add(new JLabel("Author:"));
+        super.add(author, "wrap, pushx, growx");
+        super.add(new JLabel("Project:"));
+        super.add(project, "wrap, pushx, growx");
+        super.add(new JLabel("Cell Line:"));
+        super.add(cellLine, "wrap, pushx, growx");
+        super.add(new JLabel("Description:"), "wrap, spanx");
+        super.add(scroll, "grow, push, spanx, wrap");
+        super.add(defaultButton);
         
         description.setEditable(true);
         description.setLineWrap(true);
         description.setWrapStyleWord(true);
         description.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+        
+        defaultButton.addActionListener((evt) -> {
+            this.description.setText(this.TEMPLATEDESCRIPTION);
+        });
         
     }
     
@@ -114,6 +124,7 @@ class RootStepUI extends BuilderJPanel<SequencerSettings.RootStepSettings> {
         }
         project.setText(settings.project);
         author.setText(settings.author);
+        cellLine.setText(settings.cellLine);
     }
     
     @Override
@@ -123,6 +134,7 @@ class RootStepUI extends BuilderJPanel<SequencerSettings.RootStepSettings> {
         settings.description = description.getText();
         settings.project  = project.getText();
         settings.author = author.getText();
+        settings.cellLine = cellLine.getText();
         return settings;
     }
 }

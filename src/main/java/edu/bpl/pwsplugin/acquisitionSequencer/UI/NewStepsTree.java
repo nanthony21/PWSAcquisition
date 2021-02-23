@@ -42,7 +42,7 @@ import javax.swing.tree.TreeSelectionModel;
  */
 class NewStepsTree extends TreeDragAndDrop {
     private Step acquisitionStep;
-    private static final SequencerConsts.Type[] EXCLUDED_TYPES = {SequencerConsts.Type.EVERYN, SequencerConsts.Type.CONFIG};
+    private static final SequencerConsts.Type[] EXCLUDED_TYPES = {SequencerConsts.Type.EVERYN};
     
     public NewStepsTree() {
         super();

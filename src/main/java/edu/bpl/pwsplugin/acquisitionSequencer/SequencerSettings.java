@@ -38,15 +38,10 @@ public class SequencerSettings {
     public static class RootStepSettings extends JsonableParam {
         public String directory = "";
         public String author = "";
-        public String date = "";
         public String project = "";
-        
+        public String cellLine = "";
         public String description = "";
-        
-        public RootStepSettings() {
-           super();
-           this.date = new Timestamp(new Date().getTime()).toString(); // Set the date
-        }
+
     }
 
     public static class PauseStepSettings extends JsonableParam {

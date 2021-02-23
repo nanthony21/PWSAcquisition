@@ -25,11 +25,9 @@ import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
-import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,8 +41,8 @@ import javax.swing.tree.TreeNode;
  *
  * @author nick
  */
-public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> {
-
+public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> {   
+    
     public RootStep() {
         super(new SequencerSettings.RootStepSettings(), SequencerConsts.Type.ROOT);
     }
@@ -66,7 +64,7 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
                 Globals.logger().setAcquisitionPath(startingDir.toPath()); //Begin saving additional log files to the acquisition directory.
                 status.setCellNum(0);
                 status.setSavePath(settings.directory);
-                RootStep.this.saveToJson(Paths.get(settings.directory, "sequence.pwsseq").toString()); //Save the sequence to file for retrospect.
+                status.getRuntimeSettings().saveToJson(status.getSavePath()); //Save the runtimesettings to a JSON file.
                 try {
                     status = subStepFunc.apply(status);
                 } catch (RuntimeException e) {
@@ -102,7 +100,7 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
     protected SimFn getSimulatedFunction() {
         SimFn subStepSimFn = this.getSubStepSimFunction();
         return (Step.SimulatedStatus status) -> {
-            status.requiredPaths.add(Paths.get(status.workingDirectory, "sequence.pwsseq").toString()); //This way we get a warning about overwriting the sequence file.
+            status.requiredPaths.add(Paths.get(status.workingDirectory, "sequence.rtpwsseq").toString()); //This way we get a warning about overwriting the sequence file.
             status = subStepSimFn.apply(status);
             return status;
         };
@@ -116,12 +114,15 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
             errs.add(String.format("File path not valid: %s", settings.directory));
         }
         if (this.settings.author.isEmpty()) {
-            errs.add("`Author` field is blank");
+            errs.add("`Author` field is blank.");
         }
         if (this.settings.project.isEmpty()) {
-            errs.add("`Project` field is blank");
+            errs.add("`Project` field is blank.");
         }
-
+        if (this.settings.cellLine.isEmpty()) {
+            errs.add("`Cell Line` field is blank.");
+        }
+        
         errs.addAll(this.validateSubfolderSteps());
         return errs;
     }

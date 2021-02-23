@@ -80,7 +80,7 @@ class SequencerRunningDlg extends JDialog {
         contentPane.add(cancelButton, "cell 0 3, gapright push, align center");
         this.pack();
         this.setResizable(true);
-        acqThread = new AcquisitionThread(rootStep.getFunction(new ArrayList<>()), 1); //This starts the thread.
+        acqThread = new AcquisitionThread(rootStep, 1); //This starts the thread.
         cancelButton.addActionListener((evt) -> {
             //The acquisition engine doesn't deal well with InterruptedException. Manually cancel any acquisitions before trying to cancel the thread.
             /*if (Globals.mm().acquisitions().isAcquisitionRunning()) { #If we use MDA this will be useful, right now it's pointless.
@@ -113,8 +113,8 @@ class SequencerRunningDlg extends JDialog {
         SequencerFunction rootFunc;
         private final AcquisitionStatus startingStatus;
 
-        public AcquisitionThread(SequencerFunction rootFunc, Integer startingCellNum) {
-            this.rootFunc = rootFunc;
+        public AcquisitionThread(Step root, Integer startingCellNum) {
+            this.rootFunc = root.getFunction(new ArrayList<>());
             ThrowingFunction<AcquisitionStatus, Void> publishCallback = (status) -> {
                 this.publish(status);
                 return null;
@@ -124,7 +124,7 @@ class SequencerRunningDlg extends JDialog {
                 return nullInput;
             };
             Globals.frame().setActionButtonsEnabled(false);
-            startingStatus = new AcquisitionStatus(publishCallback, pauseCallback);
+            startingStatus = new AcquisitionStatus(publishCallback, pauseCallback, root);
             this.execute();
         }
 
