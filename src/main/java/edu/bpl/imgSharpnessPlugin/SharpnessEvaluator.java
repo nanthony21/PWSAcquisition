@@ -39,7 +39,6 @@ import org.micromanager.internal.MMStudio;
  * @author Nick Anthony
  */
 public class SharpnessEvaluator {
-    public int denoiseRadius = 3;   
     private final ImgSharpnessAnalysis anl = new ImgSharpnessAnalysis();
     public static enum Method {
       Gradient,
@@ -83,7 +82,7 @@ public class SharpnessEvaluator {
                 im.set(i, j, (int) intensity);
             }
         }
-        GrayF32 blurred = BlurImageOps.gaussian(im, null, -1, this.denoiseRadius, null);
+        GrayF32 blurred = BlurImageOps.gaussian(im, null, -1, 3, null);
         PixelMath.divide(blurred, ImageStatistics.mean(blurred), blurred); //Normalize?
         GrayF32 dx = new GrayF32(im.width, im.height);
         GrayF32 dy = new GrayF32(im.width, im.height);

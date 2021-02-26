@@ -56,11 +56,6 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
         studio_ = studio;
         studio_.events().registerForEvents(this);
         panel_ = new SharpnessInspectorPanel(studio_);
-                
-        panel_.setDenoiseRadius(eval_.denoiseRadius);
-        panel_.addPropertyChangeListener("denoiseRadius", (evt) -> {
-            eval_.denoiseRadius = ((Long) evt.getNewValue()).intValue();
-        });
         
         panel_.setEvaluationMethod(eval_.getMethod());
         panel_.addPropertyChangeListener("evalMethod", (evt) -> {

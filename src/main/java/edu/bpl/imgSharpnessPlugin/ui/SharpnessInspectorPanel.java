@@ -22,7 +22,6 @@ package edu.bpl.imgSharpnessPlugin.ui;
 
 import edu.bpl.imgSharpnessPlugin.SharpnessEvaluator;
 import edu.bpl.imgSharpnessPlugin.SharpnessInspectorController;
-import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import java.awt.Color;
 import java.beans.PropertyChangeListener;
@@ -94,7 +93,6 @@ public class SharpnessInspectorPanel extends JPanel {
         true // boolean tooltips
     );
         
-    private final JFormattedTextField denoiseRadius = new JFormattedTextField(NumberFormat.getIntegerInstance());
     private final JButton resetButton = new JButton("Reset Plot");
     private final JButton scanButton = new JButton("Scan...");
     private final JButton autofocusButton = new JButton("AutoFocus");
@@ -114,9 +112,7 @@ public class SharpnessInspectorPanel extends JPanel {
     public SharpnessInspectorPanel(Studio studio) {
         super(new MigLayout("fill, nogrid"));
         studio_ = studio;
-        
-        this.denoiseRadius.setColumns(3);
-        
+                
         resetButton.addActionListener((evt) -> {
             this.clearData();
         });
@@ -153,10 +149,6 @@ public class SharpnessInspectorPanel extends JPanel {
             this.setPlotMode(mode);         
         });
         
-        this.denoiseRadius.addPropertyChangeListener("value", (evt) -> { // relay this property change event
-            this.pcs.firePropertyChange("denoiseRadius", evt.getOldValue(), evt.getNewValue());
-        });
-        
         evaluationMode.addActionListener((evt) -> {
            this.pcs.firePropertyChange("evalMethod", null, (SharpnessEvaluator.Method) evaluationMode.getSelectedItem());
         });
@@ -166,7 +158,6 @@ public class SharpnessInspectorPanel extends JPanel {
         super.add(scanButton);
         super.add(resetButton);
         super.add(new JLabel("Denoise Blur (px):"));
-        super.add(denoiseRadius);
         super.add(plotModeBox, "wrap");
         super.add(evaluationMode);
         super.add(autofocusButton);
@@ -180,10 +171,6 @@ public class SharpnessInspectorPanel extends JPanel {
     @Override
     public void addPropertyChangeListener(String property, PropertyChangeListener listener) {
         this.pcs.addPropertyChangeListener(property, listener);
-    }
-    
-    public void setDenoiseRadius(int radius) {
-        this.denoiseRadius.setValue(radius);
     }
     
     public void setValue(double z, double time, double sharpness) {
