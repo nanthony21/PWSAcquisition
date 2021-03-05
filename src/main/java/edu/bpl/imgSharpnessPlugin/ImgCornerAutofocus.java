@@ -20,10 +20,13 @@
 //
 package edu.bpl.imgSharpnessPlugin;
 
+import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
 import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
 import org.micromanager.data.Image;
+import org.micromanager.internal.MMStudio;
 
 /**
  *
@@ -33,21 +36,21 @@ public class ImgCornerAutofocus {
     private final SharpnessEvaluator evaluator_ = new SharpnessEvaluator();
     private final Map<Corners, Rectangle> rois_ = new HashMap<>();
     
-    public static enum Corners {
-        TL,
-        TR,
-        BL,
-        BR;
-    }
     
     public ImgCornerAutofocus(int imgWidth, int imgHeight, double radius) {
         RoiManager manager = new RoiManager(imgWidth, imgHeight, radius);
+        evaluator_.setMethod(SharpnessEvaluator.Method.Redondo);
         for (Corners corner : Corners.values()) {
             rois_.put(corner, manager.getCornerRoi(corner));
         }
     }
     
     public Map<Corners, Double> evaluateGradient(Image img) {
+
+        for (Map.Entry<Corners, Rectangle> entry : rois_.entrySet()) {
+            proc.setRoi(entry.getValue());
+            ImageProcessor subProc = proc.crop();
+        }        
         Map<Corners, Double> sharpMap = new HashMap<>();
         for (Map.Entry<Corners, Rectangle> entry : rois_.entrySet()) {
             double sharpness = evaluator_.evaluate(img, entry.getValue());
@@ -58,6 +61,10 @@ public class ImgCornerAutofocus {
     
     public double fullFocus() {
         return 0;
+    }
+    
+    public void setOverlayVisible(boolean visible) {
+        
     }
 }
 
@@ -74,8 +81,6 @@ class RoiManager {
     private final int h_;
     private final double sqrt2 = 1.41421356237;
 
-
-
     public RoiManager(int imgWidth, int imgHeight, double radius) {
         w_ = imgWidth;
         h_ = imgHeight;
@@ -86,7 +91,7 @@ class RoiManager {
         radius_ = percentage;
     }
 
-    public Rectangle getCornerRoi(ImgCornerAutofocus.Corners corner) { //TODO test, test with rectangle cameras.
+    public Rectangle getCornerRoi(Corners corner) { //TODO test, test with rectangle cameras.
         Rectangle rect = new Rectangle();
         int sideLength = Math.max(w_/2, h_/2); //The whole `radius` idea relies on having the width and height of our image be equal. Since that may not be true, we just use the largest of the two dimensions.
         double radiusPixels = sqrt2 * sideLength;
@@ -118,3 +123,68 @@ class RoiManager {
     }
 }
 
+
+class CornerCombiner {
+    private final Map<Corners, Rectangle> rois_ = new HashMap<>();
+    private final int sumWidth_;
+    private final int sumHeight_;
+        
+    public CornerCombiner(RoiManager manager) {
+        for (Corners corner : Corners.values()) {
+            rois_.put(corner, manager.getCornerRoi(corner));
+        } 
+        sumWidth_ = rois_.get(Corners.TL).width + rois_.get(Corners.TR).width;
+        sumHeight_ = rois_.get(Corners.TL).height + rois_.get(Corners.BL).height;
+    }
+    
+    public ImageProcessor process(Image img) {
+        //Combine the 4 corners into a single image
+        ImageProcessor proc = MMStudio.getInstance().data().getImageJConverter().createProcessor(img);
+        ImageProcessor ipComposite = new ShortProcessor(sumWidth_, sumHeight_);
+
+        for (Map.Entry<Corners, Rectangle> entry : rois_.entrySet()) {
+            proc.setRoi(entry.getValue());
+            ImageProcessor subIm = proc.crop();
+            
+            int xOffset;
+            int yOffset;
+            switch (entry.getKey()) {
+                case TL:
+                    xOffset = 0;
+                    yOffset = 0;
+                    break;
+                case TR:
+                    xOffset = (int) Math.round(rois_.get(Corners.TL).getWidth());
+                    yOffset = 0;
+                    break;
+                case BL:
+                    xOffset = 0;
+                    yOffset = (int) Math.round(rois_.get(Corners.TL).getHeight());
+                    break;
+                case BR:
+                    xOffset = (int) Math.round(rois_.get(Corners.TL).getWidth());
+                    yOffset = (int) Math.round(rois_.get(Corners.TL).getHeight());
+                    break;
+                default:
+                    throw new RuntimeException("Programming Error!!!!");
+            }
+            copyTo(subIm, ipComposite, xOffset, yOffset);
+        }
+        return ipComposite;
+    }
+    
+    private static void copyTo(ImageProcessor from, ImageProcessor to, int xOffset, int yOffset) {
+        for (int i=0; i<from.getWidth(); i++) {
+            for (int j=0; j<from.getHeight(); j++) {
+                to.putPixelValue(i+xOffset, j+yOffset, from.getPixelValue(i, j));
+            }
+        }
+    }
+}
+
+enum Corners {
+    TL,
+    TR,
+    BL,
+    BR;
+}
