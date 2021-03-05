@@ -42,7 +42,7 @@ import org.micromanager.internal.utils.MustCallOnEDT;
 
 /**
  *
- * @author N2-LiveCell
+ * @author Nick Anthony
  */
 public class SharpnessInspectorController extends AbstractInspectorPanelController {
     private static boolean expanded_ = true;  //For some reason a whole new instance of this class is created each time we switch display viewers. Having this variable static allows it's value to stay unchanged between instances.
@@ -55,7 +55,7 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
     private SharpnessInspectorController(Studio studio) {
         studio_ = studio;
         studio_.events().registerForEvents(this);
-        panel_ = new SharpnessInspectorPanel(studio_);
+        panel_ = new SharpnessInspectorPanel();
         
         panel_.setEvaluationMethod(eval_.getMethod());
         panel_.addPropertyChangeListener("evalMethod", (evt) -> {
@@ -187,7 +187,6 @@ public class SharpnessInspectorController extends AbstractInspectorPanelControll
                 r.setSize(r.width, 5);
             }
         }
-        //TODO we should use the PWS Plugin ZStage device not the default one. How is that going to work?
         try {
             long numSteps = Math.round(rangeUm / intervalUm);
             double startingPos = studio_.core().getPosition();

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////
-//PROJECT:       PWS Plugin
+//PROJECT:       ImgSharpnessPlugin
 //
 //-----------------------------------------------------------------------------
 //
@@ -30,7 +30,7 @@ import org.scijava.plugin.Plugin;
 
 /**
  *
- * @author N2-LiveCell
+ * @author Nick Anthony
  */
 @Plugin(type = InspectorPanelPlugin.class,
     priority = Priority.VERY_HIGH,

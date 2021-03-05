@@ -31,7 +31,7 @@ import org.jfree.chart.panel.Overlay;
 
 
 /**
- *
+ * A Text overlay for a JFreeChart
  * @author nick
  */
 class JFreeTextOverlay extends AbstractOverlay implements Overlay {

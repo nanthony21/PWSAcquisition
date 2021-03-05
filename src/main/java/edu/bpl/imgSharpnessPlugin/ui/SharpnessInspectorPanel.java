@@ -33,7 +33,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -95,7 +94,6 @@ public class SharpnessInspectorPanel extends JPanel {
         
     private final JButton resetButton = new JButton("Reset Plot");
     private final JButton scanButton = new JButton("Scan...");
-    private final JButton autofocusButton = new JButton("AutoFocus");
 
     private final List<SharpnessInspectorController.RequestScanListener> scanRequestedListeners = new ArrayList<>();
     private final ScanDialog scanDlg = new ScanDialog();
@@ -107,11 +105,9 @@ public class SharpnessInspectorPanel extends JPanel {
     private final XYSeries tDataSeries = ((XYSeriesCollection) tChart.getXYPlot().getDataset()).getSeries(SERIES_NAME);
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    private final Studio studio_;
     
-    public SharpnessInspectorPanel(Studio studio) {
+    public SharpnessInspectorPanel() {
         super(new MigLayout("fill, nogrid"));
-        studio_ = studio;
                 
         resetButton.addActionListener((evt) -> {
             this.clearData();
@@ -119,10 +115,6 @@ public class SharpnessInspectorPanel extends JPanel {
         
         scanButton.addActionListener((evt) -> {
             this.scanDlg.setVisible(true);
-        });
-        
-        autofocusButton.addActionListener((evt) -> {
-           studio_.logs().showMessage("AutoFocus not yet implemented.", this);
         });
         
         this.zChart.getXYPlot().setDomainCrosshairVisible(true); // A crosshair overlay to display the current z position.
@@ -160,7 +152,6 @@ public class SharpnessInspectorPanel extends JPanel {
         super.add(new JLabel("Denoise Blur (px):"));
         super.add(plotModeBox, "wrap");
         super.add(evaluationMode);
-        super.add(autofocusButton);
     }
     
     @Override
