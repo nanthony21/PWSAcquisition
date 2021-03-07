@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutionException;
 import org.micromanager.data.Image;
 
 /**
- *
+ * Basic interface that must be implemented for a class to act as an image saver.
  * @author nick
  */
 public interface ImageSaver {

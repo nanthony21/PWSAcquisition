@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 import mmcorej.org.json.JSONException;
-import mmcorej.org.json.JSONObject;
 import org.micromanager.data.Image;
 import org.micromanager.internal.utils.ReportingUtils;
 import org.micromanager.data.Datastore;

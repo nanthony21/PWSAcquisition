@@ -28,7 +28,7 @@ import org.micromanager.Studio;
 import org.scijava.plugin.Plugin;
 
 /**
- *
+ * Simply changess the image shown when the software starts up.
  * @author nick
  */
 @Plugin(type = IntroPlugin.class)
