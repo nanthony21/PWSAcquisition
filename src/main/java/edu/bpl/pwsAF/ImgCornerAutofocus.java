@@ -18,8 +18,9 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
-package edu.bpl.imgSharpnessPlugin;
+package edu.bpl.pwsAF;
 
+import edu.bpl.imgSharpnessPlugin.SharpnessEvaluator;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 import java.awt.Rectangle;
