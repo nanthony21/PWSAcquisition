@@ -51,6 +51,7 @@ public class SoftwareAutofocus extends EndpointStep<SequencerSettings.SoftwareAu
                 double score = af.getCurrentFocusScore();
                 status.newStatusMessage(String.format("Autofocus terminated at Z=%.2f with score=%.2f", z, score));
                 return status;
+                //TODO add compatibility with our custom zStages
             }
         };
     }

@@ -28,19 +28,22 @@ import edu.bpl.pwsplugin.acquisitionSequencer.factory.RootStepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStep;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
+import java.awt.Toolkit;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JTabbedPane;
 import net.miginfocom.swing.MigLayout;
-import org.micromanager.internal.utils.MMFrame;
+import org.micromanager.internal.MMStudio;
 import org.micromanager.internal.utils.ReportingUtils;
+import org.micromanager.internal.utils.WindowPositioning;
 
 /**
  *
  * @author Nick Anthony
  */
-public class PluginFrame extends MMFrame {
+public class PluginFrame extends JFrame {
     private final JTabbedPane tabs = new JTabbedPane();
     private final AcquisitionPanel acqPanel = new AcquisitionPanel();
     private final SequencerUI sequencePanel = new SequencerUI();
@@ -49,7 +52,11 @@ public class PluginFrame extends MMFrame {
 
     public PluginFrame() {
         super("PWS Plugin");
-        this.loadAndRestorePosition(100, 100);
+        super.setIconImage(Toolkit.getDefaultToolkit().getImage(
+              MMStudio.class.getResource(
+                      "/org/micromanager/icons/microscope.gif")));
+        
+        WindowPositioning.setUpBoundsMemory(this, PluginFrame.class, null);
         this.setLayout(new MigLayout("insets 2 2 2 2"));
         this.setTitle(String.format("%s %s", PWSPlugin.menuName, PWSPlugin.versionNumber));
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
