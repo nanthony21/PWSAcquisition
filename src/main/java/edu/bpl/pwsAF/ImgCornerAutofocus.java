@@ -19,8 +19,8 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 package edu.bpl.pwsAF;
-
-import edu.bpl.imgSharpnessPlugin.SharpnessEvaluator;
+//import org.micromanager.autofocus.internal.oughtafocus.ImgSharpnessAnalysis;
+import org.micromanager.imageprocessing.ImgSharpnessAnalysis
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 import java.awt.Rectangle;
@@ -34,18 +34,19 @@ import org.micromanager.internal.MMStudio;
  * @author nick
  */
 public class ImgCornerAutofocus {
-    private final SharpnessEvaluator evaluator_ = new SharpnessEvaluator();
+    private final org.micromanager.autofocus.internal.oughtafocus.ImgSharpnessAnalysis evaluator_ = new ImgSharpnessAnalysis();
     private final Map<Corners, Rectangle> rois_ = new HashMap<>();
     
     
     public ImgCornerAutofocus(int imgWidth, int imgHeight, double radius) {
         RoiManager manager = new RoiManager(imgWidth, imgHeight, radius);
-        evaluator_.setMethod(SharpnessEvaluator.Method.Redondo);
+        evaluator_.setComputationMethod(ImgSharpnessAnalysis.Method.Redondo);
         for (Corners corner : Corners.values()) {
             rois_.put(corner, manager.getCornerRoi(corner));
         }
     }
     
+    /*
     public Map<Corners, Double> evaluateGradient(Image img) {
 
         for (Map.Entry<Corners, Rectangle> entry : rois_.entrySet()) {
@@ -59,6 +60,7 @@ public class ImgCornerAutofocus {
         }
         return sharpMap;
     } 
+    */
     
     public double fullFocus() {
         return 0;
