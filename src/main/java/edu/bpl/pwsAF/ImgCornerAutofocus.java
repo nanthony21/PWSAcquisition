@@ -20,7 +20,7 @@
 //
 package edu.bpl.pwsAF;
 //import org.micromanager.autofocus.internal.oughtafocus.ImgSharpnessAnalysis;
-import org.micromanager.imageprocessing.ImgSharpnessAnalysis
+import org.micromanager.imageprocessing.ImgSharpnessAnalysis;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 import java.awt.Rectangle;
@@ -34,7 +34,7 @@ import org.micromanager.internal.MMStudio;
  * @author nick
  */
 public class ImgCornerAutofocus {
-    private final org.micromanager.autofocus.internal.oughtafocus.ImgSharpnessAnalysis evaluator_ = new ImgSharpnessAnalysis();
+    private final ImgSharpnessAnalysis evaluator_ = new ImgSharpnessAnalysis();
     private final Map<Corners, Rectangle> rois_ = new HashMap<>();
     
     
