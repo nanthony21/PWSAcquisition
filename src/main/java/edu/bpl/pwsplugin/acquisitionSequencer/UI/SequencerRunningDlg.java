@@ -50,7 +50,7 @@ import javax.swing.tree.TreePath;
 import net.miginfocom.swing.MigLayout;
 
 /**
- *
+ * This is the window that appears while the sequence is running. Displays log information and allows pausing/cancelling.
  * @author nick
  */
 class SequencerRunningDlg extends JDialog {
@@ -105,7 +105,7 @@ class SequencerRunningDlg extends JDialog {
         this.statusMsg.setText(String.join("\n", status.getStatusMessage()));
         Step[] treePath = status.coords().getTreePath();
         if (treePath.length > 0) { //The only time this shouldn't be true is when we're at the root step, the beginning or the end.
-            this.tree.updateCurrentCoords(status.coords());
+            this.tree.updateCurrentCoords(status.coords().copy()); //We get a copy of the coords since the original can change from another thread.
         }
     }
 
@@ -171,7 +171,10 @@ class SequencerRunningDlg extends JDialog {
     } 
 }
 
-
+/**
+ * A tree view that shows the current position in the sequence.
+ * @author LCPWS3
+ */
 class DisplayTree extends JPanel {
     TreeDragAndDrop tree = new TreeDragAndDrop(); //This tree is used to display the current status of the sequence, it is not user interactive.
     DisabledPanel disPan = new DisabledPanel(tree, new Color(1, 1, 1, 1)); // Disabled panel with a transparent glass pane to block interaction with the tree.
@@ -187,12 +190,12 @@ class DisplayTree extends JPanel {
         
         ((DefaultTreeModel) tree.tree().getModel()).setRoot(rootStep);
         tree.expandTree();
-        tree.tree().setCellRenderer(new TreeRenderers.SequenceRunningTreeRenderer() );
+        tree.tree().setCellRenderer(new TreeRenderers.SequenceRunningTreeRenderer());
     }
     
     public void updateCurrentCoords(SequencerCoordinate coord) {
-        tree.tree().setSelectionPath(new TreePath(coord.getTreePath()));
+        tree.tree().setSelectionPath(new TreePath(coord.getTreePath())); //Set the step that is currently running as selected. This should cause it to become highlighted.
         ((DefaultTreeModel) tree.tree().getModel()).nodeStructureChanged(rootStep); //This re-renders the tree which is needed for iteration numbers of each step to be up to date.
-        tree.expandTree(); //calling `nodeStructureChanged` causes everything to collapse.
+        tree.expandTree(); //calling `nodeStructureChanged` causes everything to collapse, we don't want that.
     }
 }

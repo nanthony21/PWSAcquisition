@@ -110,6 +110,9 @@ public class TreeRenderers {
         }
     }
     
+    /**
+     * This renderer sets the specifics of how the tree appears when we are showing the current status of running sequence.
+     */
     public static class SequenceRunningTreeRenderer extends SequenceTreeRenderer {
         
         public SequenceRunningTreeRenderer() {
@@ -119,17 +122,15 @@ public class TreeRenderers {
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean isLeaf, int row, boolean focused) {
             JLabel comp = (JLabel) super.getTreeCellRendererComponent(tree, value, selected, expanded, isLeaf, row, focused);
-            if (value instanceof IteratingContainerStep) {
-              
+            
+            if (value instanceof IteratingContainerStep) { //For a step which acts as a for-loop (IteratingContainerStep) add an indicator of which iteration we are on to the text.
                 String initText = comp.getText();
                 int currentIteration = ((IteratingContainerStep) value).getCurrentIteration();
                 int totalIterations = ((IteratingContainerStep) value).getTotalIterations();
-                initText = String.format("%s (%d/%d)", initText, currentIteration + 1, totalIterations);
+                initText = String.format("%s (%d/%d)", initText, currentIteration, totalIterations);
                 comp.setText(initText);
-                return comp;
-            } else {
-                return comp; //Just return the default rendered componenent.
             }
+            return comp;
         }
     }
 }

@@ -35,15 +35,35 @@ import java.util.List;
 public class SequencerCoordinate {
     //Uniquely identifies the location in the tree structure of steps used by the sequencer.
     //In addition to a `TreePath` containing the IDs for each step back up to the root
-    //some steps also have multiple iterations which must be accounted for.
-    private final List<Step> treePath = new ArrayList<>();
-    private final List<Integer> iterations = new ArrayList<>();
+    //some steps also have multiple iterations which must be accounted for. Warning. this is mutable.
+    private final List<Step> treePath ;
+    private final List<Integer> iterations;
     private final String sequenceRunUUID;
     
+    /**
+     * Public constructor to create a new object.
+     * @param uuid_ 
+     */
     public SequencerCoordinate(String uuid_) {
-        sequenceRunUUID = uuid_; // Save the UUID that should be specific to this run of the sequencer. Allows us to later link acquisitions with the proper sequence file during analysis.
+        this(uuid_, new ArrayList<>(), new ArrayList<>());
     }
     
+    /**
+     * Used to allow copying to work.
+     * @param uuid_
+     * @param treePath_
+     * @param iterations_ 
+     */
+    private SequencerCoordinate(String uuid_, List<Step> treePath_, List<Integer> iterations_) {
+        sequenceRunUUID = uuid_; // Save the UUID that should be specific to this run of the sequencer. Allows us to later link acquisitions with the proper sequence file during analysis.
+        iterations = iterations_;
+        treePath = treePath_;
+    }
+    
+    public SequencerCoordinate copy() {
+        return new SequencerCoordinate(this.sequenceRunUUID, new ArrayList<>(this.treePath), new ArrayList<>(this.iterations));
+    }
+
     public void moveDownTree(Step newStep) {
         //Add a new node to the end of the current path
         this.treePath.add(newStep);
@@ -73,6 +93,7 @@ public class SequencerCoordinate {
         obj1.add("stepIterations", (JsonArray) GsonUtils.getGson().toJsonTree(iterations));
         return obj1;
     }
+    
     
     public Step[] getTreePath() {
         return treePath.toArray(new Step[treePath.size()]);
