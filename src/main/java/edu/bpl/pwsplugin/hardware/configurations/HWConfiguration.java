@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 
 public class HWConfiguration {
@@ -21,14 +22,19 @@ public class HWConfiguration {
     public HWConfiguration(HWConfigurationSettings settings) throws MMDeviceException {
         this.settings = settings;
         imConfigs = new HashMap<>();
+        List<String> errs = new ArrayList<>();
         for (int i=0; i < settings.configs.size(); i++) {
             ImagingConfigurationSettings s = settings.configs.get(i);
             try {
                 imConfigs.put(s.name, ImagingConfiguration.getInstance(s));
             } catch (MMDeviceException e) {
                 Globals.logger().logError(e);
-                Globals.mm().logs().showMessage(String.format("Failed to initialize imaging configuration %s. See log.", s.name));
+                errs.add(s.name);
             }
+        }
+        if (errs.size() > 0) {
+            String configNames = errs.stream().collect(Collectors.joining(", "));
+            Globals.mm().logs().showMessage(String.format("Failed to initialize the following imaging configurations: %s", configNames));
         }
         if (imConfigs.size() > 0) {
             ImagingConfiguration conf = Iterables.get(imConfigs.values(), 0);
