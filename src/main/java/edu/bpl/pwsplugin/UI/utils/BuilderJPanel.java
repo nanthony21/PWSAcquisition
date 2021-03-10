@@ -5,8 +5,9 @@ import java.awt.LayoutManager;
 import javax.swing.JPanel;
 
 /**
- *
+ * 
  * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @param <T> The class of the `settings` object.
  */
 public abstract class BuilderJPanel<T> extends JPanel{
     //Base class for UI componenets that can `build` and be populated from an instance

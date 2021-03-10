@@ -23,8 +23,9 @@ package edu.bpl.pwsplugin.UI.utils;
 import java.awt.LayoutManager;
 
 /**
- *
+ * 
  * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @param <T> The class of the object that hold settings. Must be an iterable.
  */
 public abstract class ListBuilderJPanel<T extends Iterable> extends BuilderJPanel<T>{
     //A base class for a UI component representing a list of UIbuildable objects. Right now

@@ -41,20 +41,22 @@ import net.miginfocom.swing.MigLayout;
 import org.micromanager.internal.utils.ReportingUtils;
 
 /**
- *
+ * 
  * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @param <T> The class of the object that hold settings. Must be an list of `jsonableparam`s.
+ * @param <S> The subclass of `JsonableParam` that holds settings for each item of the list.
  */
 public class ListCardUI<T extends List<S>, S extends JsonableParam> extends ListBuilderJPanel<T> implements ItemListener {
     //A UI component that allows the user to flip through multiple UI componenent representing UIBuildable classes.
     private JComboBox<String> combo = new JComboBox<String>();
     private JPanel cardPanel = new JPanel(new CardLayout());
     JButton addButton = new JButton(" "); //Having a space here keeps the button from collapsing down in size.
-    JButton remButton = new JButton(" ");
+    JButton removeButton = new JButton(" ");
     JButton moreButton = new JButton("More...");
     JPopupMenu moreMenu = new JPopupMenu("More Menu");
     JMenuItem copyItem = new JMenuItem("Duplicate");
     JMenuItem clearItem = new JMenuItem("Clear All");
-    private List<BuilderJPanel<S>> components = new ArrayList<BuilderJPanel<S>>();
+    private List<BuilderJPanel<S>> components = new ArrayList<>();
     private S[] defaultStepTypes = null;
     private ActionListener action;
      
@@ -63,11 +65,11 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         super(new MigLayout("insets 0"), clazz);
         
         addButton.setIcon(new ImageIcon(getClass().getResource("/org/micromanager/icons/plus.png")));
-        remButton.setIcon(new ImageIcon(getClass().getResource("/org/micromanager/icons/minus.png")));       
+        removeButton.setIcon(new ImageIcon(getClass().getResource("/org/micromanager/icons/minus.png")));       
         this.addButton.setToolTipText("Add new item");
-        this.remButton.setToolTipText("Remove current item");
+        this.removeButton.setToolTipText("Remove current item");
         addButton.setIconTextGap(0);
-        remButton.setIconTextGap(0);
+        removeButton.setIconTextGap(0);
    
         this.defaultStepTypes = defaultStepTypes;
         
@@ -76,7 +78,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         super.add(new JLabel(msg), "gapleft push");
         super.add(combo);
         super.add(addButton);
-        super.add(remButton);
+        super.add(removeButton);
         super.add(moreButton, "wrap");
         super.add(cardPanel, "span, wrap");
         
@@ -87,7 +89,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         }
         
         copyItem.setEnabled(false);
-        remButton.setEnabled(false);
+        removeButton.setEnabled(false);
         
         moreMenu.add(copyItem);
         moreMenu.add(clearItem);
@@ -123,7 +125,7 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
             }
         });
         
-        remButton.addActionListener(
+        removeButton.addActionListener(
             (e)->{try{
                 this.removeStepAction();
             }catch(BuilderPanelException exc){
@@ -163,10 +165,10 @@ public class ListCardUI<T extends List<S>, S extends JsonableParam> extends List
         }
         if (t.size()>0) {
             this.copyItem.setEnabled(true);
-            this.remButton.setEnabled(true);
+            this.removeButton.setEnabled(true);
         } else {
             this.copyItem.setEnabled(false);
-            this.remButton.setEnabled(false);
+            this.removeButton.setEnabled(false);
             JLabel l = new JLabel("Empty");
             Font font = new Font("Serif", Font.BOLD, 18);
             l.setFont(font);

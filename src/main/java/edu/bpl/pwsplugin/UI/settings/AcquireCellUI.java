@@ -98,9 +98,9 @@ class SimpleAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements 
     private final CheckBoxPanel pwsCBPanel = new CheckBoxPanel(pwsSettings, "PWS");
     private final CheckBoxPanel dynCBPanel = new CheckBoxPanel(dynSettings, "Dynamics");
     private final JButton systemDefault = new JButton("Use Defaults");
-    private final ListCardUI<List<FluorSettings>, FluorSettings> fluorSettings= new ListCardUI(ArrayList.class, "", new FluorSettings());
+    private final ListCardUI<List<FluorSettings>, FluorSettings> fluorSettings = new ListCardUI(ArrayList.class, "", new FluorSettings());
     private final CheckBoxPanel fluorCBPanel = new CheckBoxPanel(fluorSettings, "Fluorescence");
-    private final AdvancedAcquireCellUI advancedUI;
+    private final AdvancedAcquireCellUI advancedUI;  // This reference to an `advancedUI` is used to get the values for settings that aren't displayed in this ui.
 
     
     public SimpleAcquireCellUI(AdvancedAcquireCellUI advanceUI) {
@@ -128,10 +128,10 @@ class SimpleAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements 
         dynSettings.setBorder(BorderFactory.createEtchedBorder());
         fluorSettings.setBorder(BorderFactory.createEtchedBorder());
         
-        this.add(pwsCBPanel, "wrap, spanx");
-        this.add(dynCBPanel, "wrap, spanx");
-        this.add(fluorCBPanel, "spanx");
-        this.add(systemDefault, "wrap");
+        super.add(pwsCBPanel, "wrap, spanx");
+        super.add(dynCBPanel, "wrap, spanx");
+        super.add(fluorCBPanel, "spanx");
+        super.add(systemDefault, "wrap");
         
         Globals.addPropertyChangeListener(this);
         this.setConfigNames(new ArrayList()); //We can't yet reference Globals on initialization. at least initialize an empty state. the property change listener should get fired afterward.
@@ -153,8 +153,9 @@ class SimpleAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements 
     
     @Override
     public AcquireCellSettings build() throws BuilderPanelException {
-        AcquireCellSettings settings = advancedUI.build();
+        AcquireCellSettings settings = advancedUI.build(); // get the full set of settings from the advanced UI.
 
+        //Now override the advanced settings with what was set in this UI.
         settings.pwsEnabled = this.pwsCBPanel.isSelected();
         settings.pwsSettings.exposure = this.pwsSettings.getExposure();
 

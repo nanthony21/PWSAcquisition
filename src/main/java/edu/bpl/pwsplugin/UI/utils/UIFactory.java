@@ -21,7 +21,7 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 import org.micromanager.internal.utils.ReportingUtils;
 
 /**
- *
+ * This UI is responsible for returning the appropriate `BuilderJPanel` for each type of settings (`JsonableParam`)
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class UIFactory {
