@@ -96,6 +96,7 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
     private void configureFilterCombo(String configGroup) {  
         if (configGroup != null) {
             filterCombo.setEnabled(true);
+            String currentSetting = (String) filterCombo.getSelectedItem();
             String[] filters;
             try { // Allow the panel to show up even if we don't have our connection to micromanager working (useful for testing).
                 filters = Globals.core().getAvailableConfigs(configGroup).toArray();
@@ -103,6 +104,7 @@ public class FluorPanel extends BuilderJPanel<FluorSettings>{
                 filters = new String[] {"None!"};
             }
             filterCombo.setModel(new DefaultComboBoxModel<>(filters));
+            filterCombo.setSelectedItem(currentSetting); // Try to set the filter to what it was previously set to. If the old setting isn't present in the new model this will do nothing.
         } else { //Manual filter switching, disable control
             filterCombo.setModel(new DefaultComboBoxModel<>());
             filterCombo.setEnabled(false);
