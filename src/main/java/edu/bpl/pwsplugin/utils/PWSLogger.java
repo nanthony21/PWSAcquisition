@@ -48,7 +48,7 @@ public class PWSLogger {
     
     public PWSLogger(Studio studio) throws Exception {
         String homeDir = System.getProperty("user.home");
-        Path logDir = Paths.get(homeDir, "PWSAcquisitionLogs");
+        Path logDir = Paths.get(homeDir, "PwspyApps", "PWSAcquisitionLogs");
         if (!logDir.toFile().exists()) {
             logDir.toFile().mkdirs();
         }
