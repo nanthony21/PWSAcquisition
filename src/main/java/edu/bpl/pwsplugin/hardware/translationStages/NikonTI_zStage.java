@@ -165,6 +165,7 @@ public class NikonTI_zStage extends TranslationStage1d {
     
     @Override
     public void setPosRelativeUm(double um) throws MMDeviceException, InterruptedException {
+        if (um == 0.0) { return; } // No need to go through calibration and all that if no move is actually requested.
         Globals.logger().logDebug(String.format("Nikon Move Relative Begin: %.2f", um));
         try {
             double initialPos = this.getPosUm();
