@@ -114,6 +114,7 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
       
     @Override
     protected void _acquireImages(ImageSaver saver, MetadataBase metadata) throws Exception {
+        Globals.logger().logDebug(String.format("PWS Acquisition beginning. %s", this.settings.toJsonString()));
         long configStartTime = System.currentTimeMillis();
         album_.clear();
         int initialWv = 550;
@@ -193,6 +194,7 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
             //saver.awaitThreadTermination();
         } finally {
             conf.tunableFilter().setWavelength(initialWv); //Set back to initial wavelength
+            Globals.logger().logDebug("PWS Acquisition ending.");
         }
     }
     

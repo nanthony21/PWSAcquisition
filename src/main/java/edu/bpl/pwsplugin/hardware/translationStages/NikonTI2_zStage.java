@@ -44,6 +44,7 @@ public class NikonTI2_zStage extends TranslationStage1d {
             
     public NikonTI2_zStage(TranslationStage1dSettings settings) throws MMDeviceException, IDException {
         super(settings);
+        Globals.logger().logDebug("Creating new instance of NikonTI2");
         try {
             String nikonHub = null;
             for (String hubLabel : Globals.core().getLoadedDevicesOfType(DeviceType.HubDevice)) {

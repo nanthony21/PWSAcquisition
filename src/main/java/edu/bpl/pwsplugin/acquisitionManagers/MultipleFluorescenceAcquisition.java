@@ -117,6 +117,7 @@ class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings>
 
     @Override
     protected void runSingleImageAcquisition(ImageSaver imSaver, MetadataBase metadata) throws Exception {
+        Globals.logger().logDebug(String.format("Multiple Fluorescence Acquisition beginning. %s", this.settings.toJsonString()));
         boolean spectralMode = imConf.hasTunableFilter();
         String fluorConfigGroup = imConf.getFluorescenceConfigGroup();
         if (fluorConfigGroup != null) {
@@ -147,6 +148,7 @@ class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings>
             imSaver.addImage(img);
         } finally {
             imConf.zStage().setPosRelativeUm(-settings.focusOffset);
+            Globals.logger().logDebug("Multiple Fluorescence Acquisition ending.");
         }
     }
 }

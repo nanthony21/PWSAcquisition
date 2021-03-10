@@ -97,6 +97,7 @@ class FluorescenceAcquisition extends SingleAcquisitionBase<FluorSettings>{
     
     @Override
     protected void _acquireImages(ImageSaver imSaver, MetadataBase metadata) throws Exception {
+        Globals.logger().logDebug(String.format("Fluorescence Acquisition beginning. %s", this.settings.toJsonString()));
         String initialFilter = ""; 
         String fluorConfGroup = imConf.getFluorescenceConfigGroup(); //This will be null if manual filter control is required.
         boolean spectralMode = imConf.hasTunableFilter();
@@ -137,6 +138,7 @@ class FluorescenceAcquisition extends SingleAcquisitionBase<FluorSettings>{
             } else {
                 ReportingUtils.showMessage("Return to the PWS filter block and click `OK`.");
             }
+            Globals.logger().logDebug("Fluorescence Acquisition ending.");
         }
     }
 }

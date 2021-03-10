@@ -76,6 +76,7 @@ class DynamicsAcquisition extends SingleAcquisitionBase<DynSettings>{
     
     @Override
     public void _acquireImages(ImageSaver imSaver, MetadataBase metadata) throws Exception {
+        Globals.logger().logDebug("Dynamics Acquisition beginning.");
         ImagingConfiguration conf = Globals.getHardwareConfiguration().getImagingConfigurationByName(this.settings.imConfigName);
         Camera camera = conf.camera();
         TunableFilter tunableFilter = conf.tunableFilter();
@@ -106,6 +107,7 @@ class DynamicsAcquisition extends SingleAcquisitionBase<DynSettings>{
         DynamicsMetadata dmd = new DynamicsMetadata(metadata, Double.valueOf(wavelength_), times, camera.getExposure());
 
         imSaver.setMetadata(dmd);
+        Globals.logger().logDebug("Dynamics Acquisition ending.");
         //imSaver.awaitThreadTermination();
     }
     

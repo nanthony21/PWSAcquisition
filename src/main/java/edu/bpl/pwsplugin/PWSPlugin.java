@@ -24,7 +24,7 @@ TODO
 1:
 kurios still goes one item too far in sequencing. Only when external triggering isn't used. Device adapter: starts at 502 instead of 500
 Add an optional timeout to pause step  so it can be used as a delay.
-
+Multiple instances of the ZStage are created for each configuration.
 
 3:
 comments and tooltips. Fix "external TTL" tooltip
@@ -34,7 +34,6 @@ comments and tooltips. Fix "external TTL" tooltip
 Transmission imaging
 
 Nikon:
-    Sometimes TI2 PFS becomes disabled during calibration.
 
 Dialogs:
     Autofocus: open timed dialog for if retry should happen
