@@ -29,6 +29,8 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
@@ -163,7 +165,11 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
     
     @Override
     public void mouseExited(MouseEvent e) { //The focus listeners still sometimes miss an event where we need to save settings.
-        saveSettingsOfLastNode();
+        Rectangle r = e.getComponent().getBounds(); 
+        Point p = e.getPoint(); // This point is relative to the component origin.
+        if (p.x < 0 || p.x >= r.width ||  p.y < 0 || p.y >= r.height) { // The mouse exited event fires even if the mouse is actually on a subcomponent of this one. Only fire if the mouse is outside the component.
+            saveSettingsOfLastNode();        
+        }
     }
     
     //Unused methods required by mouselistener interface
