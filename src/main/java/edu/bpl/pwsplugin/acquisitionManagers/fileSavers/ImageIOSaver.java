@@ -91,7 +91,7 @@ public class ImageIOSaver extends SaverExecutor {
                 for (int i=0; i<this.expectedFrames; i++) {
                     Image mmImg = this.getImageQueue().poll(5, TimeUnit.SECONDS);
                     if (mmImg == null) { 
-                        throw new TimeoutException(String.format("ImageIOSaver timed out on receiving image %d of %d", i+1, this.expectedFrames));
+                        throw new TimeoutException(String.format("ImageIOSaver timed out on receiving image %d of %d. %s", i+1, this.expectedFrames, this.fileName));
                     }
                     IIOImage image = this.MM2IIO(mmImg);
                     writer.writeToSequence(image, param);
