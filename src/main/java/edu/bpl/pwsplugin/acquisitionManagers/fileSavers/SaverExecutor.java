@@ -85,28 +85,37 @@ public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
         initialized = true;
         
         Future future = ex.submit(this);
-        threadFutures.add(future); //We used to allow multiple saving threads at once, this led to terrible write speed. Better to feed all tasks to a single thread.
         
+        synchronized (threadFutures) { // Make sure this list is only modified by one thread at a time.
+            threadFutures.add(future); //We used to allow multiple saving threads at once, this led to terrible write speed. Better to feed all tasks to a single thread.     
+        }
     }
     
+    /**
+     * This will be called by the timer. On the AWT_eventqueue thread.
+     * @throws InterruptedException
+     * @throws ExecutionException 
+     */
     private static void processRunningFutures() throws InterruptedException, ExecutionException {
-        List<Future<Void>> newFutures = new ArrayList<>(); //Holds all futures that are still alive on this iteration.
-        for (Future fut : threadFutures) { //Check if futures are done
-            if (fut.isDone()) {
-                try {
-                    fut.get(); //If an exception was thrown in the thread this will cause it to be thrown here as an ExecutionException.
-                } catch (ExecutionException ee) {
-                    if (ee.getCause() instanceof Exception) {
-                        Globals.mm().logs().showError((Exception) ee.getCause());
-                    } else {
-                        throw new RuntimeErrorException((Error) ee.getCause());
+        synchronized (threadFutures) { // Make sure no other thread modifies the list while we're working with it.
+            Iterator<Future<Void>> iter = threadFutures.iterator();
+            while (iter.hasNext()) {  // Since we are modifying the list as we loop through it we need to use iterator rather than a normal for-loop.
+                Future fut = iter.next();
+                if (fut.isDone()) {
+                    try {
+                        fut.get(); //If an exception was thrown in the thread this will cause it to be thrown here as an ExecutionException.
+                    } catch (ExecutionException ee) {
+                        if (ee.getCause() instanceof Exception) {
+                            Globals.mm().logs().showError(ee.getCause().getMessage());
+                            Globals.mm().logs().logError(ee.getCause());
+                        } else {
+                            throw new RuntimeErrorException((Error) ee.getCause());
+                        }
                     }
+                    iter.remove(); // Regardless of whether an error was thrown, this future is finished, remove it from the list.
                 }
-            } else { 
-                newFutures.add(fut);
-            } 
+            }  
         }
-        threadFutures = newFutures;
     }
 
     @Override
@@ -119,14 +128,23 @@ public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
     
     @Override
     public void addImage(Image img) {
-        this.queue.add(img);
+        this.imQueue.add(img);
     }
     
     //Methods to be used by subclasses.
+    
+    /**
+     * 
+     * @return A queue to be used for passing images between threads.
+     */
     protected LinkedBlockingQueue<Image> getImageQueue() {
-        return this.queue;
+        return this.imQueue;
     }
     
+    /**
+     * 
+     * @return A queue to be used for passing metadata between threads.
+     */
     protected LinkedBlockingQueue<MetadataBase> getMetadataQueue() {
         return this.mdQueue;
     }
