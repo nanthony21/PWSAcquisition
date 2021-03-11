@@ -41,11 +41,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 import org.micromanager.data.Coords;
 import org.micromanager.data.Pipeline;
 import org.micromanager.data.PipelineErrorException;
-import org.micromanager.data.internal.DefaultMetadata;
 
 
 class PWSAcquisition extends SingleAcquisitionBase<PWSSettings>{
