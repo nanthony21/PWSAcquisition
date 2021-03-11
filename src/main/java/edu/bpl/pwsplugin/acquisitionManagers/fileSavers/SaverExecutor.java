@@ -25,6 +25,7 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -33,36 +34,46 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import javax.management.RuntimeErrorException;
-import javax.swing.Timer;
+import java.util.Timer;
+import java.util.TimerTask;
 import org.micromanager.data.Image;
 
 /**
- *
+ * Each time a new image is requested to be saved a new thread will be created to handle it.
+ * TODO: The usage of static variables was probably not smart. This should be split into two classes. One is the executor that handles executing tasks on a single thread. The other class represents the task that can be submitted to an executor.
+ * Rather than having two queues (images, and metadata) why not have one queue containing Image/metadata pairs.
  * @author nick
  */
 public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
-    private static final ExecutorService ex = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("PWS_ImageIO_Saver_Thread_%d").setPriority(Thread.MAX_PRIORITY).build());
-    private static List<Future<Void>> threadFutures = new ArrayList<>();
-    private final LinkedBlockingQueue<Image> queue = new LinkedBlockingQueue<>();
-    private final LinkedBlockingQueue<MetadataBase> mdQueue = new LinkedBlockingQueue<>(1);
-    private boolean initialized = false;
-    protected boolean configured = false; //subclasses must set this true before running.
+    private static final ExecutorService ex = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("PWS_ImageIO_Saver_Thread_%d").setPriority(Thread.MAX_PRIORITY).build()); // A single thread handles saving for the whole application.
+    private static final List<Future<Void>> threadFutures = new ArrayList<>(); // This list keeps track of the save tasks that are still running. The timer periodically cleans the list of finished tasks.
+    private final LinkedBlockingQueue<Image> imQueue = new LinkedBlockingQueue<>(); // A queue to pass images between threads.
+    private final LinkedBlockingQueue<MetadataBase> mdQueue = new LinkedBlockingQueue<>(1); // A  queue to pass metadata between queues.
+    private boolean initialized = false; //Subclasses of this can only be run once, this varible checks to make sure that is the case.
+    protected boolean configured = false; //subclasses must set this to `true` before running.
     private static final Timer timer;
     
     static {
-        ActionListener actlist = (evt) -> {
-            try {
-                SaverExecutor.processRunningFutures();
-            } catch (Exception e) {
-                Globals.mm().logs().logError(e);
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    SaverExecutor.processRunningFutures();
+                } catch (Exception e) {
+                    Globals.mm().logs().logError(e);
+                }
             }
         };
         
-        timer = new Timer(1000, actlist); //This timer checks the results of the saver threads on a regular interval.
-        timer.setRepeats(true);
-        timer.start();
+        timer = new Timer("SaverExecutorTimerThread");
+        timer.scheduleAtFixedRate(task, 1000, 1000);// 1000, actlist); //This timer checks the results of the saver threads on a regular interval. It will call its target from the AWT eventqueue thread.
     }
         
+    /**
+     * This will be called from the thread of whatever piece of code requests saving.
+     * @throws InterruptedException
+     * @throws ExecutionException 
+     */
     @Override
     public void beginSavingThread() throws InterruptedException, ExecutionException {
         if (!configured) {
