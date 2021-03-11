@@ -58,6 +58,11 @@ public class ImSaverRaw extends SaverThread {
     }
     
     @Override
+    public String getSavePath() {
+        return savePath_;
+    }
+    
+    @Override
     public void configure(String savePath, String fileNamePrefix, Integer expectedFrames) {
         expectedFrames_ = expectedFrames; // The number of image frames that are expected to be received via queue
         savePath_ = savePath; // The file path to save to

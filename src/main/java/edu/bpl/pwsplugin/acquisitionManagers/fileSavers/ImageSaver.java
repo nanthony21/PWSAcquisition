@@ -33,6 +33,7 @@ public interface ImageSaver {
     public void beginSavingThread() throws InterruptedException, ExecutionException;
     public void setMetadata(MetadataBase md);
     public void addImage(Image img);
+    public String getSavePath();
     //public void closeThread();
     //public void joinThread()
 }

@@ -21,6 +21,7 @@
 package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
 import com.google.gson.JsonObject;
+import com.sun.mail.handlers.image_gif;
 import edu.bpl.pwsplugin.Globals;
 import java.nio.file.Paths;
 import org.micromanager.data.Image;
@@ -62,6 +63,11 @@ public class ImageIOSaver extends SaverExecutor {
     }
     
     @Override
+    public String getSavePath() {
+        return savePath;
+    }
+    
+    @Override
     public void configure(String savePath, String fileNamePrefix, Integer expectedFrames) {
         this.savePath = savePath;
         this.fileName = fileNamePrefix;
@@ -85,13 +91,14 @@ public class ImageIOSaver extends SaverExecutor {
         if (!directory.exists()) { directory.mkdirs(); }
         File file = Paths.get(this.savePath, fullFileName).toFile(); //Caution: I was previously wrapping this in a FileOutputStream before passing it to `CreateImageOutputStream`. This resulted in terrible write speeds that caused many other bugs.
         try (ImageOutputStream outStream = ImageIO.createImageOutputStream(file)) {
+            Globals.core().logMessage(String.format("Outstream is: %s File is: %s", outStream, file));
             writer.setOutput(outStream);
             writer.prepareWriteSequence(null); //null means we will use the default streamMetadata.
             try {
                 for (int i=0; i<this.expectedFrames; i++) {
-                    Image mmImg = this.getImageQueue().poll(5, TimeUnit.SECONDS);
+                    Image mmImg = this.getImageQueue().poll(15, TimeUnit.SECONDS);
                     if (mmImg == null) { 
-                        throw new TimeoutException(String.format("ImageIOSaver timed out on receiving image %d of %d. %s", i+1, this.expectedFrames, this.fileName));
+                        throw new TimeoutException(String.format("ImageIOSaver timed out on receiving image %d of %d. Queue size: %d, File: %s", i+1, this.expectedFrames, this.getImageQueue().size(), file.getAbsolutePath()));
                     }
                     IIOImage image = this.MM2IIO(mmImg);
                     writer.writeToSequence(image, param);
