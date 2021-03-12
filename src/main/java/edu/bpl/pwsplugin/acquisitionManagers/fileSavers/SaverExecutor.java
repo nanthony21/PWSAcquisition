@@ -114,7 +114,10 @@ public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
                     }
                     iter.remove(); // Regardless of whether an error was thrown, this future is finished, remove it from the list.
                 }
-            }  
+            }
+            if (threadFutures.size() > 2) {
+                Globals.logger().logMsg(String.format("Warning: SaverExecutor has %d jobs queued", threadFutures.size()));
+            }
         }
     }
 

@@ -21,7 +21,6 @@
 package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
 import com.google.gson.JsonObject;
-import com.sun.mail.handlers.image_gif;
 import edu.bpl.pwsplugin.Globals;
 import java.nio.file.Paths;
 import org.micromanager.data.Image;
@@ -88,10 +87,15 @@ public class ImageIOSaver extends SaverExecutor {
         long startTime = System.currentTimeMillis();
         String fullFileName = String.format("%s.tif", this.fileName);
         File directory = new File(this.savePath);
-        if (!directory.exists()) { directory.mkdirs(); }
+        if (!directory.exists()) { 
+            boolean success = directory.mkdirs();
+            if (!success) {
+                Globals.logger().logError(String.format("Failed to create folder: %s", directory.toString()));
+            }
+        }
         File file = Paths.get(this.savePath, fullFileName).toFile(); //Caution: I was previously wrapping this in a FileOutputStream before passing it to `CreateImageOutputStream`. This resulted in terrible write speeds that caused many other bugs.
+        Thread.sleep(100); // This can help prevent an error with saving files to  NFS.
         try (ImageOutputStream outStream = ImageIO.createImageOutputStream(file)) {
-            Globals.core().logMessage(String.format("Outstream is: %s File is: %s", outStream, file));
             writer.setOutput(outStream);
             writer.prepareWriteSequence(null); //null means we will use the default streamMetadata.
             try {
