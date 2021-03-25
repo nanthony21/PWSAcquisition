@@ -34,7 +34,7 @@ import mmcorej.DeviceType;
  */
 public class DefaultIlluminator implements Illuminator {
     //This can be any micromanager shutter device.
-    //Classes can inherit from this to immplement more specific validation or other functionality.
+    //Classes can inherit from this to implement more specific validation or other functionality.
     protected final IlluminatorSettings settings;
     
     public DefaultIlluminator(IlluminatorSettings settings) throws Device.IDException {

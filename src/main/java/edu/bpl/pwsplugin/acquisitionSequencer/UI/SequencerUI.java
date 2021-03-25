@@ -135,10 +135,11 @@ public class SequencerUI extends BuilderJPanel<RootStep> implements PropertyChan
         this.loadButton.addActionListener((evt) -> {
             try {
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-                String path = FileDialogs.openFile(topFrame, "Load Sequence", LOADSTEPFILETYPE).getPath();
-                if (path == null) {
+                File f = FileDialogs.openFile(topFrame, "Load Sequence", LOADSTEPFILETYPE);
+                if (f == null) {
                     return; // file dialog must have been cancelled.
                 }
+                String path = f.getPath();
      
                 RootStep rootStep;
                 try (FileReader reader = new FileReader(path)) {
@@ -152,6 +153,7 @@ public class SequencerUI extends BuilderJPanel<RootStep> implements PropertyChan
                     return;
                 }
                 this.populateFields(rootStep);
+                this.seqTree.setRootNodeSelected(); // Change the selection to make sure the UI updates properly.
             } catch (NullPointerException | JsonIOException | ClassCastException e) {
                 Globals.mm().logs().showError(e);
             }

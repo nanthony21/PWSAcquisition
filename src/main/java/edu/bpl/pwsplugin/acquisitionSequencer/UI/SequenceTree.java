@@ -70,6 +70,10 @@ class SequenceTree extends TreeDragAndDrop implements KeyListener {
 
     }
     
+    public void setRootNodeSelected() {
+        tree.setSelectionPath(new TreePath(((ContainerStep) model.getRoot()).getPath()));
+    }
+    
     @Override
     public void keyTyped(KeyEvent e) {}
     
