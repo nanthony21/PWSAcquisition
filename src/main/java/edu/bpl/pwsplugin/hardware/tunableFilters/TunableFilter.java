@@ -81,6 +81,7 @@ public interface TunableFilter extends Device {
                 new Device.AutoFinder<>(
                     TunableFilterSettings.class, 
                     generator,
+                    Spectra3.class,
                     VarispecLCTF.class,
                     KuriosLCTF.class,
                     SimulatedFilter.class
@@ -92,6 +93,7 @@ public interface TunableFilter extends Device {
     public enum Types {
         VARISPECLCTF,
         KURIOSLCTF,
-        Simulated;
+        Simulated,
+        SPECTRA3;
     }
 }
