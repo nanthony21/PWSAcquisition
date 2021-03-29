@@ -48,12 +48,12 @@ class SequenceTree extends TreeDragAndDrop implements KeyListener {
 
         JsonableParam settings;
         try {
-            settings = SequencerConsts.getFactory(SequencerConsts.Type.ROOT).getSettings().newInstance();
+            settings = SequencerConsts.getFactory(SequencerConsts.Type.ROOT.name()).getSettings().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
         
-        ContainerStep root = ((ContainerStep) SequencerConsts.getFactory(SequencerConsts.Type.ROOT).createStep());
+        ContainerStep root = ((ContainerStep) SequencerConsts.getFactory(SequencerConsts.Type.ROOT.name()).createStep());
         
         model.setRoot(root);
         tree.setRootVisible(true);

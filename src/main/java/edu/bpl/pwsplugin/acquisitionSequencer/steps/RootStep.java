@@ -44,7 +44,7 @@ import javax.swing.tree.TreeNode;
 public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> {   
     
     public RootStep() {
-        super(new SequencerSettings.RootStepSettings(), SequencerConsts.Type.ROOT);
+        super(new SequencerSettings.RootStepSettings(), SequencerConsts.Type.ROOT.name());
     }
     
     @Override

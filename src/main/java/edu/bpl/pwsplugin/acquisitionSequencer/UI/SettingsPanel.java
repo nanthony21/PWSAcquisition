@@ -75,7 +75,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         }
 
         for (SequencerConsts.Type type : SequencerConsts.Type.values()) {
-            panelTypeMapping.put(type, SequencerConsts.getFactory(type).createUI());
+            panelTypeMapping.put(type, SequencerConsts.getFactory(type.name()).createUI());
         }
         
         int maxH = 0;
@@ -96,7 +96,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         cardPanel.setSize(dim);
         cardPanel.setMinimumSize(dim);
         
-        showPanelForType(SequencerConsts.Type.ACQ);
+        showPanelForType(SequencerConsts.Type.ACQ.name());
     }
     
     public void forceUpdateSettings(SequencerConsts.Type type, JsonableParam settings) {
@@ -140,7 +140,7 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         }
     }
     
-    private BuilderJPanel showPanelForType(SequencerConsts.Type type) {
+    private BuilderJPanel showPanelForType(String type) {
         nameLabel.setText(SequencerConsts.getFactory(type).getName());
         descriptionLabel.setText("<html>" + SequencerConsts.getFactory(type).getDescription() + "</html>"); //The html tags here should enable text wrapping.
         ((CardLayout) cardPanel.getLayout()).show(cardPanel, type.toString());

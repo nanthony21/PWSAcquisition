@@ -20,7 +20,6 @@
 //
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /**
@@ -30,7 +29,7 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 public abstract class IteratingContainerStep<T extends JsonableParam> extends ContainerStep<T> {
     //A container step that runs it's substeps multiple times.
     
-    public IteratingContainerStep(T settings, SequencerConsts.Type type) {
+    public IteratingContainerStep(T settings, String type) {
         super(settings, type);
     }
     

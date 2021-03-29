@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class AutoShutterStep extends ContainerStep<SequencerSettings.AutoShutterSettings> {
     public AutoShutterStep() {
-        super(new SequencerSettings.AutoShutterSettings(), SequencerConsts.Type.AUTOSHUTTER);
+        super(new SequencerSettings.AutoShutterSettings(), SequencerConsts.Type.AUTOSHUTTER.name());
     }
 
     @Override

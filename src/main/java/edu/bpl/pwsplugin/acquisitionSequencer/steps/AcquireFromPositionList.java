@@ -39,7 +39,7 @@ public class AcquireFromPositionList extends IteratingContainerStep<SequencerSet
     private Integer currentIteration = 0;
     
     public AcquireFromPositionList() {
-        super(new SequencerSettings.AcquirePositionsSettings(), SequencerConsts.Type.POS);
+        super(new SequencerSettings.AcquirePositionsSettings(), SequencerConsts.Type.POS.name());
     }
 
     @Override

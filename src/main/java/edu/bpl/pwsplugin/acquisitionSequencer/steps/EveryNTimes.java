@@ -36,7 +36,7 @@ public class EveryNTimes extends ContainerStep<SequencerSettings.EveryNTimesSett
     int simulatedIteration = 0;
 
     public EveryNTimes() {
-        super(new SequencerSettings.EveryNTimesSettings(), SequencerConsts.Type.EVERYN);
+        super(new SequencerSettings.EveryNTimesSettings(), SequencerConsts.Type.EVERYN.name());
     }
 
     @Override

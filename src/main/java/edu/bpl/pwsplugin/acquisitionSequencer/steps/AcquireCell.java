@@ -48,7 +48,7 @@ public class AcquireCell extends EndpointStep<AcquireCellSettings> {
     
     //Represents the acquisition of a single "CellXXX" folder, it can contain multiple PWS, Dynamics, and Fluorescence acquisitions.
     public AcquireCell() {
-        super(new AcquireCellSettings(), SequencerConsts.Type.ACQ);
+        super(new AcquireCellSettings(), SequencerConsts.Type.ACQ.name());
     }
 
     @Override

@@ -22,7 +22,6 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +36,7 @@ import javax.swing.tree.TreeNode;
 public abstract class ContainerStep<T extends JsonableParam> extends Step<T> {
     //A `Step` that takes other `Step`s and wraps functionality around them.
     
-    public ContainerStep(T settings, SequencerConsts.Type type) {
+    public ContainerStep(T settings, String type) {
         super(settings, type);
     }
     

@@ -33,7 +33,7 @@ import java.util.List;
 public class ChangeConfigGroup extends ContainerStep<SequencerSettings.ChangeConfigGroupSettings> {
     
     public ChangeConfigGroup() {
-        super(new SequencerSettings.ChangeConfigGroupSettings(), SequencerConsts.Type.CONFIG);
+        super(new SequencerSettings.ChangeConfigGroupSettings(), SequencerConsts.Type.CONFIG.name());
     }
 
     @Override

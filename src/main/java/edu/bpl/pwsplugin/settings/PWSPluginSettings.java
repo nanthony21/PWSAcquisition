@@ -27,7 +27,7 @@ public class PWSPluginSettings extends JsonableParam {
     //passed around, saved, loaded, etc.
     public HWConfigurationSettings hwConfiguration = new HWConfigurationSettings();
     public AcquireCellSettings acquisitionSettings = new AcquireCellSettings();
-    public RootStep sequenceRoot = (RootStep) SequencerConsts.getFactory(SequencerConsts.Type.ROOT).createStep();
+    public RootStep sequenceRoot = (RootStep) SequencerConsts.getFactory(SequencerConsts.Type.ROOT.name()).createStep();
     public String saveDir = "";
     public int cellNum = 1;
 

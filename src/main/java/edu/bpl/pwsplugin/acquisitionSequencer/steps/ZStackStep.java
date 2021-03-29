@@ -36,7 +36,7 @@ public class ZStackStep extends IteratingContainerStep<SequencerSettings.ZStackS
     private Integer currentIteration = 0;
     
     public ZStackStep() {
-        super(new SequencerSettings.ZStackSettings(), SequencerConsts.Type.ZSTACK);
+        super(new SequencerSettings.ZStackSettings(), SequencerConsts.Type.ZSTACK.name());
     }
 
     @Override

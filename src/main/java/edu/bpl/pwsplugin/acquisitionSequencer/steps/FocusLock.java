@@ -38,14 +38,14 @@ import javax.swing.tree.TreeNode;
 public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings> {
     
     public FocusLock() {
-        super(new SequencerSettings.FocusLockSettings(), SequencerConsts.Type.PFS);
+        super(new SequencerSettings.FocusLockSettings(), SequencerConsts.Type.PFS.name());
     }
 
     @Override
     protected SequencerFunction getCallback() {
         return (status) -> {
             Step[] path = status.coords().getTreePath(); //Indicates our current location in the tree of steps.
-            if (path[path.length - 1].getType() == SequencerConsts.Type.ACQ) { //If the current  step is an acquisition then check for refocus.
+            if (path[path.length - 1].getType().equals(SequencerConsts.Type.ACQ.name())) { //If the current  step is an acquisition then check for refocus.
                 TranslationStage1d zStage = Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
                 if (!zStage.hasAutoFocus()) {
                     status.newStatusMessage("Focus Lock: Error: The current zStage has no autofocus functionality.");
@@ -111,9 +111,9 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
         while (en.hasMoreElements()) {
             Step step = en.nextElement();
             if (step.getType().equals(SequencerConsts.Type.PFS)) {
-                errs.add(String.format("Optical Focus Lock may not contain a sub-step of type: %s", SequencerConsts.getFactory(SequencerConsts.Type.PFS).getName()));
+                errs.add(String.format("Optical Focus Lock may not contain a sub-step of type: %s", SequencerConsts.getFactory(SequencerConsts.Type.PFS.name()).getName()));
             } else if (step.getType().equals(SequencerConsts.Type.AF)) { //The autofocus step makes calls that move z without using our custom zStage devices, this will break the focus lock.
-                errs.add(String.format("Optical Focus Lock may not contain a sub-step of type: %s", SequencerConsts.getFactory(SequencerConsts.Type.AF).getName()));
+                errs.add(String.format("Optical Focus Lock may not contain a sub-step of type: %s", SequencerConsts.getFactory(SequencerConsts.Type.AF.name()).getName()));
             }
         }
         return errs;

@@ -38,7 +38,7 @@ public class EnterSubfolderStep extends ContainerStep<SequencerSettings.EnterSub
     private Integer simCellNum = 0;
 
     public EnterSubfolderStep() {
-        super(new SequencerSettings.EnterSubfolderSettings(), SequencerConsts.Type.SUBFOLDER);
+        super(new SequencerSettings.EnterSubfolderSettings(), SequencerConsts.Type.SUBFOLDER.name());
     }
 
     @Override

@@ -37,7 +37,7 @@ import org.micromanager.AutofocusPlugin;
 public class SoftwareAutofocus extends EndpointStep<SequencerSettings.SoftwareAutoFocusSettings> {
     
     public SoftwareAutofocus() {
-        super(new SequencerSettings.SoftwareAutoFocusSettings(), SequencerConsts.Type.AF);
+        super(new SequencerSettings.SoftwareAutoFocusSettings(), SequencerConsts.Type.AF.name());
     }
 
     @Override

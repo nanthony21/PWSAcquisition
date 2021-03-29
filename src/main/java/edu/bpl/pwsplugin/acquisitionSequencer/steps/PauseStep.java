@@ -49,7 +49,7 @@ import net.miginfocom.swing.MigLayout;
 public class PauseStep extends EndpointStep<SequencerSettings.PauseStepSettings> {
     
     public PauseStep() {
-        super(new SequencerSettings.PauseStepSettings(), SequencerConsts.Type.PAUSE);
+        super(new SequencerSettings.PauseStepSettings(), SequencerConsts.Type.PAUSE.name());
     }
 
     @Override

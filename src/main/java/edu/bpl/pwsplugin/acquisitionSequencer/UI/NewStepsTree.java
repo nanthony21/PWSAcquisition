@@ -62,7 +62,7 @@ class NewStepsTree extends TreeDragAndDrop {
             }
             
             JsonableParam settings;
-            StepFactory factory = SequencerConsts.getFactory(type);
+            StepFactory factory = SequencerConsts.getFactory(type.name());
             try {
                 settings = factory.getSettings().newInstance();
             } catch (InstantiationException | IllegalAccessException e) {

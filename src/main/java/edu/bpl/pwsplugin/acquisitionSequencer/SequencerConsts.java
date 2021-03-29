@@ -40,7 +40,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.factory.ZStackFactory;
  * @author nick
  */
 public class SequencerConsts {
-    public enum Type {
+    public enum Type {  // Built-intypes
         ACQ,
         POS,
         TIME,
@@ -56,33 +56,33 @@ public class SequencerConsts {
         AUTOSHUTTER;
     }
 
-    public static StepFactory getFactory(Type type) {
+    public static StepFactory getFactory(String type) {
         if (null != type) switch (type) {
-            case ACQ:
+            case "ACQ":
                 return new AcquireCellFactory();
-            case AF:
+            case "AF":
                 return new SoftwareAutofocusFactory();
-            case PFS:
+            case "PFS":
                 return new FocusLockFactory();
-            case POS:
+            case "POS":
                 return new AcquireFromPositionListFactory();
-            case TIME:
+            case "TIME":
                 return new AcquireTimeSeriesFactory();
-            case CONFIG:
+            case "CONFIG":
                 return new ChangeConfigGroupFactory();
-            case PAUSE:
+            case "PAUSE":
                 return new PauseFactory();
-            case EVERYN:
+            case "EVERYN":
                 return new EveryNTimesFactory();
-            case ROOT:
+            case "ROOT":
                 return new RootStepFactory();
-            case SUBFOLDER:
+            case "SUBFOLDER":
                 return new EnterSubfolderFactory();
-            case ZSTACK:
+            case "ZSTACK":
                 return new ZStackFactory();
-            case BROKEN:
+            case "BROKEN":
                 return new BrokenStepFactory();
-            case AUTOSHUTTER:
+            case "AUTOSHUTTER":
                 return new AutoShutterStepFactory();
         } 
         throw new RuntimeException("Shouldn't get here.");
@@ -90,7 +90,7 @@ public class SequencerConsts {
     
     public static void registerGson() {
         for (Type t : Type.values()) {
-            getFactory(t).registerGson();
+            getFactory(t.name()).registerGson();
         }
     }
 }

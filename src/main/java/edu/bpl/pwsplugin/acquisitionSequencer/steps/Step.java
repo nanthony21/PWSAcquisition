@@ -47,12 +47,12 @@ import java.util.function.Function;
 public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeNode {
     //Base class for a single step in the acquisition sequencer.
     protected T settings; 
-    private final SequencerConsts.Type stepType;
+    private final String stepType;
     private static final AtomicInteger counter = new AtomicInteger(); //This static counter makes sure that each Step object has it's own uid during runtime.
     private final Integer uid = counter.getAndIncrement();
 
     
-    public Step(T settings, SequencerConsts.Type type) {
+    public Step(T settings, String type) {
         super();
         this.stepType = type;
         this.setSettings(settings);
@@ -68,8 +68,8 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
         return this.uid; 
     }
         
-    public final SequencerConsts.Type getType() {
-        //An enumerator indicating which type of sequence step this is.
+    public final String getType() {
+        //An string indicating which type of sequence step this is.
         return stepType;
     }
 
@@ -127,7 +127,7 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
     }
         
     @Override
-    public String toString() { //this determines how its labeled in a JTree
+    public String toString() { //this determines how it iss labeled in a JTree
         return SequencerConsts.getFactory(this.getType()).getName();
     }
         
@@ -172,7 +172,7 @@ class StepTypeAdapter extends TypeAdapter<Step> {
         out.name("id");
         out.value(step.getID());
         out.name("stepType");
-        out.value(step.getType().name());
+        out.value(step.getType());
         out.name("settings");
         gson.toJson(step.getSettings(), SequencerConsts.getFactory(step.getType()).getSettings(), out);
         if (step.getAllowsChildren()) {
@@ -190,7 +190,7 @@ class StepTypeAdapter extends TypeAdapter<Step> {
             if (!in.nextName().equals("id")) { throw new IOException("Json Parse Error"); } //ID is determined at runtime don't load it.
             int id = in.nextInt(); //read the id to get rid of it.
             if (!in.nextName().equals("stepType")) { throw new IOException("Json Parse Error"); } //This must be "stepType" 
-            SequencerConsts.Type stepType = SequencerConsts.Type.valueOf(in.nextString());
+            String stepType = in.nextString();
             Step step = SequencerConsts.getFactory(stepType).getStep().newInstance();
             if (!in.nextName().equals("settings")) { throw new IOException("Json Parse Error"); }
             JsonableParam settings = gson.fromJson(in, SequencerConsts.getFactory(stepType).getSettings());
@@ -211,7 +211,7 @@ class StepTypeAdapter extends TypeAdapter<Step> {
             try {
                 while (in.hasNext()) { in.skipValue(); } //Read out the rest of the failed json object before returning.
                 in.endObject();
-                return SequencerConsts.getFactory(SequencerConsts.Type.BROKEN).getStep().newInstance();//Rather than allow an exception to break the whole loading process just insert the special "Broken step" where the error occured.
+                return SequencerConsts.getFactory(SequencerConsts.Type.BROKEN.name()).getStep().newInstance();//Rather than allow an exception to break the whole loading process just insert the special "Broken step" where the error occured.
             } catch (InstantiationException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }

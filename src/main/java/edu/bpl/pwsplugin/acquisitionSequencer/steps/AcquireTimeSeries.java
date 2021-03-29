@@ -35,7 +35,7 @@ public class AcquireTimeSeries extends IteratingContainerStep<SequencerSettings.
     private Integer currentIteration = 0;
     
     public AcquireTimeSeries() {
-        super(new SequencerSettings.AcquireTimeSeriesSettings(), SequencerConsts.Type.TIME);
+        super(new SequencerSettings.AcquireTimeSeriesSettings(), SequencerConsts.Type.TIME.name());
     }
 
     @Override

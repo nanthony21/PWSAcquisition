@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+/*
 package edu.bpl.pwsAF;
 //import org.micromanager.autofocus.internal.oughtafocus.ImgSharpnessAnalysis;
 import org.micromanager.imageprocessing.ImgSharpnessAnalysis;
@@ -191,3 +192,5 @@ enum Corners {
     BL,
     BR;
 }
+
+*/

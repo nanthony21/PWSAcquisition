@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class BrokenStep extends ContainerStep<JsonableParam> {
     public BrokenStep() {
-        super(new JsonableParam(), SequencerConsts.Type.BROKEN);
+        super(new JsonableParam(), SequencerConsts.Type.BROKEN.name());
     }
     
     @Override
