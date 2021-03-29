@@ -20,6 +20,7 @@
 //
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
+import edu.bpl.pwsplugin.acquisitionSequencer.Sequencer;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyOnlyTransferHandler;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
@@ -43,9 +44,11 @@ import javax.swing.tree.TreeSelectionModel;
 class NewStepsTree extends TreeDragAndDrop {
     private Step acquisitionStep;
     private static final SequencerConsts.Type[] EXCLUDED_TYPES = {SequencerConsts.Type.EVERYN};
+    private final Sequencer sequencer_;
     
-    public NewStepsTree() {
+    public NewStepsTree(Sequencer sequencer) {
         super();
+        sequencer_ = sequencer;
         tree.setTransferHandler(new CopyOnlyTransferHandler());
         this.tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
@@ -62,7 +65,7 @@ class NewStepsTree extends TreeDragAndDrop {
             }
             
             JsonableParam settings;
-            StepFactory factory = SequencerConsts.getFactory(type.name());
+            StepFactory factory = sequencer_.getFactory(type.name());
             try {
                 settings = factory.getSettings().newInstance();
             } catch (InstantiationException | IllegalAccessException e) {

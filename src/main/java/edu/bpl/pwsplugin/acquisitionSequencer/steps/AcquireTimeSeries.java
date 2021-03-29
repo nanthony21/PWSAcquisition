@@ -25,7 +25,6 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import java.util.List;
-import org.micromanager.data.Coords;
 
 /**
  *

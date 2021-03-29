@@ -23,6 +23,7 @@ package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
+import edu.bpl.pwsplugin.acquisitionSequencer.Sequencer;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
@@ -51,15 +52,16 @@ import net.miginfocom.swing.MigLayout;
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListener, MouseListener {
-    Map<SequencerConsts.Type, BuilderJPanel> panelTypeMapping = new HashMap<>();
+    Map<String, BuilderJPanel> panelTypeMapping = new HashMap<>();
     Step lastSelectedNode = null;
     JPanel cardPanel = new JPanel(new CardLayout());
     JLabel nameLabel = new JLabel();
     JLabel descriptionLabel = new JLabel();
+    private final Sequencer sequencer_;
     
-    public SettingsPanel(TreeDragAndDrop... trees) {
+    public SettingsPanel(Sequencer sequencer, TreeDragAndDrop... trees) {
         super(new MigLayout());
-        
+        sequencer_ = sequencer;
         nameLabel.setFont(new Font("serif", Font.BOLD, 12));
         descriptionLabel.setFont(new Font("serif", Font.ITALIC, 11));
         
@@ -75,13 +77,13 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
         }
 
         for (SequencerConsts.Type type : SequencerConsts.Type.values()) {
-            panelTypeMapping.put(type, SequencerConsts.getFactory(type.name()).createUI());
+            panelTypeMapping.put(type.name(), sequencer.getFactory(type.name()).createUI());
         }
         
         int maxH = 0;
         int maxW = 0;
-        for (Map.Entry<SequencerConsts.Type, BuilderJPanel> e : panelTypeMapping.entrySet()) {
-            cardPanel.add(e.getValue(), e.getKey().toString());
+        for (Map.Entry<String, BuilderJPanel> e : panelTypeMapping.entrySet()) {
+            cardPanel.add(e.getValue(), e.getKey());
             int h = e.getValue().getHeight();
             if (h > maxH) {
                 maxH = h;
@@ -141,8 +143,8 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
     }
     
     private BuilderJPanel showPanelForType(String type) {
-        nameLabel.setText(SequencerConsts.getFactory(type).getName());
-        descriptionLabel.setText("<html>" + SequencerConsts.getFactory(type).getDescription() + "</html>"); //The html tags here should enable text wrapping.
+        nameLabel.setText(sequencer_.getFactory(type).getName());
+        descriptionLabel.setText("<html>" + sequencer_.getFactory(type).getDescription() + "</html>"); //The html tags here should enable text wrapping.
         ((CardLayout) cardPanel.getLayout()).show(cardPanel, type.toString());
         return panelTypeMapping.get(type);
     }

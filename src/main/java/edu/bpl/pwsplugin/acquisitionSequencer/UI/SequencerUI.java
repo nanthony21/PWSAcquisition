@@ -24,6 +24,7 @@ import com.google.gson.JsonIOException;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionSequencer.Sequencer;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStep;
@@ -71,19 +72,25 @@ public class SequencerUI extends BuilderJPanel<RootStep> implements PropertyChan
     /*
     This is the main UI for the sequencer. It incorporates the other components into a panel for the user.
     */
-    SequenceTree seqTree = new SequenceTree(); // The tree containing the steps defining a sequence.
-    NewStepsTree newStepsTree = new NewStepsTree(); // The tree containing all available steps. Drag from here to the sequence tree.
-    SettingsPanel settingsPanel = new SettingsPanel(seqTree, newStepsTree); //A panel displaying the settings for each selected step type.
+    private final Sequencer sequencer_;
+    SequenceTree seqTree; // The tree containing the steps defining a sequence.
+    NewStepsTree newStepsTree; // The tree containing all available steps. Drag from here to the sequence tree.
+    SettingsPanel settingsPanel; //A panel displaying the settings for each selected step type.
     JButton runButton = new JButton("Run");
     JButton saveButton = new JButton("Save");
     JButton loadButton = new JButton("Load");
     private static final FileDialogs.FileType STEPFILETYPE = new FileDialogs.FileType("PWS Acquisition Sequence", "Sequence (.pwsseq)", "newAcqSequence.pwsseq", true, "pwsseq"); // The specification for how to save a Step to a file.
     private static final FileDialogs.FileType LOADSTEPFILETYPE = new FileDialogs.FileType("PWS Acquisition Sequence", "Sequence (.(rt)pwsseq)", "sequence.rtpwsseq", true, "rtpwsseq", "pwsseq");
     
-    public SequencerUI() {
+    public SequencerUI(Sequencer sequencer) {
         super(new MigLayout("fill"), RootStep.class);
         Globals.addPropertyChangeListener(this); //Register to receive updates to hardware configuration.
 
+        sequencer_ = sequencer;
+        seqTree = new SequenceTree(sequencer_);
+        newStepsTree = new NewStepsTree(sequencer_);
+        settingsPanel = new SettingsPanel(sequencer_, seqTree, newStepsTree);
+        
         this.settingsPanel.setBorder(BorderFactory.createEtchedBorder());
         
         //Button action handlers.

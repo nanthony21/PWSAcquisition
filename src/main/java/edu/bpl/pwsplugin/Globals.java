@@ -4,6 +4,7 @@ package edu.bpl.pwsplugin;
 import edu.bpl.pwsplugin.hardware.configurations.HWConfiguration;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.UI.PluginFrame;
+import edu.bpl.pwsplugin.acquisitionSequencer.Sequencer;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
@@ -25,6 +26,7 @@ public class Globals {
     private PWSLogger logger_;
     private HWConfiguration config;
     private PluginFrame frame;
+    private Sequencer sequencer_;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     
     private Globals() {}
@@ -46,6 +48,7 @@ public class Globals {
             throw new RuntimeException(e);
         }
         instance().acqMan_ = new AcquisitionManager();
+        instance().sequencer_ = new Sequencer();
         instance().frame = new PluginFrame();
         try {
             instance().config = new HWConfiguration(new HWConfigurationSettings()); //Set these even though they should be overridden when the settings are loaded.
@@ -108,6 +111,10 @@ public class Globals {
     
     public static HWConfiguration getHardwareConfiguration() { //Access to the current hardware configuration.
         return instance().config;
+    }
+    
+    public static Sequencer sequencer() {
+        return instance().sequencer_;
     }
     
     public static void setHardwareConfigurationSettings(HWConfigurationSettings configg) { //Update the hardware configuration with new settings. Fires an event to property change listeners.

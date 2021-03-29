@@ -48,8 +48,8 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
     //Base class for a single step in the acquisition sequencer.
     protected T settings; 
     private final String stepType;
-    private static final AtomicInteger counter = new AtomicInteger(); //This static counter makes sure that each Step object has it's own uid during runtime.
-    private final Integer uid = counter.getAndIncrement();
+    private static final AtomicInteger COUNTER = new AtomicInteger(); //This static counter makes sure that each Step object has it's own uid during runtime.
+    private final Integer uid = COUNTER.getAndIncrement();
 
     
     public Step(T settings, String type) {
@@ -127,7 +127,7 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
     }
         
     @Override
-    public String toString() { //this determines how it iss labeled in a JTree
+    public String toString() { //this determines how it is labeled in a JTree
         return SequencerConsts.getFactory(this.getType()).getName();
     }
         

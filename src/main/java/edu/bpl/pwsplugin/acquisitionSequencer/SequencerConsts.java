@@ -40,6 +40,7 @@ import edu.bpl.pwsplugin.acquisitionSequencer.factory.ZStackFactory;
  * @author nick
  */
 public class SequencerConsts {
+            
     public enum Type {  // Built-intypes
         ACQ,
         POS,

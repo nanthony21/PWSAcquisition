@@ -136,8 +136,12 @@ class SequencerRunningDlg extends JDialog {
                 Throwable exc = rte.getCause(); 
                 if (exc instanceof InterruptedException) { //Interrupted exceptions are caused by the user cancelling, no need to report it.
                     Globals.mm().logs().showMessage("User cancelled acquisition.");
+                } else if (exc == null) {
+                    Globals.mm().logs().showError(String.format("Error in sequencer. see core log file. %s", rte.getMessage()));
+                    Globals.mm().logs().logError(rte);
                 } else if (exc instanceof Exception) {
                     Globals.mm().logs().showError(String.format("Error in sequencer. See core log file. %s", exc.getMessage()));
+                    Globals.mm().logs().logError(exc);
                 } else {
                     Globals.mm().logs().showError("Acquisition threw a throwable that was not an exception! How?");
                 }
