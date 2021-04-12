@@ -19,8 +19,9 @@ public class Sequencer {
     private final FactoryRegistry registry_ = new FactoryRegistry();
             
     public Sequencer() { //TODO plugin loading instead of hard coding.
-        for (SequencerConsts.Type type : SequencerConsts.Type.values()) {
-            registry_.registerFactory(type.name(), SequencerConsts.getFactory(type.name()));
+        SequencerPlugin defaultPlugin = new DefaultSequencerPlugin();
+        for (String stepType : defaultPlugin.getAvailableStepNames()) {
+            registry_.registerFactory(stepType, SequencerConsts.getFactory(stepType));
         }
         
         ui_ = new SequencerUI(this); // Important that the registry is all set before the UI is created.
