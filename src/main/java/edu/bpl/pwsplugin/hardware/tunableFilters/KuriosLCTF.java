@@ -35,7 +35,7 @@ public class KuriosLCTF extends DefaultTunableFilter {
         try {
             String prop = Globals.core().getProperty(devName, "Status");
             if (!prop.equals("Ready")) {
-                errs.add(String.format("Kurios LCTF indicates that the device is `%s` rather than `Ready`, please wait.", prop));
+                errs.add(String.format("Kurios LCTF indicates that the device status is `%s` rather than `Ready`, please wait.", prop));
             }
             prop = Globals.core().getProperty(devName, "Spectral Range");
             if (!prop.equals("Visible")) {
