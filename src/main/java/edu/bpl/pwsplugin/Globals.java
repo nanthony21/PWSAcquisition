@@ -11,8 +11,6 @@ import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.utils.PWSLogger;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.List;
-import javax.swing.JOptionPane;
 import mmcorej.CMMCore;
 import org.micromanager.Studio;
 import org.micromanager.internal.utils.ReportingUtils;

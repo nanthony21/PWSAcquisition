@@ -58,9 +58,9 @@ public class AcquireCell extends EndpointStep<AcquireCellSettings> {
         return new SequencerFunction() {
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-                status.setCellNum(status.getCellNum() + 1);
-                status.newStatusMessage(String.format("Acquiring Cell %d", status.getCellNum()));
-                File directory = FileSpecs.getCellFolderName(Paths.get(status.getSavePath()), status.getCellNum()).toFile();
+                status.setAcquisitionlNum(status.getAcquisitionlNum() + 1);
+                status.newStatusMessage(String.format("Acquiring Cell %d", status.getAcquisitionlNum()));
+                File directory = FileSpecs.getCellFolderName(Paths.get(status.getSavePath()), status.getAcquisitionlNum()).toFile();
                 if (!directory.exists()) { directory.mkdirs(); } //The cell folder can be created by the Image saving thread once acquisition begins. In some cases the other thread can get backed up, for safety we just make sure to create the folder right at the beginning.
                 if ((!settings.fluorSettings.isEmpty()) && settings.fluorEnabled) {
                     status.allowPauseHere();
@@ -86,7 +86,7 @@ public class AcquireCell extends EndpointStep<AcquireCellSettings> {
     
     private void saveSequenceCoordsFile(AcquisitionStatus status) throws IOException {
         JsonObject obj = status.coords().toJson();
-        Path directory = FileSpecs.getCellFolderName(Paths.get(status.getSavePath()), status.getCellNum());
+        Path directory = FileSpecs.getCellFolderName(Paths.get(status.getSavePath()), status.getAcquisitionlNum());
         String savePath = directory.resolve("sequencerCoords.json").toString();
         try (FileWriter w = new FileWriter(savePath)) {
             GsonUtils.getGson().toJson(obj, w);

@@ -44,8 +44,8 @@ public class AcquisitionStatus {
     //There should be only a single instance of this created per acquisition.
     private final RuntimeSettings runTimeSettings;
     private String currentPath;
-    protected Integer currentCellNum; //The folder number we are currently acquiring.
-    private List<String> statusMsg = new ArrayList<>(); //A string describing what is currently happening.
+    protected Integer currentAcquisitionlNum; //The folder number we are currently acquiring.
+    private final List<String> statusMsg = new ArrayList<>(); //A string describing what is currently happening.
     private final Function<AcquisitionStatus, Void> publishCallBack; //This callback should link to the `publish` method of the swingworker running the acquisition thread.
     private final Function<Void, Void> pauseCallBack; // This callback should link to the `pausepoint` method of a pause button.
     private final SequencerCoordinate coords; //This keeps track of where in the sequence we are. Callbacks can use this to determine where they are being called from.
@@ -56,21 +56,6 @@ public class AcquisitionStatus {
         this.pauseCallBack = pauseCallBack;
         runTimeSettings = new RuntimeSettings(rootStep);
         coords = new SequencerCoordinate(runTimeSettings.getUUID());
-    }
-    
-    /*public AcquisitionStatus(AcquisitionStatus status) { //This isn't used and maybe thats a good thing, maybe a single sequence should just have a single status object that is completely mutable.
-        //Copy an existing status object to a new object, avoids issues with this being a mutable object.
-        currentPath = status.currentPath;
-        currentCellNum = status.currentCellNum;
-        statusMsg = status.statusMsg;
-        publishCallBack = status.publishCallBack;
-        pauseCallBack = status.pauseCallBack;
-    }*/
-    
-    private void publish() {
-        //Send a copy of this object back to the swingworker so it can be accessed from the `process` method. 
-        //We really only have one instance of this class which is not really how the publish/process mechanism is designed, but it still works as a convenient way to make UI events happen in response to calling this publish method.
-        publishCallBack.apply(this);
     }
     
     public synchronized Integer newStatusMessage(String message) {
@@ -108,36 +93,15 @@ public class AcquisitionStatus {
         currentPath = path;
     }
     
-    public synchronized void setCellNum(Integer num) {
-        currentCellNum = num;
+    public synchronized void setAcquisitionlNum(Integer num) {
+        currentAcquisitionlNum = num;
         Globals.acqManager().setCellNum(num);
         this.publish();
     }
     
-    public synchronized Integer getCellNum() {
-        return currentCellNum;
+    public synchronized Integer getAcquisitionlNum() {
+        return currentAcquisitionlNum;
     }
-    
-    /*public synchronized List<Step> getTreePath() {
-        return coords.getTreePath();
-    }
-    
-    //Coordinate tracking methods. It is important that each step calls these to keep track of where we are in the sequence, this is mostly handled by the base classes.
-    public synchronized void moveDownTree(Step step) {
-        this.coords.moveDownTree(step);
-    }
-    
-    public synchronized void moveUpTree() {
-        this.coords.moveUpTree();
-    }
-    
-    public synchronized void incrementIteration() {
-        this.coords.incrementIteration();
-    }
-    
-    public JsonObject getCoordsAsJson() {
-        return this.coords.toJson();
-    }*/
     
     public synchronized SequencerCoordinate coords() {
         return this.coords;
@@ -174,4 +138,9 @@ public class AcquisitionStatus {
         }
     }
     
+    private void publish() {
+        //Send a copy of this object back to the swingworker so it can be accessed from the `process` method. 
+        //We really only have one instance of this class which is not really how the publish/process mechanism is designed, but it still works as a convenient way to make UI events happen in response to calling this publish method.
+        publishCallBack.apply(this);
+    }
 }

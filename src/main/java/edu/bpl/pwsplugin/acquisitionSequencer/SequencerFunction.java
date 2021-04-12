@@ -20,9 +20,6 @@
 //
 package edu.bpl.pwsplugin.acquisitionSequencer;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
-
 /**
  *
  * @author nick

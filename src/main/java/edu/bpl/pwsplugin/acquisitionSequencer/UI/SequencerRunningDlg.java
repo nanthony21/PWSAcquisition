@@ -101,7 +101,7 @@ class SequencerRunningDlg extends JDialog {
     }
 
     public void updateStatus(AcquisitionStatus status) {
-        this.cellNum.setText(String.format("Acquiring Cell: %d", status.getCellNum()));
+        this.cellNum.setText(String.format("Acquiring Cell: %d", status.getAcquisitionlNum()));
         this.statusMsg.setText(String.join("\n", status.getStatusMessage()));
         Step[] treePath = status.coords().getTreePath();
         if (treePath.length > 0) { //The only time this shouldn't be true is when we're at the root step, the beginning or the end.

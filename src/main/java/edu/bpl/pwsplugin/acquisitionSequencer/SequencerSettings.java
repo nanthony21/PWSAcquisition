@@ -21,8 +21,6 @@
 package edu.bpl.pwsplugin.acquisitionSequencer;
 
 import edu.bpl.pwsplugin.utils.JsonableParam;
-import java.sql.Timestamp;
-import java.util.Date;
 import org.micromanager.PositionList;
 
 /**

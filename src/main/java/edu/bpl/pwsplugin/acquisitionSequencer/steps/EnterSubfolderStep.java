@@ -50,14 +50,14 @@ public class EnterSubfolderStep extends ContainerStep<SequencerSettings.EnterSub
             @Override
             public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
                 String origPath = status.getSavePath();
-                Integer origCellNum = status.getCellNum();
+                Integer origCellNum = status.getAcquisitionlNum();
                 status.newStatusMessage(String.format("Moving to subfolder: %s", settings.relativePath));
                 status.setSavePath(Paths.get(origPath).resolve(settings.relativePath).toString());
-                status.setCellNum(cellNum); // Even if we exit and enter this subfolder multiple times we should still remember which cell num we're on.
+                status.setAcquisitionlNum(cellNum); // Even if we exit and enter this subfolder multiple times we should still remember which cell num we're on.
                 status = stepFunction.apply(status);
-                cellNum = status.getCellNum(); //Update our placeholder with whatever we left off on.
+                cellNum = status.getAcquisitionlNum(); //Update our placeholder with whatever we left off on.
                 status.setSavePath(origPath);
-                status.setCellNum(origCellNum);
+                status.setAcquisitionlNum(origCellNum);
                 return status;
             }
         };
