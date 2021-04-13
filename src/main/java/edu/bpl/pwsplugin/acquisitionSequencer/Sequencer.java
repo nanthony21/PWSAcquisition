@@ -6,6 +6,7 @@
 package edu.bpl.pwsplugin.acquisitionSequencer;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.SequencerUI;
+import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.DefaultSequencerPlugin;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import java.util.HashMap;
 import java.util.Map;

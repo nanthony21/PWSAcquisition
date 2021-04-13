@@ -18,13 +18,15 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
-package edu.bpl.pwsplugin.acquisitionSequencer.steps;
+package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.DefaultSequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.IteratingContainerStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
 import java.util.List;
 
@@ -36,7 +38,7 @@ public class ZStackStep extends IteratingContainerStep<SequencerSettings.ZStackS
     private Integer currentIteration = 0;
     
     public ZStackStep() {
-        super(new SequencerSettings.ZStackSettings(), SequencerConsts.Type.ZSTACK.name());
+        super(new SequencerSettings.ZStackSettings(), DefaultSequencerPlugin.Type.ZSTACK.name());
     }
 
     @Override

@@ -18,12 +18,14 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
-package edu.bpl.pwsplugin.acquisitionSequencer.steps;
+package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.DefaultSequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.List;
@@ -38,7 +40,7 @@ public class EnterSubfolderStep extends ContainerStep<SequencerSettings.EnterSub
     private Integer simCellNum = 0;
 
     public EnterSubfolderStep() {
-        super(new SequencerSettings.EnterSubfolderSettings(), SequencerConsts.Type.SUBFOLDER.name());
+        super(new SequencerSettings.EnterSubfolderSettings(), DefaultSequencerPlugin.Type.SUBFOLDER.name());
     }
 
     @Override

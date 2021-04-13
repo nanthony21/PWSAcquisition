@@ -18,12 +18,14 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
-package edu.bpl.pwsplugin.acquisitionSequencer.steps;
+package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.DefaultSequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.IteratingContainerStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import java.util.List;
 import java.util.concurrent.Callable;
 import org.micromanager.AutofocusPlugin;
@@ -39,7 +41,7 @@ public class AcquireFromPositionList extends IteratingContainerStep<SequencerSet
     private Integer currentIteration = 0;
     
     public AcquireFromPositionList() {
-        super(new SequencerSettings.AcquirePositionsSettings(), SequencerConsts.Type.POS.name());
+        super(new SequencerSettings.AcquirePositionsSettings(), DefaultSequencerPlugin.Type.POS.name());
     }
 
     @Override

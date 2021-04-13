@@ -18,13 +18,15 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
-package edu.bpl.pwsplugin.acquisitionSequencer.steps;
+package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.DefaultSequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import java.awt.Dialog;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +51,7 @@ import net.miginfocom.swing.MigLayout;
 public class PauseStep extends EndpointStep<SequencerSettings.PauseStepSettings> {
     
     public PauseStep() {
-        super(new SequencerSettings.PauseStepSettings(), SequencerConsts.Type.PAUSE.name());
+        super(new SequencerSettings.PauseStepSettings(), DefaultSequencerPlugin.Type.PAUSE.name());
     }
 
     @Override

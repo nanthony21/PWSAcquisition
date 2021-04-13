@@ -18,12 +18,15 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
-package edu.bpl.pwsplugin.acquisitionSequencer.steps;
+package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.DefaultSequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import java.util.List;
 
 /**
@@ -36,7 +39,7 @@ public class EveryNTimes extends ContainerStep<SequencerSettings.EveryNTimesSett
     int simulatedIteration = 0;
 
     public EveryNTimes() {
-        super(new SequencerSettings.EveryNTimesSettings(), SequencerConsts.Type.EVERYN.name());
+        super(new SequencerSettings.EveryNTimesSettings(), DefaultSequencerPlugin.Type.EVERYN.name());
     }
 
     @Override

@@ -18,19 +18,20 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
-package edu.bpl.pwsplugin.acquisitionSequencer.factory;
+package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.AcquireTimeSeries;
+import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps.AcquireTimeSeries;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JLabel;
 import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
+import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 

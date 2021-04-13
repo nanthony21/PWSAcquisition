@@ -18,12 +18,15 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
-package edu.bpl.pwsplugin.acquisitionSequencer.steps;
+package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.DefaultSequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.IteratingContainerStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import java.util.List;
 
 /**
@@ -34,7 +37,7 @@ public class AcquireTimeSeries extends IteratingContainerStep<SequencerSettings.
     private Integer currentIteration = 0;
     
     public AcquireTimeSeries() {
-        super(new SequencerSettings.AcquireTimeSeriesSettings(), SequencerConsts.Type.TIME.name());
+        super(new SequencerSettings.AcquireTimeSeriesSettings(), DefaultSequencerPlugin.Type.TIME.name());
     }
 
     @Override

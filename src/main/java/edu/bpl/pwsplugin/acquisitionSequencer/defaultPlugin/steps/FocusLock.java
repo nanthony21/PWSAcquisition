@@ -18,13 +18,15 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
-package edu.bpl.pwsplugin.acquisitionSequencer.steps;
+package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.DefaultSequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
 import java.util.Enumeration;
@@ -38,14 +40,14 @@ import javax.swing.tree.TreeNode;
 public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings> {
     
     public FocusLock() {
-        super(new SequencerSettings.FocusLockSettings(), SequencerConsts.Type.PFS.name());
+        super(new SequencerSettings.FocusLockSettings(), DefaultSequencerPlugin.Type.PFS.name());
     }
 
     @Override
     protected SequencerFunction getCallback() {
         return (status) -> {
             Step[] path = status.coords().getTreePath(); //Indicates our current location in the tree of steps.
-            if (path[path.length - 1].getType().equals(SequencerConsts.Type.ACQ.name())) { //If the current  step is an acquisition then check for refocus.
+            if (path[path.length - 1].getType().equals(DefaultSequencerPlugin.Type.ACQ.name())) { //If the current  step is an acquisition then check for refocus.
                 TranslationStage1d zStage = Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
                 if (!zStage.hasAutoFocus()) {
                     status.newStatusMessage("Focus Lock: Error: The current zStage has no autofocus functionality.");
@@ -110,9 +112,9 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
         en.nextElement(); //This clears the first item which is just a reference to this very same step.
         while (en.hasMoreElements()) {
             Step step = en.nextElement();
-            if (step.getType().equals(SequencerConsts.Type.PFS.name())) {
+            if (step.getType().equals(DefaultSequencerPlugin.Type.PFS.name())) {
                 errs.add("Optical Focus Lock may not contain a sub-step of type: Optical Focus Lock");
-            } else if (step.getType().equals(SequencerConsts.Type.AF.name())) { //The autofocus step makes calls that move z without using our custom zStage devices, this will break the focus lock.
+            } else if (step.getType().equals(DefaultSequencerPlugin.Type.AF.name())) { //The autofocus step makes calls that move z without using our custom zStage devices, this will break the focus lock.
                 errs.add("Optical Focus Lock may not contain a sub-step of type: Autofocus");
             }
         }

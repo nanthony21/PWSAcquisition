@@ -18,12 +18,15 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
-package edu.bpl.pwsplugin.acquisitionSequencer.steps;
+package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.DefaultSequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 import java.util.List;
 
@@ -33,7 +36,7 @@ import java.util.List;
  */
 public class AutoShutterStep extends ContainerStep<SequencerSettings.AutoShutterSettings> {
     public AutoShutterStep() {
-        super(new SequencerSettings.AutoShutterSettings(), SequencerConsts.Type.AUTOSHUTTER.name());
+        super(new SequencerSettings.AutoShutterSettings(), DefaultSequencerPlugin.Type.AUTOSHUTTER.name());
     }
 
     @Override

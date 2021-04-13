@@ -92,7 +92,7 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
     
     public abstract List<String> validate(); //Return a list of any errors for this step.
     
-    protected static class SimulatedStatus {
+    public static class SimulatedStatus {
         //A single instance of this class is passed between the simulation functions to keep track of multiple parameters.
         public Integer cellNum = 1; // The "Cell{X}" number that the acquisition is on.
         public List<String> requiredPaths = new ArrayList<>(); // A list of file paths that will be saved. Used to determine if there are any file conflicts.
@@ -100,7 +100,7 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
     }
     
     @FunctionalInterface
-    protected static interface SimFn extends Function<SimulatedStatus, SimulatedStatus> {} //Recieves a SimulatedStatus and returns the same object.
+    public static interface SimFn extends Function<SimulatedStatus, SimulatedStatus> {} //Recieves a SimulatedStatus and returns the same object.
     
     protected SequencerFunction getCallback() { return null; } //Subclasses can override to define a callback function that will be run before each child step. For example, the optical focus lock checks that PFS is still locked. If not, then it goes through search routine.
     
