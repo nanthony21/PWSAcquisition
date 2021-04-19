@@ -3,6 +3,7 @@ package edu.bpl.pwsplugin.hardware.tunableFilters;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.Device;
+import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.TunableFilterSettings;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,16 @@ public class KuriosLCTF extends DefaultTunableFilter {
             return Globals.core().getDeviceName(this.devName).equals("Kurios LCTF");
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    @Override
+    public void initialize() throws MMDeviceException {
+        super.initialize();
+        try {
+            Globals.core().setDeviceDelayMs(this.devName, 10);  // Testing has shown that this delay (taken into account by the acquisition manager) helps reduce noise.
+        } catch (Exception e) {
+            throw new MMDeviceException(e);
         }
     }
     

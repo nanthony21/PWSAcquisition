@@ -115,10 +115,10 @@ public abstract class DefaultTunableFilter implements TunableFilter{
     }
     
     @Override
-    public void initialize() {}//Not sure what to do here
+    public void initialize() throws MMDeviceException {}  //Not sure what to do here
     
     @Override
-    public void activate() {}//Not sure what to do here
+    public void activate() throws MMDeviceException {}//Not sure what to do here
     
     @Override
     public abstract boolean identify();
