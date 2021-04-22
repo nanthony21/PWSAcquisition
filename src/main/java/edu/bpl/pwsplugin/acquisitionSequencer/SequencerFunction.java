@@ -21,10 +21,9 @@
 package edu.bpl.pwsplugin.acquisitionSequencer;
 
 /**
- *
  * @author nick
  */
 @FunctionalInterface
 public interface SequencerFunction extends ThrowingFunction<AcquisitionStatus, AcquisitionStatus> {
-    
+
 }

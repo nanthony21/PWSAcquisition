@@ -31,35 +31,35 @@ import mmcorej.DeviceType;
 import net.miginfocom.swing.MigLayout;
 
 /**
- *
  * @author nick
  */
 public class IlluminatorUI extends BuilderJPanel<IlluminatorSettings> {
-    private final JComboBox<String> deviceName = new JComboBox<>();
-    
-    public IlluminatorUI() {
-        super(new MigLayout(), IlluminatorSettings.class);
-        
-        
-        super.add(new JLabel("Device Name:"), "gapleft push");
-        super.add(deviceName, "wrap");
-        
-        this.updateComboBoxes();
-    }
-    
-    private void updateComboBoxes() {
-        this.deviceName.setModel(new DefaultComboBoxModel<>(Globals.core().getLoadedDevicesOfType(DeviceType.ShutterDevice).toArray()));
-    }
-    
-    @Override
-    public void populateFields(IlluminatorSettings settings) {
-        deviceName.setSelectedItem(settings.name);
-    }
-    
-    @Override
-    public IlluminatorSettings build() throws BuilderPanelException {
-        IlluminatorSettings settings = new IlluminatorSettings();
-        settings.name = (String) deviceName.getSelectedItem();
-        return settings;
-    }
+
+   private final JComboBox<String> deviceName = new JComboBox<>();
+
+   public IlluminatorUI() {
+      super(new MigLayout(), IlluminatorSettings.class);
+
+      super.add(new JLabel("Device Name:"), "gapleft push");
+      super.add(deviceName, "wrap");
+
+      this.updateComboBoxes();
+   }
+
+   private void updateComboBoxes() {
+      this.deviceName.setModel(new DefaultComboBoxModel<>(
+            Globals.core().getLoadedDevicesOfType(DeviceType.ShutterDevice).toArray()));
+   }
+
+   @Override
+   public void populateFields(IlluminatorSettings settings) {
+      deviceName.setSelectedItem(settings.name);
+   }
+
+   @Override
+   public IlluminatorSettings build() throws BuilderPanelException {
+      IlluminatorSettings settings = new IlluminatorSettings();
+      settings.name = (String) deviceName.getSelectedItem();
+      return settings;
+   }
 }

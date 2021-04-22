@@ -30,42 +30,42 @@ import javax.swing.WindowConstants;
 import net.miginfocom.swing.MigLayout;
 
 /**
- *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 class ConfigurationDialog extends JDialog {
-    JButton acceptButton = new JButton("Accept");
-    private HWConfPanel hwc = new HWConfPanel();
-    
-    public ConfigurationDialog(Window owner) {
-        super(owner, "Hardware Configuration");
-        this.setModal(true);
-        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        this.setLocationRelativeTo(owner);
-        
-        acceptButton.addActionListener((evt)->{
-            this.setVisible(false);
-            this.dispose();
-        });
-        
-        JPanel pnl = new JPanel(new MigLayout());
-        pnl.add(hwc, "wrap");
-        pnl.add(acceptButton, "span, align center");
-        this.setContentPane(pnl);
-        this.pack();
-        this.setResizable(false);
-    }
-    
-    public void populateFields(HWConfigurationSettings config) {
-        hwc.populateFields(config);
-    }
-    
-    public HWConfigurationSettings build() {
-        return hwc.build();
-    }
-    
-    public HWConfigurationSettings showDialog() {
-        this.setVisible(true);
-        return this.build();
-    }
+
+   JButton acceptButton = new JButton("Accept");
+   private HWConfPanel hwc = new HWConfPanel();
+
+   public ConfigurationDialog(Window owner) {
+      super(owner, "Hardware Configuration");
+      this.setModal(true);
+      this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+      this.setLocationRelativeTo(owner);
+
+      acceptButton.addActionListener((evt) -> {
+         this.setVisible(false);
+         this.dispose();
+      });
+
+      JPanel pnl = new JPanel(new MigLayout());
+      pnl.add(hwc, "wrap");
+      pnl.add(acceptButton, "span, align center");
+      this.setContentPane(pnl);
+      this.pack();
+      this.setResizable(false);
+   }
+
+   public void populateFields(HWConfigurationSettings config) {
+      hwc.populateFields(config);
+   }
+
+   public HWConfigurationSettings build() {
+      return hwc.build();
+   }
+
+   public HWConfigurationSettings showDialog() {
+      this.setVisible(true);
+      return this.build();
+   }
 }

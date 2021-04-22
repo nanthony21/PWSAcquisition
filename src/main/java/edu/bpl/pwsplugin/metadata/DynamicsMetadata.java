@@ -25,27 +25,28 @@ import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.util.List;
 
 /**
- *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class DynamicsMetadata extends MetadataBase{
-    private final Double wavelength;
-    private final List<Double> times;
-    private final Double exposure;
-    
-    public DynamicsMetadata(MetadataBase base, Double wavelength, List<Double> times, Double exposure) {
-        super(base);
-        this.wavelength = wavelength;
-        this.times = times;
-        this.exposure = exposure;
-    }
-    
-    @Override
-    public JsonObject toJson() {
-        JsonObject md = super.toJson();
-        md.addProperty("wavelength", wavelength);
-        md.addProperty("exposure", exposure);
-        md.add("times", GsonUtils.getGson().toJsonTree(times).getAsJsonArray());
-        return md;
-    }
+public class DynamicsMetadata extends MetadataBase {
+
+   private final Double wavelength;
+   private final List<Double> times;
+   private final Double exposure;
+
+   public DynamicsMetadata(MetadataBase base, Double wavelength, List<Double> times,
+         Double exposure) {
+      super(base);
+      this.wavelength = wavelength;
+      this.times = times;
+      this.exposure = exposure;
+   }
+
+   @Override
+   public JsonObject toJson() {
+      JsonObject md = super.toJson();
+      md.addProperty("wavelength", wavelength);
+      md.addProperty("exposure", exposure);
+      md.add("times", GsonUtils.getGson().toJsonTree(times).getAsJsonArray());
+      return md;
+   }
 }

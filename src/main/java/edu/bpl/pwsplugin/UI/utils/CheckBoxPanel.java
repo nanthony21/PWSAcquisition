@@ -30,7 +30,6 @@ import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
 
 /**
- *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 
@@ -40,23 +39,23 @@ public class CheckBoxPanel extends JPanel {
    JPanel contentsPanel;
    Map<Component, Object> _enabledState;
 
-    public CheckBoxPanel(JPanel contents, String title) {
-        super(new MigLayout("insets 0 0 0 0"));
-        checkBox = new JCheckBox(title);
-        checkBox.setFont(new Font("serif", Font.BOLD, 11) {
-        });
-        contentsPanel = new DisabledPanel(contents);
+   public CheckBoxPanel(JPanel contents, String title) {
+      super(new MigLayout("insets 0 0 0 0"));
+      checkBox = new JCheckBox(title);
+      checkBox.setFont(new Font("serif", Font.BOLD, 11) {
+      });
+      contentsPanel = new DisabledPanel(contents);
 
-        super.add(checkBox, "wrap 0"); // 0 gap between the components.
-        super.add(contentsPanel);
+      super.add(checkBox, "wrap 0"); // 0 gap between the components.
+      super.add(contentsPanel);
 
-        checkBox.addItemListener((evt)-> {
-              boolean enable = checkBox.isSelected();
-              contentsPanel.setEnabled(enable);
-           });
-        checkBox.setSelected(true);
-    }
-   
+      checkBox.addItemListener((evt) -> {
+         boolean enable = checkBox.isSelected();
+         contentsPanel.setEnabled(enable);
+      });
+      checkBox.setSelected(true);
+   }
+
    public boolean isSelected() {
       return checkBox.isSelected();
    }

@@ -27,30 +27,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author N2-LiveCell
  */
 public class VarispecLCTF extends DefaultTunableFilter {
-    
-    public VarispecLCTF(TunableFilterSettings settings) throws Device.IDException {
-        super(settings, "Wavelength");
-    }
-    
-    @Override
-    public boolean identify() {
-        try {
-            return Globals.core().getDeviceName(devName).equals("VarispecLCTF");
-        } catch (Exception e) {
-            return false;
-        }
-    }
-    
-    @Override
-    public List<String> validate() {
-        List<String> errs = new ArrayList<>();
-        if (!identify()) {
-            errs.add("VarispecLCTF: Could not find device named " + this.devName + ".");
-        }
-        return errs; 
-    }
+
+   public VarispecLCTF(TunableFilterSettings settings) throws Device.IDException {
+      super(settings, "Wavelength");
+   }
+
+   @Override
+   public boolean identify() {
+      try {
+         return Globals.core().getDeviceName(devName).equals("VarispecLCTF");
+      } catch (Exception e) {
+         return false;
+      }
+   }
+
+   @Override
+   public List<String> validate() {
+      List<String> errs = new ArrayList<>();
+      if (!identify()) {
+         errs.add("VarispecLCTF: Could not find device named " + this.devName + ".");
+      }
+      return errs;
+   }
 }

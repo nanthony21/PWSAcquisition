@@ -23,9 +23,9 @@ package edu.bpl.pwsplugin.hardware.settings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /**
- *
  * @author nicke
  */
 public class TranslationStage1dSettings extends JsonableParam {
-    public String deviceName = "";
+
+   public String deviceName = "";
 }

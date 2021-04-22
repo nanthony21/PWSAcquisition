@@ -21,30 +21,33 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 import org.micromanager.internal.utils.ReportingUtils;
 
 /**
- * This UI is responsible for returning the appropriate `BuilderJPanel` for each type of settings (`JsonableParam`)
+ * This UI is responsible for returning the appropriate `BuilderJPanel` for each type of settings
+ * (`JsonableParam`)
+ *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class UIFactory {
-    public static BuilderJPanel getUI(Class<? extends JsonableParam> clazz) {
-        if (clazz.equals(PWSSettings.class)) {
-            return new PWSPanel();
-        } else if (clazz.equals(DynSettings.class)) {
-            return new DynPanel();
-        } else if (clazz.equals(HWConfigurationSettings.class)) {
-            return new HWConfPanel();
-        } else if (clazz.equals(CamSettings.class)) {
-            return new CamUI();
-        } else if (clazz.equals(TunableFilterSettings.class)) {
-            return new TunableFilterUI();
-        } else if (clazz.equals(IlluminatorSettings.class)) {
-            return new IlluminatorUI();
-        } else if (clazz.equals(ImagingConfigurationSettings.class)) {
-            return new ImagingConfigUI();
-        } else if (clazz.equals(FluorSettings.class)) {
-            return new FluorPanel();
-        } else {
-            ReportingUtils.showError("Could not find UI for class: " + clazz);
-            return null;
-        }
-    }
+
+   public static BuilderJPanel getUI(Class<? extends JsonableParam> clazz) {
+      if (clazz.equals(PWSSettings.class)) {
+         return new PWSPanel();
+      } else if (clazz.equals(DynSettings.class)) {
+         return new DynPanel();
+      } else if (clazz.equals(HWConfigurationSettings.class)) {
+         return new HWConfPanel();
+      } else if (clazz.equals(CamSettings.class)) {
+         return new CamUI();
+      } else if (clazz.equals(TunableFilterSettings.class)) {
+         return new TunableFilterUI();
+      } else if (clazz.equals(IlluminatorSettings.class)) {
+         return new IlluminatorUI();
+      } else if (clazz.equals(ImagingConfigurationSettings.class)) {
+         return new ImagingConfigUI();
+      } else if (clazz.equals(FluorSettings.class)) {
+         return new FluorPanel();
+      } else {
+         ReportingUtils.showError("Could not find UI for class: " + clazz);
+         return null;
+      }
+   }
 }

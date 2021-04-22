@@ -52,17 +52,16 @@ public final class SwingUtils {
    }
 
    /**
-    * Convenience method for searching below <code>container</code> in the
-    * component hierarchy and return nested components that are instances of
-    * class <code>clazz</code> it finds. Returns an empty list if no such
-    * components exist in the container.
-    * <P>
-    * Invoking this method with a class parameter of JComponent.class
-    * will return all nested components.
-    * <P>
+    * Convenience method for searching below <code>container</code> in the component hierarchy and
+    * return nested components that are instances of class <code>clazz</code> it finds. Returns an
+    * empty list if no such components exist in the container.
+    * <p>
+    * Invoking this method with a class parameter of JComponent.class will return all nested
+    * components.
+    * <p>
     * This method invokes getDescendantsOfType(clazz, container, true)
-    * 
-    * @param clazz the class of components whose instances are to be found.
+    *
+    * @param clazz     the class of components whose instances are to be found.
     * @param container the container at which to begin the search
     * @return the List of components
     */
@@ -72,18 +71,17 @@ public final class SwingUtils {
    }
 
    /**
-    * Convenience method for searching below <code>container</code> in the
-    * component hierarchy and return nested components that are instances of
-    * class <code>clazz</code> it finds. Returns an empty list if no such
-    * components exist in the container.
-    * <P>
-    * Invoking this method with a class parameter of JComponent.class
-    * will return all nested components.
-    * 
-    * @param clazz the class of components whose instances are to be found.
+    * Convenience method for searching below <code>container</code> in the component hierarchy and
+    * return nested components that are instances of class <code>clazz</code> it finds. Returns an
+    * empty list if no such components exist in the container.
+    * <p>
+    * Invoking this method with a class parameter of JComponent.class will return all nested
+    * components.
+    *
+    * @param clazz     the class of components whose instances are to be found.
     * @param container the container at which to begin the search
-    * @param nested true to list components nested within another listed
-    * component, false otherwise
+    * @param nested    true to list components nested within another listed component, false
+    *                  otherwise
     * @return the List of components
     */
    public static <T extends JComponent> List<T> getDescendantsOfType(
@@ -102,23 +100,20 @@ public final class SwingUtils {
    }
 
    /**
-    * Convenience method that searches below <code>container</code> in the
-    * component hierarchy and returns the first found component that is an
-    * instance of class <code>clazz</code> having the bound property value.
-    * Returns {@code null} if such component cannot be found.
-    * <P>
-    * This method invokes getDescendantOfType(clazz, container, property, value,
-    * true)
-    * 
-    * @param clazz the class of component whose instance is to be found.
+    * Convenience method that searches below <code>container</code> in the component hierarchy and
+    * returns the first found component that is an instance of class <code>clazz</code> having the
+    * bound property value. Returns {@code null} if such component cannot be found.
+    * <p>
+    * This method invokes getDescendantOfType(clazz, container, property, value, true)
+    *
+    * @param clazz     the class of component whose instance is to be found.
     * @param container the container at which to begin the search
-    * @param property the className of the bound property, exactly as expressed in
-    * the accessor e.g. "Text" for getText(), "Value" for getValue().
-    * @param value the value of the bound property
-    * @return the component, or null if no such component exists in the
-    * container
-    * @throws java.lang.IllegalArgumentException if the bound property does
-    * not exist for the class or cannot be accessed
+    * @param property  the className of the bound property, exactly as expressed in the accessor
+    *                  e.g. "Text" for getText(), "Value" for getValue().
+    * @param value     the value of the bound property
+    * @return the component, or null if no such component exists in the container
+    * @throws java.lang.IllegalArgumentException if the bound property does not exist for the class
+    *                                            or cannot be accessed
     */
    public static <T extends JComponent> T getDescendantOfType(
          Class<T> clazz, Container container, String property, Object value)
@@ -127,22 +122,20 @@ public final class SwingUtils {
    }
 
    /**
-    * Convenience method that searches below <code>container</code> in the
-    * component hierarchy and returns the first found component that is an
-    * instance of class <code>clazz</code> and has the bound property value.
-    * Returns {@code null} if such component cannot be found.
-    * 
-    * @param clazz the class of component whose instance to be found.
+    * Convenience method that searches below <code>container</code> in the component hierarchy and
+    * returns the first found component that is an instance of class <code>clazz</code> and has the
+    * bound property value. Returns {@code null} if such component cannot be found.
+    *
+    * @param clazz     the class of component whose instance to be found.
     * @param container the container at which to begin the search
-    * @param property the className of the bound property, exactly as expressed in
-    * the accessor e.g. "Text" for getText(), "Value" for getValue().
-    * @param value the value of the bound property
-    * @param nested true to list components nested within another component
-    * which is also an instance of <code>clazz</code>, false otherwise
-    * @return the component, or null if no such component exists in the
-    * container
-    * @throws java.lang.IllegalArgumentException if the bound property does
-    * not exist for the class or cannot be accessed
+    * @param property  the className of the bound property, exactly as expressed in the accessor
+    *                  e.g. "Text" for getText(), "Value" for getValue().
+    * @param value     the value of the bound property
+    * @param nested    true to list components nested within another component which is also an
+    *                  instance of <code>clazz</code>, false otherwise
+    * @return the component, or null if no such component exists in the container
+    * @throws java.lang.IllegalArgumentException if the bound property does not exist for the class
+    *                                            or cannot be accessed
     */
    public static <T extends JComponent> T getDescendantOfType(Class<T> clazz,
          Container container, String property, Object value, boolean nested)
@@ -152,14 +145,14 @@ public final class SwingUtils {
    }
 
    /**
-    * Convenience method for searching below <code>container</code> in the
-    * component hierarchy and return nested components of class
+    * Convenience method for searching below <code>container</code> in the component hierarchy and
+    * return nested components of class
     * <code>clazz</code> it finds.  Returns an empty list if no such
     * components exist in the container.
-    * <P>
+    * <p>
     * This method invokes getDescendantsOfClass(clazz, container, true)
-    * 
-    * @param clazz the class of components to be found.
+    *
+    * @param clazz     the class of components to be found.
     * @param container the container at which to begin the search
     * @return the List of components
     */
@@ -169,15 +162,15 @@ public final class SwingUtils {
    }
 
    /**
-    * Convenience method for searching below <code>container</code> in the
-    * component hierarchy and return nested components of class
+    * Convenience method for searching below <code>container</code> in the component hierarchy and
+    * return nested components of class
     * <code>clazz</code> it finds.  Returns an empty list if no such
     * components exist in the container.
-    * 
-    * @param clazz the class of components to be found.
+    *
+    * @param clazz     the class of components to be found.
     * @param container the container at which to begin the search
-    * @param nested true to list components nested within another listed
-    * component, false otherwise
+    * @param nested    true to list components nested within another listed component, false
+    *                  otherwise
     * @return the List of components
     */
    public static <T extends JComponent> List<T> getDescendantsOfClass(
@@ -196,26 +189,23 @@ public final class SwingUtils {
    }
 
    /**
-    * Convenience method that searches below <code>container</code> in the
-    * component hierarchy in a depth first manner and returns the first
-    * found component of class <code>clazz</code> having the bound property
-    * value.
-    * <P>
+    * Convenience method that searches below <code>container</code> in the component hierarchy in a
+    * depth first manner and returns the first found component of class <code>clazz</code> having
+    * the bound property value.
+    * <p>
     * Returns {@code null} if such component cannot be found.
-    * <P>
-    * This method invokes getDescendantOfClass(clazz, container, property,
-    * value, true)
-    * 
-    * @param clazz the class of component to be found.
+    * <p>
+    * This method invokes getDescendantOfClass(clazz, container, property, value, true)
+    *
+    * @param clazz     the class of component to be found.
     * @param container the container at which to begin the search
-    * @param property the className of the bound property, exactly as expressed in
-    * the accessor e.g. "Text" for getText(), "Value" for getValue().
-    * This parameter is case sensitive.
-    * @param value the value of the bound property
-    * @return the component, or null if no such component exists in the
-    * container's hierarchy.
-    * @throws java.lang.IllegalArgumentException if the bound property does
-    * not exist for the class or cannot be accessed
+    * @param property  the className of the bound property, exactly as expressed in the accessor
+    *                  e.g. "Text" for getText(), "Value" for getValue(). This parameter is case
+    *                  sensitive.
+    * @param value     the value of the bound property
+    * @return the component, or null if no such component exists in the container's hierarchy.
+    * @throws java.lang.IllegalArgumentException if the bound property does not exist for the class
+    *                                            or cannot be accessed
     */
    public static <T extends JComponent> T getDescendantOfClass(Class<T> clazz,
          Container container, String property, Object value)
@@ -224,25 +214,23 @@ public final class SwingUtils {
    }
 
    /**
-    * Convenience method that searches below <code>container</code> in the
-    * component hierarchy in a depth first manner and returns the first
-    * found component of class <code>clazz</code> having the bound property
-    * value.
-    * <P>
+    * Convenience method that searches below <code>container</code> in the component hierarchy in a
+    * depth first manner and returns the first found component of class <code>clazz</code> having
+    * the bound property value.
+    * <p>
     * Returns {@code null} if such component cannot be found.
-    * 
-    * @param clazz the class of component to be found.
+    *
+    * @param clazz     the class of component to be found.
     * @param container the container at which to begin the search
-    * @param property the className of the bound property, exactly as expressed
-    * in the accessor e.g. "Text" for getText(), "Value" for getValue().
-    * This parameter is case sensitive.
-    * @param value the value of the bound property
-    * @param nested true to include components nested within another listed
-    * component, false otherwise
-    * @return the component, or null if no such component exists in the
-    * container's hierarchy
-    * @throws java.lang.IllegalArgumentException if the bound property does
-    * not exist for the class or cannot be accessed
+    * @param property  the className of the bound property, exactly as expressed in the accessor
+    *                  e.g. "Text" for getText(), "Value" for getValue(). This parameter is case
+    *                  sensitive.
+    * @param value     the value of the bound property
+    * @param nested    true to include components nested within another listed component, false
+    *                  otherwise
+    * @return the component, or null if no such component exists in the container's hierarchy
+    * @throws java.lang.IllegalArgumentException if the bound property does not exist for the class
+    *                                            or cannot be accessed
     */
    public static <T extends JComponent> T getDescendantOfClass(Class<T> clazz,
          Container container, String property, Object value, boolean nested)
@@ -276,43 +264,39 @@ public final class SwingUtils {
       } catch (InvocationTargetException ex) {
          throw new IllegalArgumentException(
                "Error accessing property " + property +
-               " in class " + clazz.getName());
+                     " in class " + clazz.getName());
       } catch (IllegalAccessException ex) {
          throw new IllegalArgumentException(
                "Property " + property +
-               " cannot be accessed in class " + clazz.getName());
+                     " cannot be accessed in class " + clazz.getName());
       } catch (SecurityException ex) {
          throw new IllegalArgumentException(
                "Property " + property +
-               " cannot be accessed in class " + clazz.getName());
+                     " cannot be accessed in class " + clazz.getName());
       }
       return retVal;
    }
 
    /**
-    * Convenience method for determining whether two objects are either
-    * equal or both null.
-    * 
+    * Convenience method for determining whether two objects are either equal or both null.
+    *
     * @param obj1 the first reference object to compare.
     * @param obj2 the second reference object to compare.
-    * @return true if obj1 and obj2 are equal or if both are null,
-    * false otherwise
+    * @return true if obj1 and obj2 are equal or if both are null, false otherwise
     */
    public static boolean equals(Object obj1, Object obj2) {
       return obj1 == null ? obj2 == null : obj1.equals(obj2);
    }
 
    /**
-    * Convenience method for mapping a container in the hierarchy to its
-    * contained components.  The keys are the containers, and the values
-    * are lists of contained components.
-    * <P>
-    * Implementation note:  The returned value is a HashMap and the values
-    * are of type ArrayList.  This is subject to change, so callers should
-    * code against the interfaces Map and List.
-    * 
+    * Convenience method for mapping a container in the hierarchy to its contained components.  The
+    * keys are the containers, and the values are lists of contained components.
+    * <p>
+    * Implementation note:  The returned value is a HashMap and the values are of type ArrayList.
+    * This is subject to change, so callers should code against the interfaces Map and List.
+    *
     * @param container The JComponent to be mapped
-    * @param nested true to drill down to nested containers, false otherwise
+    * @param nested    true to drill down to nested containers, false otherwise
     * @return the Map of the UI
     */
    public static Map<JComponent, List<JComponent>> getComponentMap(
@@ -334,9 +318,9 @@ public final class SwingUtils {
    }
 
    /**
-    * Convenience method for retrieving a subset of the UIDefaults pertaining
-    * to a particular class.
-    * 
+    * Convenience method for retrieving a subset of the UIDefaults pertaining to a particular
+    * class.
+    *
     * @param clazz the class of interest
     * @return the UIDefaults of the class
     */
@@ -347,9 +331,9 @@ public final class SwingUtils {
    }
 
    /**
-    * Convenience method for retrieving a subset of the UIDefaults pertaining
-    * to a particular class.
-    * 
+    * Convenience method for retrieving a subset of the UIDefaults pertaining to a particular
+    * class.
+    *
     * @param className fully qualified name of the class of interest
     * @return the UIDefaults of the class named
     */
@@ -371,10 +355,9 @@ public final class SwingUtils {
    }
 
    /**
-    * Convenience method for retrieving the UIDefault for a single property
-    * of a particular class.
-    * 
-    * @param clazz the class of interest
+    * Convenience method for retrieving the UIDefault for a single property of a particular class.
+    *
+    * @param clazz    the class of interest
     * @param property the property to query
     * @return the UIDefault property, or null if not found
     */
@@ -392,11 +375,12 @@ public final class SwingUtils {
       }
       return retVal;
    }
-   
+
    /**
     * Exclude methods that return values that are meaningless to the user
     */
    static Set<String> setExclude = new HashSet<String>();
+
    static {
       setExclude.add("getFocusCycleRootAncestor");
       setExclude.add("getAccessibleContext");
@@ -406,12 +390,12 @@ public final class SwingUtils {
    }
 
    /**
-    * Convenience method for obtaining most non-null human readable properties
-    * of a JComponent.  Array properties are not included.
-    * <P>
-    * Implementation note:  The returned value is a HashMap.  This is subject
-    * to change, so callers should code against the interface Map.
-    * 
+    * Convenience method for obtaining most non-null human readable properties of a JComponent.
+    * Array properties are not included.
+    * <p>
+    * Implementation note:  The returned value is a HashMap.  This is subject to change, so callers
+    * should code against the interface Map.
+    *
     * @param component the component whose proerties are to be determined
     * @return the class and value of the properties
     */
@@ -434,7 +418,7 @@ public final class SwingUtils {
                      retVal.put(key, value);
                   }
                }
-            // ignore exceptions that arise if the property could not be accessed
+               // ignore exceptions that arise if the property could not be accessed
             } catch (IllegalAccessException ex) {
             } catch (IllegalArgumentException ex) {
             } catch (InvocationTargetException ex) {
@@ -445,11 +429,10 @@ public final class SwingUtils {
    }
 
    /**
-    * Convenience method to obtain the Swing class from which this
-    * component was directly or indirectly derived.
-    * 
-    * @param component The component whose Swing superclass is to be
-    * determined
+    * Convenience method to obtain the Swing class from which this component was directly or
+    * indirectly derived.
+    *
+    * @param component The component whose Swing superclass is to be determined
     * @return The nearest Swing class in the inheritance tree
     */
    public static <T extends JComponent> Class getJClass(T component) {

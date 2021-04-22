@@ -29,47 +29,49 @@ import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import java.util.List;
 
 /**
- *
  * @author nick
  */
 public interface ImagingConfiguration {
 
-    public Camera camera();
+   public Camera camera();
 
-    public Illuminator illuminator();
-    
-    //public ImagingConfigurationSettings settings();
+   public Illuminator illuminator();
 
-    public boolean hasTunableFilter();
-    
-    public TunableFilter tunableFilter();
+   //public ImagingConfigurationSettings settings();
 
-    public List<String> validate() throws MMDeviceException;
+   public boolean hasTunableFilter();
 
-    public TranslationStage1d zStage();
-    
-    public void activateConfiguration() throws MMDeviceException;
-    
-    public void deactivateConfiguration() throws MMDeviceException;
-    
-    public String getFluorescenceConfigGroup(); // The name of the configuration group used to control fluorescence filter. Return null if manual control is required.
-    
-    public static ImagingConfiguration getInstance(ImagingConfigurationSettings settings) throws MMDeviceException {
-        if (null == settings.configType) {
-            return null; //This shouldn't ever happen.
-        } else switch (settings.configType) {
+   public TunableFilter tunableFilter();
+
+   public List<String> validate() throws MMDeviceException;
+
+   public TranslationStage1d zStage();
+
+   public void activateConfiguration() throws MMDeviceException;
+
+   public void deactivateConfiguration() throws MMDeviceException;
+
+   public String getFluorescenceConfigGroup(); // The name of the configuration group used to control fluorescence filter. Return null if manual control is required.
+
+   public static ImagingConfiguration getInstance(ImagingConfigurationSettings settings)
+         throws MMDeviceException {
+      if (null == settings.configType) {
+         return null; //This shouldn't ever happen.
+      } else {
+         switch (settings.configType) {
             case SpectralCamera:
-                return new SpectralCamera(settings);
+               return new SpectralCamera(settings);
             case StandardCamera:
-                return new StandardCamera(settings);
+               return new StandardCamera(settings);
             default:
-                return null; //This shouldn't ever happen.
-        }
-    }
-    
-    public enum Types {
-        SpectralCamera,
-        StandardCamera;
-    }
-    
+               return null; //This shouldn't ever happen.
+         }
+      }
+   }
+
+   public enum Types {
+      SpectralCamera,
+      StandardCamera;
+   }
+
 }

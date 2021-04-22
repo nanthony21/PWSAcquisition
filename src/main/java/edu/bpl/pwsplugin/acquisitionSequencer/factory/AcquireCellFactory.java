@@ -29,44 +29,44 @@ import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /**
- *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class AcquireCellFactory extends StepFactory {
-    @Override
-    public Class<? extends BuilderJPanel> getUI() {
-        return AcquireCellUI.class;
-    }
-    
-    @Override
-    public Class<? extends JsonableParam> getSettings() {
-        return AcquireCellSettings.class;
-    }
-    
-    @Override
-    public Class<? extends Step> getStep() {
-        return AcquireCell.class;
-    }
-    
-    @Override
-    public String getDescription() {
-        return "Acquire PWS, Dynamics, and Fluorescence into a single folder.";
-    }
-    
-    @Override
-    public String getName() {
-        return "Acquisition";
-    }
-    
-    @Override
-    public String getCategory() {
-        return null;
-    }
 
-    @Override
-    public SequencerConsts.Type getType() {
-        return SequencerConsts.Type.ACQ;
-    }
+   @Override
+   public Class<? extends BuilderJPanel> getUI() {
+      return AcquireCellUI.class;
+   }
+
+   @Override
+   public Class<? extends JsonableParam> getSettings() {
+      return AcquireCellSettings.class;
+   }
+
+   @Override
+   public Class<? extends Step> getStep() {
+      return AcquireCell.class;
+   }
+
+   @Override
+   public String getDescription() {
+      return "Acquire PWS, Dynamics, and Fluorescence into a single folder.";
+   }
+
+   @Override
+   public String getName() {
+      return "Acquisition";
+   }
+
+   @Override
+   public String getCategory() {
+      return null;
+   }
+
+   @Override
+   public SequencerConsts.Type getType() {
+      return SequencerConsts.Type.ACQ;
+   }
 }
 
 

@@ -21,11 +21,20 @@
 package edu.bpl.pwsplugin.hardware;
 
 /**
- *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class MMDeviceException extends Exception { //Micromanager core stupidly throw generic Exceptions. When possible we wrap them in this specific exception for overall cleaner code.
-    public MMDeviceException() { super(); }
-    public MMDeviceException(Throwable cause) { super(cause); }
-    public MMDeviceException(String msg) { super(msg); }
+public class MMDeviceException extends
+      Exception { //Micromanager core stupidly throw generic Exceptions. When possible we wrap them in this specific exception for overall cleaner code.
+
+   public MMDeviceException() {
+      super();
+   }
+
+   public MMDeviceException(Throwable cause) {
+      super(cause);
+   }
+
+   public MMDeviceException(String msg) {
+      super(msg);
+   }
 }

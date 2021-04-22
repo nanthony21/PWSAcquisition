@@ -27,47 +27,47 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import java.util.List;
 
 /**
- *
  * @author nick
  */
 public class EveryNTimes extends ContainerStep<SequencerSettings.EveryNTimesSettings> {
-    
-    int iteration = 0;
-    int simulatedIteration = 0;
 
-    public EveryNTimes() {
-        super(new SequencerSettings.EveryNTimesSettings(), SequencerConsts.Type.EVERYN.name());
-    }
+   int iteration = 0;
+   int simulatedIteration = 0;
 
-    @Override
-    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
-        SequencerFunction stepFunction = super.getSubstepsFunction(callbacks);
-        iteration = 0; //initialize
-        SequencerSettings.EveryNTimesSettings settings = this.settings;
-        return new SequencerFunction() {
-            @Override
-            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-                if (((iteration - settings.offset) % settings.n) == 0) {
-                    status.newStatusMessage(String.format("EveryNTimes: Running substep on iteration %d", iteration+1));
-                    status = stepFunction.apply(status);
-                }
-                iteration++;
-                return status;
+   public EveryNTimes() {
+      super(new SequencerSettings.EveryNTimesSettings(), SequencerConsts.Type.EVERYN.name());
+   }
+
+   @Override
+   public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
+      SequencerFunction stepFunction = super.getSubstepsFunction(callbacks);
+      iteration = 0; //initialize
+      SequencerSettings.EveryNTimesSettings settings = this.settings;
+      return new SequencerFunction() {
+         @Override
+         public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
+            if (((iteration - settings.offset) % settings.n) == 0) {
+               status.newStatusMessage(
+                     String.format("EveryNTimes: Running substep on iteration %d", iteration + 1));
+               status = stepFunction.apply(status);
             }
-        };
-    }
-
-    @Override
-    protected SimFn getSimulatedFunction() {
-        SimFn subStepSimFn = this.getSubStepSimFunction();
-        simulatedIteration = 0; //Initialize
-        return (Step.SimulatedStatus status) -> {
-            if (((simulatedIteration - this.settings.offset) % this.settings.n) == 0) {
-                status = subStepSimFn.apply(status);
-            }
-            simulatedIteration++;
+            iteration++;
             return status;
-        };
-    }
-    
+         }
+      };
+   }
+
+   @Override
+   protected SimFn getSimulatedFunction() {
+      SimFn subStepSimFn = this.getSubStepSimFunction();
+      simulatedIteration = 0; //Initialize
+      return (Step.SimulatedStatus status) -> {
+         if (((simulatedIteration - this.settings.offset) % this.settings.n) == 0) {
+            status = subStepSimFn.apply(status);
+         }
+         simulatedIteration++;
+         return status;
+      };
+   }
+
 }

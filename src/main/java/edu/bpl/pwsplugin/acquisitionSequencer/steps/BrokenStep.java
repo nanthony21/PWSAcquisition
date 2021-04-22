@@ -26,28 +26,32 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.List;
 
 /**
- *
  * @author nick
  */
 public class BrokenStep extends ContainerStep<JsonableParam> {
-    public BrokenStep() {
-        super(new JsonableParam(), SequencerConsts.Type.BROKEN.name());
-    }
-    
-    @Override
-    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
-        return (status) -> { throw new RuntimeException("The BrokenStep should never be run."); };
-    }
-    
-    @Override
-    public SimFn getSimulatedFunction() {
-        return (status) -> { throw new RuntimeException("The BrokenStep should never be run."); };
-    }
-    
-    @Override
-    public List<String> validate() {
-        List<String> errs = super.validate();
-        errs.add("The BROKEN step is caused by an error and can not be run. It must be replaced.");
-        return errs;
-    }   
+
+   public BrokenStep() {
+      super(new JsonableParam(), SequencerConsts.Type.BROKEN.name());
+   }
+
+   @Override
+   public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
+      return (status) -> {
+         throw new RuntimeException("The BrokenStep should never be run.");
+      };
+   }
+
+   @Override
+   public SimFn getSimulatedFunction() {
+      return (status) -> {
+         throw new RuntimeException("The BrokenStep should never be run.");
+      };
+   }
+
+   @Override
+   public List<String> validate() {
+      List<String> errs = super.validate();
+      errs.add("The BROKEN step is caused by an error and can not be run. It must be replaced.");
+      return errs;
+   }
 }

@@ -24,9 +24,9 @@ import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /**
- *
  * @author nick
  */
 public class IlluminatorSettings extends JsonableParam {
-    public String name = "";
+
+   public String name = "";
 }

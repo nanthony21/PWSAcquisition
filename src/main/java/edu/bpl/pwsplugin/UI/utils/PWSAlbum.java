@@ -34,56 +34,55 @@ import javax.swing.SwingUtilities;
 import org.micromanager.data.RewritableDatastore;
 
 public class PWSAlbum {
+
    private final RewritableDatastore store_;
    private int idx = 0;
    String displayName_;
    private DisplayWindow display = null;
-   
+
    public PWSAlbum(String displayName) {
-       store_ = Globals.mm().data().createRewritableRAMDatastore();
-       displayName_ = displayName;
+      store_ = Globals.mm().data().createRewritableRAMDatastore();
+      displayName_ = displayName;
    }
-   
+
    public Datastore getDatastore() {
       return store_;
    }
-   
-   public void clear() throws IOException{
-       idx = 0;
-       store_.deleteAllImages();
+
+   public void clear() throws IOException {
+      idx = 0;
+      store_.deleteAllImages();
    }
 
    public void addImage(Image image) {
-        if ((display==null) || (display.isClosed())) {
-            display = Globals.mm().displays().createDisplay(store_);
-            //display.getWindow() //todo get window location and arrange in a grid
-            try { 
-                display.setZoom(0.25); // Old versions of micromanager don't have this implemented.
-            } catch (UnsupportedOperationException uoe) {} //Do nothing.
-            display.setCustomTitle(displayName_);
-        }
-        Coords newCoords = image.getCoords().copyBuilder().t(idx).build();
-        idx++;
+      if ((display == null) || (display.isClosed())) {
+         display = Globals.mm().displays().createDisplay(store_);
+         //display.getWindow() //todo get window location and arrange in a grid
+         try {
+            display.setZoom(0.25); // Old versions of micromanager don't have this implemented.
+         } catch (UnsupportedOperationException uoe) {
+         } //Do nothing.
+         display.setCustomTitle(displayName_);
+      }
+      Coords newCoords = image.getCoords().copyBuilder().t(idx).build();
+      idx++;
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    display.toFront();
-                    store_.putImage(image.copyAtCoords(newCoords));
-                }
-                catch (DatastoreFrozenException e) {
-                   ReportingUtils.showError(e, "Album datastore is locked.");
-                }
-                catch (DatastoreRewriteException e) {
-                   // This should never happen.
-                   ReportingUtils.showError(e, "Unable to add image at " + newCoords + 
-                           " to album as another image with those coords already exists.");
-                }
-                catch (IOException e) {
-                    ReportingUtils.showError(e, "PWSAlbum IOException");
-                }
+      SwingUtilities.invokeLater(new Runnable() {
+         @Override
+         public void run() {
+            try {
+               display.toFront();
+               store_.putImage(image.copyAtCoords(newCoords));
+            } catch (DatastoreFrozenException e) {
+               ReportingUtils.showError(e, "Album datastore is locked.");
+            } catch (DatastoreRewriteException e) {
+               // This should never happen.
+               ReportingUtils.showError(e, "Unable to add image at " + newCoords +
+                     " to album as another image with those coords already exists.");
+            } catch (IOException e) {
+               ReportingUtils.showError(e, "PWSAlbum IOException");
             }
-        });  
-    }
+         }
+      });
+   }
 }

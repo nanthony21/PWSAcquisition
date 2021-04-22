@@ -36,62 +36,63 @@ import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.ZStackFactory;
 
 /**
- *
  * @author nick
  */
 public class SequencerConsts {
-            
-    public enum Type {  // Built-intypes
-        ACQ,
-        POS,
-        TIME,
-        PFS,
-        AF,
-        CONFIG,
-        PAUSE,
-        EVERYN,
-        ROOT,
-        SUBFOLDER,
-        ZSTACK,
-        BROKEN,
-        AUTOSHUTTER;
-    }
 
-    public static StepFactory getFactory(String type) {
-        if (null != type) switch (type) {
+   public enum Type {  // Built-intypes
+      ACQ,
+      POS,
+      TIME,
+      PFS,
+      AF,
+      CONFIG,
+      PAUSE,
+      EVERYN,
+      ROOT,
+      SUBFOLDER,
+      ZSTACK,
+      BROKEN,
+      AUTOSHUTTER;
+   }
+
+   public static StepFactory getFactory(String type) {
+      if (null != type) {
+         switch (type) {
             case "ACQ":
-                return new AcquireCellFactory();
+               return new AcquireCellFactory();
             case "AF":
-                return new SoftwareAutofocusFactory();
+               return new SoftwareAutofocusFactory();
             case "PFS":
-                return new FocusLockFactory();
+               return new FocusLockFactory();
             case "POS":
-                return new AcquireFromPositionListFactory();
+               return new AcquireFromPositionListFactory();
             case "TIME":
-                return new AcquireTimeSeriesFactory();
+               return new AcquireTimeSeriesFactory();
             case "CONFIG":
-                return new ChangeConfigGroupFactory();
+               return new ChangeConfigGroupFactory();
             case "PAUSE":
-                return new PauseFactory();
+               return new PauseFactory();
             case "EVERYN":
-                return new EveryNTimesFactory();
+               return new EveryNTimesFactory();
             case "ROOT":
-                return new RootStepFactory();
+               return new RootStepFactory();
             case "SUBFOLDER":
-                return new EnterSubfolderFactory();
+               return new EnterSubfolderFactory();
             case "ZSTACK":
-                return new ZStackFactory();
+               return new ZStackFactory();
             case "BROKEN":
-                return new BrokenStepFactory();
+               return new BrokenStepFactory();
             case "AUTOSHUTTER":
-                return new AutoShutterStepFactory();
-        } 
-        throw new RuntimeException("Shouldn't get here.");
-    }
-    
-    public static void registerGson() {
-        for (Type t : Type.values()) {
-            getFactory(t.name()).registerGson();
-        }
-    }
+               return new AutoShutterStepFactory();
+         }
+      }
+      throw new RuntimeException("Shouldn't get here.");
+   }
+
+   public static void registerGson() {
+      for (Type t : Type.values()) {
+         getFactory(t.name()).registerGson();
+      }
+   }
 }

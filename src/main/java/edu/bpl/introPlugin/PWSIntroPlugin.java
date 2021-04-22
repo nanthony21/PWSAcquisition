@@ -29,36 +29,39 @@ import org.scijava.plugin.Plugin;
 
 /**
  * Simply changess the image shown when the software starts up.
+ *
  * @author nick
  */
 @Plugin(type = IntroPlugin.class)
 public class PWSIntroPlugin implements IntroPlugin {
-    public List<String> getConfigFilePaths() {
-        return null;
-    }
-    
-    public Icon getSplashImage() {
-        return new ImageIcon(getClass().getResource("/edu/bpl/icons/splash.png"));
-    }
-    
-    public String getCopyright() {
-        return "Nick Anthony 2020";
-    }
-    
-    public void setContext(Studio studio) {}
 
-    public String getName() {
-        return "PWS Intro Plugin";
-    }
+   public List<String> getConfigFilePaths() {
+      return null;
+   }
 
+   public Icon getSplashImage() {
+      return new ImageIcon(getClass().getResource("/edu/bpl/icons/splash.png"));
+   }
 
-    public String getHelpText() {
-        return "This just changees the Image displayed at startup.";
-    }
+   public String getCopyright() {
+      return "Nick Anthony 2020";
+   }
+
+   public void setContext(Studio studio) {
+   }
+
+   public String getName() {
+      return "PWS Intro Plugin";
+   }
 
 
-    public String getVersion() {
-        return "0.0.1";
-    }
+   public String getHelpText() {
+      return "This just changees the Image displayed at startup.";
+   }
+
+
+   public String getVersion() {
+      return "0.0.1";
+   }
 
 }

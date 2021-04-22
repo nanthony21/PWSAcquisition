@@ -23,22 +23,21 @@ package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /**
- *
  * @author N2-LiveCell
  */
 public abstract class IteratingContainerStep<T extends JsonableParam> extends ContainerStep<T> {
-    //A container step that runs it's substeps multiple times.
-    
-    public IteratingContainerStep(T settings, String type) {
-        super(settings, type);
-    }
-    
-    public IteratingContainerStep(IteratingContainerStep step) {
-        super(step); //Required copy constructor
-    }
-    
-    public abstract Integer getTotalIterations();
-    
-    public abstract Integer getCurrentIteration();
-    
+   //A container step that runs it's substeps multiple times.
+
+   public IteratingContainerStep(T settings, String type) {
+      super(settings, type);
+   }
+
+   public IteratingContainerStep(IteratingContainerStep step) {
+      super(step); //Required copy constructor
+   }
+
+   public abstract Integer getTotalIterations();
+
+   public abstract Integer getCurrentIteration();
+
 }

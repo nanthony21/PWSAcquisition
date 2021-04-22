@@ -37,79 +37,84 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 /**
- *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 class SequenceTree extends TreeDragAndDrop implements KeyListener {
-    public SequenceTree(Sequencer sequencer) {
-        super();
-        tree.setTransferHandler(new CopyMoveTransferHandler());
-        tree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);        
 
-        JsonableParam settings;
-        try {
-            settings = sequencer.getFactory(SequencerConsts.Type.ROOT.name()).getSettings().newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        
-        ContainerStep root = ((ContainerStep) sequencer.getFactory(SequencerConsts.Type.ROOT.name()).createStep());
-        
-        model.setRoot(root);
-        tree.setRootVisible(true);
-        tree.setShowsRootHandles(false);
-        tree.setCellRenderer(new TreeRenderers.SequenceTreeRenderer());
-        
-        Dimension d = new Dimension(200, 200);
-        setSize(d);
-        setMinimumSize(d);
-        
-        setComponentPopupMenu(new PopupMenu());
-        this.addKeyListener(this);
-        tree.addKeyListener(this);
+   public SequenceTree(Sequencer sequencer) {
+      super();
+      tree.setTransferHandler(new CopyMoveTransferHandler());
+      tree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
 
-    }
-    
-    public void setRootNodeSelected() {
-        tree.setSelectionPath(new TreePath(((ContainerStep) model.getRoot()).getPath()));
-    }
-    
-    @Override
-    public void keyTyped(KeyEvent e) {}
-    
-    @Override
-    public void keyPressed(KeyEvent e) {}
-    
-    @Override
-    public void keyReleased(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+      JsonableParam settings;
+      try {
+         settings = sequencer.getFactory(SequencerConsts.Type.ROOT.name()).getSettings()
+               .newInstance();
+      } catch (InstantiationException | IllegalAccessException e) {
+         throw new RuntimeException(e);
+      }
+
+      ContainerStep root = ((ContainerStep) sequencer.getFactory(SequencerConsts.Type.ROOT.name())
+            .createStep());
+
+      model.setRoot(root);
+      tree.setRootVisible(true);
+      tree.setShowsRootHandles(false);
+      tree.setCellRenderer(new TreeRenderers.SequenceTreeRenderer());
+
+      Dimension d = new Dimension(200, 200);
+      setSize(d);
+      setMinimumSize(d);
+
+      setComponentPopupMenu(new PopupMenu());
+      this.addKeyListener(this);
+      tree.addKeyListener(this);
+
+   }
+
+   public void setRootNodeSelected() {
+      tree.setSelectionPath(new TreePath(((ContainerStep) model.getRoot()).getPath()));
+   }
+
+   @Override
+   public void keyTyped(KeyEvent e) {
+   }
+
+   @Override
+   public void keyPressed(KeyEvent e) {
+   }
+
+   @Override
+   public void keyReleased(KeyEvent e) {
+      if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+         deleteSelectedNodes();
+      }
+   }
+
+   private void deleteSelectedNodes() {
+      TreePath[] paths = tree.getSelectionPaths();
+      if (paths != null) {
+         for (TreePath path : paths) {
+            model.removeNodeFromParent((MutableTreeNode) path.getLastPathComponent());
+         }
+      }
+   }
+
+   class PopupMenu extends JPopupMenu {
+
+      public PopupMenu() {
+         super();
+         JMenuItem deleteItem = new JMenuItem("Delete");
+         deleteItem.addActionListener((evt) -> {
             deleteSelectedNodes();
-        }
-    }
-    
-    private void deleteSelectedNodes() {
-        TreePath[] paths = tree.getSelectionPaths();
-        if (paths != null) {
-            for (TreePath path : paths) {
-                model.removeNodeFromParent((MutableTreeNode) path.getLastPathComponent());
-            }
-        }
-    }
-    
-    class PopupMenu extends JPopupMenu {
-        public PopupMenu() {
-            super();
-            JMenuItem deleteItem = new JMenuItem("Delete");
-            deleteItem.addActionListener((evt)->{
-                deleteSelectedNodes();
-            });
-            
-            this.add(deleteItem);
-        }
-        
-        @Override
-        public void setVisible(boolean vis) {
-            super.setVisible(vis); //just for a debug breakpoint
-        }
-    }
+         });
+
+         this.add(deleteItem);
+      }
+
+      @Override
+      public void setVisible(boolean vis) {
+         super.setVisible(vis); //just for a debug breakpoint
+      }
+   }
 }

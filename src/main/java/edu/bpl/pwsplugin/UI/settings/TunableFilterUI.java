@@ -36,26 +36,26 @@ import mmcorej.DeviceType;
 import net.miginfocom.swing.MigLayout;
 
 /**
- *
  * @author N2-LiveCell
  */
-public class TunableFilterUI extends SingleBuilderJPanel<TunableFilterSettings>{
-    private final JComboBox<String> name = new JComboBox<>();
-    
-    public TunableFilterUI() {
-        super(new MigLayout(), TunableFilterSettings.class);
-        
-        
-        this.add(new JLabel("Device Name:"), "gapleft push");
-        this.add(name, "wrap");
-        
-        this.name.setModel(new DefaultComboBoxModel<>(Globals.core().getLoadedDevicesOfType(DeviceType.AnyType).toArray()));
-    }
-    
-    @Override
-    public Map<String, Object> getPropertyFieldMap() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", name);
-        return map;
-    }
+public class TunableFilterUI extends SingleBuilderJPanel<TunableFilterSettings> {
+
+   private final JComboBox<String> name = new JComboBox<>();
+
+   public TunableFilterUI() {
+      super(new MigLayout(), TunableFilterSettings.class);
+
+      this.add(new JLabel("Device Name:"), "gapleft push");
+      this.add(name, "wrap");
+
+      this.name.setModel(new DefaultComboBoxModel<>(
+            Globals.core().getLoadedDevicesOfType(DeviceType.AnyType).toArray()));
+   }
+
+   @Override
+   public Map<String, Object> getPropertyFieldMap() {
+      Map<String, Object> map = new HashMap<>();
+      map.put("name", name);
+      return map;
+   }
 }

@@ -28,65 +28,68 @@ import java.util.function.Function;
 import mmcorej.DeviceType;
 
 
-
 /**
- *
  * @author nicke
  */
 public abstract class TranslationStage1d implements Device {
-    protected final TranslationStage1dSettings settings;
-    
-    @Override
-    public void activate() {} //Nothing to do here 
-    
-    @Override
-    public void initialize() {} //Nothing to do here 
-    
-    public TranslationStage1d(TranslationStage1dSettings settings) throws IDException {
-        this.settings = settings;
-        if (!this.identify()) {
-            throw new Device.IDException(String.format("Failed to identify class %s for device name %s", this.getClass().toString(), settings.deviceName));
-        }
-    }
-    
-    public abstract double getPosUm() throws MMDeviceException;
-    
-    public abstract void setPosUm(double um) throws MMDeviceException, InterruptedException;
-    
-    public abstract void setPosRelativeUm(double um) throws MMDeviceException, InterruptedException;
-    
-    public abstract boolean hasAutoFocus();
-    
-    //The following only need to be implemented if `hasAutoFocus` is true
-    public void setAutoFocusEnabled(boolean enable) throws MMDeviceException {
-        throw new UnsupportedOperationException();
-    }
-    
-    public boolean getAutoFocusEnabled() throws MMDeviceException {
-        throw new UnsupportedOperationException();
-    }
-    
-    public boolean getAutoFocusLocked() throws MMDeviceException {
-        throw new UnsupportedOperationException();
-    }
-    
-    public double runFullFocus() throws MMDeviceException {
-        //Search for a zStage position where the continuous focus can be locked.
-        //Returns the position (microns) where lock is achievable. Throws an exception
-        //if no lock is possible.
-        throw new UnsupportedOperationException();
-    }
-    
-    public void addFocusLockListener(PropertyChangeListener listener) {
-        throw new UnsupportedOperationException();
-    }
-     
-    public enum Types {
-        NikonTI,
-        Simulated,
-        NikonTI2,
-        PriorProscan3
-    }
+
+   protected final TranslationStage1dSettings settings;
+
+   @Override
+   public void activate() {
+   } //Nothing to do here
+
+   @Override
+   public void initialize() {
+   } //Nothing to do here
+
+   public TranslationStage1d(TranslationStage1dSettings settings) throws IDException {
+      this.settings = settings;
+      if (!this.identify()) {
+         throw new Device.IDException(
+               String.format("Failed to identify class %s for device name %s",
+                     this.getClass().toString(), settings.deviceName));
+      }
+   }
+
+   public abstract double getPosUm() throws MMDeviceException;
+
+   public abstract void setPosUm(double um) throws MMDeviceException, InterruptedException;
+
+   public abstract void setPosRelativeUm(double um) throws MMDeviceException, InterruptedException;
+
+   public abstract boolean hasAutoFocus();
+
+   //The following only need to be implemented if `hasAutoFocus` is true
+   public void setAutoFocusEnabled(boolean enable) throws MMDeviceException {
+      throw new UnsupportedOperationException();
+   }
+
+   public boolean getAutoFocusEnabled() throws MMDeviceException {
+      throw new UnsupportedOperationException();
+   }
+
+   public boolean getAutoFocusLocked() throws MMDeviceException {
+      throw new UnsupportedOperationException();
+   }
+
+   public double runFullFocus() throws MMDeviceException {
+      //Search for a zStage position where the continuous focus can be locked.
+      //Returns the position (microns) where lock is achievable. Throws an exception
+      //if no lock is possible.
+      throw new UnsupportedOperationException();
+   }
+
+   public void addFocusLockListener(PropertyChangeListener listener) {
+      throw new UnsupportedOperationException();
+   }
+
+   public enum Types {
+      NikonTI,
+      Simulated,
+      NikonTI2,
+      PriorProscan3
+   }
       
     /*private static final List<Class<? extends TranslationStage1d>> subClasses = 
             Arrays.asList(
@@ -158,26 +161,26 @@ public abstract class TranslationStage1d implements Device {
         }
         return null; //Nothing was identified.
     }*/
-    
-    public static TranslationStage1d getAutomaticInstance() {
-        
-        Function<String, TranslationStage1dSettings> generator = (devName) -> {
-            TranslationStage1dSettings settings = new TranslationStage1dSettings();
-            settings.deviceName = devName;
-            return settings;
-        };
-        
-        Device.AutoFinder<TranslationStage1d, TranslationStage1dSettings> finder = 
-                new Device.AutoFinder<>(
-                    TranslationStage1dSettings.class, 
-                    generator,
-                    NikonTI2_zStage.class,
-                    NikonTI_zStage.class,
-                    SimulationStage1d.class,
-                    PriorProscan3.class
-                );
-                
-        return finder.scanAllDevices(DeviceType.StageDevice);
-    }
+
+   public static TranslationStage1d getAutomaticInstance() {
+
+      Function<String, TranslationStage1dSettings> generator = (devName) -> {
+         TranslationStage1dSettings settings = new TranslationStage1dSettings();
+         settings.deviceName = devName;
+         return settings;
+      };
+
+      Device.AutoFinder<TranslationStage1d, TranslationStage1dSettings> finder =
+            new Device.AutoFinder<>(
+                  TranslationStage1dSettings.class,
+                  generator,
+                  NikonTI2_zStage.class,
+                  NikonTI_zStage.class,
+                  SimulationStage1d.class,
+                  PriorProscan3.class
+            );
+
+      return finder.scanAllDevices(DeviceType.StageDevice);
+   }
 }
 

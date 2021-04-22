@@ -27,12 +27,12 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class CamSettings extends JsonableParam {
-    public String name = "";
-    public List<Double> linearityPolynomial = new ArrayList<>();
-    public int darkCounts = 0;
-    public String binning = "";
+
+   public String name = "";
+   public List<Double> linearityPolynomial = new ArrayList<>();
+   public int darkCounts = 0;
+   public String binning = "";
 }

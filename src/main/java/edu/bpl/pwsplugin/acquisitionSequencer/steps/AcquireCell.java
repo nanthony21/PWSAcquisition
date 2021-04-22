@@ -41,95 +41,110 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- *
  * @author nick
  */
 public class AcquireCell extends EndpointStep<AcquireCellSettings> {
-    
-    //Represents the acquisition of a single "CellXXX" folder, it can contain multiple PWS, Dynamics, and Fluorescence acquisitions.
-    public AcquireCell() {
-        super(new AcquireCellSettings(), SequencerConsts.Type.ACQ.name());
-    }
 
-    @Override
-    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
-        AcquireCellSettings settings = this.getSettings();
-        AcquisitionManager acqMan = Globals.acqManager();
-        return new SequencerFunction() {
-            @Override
-            public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-                status.setAcquisitionlNum(status.getAcquisitionlNum() + 1);
-                status.newStatusMessage(String.format("Acquiring Cell %d", status.getAcquisitionlNum()));
-                File directory = FileSpecs.getCellFolderName(Paths.get(status.getSavePath()), status.getAcquisitionlNum()).toFile();
-                if (!directory.exists()) { directory.mkdirs(); } //The cell folder can be created by the Image saving thread once acquisition begins. In some cases the other thread can get backed up, for safety we just make sure to create the folder right at the beginning.
-                if ((!settings.fluorSettings.isEmpty()) && settings.fluorEnabled) {
-                    status.allowPauseHere();
-                    acqMan.setFluorescenceSettings(settings.fluorSettings);
-                    acqMan.acquireFluorescence();
-                }
-                if (settings.pwsEnabled) {
-                    status.allowPauseHere();
-                    acqMan.setPWSSettings(settings.pwsSettings);
-                    acqMan.acquirePWS();
-                }
-                if (settings.dynEnabled) {
-                    status.allowPauseHere();
-                    acqMan.setDynamicsSettings(settings.dynSettings);
-                    acqMan.acquireDynamics();
-                }
-                saveSequenceCoordsFile(status);
-                status.allowPauseHere();
-                return status;
+   //Represents the acquisition of a single "CellXXX" folder, it can contain multiple PWS, Dynamics, and Fluorescence acquisitions.
+   public AcquireCell() {
+      super(new AcquireCellSettings(), SequencerConsts.Type.ACQ.name());
+   }
+
+   @Override
+   public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
+      AcquireCellSettings settings = this.getSettings();
+      AcquisitionManager acqMan = Globals.acqManager();
+      return new SequencerFunction() {
+         @Override
+         public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
+            status.setAcquisitionlNum(status.getAcquisitionlNum() + 1);
+            status.newStatusMessage(
+                  String.format("Acquiring Cell %d", status.getAcquisitionlNum()));
+            File directory = FileSpecs
+                  .getCellFolderName(Paths.get(status.getSavePath()), status.getAcquisitionlNum())
+                  .toFile();
+            if (!directory.exists()) {
+               directory.mkdirs();
+            } //The cell folder can be created by the Image saving thread once acquisition begins. In some cases the other thread can get backed up, for safety we just make sure to create the folder right at the beginning.
+            if ((!settings.fluorSettings.isEmpty()) && settings.fluorEnabled) {
+               status.allowPauseHere();
+               acqMan.setFluorescenceSettings(settings.fluorSettings);
+               acqMan.acquireFluorescence();
             }
-        };
-    }
-    
-    private void saveSequenceCoordsFile(AcquisitionStatus status) throws IOException {
-        JsonObject obj = status.coords().toJson();
-        Path directory = FileSpecs.getCellFolderName(Paths.get(status.getSavePath()), status.getAcquisitionlNum());
-        String savePath = directory.resolve("sequencerCoords.json").toString();
-        try (FileWriter w = new FileWriter(savePath)) {
-            GsonUtils.getGson().toJson(obj, w);
-        }
-    }
-
-    @Override
-    protected SimFn getSimulatedFunction() {
-        return (Step.SimulatedStatus status) -> {
-            status.cellNum++;
-            status.requiredPaths.add(Paths.get(status.workingDirectory, String.format("Cell%d", status.cellNum)).toString());
+            if (settings.pwsEnabled) {
+               status.allowPauseHere();
+               acqMan.setPWSSettings(settings.pwsSettings);
+               acqMan.acquirePWS();
+            }
+            if (settings.dynEnabled) {
+               status.allowPauseHere();
+               acqMan.setDynamicsSettings(settings.dynSettings);
+               acqMan.acquireDynamics();
+            }
+            saveSequenceCoordsFile(status);
+            status.allowPauseHere();
             return status;
-        };
-    }
-    
-        
-    @Override
-    public List<String> validate() {
-        List<String> errs = new ArrayList<>();
-        if (settings.pwsEnabled) {
-            String confName = settings.pwsSettings.imConfigName;
+         }
+      };
+   }
+
+   private void saveSequenceCoordsFile(AcquisitionStatus status) throws IOException {
+      JsonObject obj = status.coords().toJson();
+      Path directory = FileSpecs
+            .getCellFolderName(Paths.get(status.getSavePath()), status.getAcquisitionlNum());
+      String savePath = directory.resolve("sequencerCoords.json").toString();
+      try (FileWriter w = new FileWriter(savePath)) {
+         GsonUtils.getGson().toJson(obj, w);
+      }
+   }
+
+   @Override
+   protected SimFn getSimulatedFunction() {
+      return (Step.SimulatedStatus status) -> {
+         status.cellNum++;
+         status.requiredPaths
+               .add(Paths.get(status.workingDirectory, String.format("Cell%d", status.cellNum))
+                     .toString());
+         return status;
+      };
+   }
+
+
+   @Override
+   public List<String> validate() {
+      List<String> errs = new ArrayList<>();
+      if (settings.pwsEnabled) {
+         String confName = settings.pwsSettings.imConfigName;
+         try {
+            Globals.getHardwareConfiguration().getImagingConfigurationByName(confName);
+         } catch (NoSuchElementException nsee) {
+            errs.add(String.format(
+                  "PWS Acquisition: No imaging configuration by the name `%s` was found in the hardware configuration.",
+                  confName));
+         }
+      }
+      if (settings.dynEnabled) {
+         String confName = settings.dynSettings.imConfigName;
+         try {
+            Globals.getHardwareConfiguration().getImagingConfigurationByName(confName);
+         } catch (NoSuchElementException nsee) {
+            errs.add(String.format(
+                  "Dynamics Acquisition: No imaging configuration by the name `%s` was found in the hardware configuration.",
+                  confName));
+         }
+      }
+      if ((!settings.fluorSettings.isEmpty()) && settings.fluorEnabled) {
+         for (FluorSettings flSettings : settings.fluorSettings) {
+            String confName = flSettings.imConfigName;
             try {
-                Globals.getHardwareConfiguration().getImagingConfigurationByName(confName);
+               Globals.getHardwareConfiguration().getImagingConfigurationByName(confName);
             } catch (NoSuchElementException nsee) {
-                errs.add(String.format("PWS Acquisition: No imaging configuration by the name `%s` was found in the hardware configuration.", confName));
+               errs.add(String.format(
+                     "Fluorescence Acquisition: No imaging configuration by the name `%s` was found in the hardware configuration.",
+                     confName));
             }
-        } if (settings.dynEnabled) {
-            String confName = settings.dynSettings.imConfigName;
-            try {
-                Globals.getHardwareConfiguration().getImagingConfigurationByName(confName);
-            } catch (NoSuchElementException nsee) {
-                errs.add(String.format("Dynamics Acquisition: No imaging configuration by the name `%s` was found in the hardware configuration.", confName));
-            }
-        } if ((!settings.fluorSettings.isEmpty()) && settings.fluorEnabled) {
-            for (FluorSettings flSettings : settings.fluorSettings) {
-                String confName = flSettings.imConfigName;
-                try {
-                    Globals.getHardwareConfiguration().getImagingConfigurationByName(confName);
-                } catch (NoSuchElementException nsee) {
-                    errs.add(String.format("Fluorescence Acquisition: No imaging configuration by the name `%s` was found in the hardware configuration.", confName));
-                }
-            }
-        }
-        return errs;
-    }
+         }
+      }
+      return errs;
+   }
 }

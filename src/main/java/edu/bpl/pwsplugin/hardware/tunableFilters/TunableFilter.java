@@ -31,29 +31,29 @@ import java.util.function.Function;
 
 
 /**
- *
  * @author N2-LiveCell
  */
 public interface TunableFilter extends Device {
-    public void setWavelength(int wavelength) throws MMDeviceException;
-    
-    public int getWavelength() throws MMDeviceException;
-    
-    public boolean supportsSequencing();
-    
-    public int getMaxSequenceLength() throws MMDeviceException;
-    
-    public void loadSequence(int[] wavelengthSequence) throws MMDeviceException;
-    
-    public void startSequence() throws MMDeviceException;
-    
-    public void stopSequence() throws MMDeviceException;
-    
-    public boolean isBusy() throws MMDeviceException;
-    
-    public double getDelayMs() throws MMDeviceException;
-    
-    public TunableFilterSettings getSettings();
+
+   public void setWavelength(int wavelength) throws MMDeviceException;
+
+   public int getWavelength() throws MMDeviceException;
+
+   public boolean supportsSequencing();
+
+   public int getMaxSequenceLength() throws MMDeviceException;
+
+   public void loadSequence(int[] wavelengthSequence) throws MMDeviceException;
+
+   public void startSequence() throws MMDeviceException;
+
+   public void stopSequence() throws MMDeviceException;
+
+   public boolean isBusy() throws MMDeviceException;
+
+   public double getDelayMs() throws MMDeviceException;
+
+   public TunableFilterSettings getSettings();
             
     /*public static TunableFilter getInstance(TunableFilterSettings settings) {
         if (null == settings.filterType) {
@@ -69,31 +69,31 @@ public interface TunableFilter extends Device {
                 return null; //This shouldn't ever happen.
         }
     }*/
-    
-    public static TunableFilter getAutomaticInstance(TunableFilterSettings settings) {
-        Function<String, TunableFilterSettings> generator = (devName) -> {
-            TunableFilterSettings sets = (TunableFilterSettings) settings.copy();
-            sets.name = devName;
-            return sets;
-        };
-        
-        Device.AutoFinder<TunableFilter, TunableFilterSettings> finder = 
-                new Device.AutoFinder<>(
-                    TunableFilterSettings.class, 
-                    generator,
-                    Spectra3.class,
-                    VarispecLCTF.class,
-                    KuriosLCTF.class,
-                    SimulatedFilter.class
-                );
-                
-        return finder.getAutoInstance(settings.name);
-    }
-    
-    public enum Types {
-        VARISPECLCTF,
-        KURIOSLCTF,
-        Simulated,
-        SPECTRA3;
-    }
+
+   public static TunableFilter getAutomaticInstance(TunableFilterSettings settings) {
+      Function<String, TunableFilterSettings> generator = (devName) -> {
+         TunableFilterSettings sets = (TunableFilterSettings) settings.copy();
+         sets.name = devName;
+         return sets;
+      };
+
+      Device.AutoFinder<TunableFilter, TunableFilterSettings> finder =
+            new Device.AutoFinder<>(
+                  TunableFilterSettings.class,
+                  generator,
+                  Spectra3.class,
+                  VarispecLCTF.class,
+                  KuriosLCTF.class,
+                  SimulatedFilter.class
+            );
+
+      return finder.getAutoInstance(settings.name);
+   }
+
+   public enum Types {
+      VARISPECLCTF,
+      KURIOSLCTF,
+      Simulated,
+      SPECTRA3;
+   }
 }

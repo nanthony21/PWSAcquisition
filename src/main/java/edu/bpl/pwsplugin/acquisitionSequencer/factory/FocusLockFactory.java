@@ -35,64 +35,65 @@ import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
 /**
- *
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
 public class FocusLockFactory extends StepFactory {
-    @Override
-    public Class<? extends BuilderJPanel> getUI() {
-        return FocusLockUI.class;
-    }
-    
-    @Override
-    public Class<? extends JsonableParam> getSettings() {
-        return SequencerSettings.FocusLockSettings.class;
-    }
-    
-    @Override
-    public Class<? extends Step> getStep() {
-        return FocusLock.class;
-    }
-    
-    @Override
-    public String getDescription() {
-        return "Engage continuous hardware autofocus. Focus lock will be checked before execution of each Acquisition within this.";
-    }
-    
-    @Override
-    public String getName() {
-        return "Optical Focus Lock";
-    }
-    
-    @Override
-    public String getCategory() {
-        return "Focus";
-    }
 
-    @Override
-    public SequencerConsts.Type getType() {
-        return SequencerConsts.Type.PFS;
-    }
+   @Override
+   public Class<? extends BuilderJPanel> getUI() {
+      return FocusLockUI.class;
+   }
+
+   @Override
+   public Class<? extends JsonableParam> getSettings() {
+      return SequencerSettings.FocusLockSettings.class;
+   }
+
+   @Override
+   public Class<? extends Step> getStep() {
+      return FocusLock.class;
+   }
+
+   @Override
+   public String getDescription() {
+      return "Engage continuous hardware autofocus. Focus lock will be checked before execution of each Acquisition within this.";
+   }
+
+   @Override
+   public String getName() {
+      return "Optical Focus Lock";
+   }
+
+   @Override
+   public String getCategory() {
+      return "Focus";
+   }
+
+   @Override
+   public SequencerConsts.Type getType() {
+      return SequencerConsts.Type.PFS;
+   }
 }
 
-class FocusLockUI extends SingleBuilderJPanel<SequencerSettings.FocusLockSettings>{
-    ImprovedComponents.Spinner delay;
-    
-    public FocusLockUI() {
-        super(new MigLayout(), SequencerSettings.FocusLockSettings.class);
-        
-        delay = new ImprovedComponents.Spinner(new SpinnerNumberModel(1.0, 0.0, 30.0, 1.0));
-        ((ImprovedComponents.Spinner.DefaultEditor) delay.getEditor()).getTextField().setColumns(4);
-        
-        this.add(new JLabel("Delay (s):"), "gapleft push");
-        this.add(delay);
-    }
-    
-    @Override
-    public Map<String, Object> getPropertyFieldMap() {
-        Map<String,Object> m = new HashMap<>();
-        m.put("delay", delay);        
-        return m;
-    }
+class FocusLockUI extends SingleBuilderJPanel<SequencerSettings.FocusLockSettings> {
+
+   ImprovedComponents.Spinner delay;
+
+   public FocusLockUI() {
+      super(new MigLayout(), SequencerSettings.FocusLockSettings.class);
+
+      delay = new ImprovedComponents.Spinner(new SpinnerNumberModel(1.0, 0.0, 30.0, 1.0));
+      ((ImprovedComponents.Spinner.DefaultEditor) delay.getEditor()).getTextField().setColumns(4);
+
+      this.add(new JLabel("Delay (s):"), "gapleft push");
+      this.add(delay);
+   }
+
+   @Override
+   public Map<String, Object> getPropertyFieldMap() {
+      Map<String, Object> m = new HashMap<>();
+      m.put("delay", delay);
+      return m;
+   }
 }
 

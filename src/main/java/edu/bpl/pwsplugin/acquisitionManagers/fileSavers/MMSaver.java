@@ -22,109 +22,116 @@ import org.micromanager.data.Datastore;
 import org.micromanager.data.Coords;
 
 public class MMSaver extends SaverThread {
-    //A thread that saves a tiff file using Micro-Manager's `DataStore`. Metadata is saved to a separate json file.
-    //6/18/2020 The `Datastore` used seems somewhat cumbersome and has random errors presumably due to code that is not thread-safe. Going to consider switching to a lower lever api.
-    int expectedFrames_;
-    String savePath_;
-    JsonObject metadata_;
-    String filePrefix_;
-    
-    @Override
-    public String getSavePath() {
-        return savePath_;
-    }
-    
-    @Override
-    public void configure(String savePath, String fileNamePrefix, Integer expectedFrames) {
-        expectedFrames_ = expectedFrames; // The number of image frames that are expected to be received via queue
-        savePath_ = savePath; // The file path to save to
-        filePrefix_ = fileNamePrefix; // The prefix to name the image file by. This is used by the analysis software to find images.
-        configured = true;
-    }
-    
-    @Override
-    public void run(){
-        try {
-            long now = System.currentTimeMillis(); 
-            Datastore ds = Globals.mm().data().createMultipageTIFFDatastore(savePath_, false, true);
-            try {
-                ds.setName("PWSPluginSaver");
-                Image im;
-                Coords.Builder coords;
-                for (int i=0; i<expectedFrames_; i++) {
-                    im = (Image) getQueue().poll(5, TimeUnit.SECONDS); //Wait for an image
-                    if (im == null) {
-                        ReportingUtils.showError("ImSaver timed out while waiting for image");
-                        return;
-                    }
-                    coords = im.getCoords().copyBuilder();
-                    coords.timePoint(i);
-                    ds.putImage(im.copyAtCoords(coords.build()));
 
-                    if (i == expectedFrames_/2) {
-                        saveImBd(im); //Save the image from halfway through the sequence.
-                    }
-                }
-            } finally { //If something goes wrong we still want to make sure to close the file.
-                ds.freeze(); //This must be called prior to closing or the file will be corrupted. We are sometimes getting a null pointer error here, maybe due to non-threadsafe code.
-                ds.close();
-            }
+   //A thread that saves a tiff file using Micro-Manager's `DataStore`. Metadata is saved to a separate json file.
+   //6/18/2020 The `Datastore` used seems somewhat cumbersome and has random errors presumably due to code that is not thread-safe. Going to consider switching to a lower lever api.
+   int expectedFrames_;
+   String savePath_;
+   JsonObject metadata_;
+   String filePrefix_;
 
-            //Rename from micromanager's default datastore naming to our own custom name.
-            File oldFile = new File(savePath_).listFiles((dir, name) -> name.endsWith(".ome.tif") && name.contains("MMStack"))[0];
-            File newFile = new File(Paths.get(savePath_).resolve(filePrefix_ + ".tif").toString());
-            oldFile.renameTo(newFile);
-            
-            //make sure the metadata has been set.
-            int i = 0;
-            while (metadata_ == null) { //Wait for metadata to be set by the acquistion manager.
-                Thread.sleep(10);
-                i++;
-                if (i > 100) {
-                    ReportingUtils.showError("ImSaver timed out while waiting for metadata");
-                    return;
-                }
+   @Override
+   public String getSavePath() {
+      return savePath_;
+   }
+
+   @Override
+   public void configure(String savePath, String fileNamePrefix, Integer expectedFrames) {
+      expectedFrames_ = expectedFrames; // The number of image frames that are expected to be received via queue
+      savePath_ = savePath; // The file path to save to
+      filePrefix_ = fileNamePrefix; // The prefix to name the image file by. This is used by the analysis software to find images.
+      configured = true;
+   }
+
+   @Override
+   public void run() {
+      try {
+         long now = System.currentTimeMillis();
+         Datastore ds = Globals.mm().data().createMultipageTIFFDatastore(savePath_, false, true);
+         try {
+            ds.setName("PWSPluginSaver");
+            Image im;
+            Coords.Builder coords;
+            for (int i = 0; i < expectedFrames_; i++) {
+               im = (Image) getQueue().poll(5, TimeUnit.SECONDS); //Wait for an image
+               if (im == null) {
+                  ReportingUtils.showError("ImSaver timed out while waiting for image");
+                  return;
+               }
+               coords = im.getCoords().copyBuilder();
+               coords.timePoint(i);
+               ds.putImage(im.copyAtCoords(coords.build()));
+
+               if (i == expectedFrames_ / 2) {
+                  saveImBd(im); //Save the image from halfway through the sequence.
+               }
             }
-            writeMetadata();
-            
-            long itTook = System.currentTimeMillis() - now;
-            ReportingUtils.logMessage("PWSPlugin: produced image. Saving took:" + itTook + "milliseconds.");
-        } catch (InterruptedException ie) {
-            Thread.currentThread().interrupt();
-            ReportingUtils.showError(ie);
-            ReportingUtils.logError("Error: PWSPlugin, while producing averaged img: "+ ie.toString());
-        } catch (IOException | JSONException ex) {
-            ReportingUtils.showError(ex);
-            ReportingUtils.logError("Error: PWSPlugin, while producing averaged img: "+ ex.toString());
-        } 
-    }
-        
-    @Override
-    public void setMetadata(MetadataBase md) {
-        metadata_ = md.toJson();
-    }
-    
- 
-    private void writeMetadata() throws IOException, JSONException {
-        try (FileWriter file = new FileWriter(Paths.get(savePath_).resolve(filePrefix_ + "metadata.json").toString())) {
-            file.write(GsonUtils.getGson().toJson(metadata_)); //4 spaces of indentation
-            file.flush();
-        }
-    }
-    
-    private void saveImBd(Image im) throws IOException{
-        ImagePlus imPlus = new ImagePlus(filePrefix_, Globals.mm().data().ij().createProcessor(im));
-        ContrastEnhancer contrast = new ContrastEnhancer();
-        contrast.stretchHistogram(imPlus,0.01); //I think this will saturate 0.01% of the image. or maybe its 1% idk. 
-        ImageConverter converter = new ImageConverter(imPlus);
-        converter.setDoScaling(true);
-        converter.convertToGray8();
-        FileInfo info = new FileInfo();
-        imPlus.setFileInfo(info);
-        FileSaver saver = new FileSaver(imPlus);
-        boolean success = saver.saveAsTiff(Paths.get(savePath_).resolve("image_bd.tif").toString());
-        if (!success) {
-            throw new IOException("Image BD failed to save");
-        }
-    }
+         } finally { //If something goes wrong we still want to make sure to close the file.
+            ds.freeze(); //This must be called prior to closing or the file will be corrupted. We are sometimes getting a null pointer error here, maybe due to non-threadsafe code.
+            ds.close();
+         }
+
+         //Rename from micromanager's default datastore naming to our own custom name.
+         File oldFile = new File(savePath_)
+               .listFiles((dir, name) -> name.endsWith(".ome.tif") && name.contains("MMStack"))[0];
+         File newFile = new File(Paths.get(savePath_).resolve(filePrefix_ + ".tif").toString());
+         oldFile.renameTo(newFile);
+
+         //make sure the metadata has been set.
+         int i = 0;
+         while (metadata_ == null) { //Wait for metadata to be set by the acquistion manager.
+            Thread.sleep(10);
+            i++;
+            if (i > 100) {
+               ReportingUtils.showError("ImSaver timed out while waiting for metadata");
+               return;
+            }
+         }
+         writeMetadata();
+
+         long itTook = System.currentTimeMillis() - now;
+         ReportingUtils
+               .logMessage("PWSPlugin: produced image. Saving took:" + itTook + "milliseconds.");
+      } catch (InterruptedException ie) {
+         Thread.currentThread().interrupt();
+         ReportingUtils.showError(ie);
+         ReportingUtils
+               .logError("Error: PWSPlugin, while producing averaged img: " + ie.toString());
+      } catch (IOException | JSONException ex) {
+         ReportingUtils.showError(ex);
+         ReportingUtils
+               .logError("Error: PWSPlugin, while producing averaged img: " + ex.toString());
+      }
+   }
+
+   @Override
+   public void setMetadata(MetadataBase md) {
+      metadata_ = md.toJson();
+   }
+
+
+   private void writeMetadata() throws IOException, JSONException {
+      try (FileWriter file = new FileWriter(
+            Paths.get(savePath_).resolve(filePrefix_ + "metadata.json").toString())) {
+         file.write(GsonUtils.getGson().toJson(metadata_)); //4 spaces of indentation
+         file.flush();
+      }
+   }
+
+   private void saveImBd(Image im) throws IOException {
+      ImagePlus imPlus = new ImagePlus(filePrefix_, Globals.mm().data().ij().createProcessor(im));
+      ContrastEnhancer contrast = new ContrastEnhancer();
+      contrast.stretchHistogram(imPlus,
+            0.01); //I think this will saturate 0.01% of the image. or maybe its 1% idk.
+      ImageConverter converter = new ImageConverter(imPlus);
+      converter.setDoScaling(true);
+      converter.convertToGray8();
+      FileInfo info = new FileInfo();
+      imPlus.setFileInfo(info);
+      FileSaver saver = new FileSaver(imPlus);
+      boolean success = saver.saveAsTiff(Paths.get(savePath_).resolve("image_bd.tif").toString());
+      if (!success) {
+         throw new IOException("Image BD failed to save");
+      }
+   }
 }
