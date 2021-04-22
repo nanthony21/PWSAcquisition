@@ -30,7 +30,7 @@ public class Globals {
    private Globals() {
    }
 
-   private static Globals instance() {
+   public static Globals instance() {
       //Stores a reference to the singleton instance of this class
       if (instance == null) {
          instance = new Globals();

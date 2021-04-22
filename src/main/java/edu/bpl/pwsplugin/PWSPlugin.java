@@ -129,5 +129,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
    }
 
    //API
-   
+   public Globals api() {
+      return Globals.instance();
+   }
 }
