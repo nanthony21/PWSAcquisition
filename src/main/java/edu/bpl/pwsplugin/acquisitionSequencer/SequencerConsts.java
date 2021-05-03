@@ -22,6 +22,7 @@
 package edu.bpl.pwsplugin.acquisitionsequencer;
 
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.BrokenStepFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.factory.EnterSubfolderFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.RootStepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 
@@ -32,7 +33,8 @@ public class SequencerConsts {
 
    public enum Type {  // Built-intypes
       ROOT,
-      BROKEN
+      BROKEN,
+      SUBFOLDER
    }
 
    public static StepFactory getFactory(String type) {
@@ -42,6 +44,10 @@ public class SequencerConsts {
                return new RootStepFactory();
             case "BROKEN":
                return new BrokenStepFactory();
+            case "SUBFOLDER":
+               return new EnterSubfolderFactory();
+            default:
+               throw new RuntimeException("Unhandled case.");
          }
       }
       throw new RuntimeException("Shouldn't get here.");

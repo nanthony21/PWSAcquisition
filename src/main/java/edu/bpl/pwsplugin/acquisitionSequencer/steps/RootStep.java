@@ -137,8 +137,7 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
       List<String> errs = new ArrayList<>();
       //Collect all subfolder steps.
       List<Step> subfolderSteps = new ArrayList<>();
-      Enumeration<Step> en = (Enumeration<Step>) (Enumeration<? extends TreeNode>) this
-            .breadthFirstEnumeration();
+      Enumeration<Step> en = (Enumeration<Step>) this.breadthFirstEnumeration();
       while (en.hasMoreElements()) {
          Step step = en.nextElement();
          if (step.getType().equals(SequencerConsts.Type.SUBFOLDER)) {
@@ -148,11 +147,11 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
 
       //Build a list of all paths relative to the root.
       List<String> usedPaths = new ArrayList<>();
-      for (Step endPointStep : subfolderSteps) {
+      for (Step<?> endPointStep : subfolderSteps) {
          TreeNode[] path = endPointStep.getPath(); //The path from the step up to the root
-         Step[] treePath = Arrays.copyOf(path, path.length, Step[].class); //cast to Step[].
+         Step<?>[] treePath = Arrays.copyOf(path, path.length, Step[].class); //cast to Step[].
          List<String> subfoldersAlongPath = new ArrayList<>();
-         for (Step step : treePath) {
+         for (Step<?> step : treePath) {
             if (step.getType().equals(SequencerConsts.Type.SUBFOLDER)) {
                String relPath = ((SequencerSettings.EnterSubfolderSettings) step
                      .getSettings()).relativePath;

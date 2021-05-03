@@ -12,7 +12,7 @@ import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.AcquireFro
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.AcquireTimeSeriesFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.AutoShutterStepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.ChangeConfigGroupFactory;
-import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.EnterSubfolderFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.factory.EnterSubfolderFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.EveryNTimesFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.FocusLockFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.PauseFactory;
@@ -37,7 +37,6 @@ public class DefaultSequencerPlugin implements SequencerPlugin {
       CONFIG,
       PAUSE,
       EVERYN,
-      SUBFOLDER,
       ZSTACK,
       AUTOSHUTTER;
    }
@@ -62,8 +61,6 @@ public class DefaultSequencerPlugin implements SequencerPlugin {
                return new PauseFactory();
             case "EVERYN":
                return new EveryNTimesFactory();
-            case "SUBFOLDER":
-               return new EnterSubfolderFactory();
             case "ZSTACK":
                return new ZStackFactory();
             case "AUTOSHUTTER":

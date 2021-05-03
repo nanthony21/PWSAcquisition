@@ -19,9 +19,10 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.steps;
+package edu.bpl.pwsplugin.acquisitionsequencer.steps;
 
 import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
@@ -40,8 +41,7 @@ public class EnterSubfolderStep extends ContainerStep<SequencerSettings.EnterSub
    private Integer simCellNum = 0;
 
    public EnterSubfolderStep() {
-      super(new SequencerSettings.EnterSubfolderSettings(),
-            DefaultSequencerPlugin.Type.SUBFOLDER.name());
+      super(new SequencerSettings.EnterSubfolderSettings(), SequencerConsts.Type.SUBFOLDER.name());
    }
 
    @Override
