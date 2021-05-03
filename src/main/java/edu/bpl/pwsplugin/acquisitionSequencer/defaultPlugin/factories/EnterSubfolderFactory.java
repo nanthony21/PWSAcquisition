@@ -18,7 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
-package edu.bpl.pwsplugin.acquisitionSequencer.factory;
+package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories;
 
 import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
@@ -28,7 +28,8 @@ import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.EnterSubfolderStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps.EnterSubfolderStep;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.io.File;
 import java.nio.file.InvalidPathException;

@@ -18,81 +18,93 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
-package edu.bpl.pwsplugin.acquisitionSequencer.factory;
+package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories;
 
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.FocusLock;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps.AcquireTimeSeries;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JLabel;
 import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
+import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
+
 
 /**
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class FocusLockFactory extends StepFactory {
+public class AcquireTimeSeriesFactory extends StepFactory {
 
    @Override
    public Class<? extends BuilderJPanel> getUI() {
-      return FocusLockUI.class;
+      return TimeSeriesUI.class;
    }
 
    @Override
    public Class<? extends JsonableParam> getSettings() {
-      return SequencerSettings.FocusLockSettings.class;
+      return SequencerSettings.AcquireTimeSeriesSettings.class;
    }
 
    @Override
    public Class<? extends Step> getStep() {
-      return FocusLock.class;
+      return AcquireTimeSeries.class;
    }
 
    @Override
    public String getDescription() {
-      return "Engage continuous hardware autofocus. Focus lock will be checked before execution of each Acquisition within this.";
+      return "Perform enclosed steps at multiple time points.";
    }
 
    @Override
    public String getName() {
-      return "Optical Focus Lock";
+      return "Time Series";
    }
 
    @Override
    public String getCategory() {
-      return "Focus";
+      return "Sequencing";
    }
 
    @Override
    public SequencerConsts.Type getType() {
-      return SequencerConsts.Type.PFS;
+      return SequencerConsts.Type.TIME;
    }
 }
 
-class FocusLockUI extends SingleBuilderJPanel<SequencerSettings.FocusLockSettings> {
 
-   ImprovedComponents.Spinner delay;
+class TimeSeriesUI extends SingleBuilderJPanel<SequencerSettings.AcquireTimeSeriesSettings> {
 
-   public FocusLockUI() {
-      super(new MigLayout(), SequencerSettings.FocusLockSettings.class);
+   ImprovedComponents.Spinner numFrames;
+   ImprovedComponents.Spinner frameIntervalMinutes;
 
-      delay = new ImprovedComponents.Spinner(new SpinnerNumberModel(1.0, 0.0, 30.0, 1.0));
-      ((ImprovedComponents.Spinner.DefaultEditor) delay.getEditor()).getTextField().setColumns(4);
+   public TimeSeriesUI() {
+      super(new MigLayout("insets 5 0 0 0"), SequencerSettings.AcquireTimeSeriesSettings.class);
 
-      this.add(new JLabel("Delay (s):"), "gapleft push");
-      this.add(delay);
+      numFrames = new ImprovedComponents.Spinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
+      frameIntervalMinutes = new ImprovedComponents.Spinner(
+            new SpinnerNumberModel(1.0, 0.0, 1000000000.0, 1.0));
+      ((ImprovedComponents.Spinner.DefaultEditor) numFrames.getEditor()).getTextField()
+            .setColumns(6);
+      ((ImprovedComponents.Spinner.DefaultEditor) frameIntervalMinutes.getEditor()).getTextField()
+            .setColumns(6);
+
+      this.add(new JLabel("Number of time frames:"), "gapleft push");
+      this.add(numFrames, "wrap");
+      this.add(new JLabel("Frame Interval (minutes):"), "gapleft push");
+      this.add(frameIntervalMinutes);
    }
 
    @Override
    public Map<String, Object> getPropertyFieldMap() {
-      Map<String, Object> m = new HashMap<>();
-      m.put("delay", delay);
+      HashMap<String, Object> m = new HashMap<>();
+      m.put("numFrames", numFrames);
+      m.put("frameIntervalMinutes", frameIntervalMinutes);
       return m;
    }
 }

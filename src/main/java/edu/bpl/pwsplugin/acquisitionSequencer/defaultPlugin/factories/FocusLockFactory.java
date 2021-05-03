@@ -18,90 +18,83 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
-package edu.bpl.pwsplugin.acquisitionSequencer.factory;
+package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories;
 
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
+import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.PauseStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps.FocusLock;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
-import javax.swing.BorderFactory;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
+import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
+import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
 /**
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class PauseFactory extends StepFactory {
+public class FocusLockFactory extends StepFactory {
 
    @Override
    public Class<? extends BuilderJPanel> getUI() {
-      return PauseStepUI.class;
+      return FocusLockUI.class;
    }
 
    @Override
    public Class<? extends JsonableParam> getSettings() {
-      return SequencerSettings.PauseStepSettings.class;
+      return SequencerSettings.FocusLockSettings.class;
    }
 
    @Override
    public Class<? extends Step> getStep() {
-      return PauseStep.class;
+      return FocusLock.class;
    }
 
    @Override
    public String getDescription() {
-      return "Open a dialog window and pause execution until the dialog is closed.";
+      return "Engage continuous hardware autofocus. Focus lock will be checked before execution of each Acquisition within this.";
    }
 
    @Override
    public String getName() {
-      return "Pause";
+      return "Optical Focus Lock";
    }
 
    @Override
    public String getCategory() {
-      return "Utility";
+      return "Focus";
    }
 
    @Override
    public SequencerConsts.Type getType() {
-      return SequencerConsts.Type.PAUSE;
+      return SequencerConsts.Type.PFS;
    }
 }
 
-class PauseStepUI extends BuilderJPanel<SequencerSettings.PauseStepSettings> {
+class FocusLockUI extends SingleBuilderJPanel<SequencerSettings.FocusLockSettings> {
 
-   JTextArea message = new JTextArea();
+   ImprovedComponents.Spinner delay;
 
-   public PauseStepUI() {
-      super(new MigLayout("insets 0 0 0 0, fill"), SequencerSettings.PauseStepSettings.class);
+   public FocusLockUI() {
+      super(new MigLayout(), SequencerSettings.FocusLockSettings.class);
 
-      //message.setPreferredSize(new Dimension(100, 100));
-      message.setBorder(BorderFactory.createLoweredBevelBorder());
-      message.setLineWrap(true);
-      message.setWrapStyleWord(true);
+      delay = new ImprovedComponents.Spinner(new SpinnerNumberModel(1.0, 0.0, 30.0, 1.0));
+      ((ImprovedComponents.Spinner.DefaultEditor) delay.getEditor()).getTextField().setColumns(4);
 
-      JScrollPane scroll = new JScrollPane(message);
-      scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
-      this.add(new JLabel("Message:"), "wrap");
-      this.add(scroll,
-            "w 100%, h 100%"); //This does the same as "grow" except that grow wasn't working for some reason here.
+      this.add(new JLabel("Delay (s):"), "gapleft push");
+      this.add(delay);
    }
 
    @Override
-   public SequencerSettings.PauseStepSettings build() {
-      SequencerSettings.PauseStepSettings settings = new SequencerSettings.PauseStepSettings();
-      settings.message = message.getText();
-      return settings;
-   }
-
-   @Override
-   public void populateFields(SequencerSettings.PauseStepSettings settings) {
-      this.message.setText(settings.message);
+   public Map<String, Object> getPropertyFieldMap() {
+      Map<String, Object> m = new HashMap<>();
+      m.put("delay", delay);
+      return m;
    }
 }
+

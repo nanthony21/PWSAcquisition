@@ -96,7 +96,7 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
 
    public abstract List<String> validate(); //Return a list of any errors for this step.
 
-   protected static class SimulatedStatus {
+    public static class SimulatedStatus {
 
       //A single instance of this class is passed between the simulation functions to keep track of multiple parameters.
       public Integer cellNum = 1; // The "Cell{X}" number that the acquisition is on.
@@ -105,7 +105,7 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
    }
 
    @FunctionalInterface
-   protected static interface SimFn extends Function<SimulatedStatus, SimulatedStatus> {
+    public static interface SimFn extends Function<SimulatedStatus, SimulatedStatus> {} //Recieves a SimulatedStatus and returns the same object.
 
    } //Recieves a SimulatedStatus and returns the same object.
 
