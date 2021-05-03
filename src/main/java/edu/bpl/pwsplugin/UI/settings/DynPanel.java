@@ -18,8 +18,10 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.UI.settings;
 
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import java.util.HashMap;
@@ -27,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 

@@ -18,12 +18,13 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionManagers;
 
+import edu.bpl.pwsplugin.FileSpecs;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
-import edu.bpl.pwsplugin.FileSpecs;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
@@ -36,7 +37,6 @@ import java.util.Map;
 import org.micromanager.data.Coords;
 import org.micromanager.data.Image;
 import org.micromanager.data.Pipeline;
-import org.micromanager.data.internal.DefaultMetadata;
 import org.micromanager.internal.utils.ReportingUtils;
 
 /**
@@ -48,7 +48,8 @@ class MultipleFluorescenceAcquisition extends
    //Acquires multiple fluorescence images from a list of fluorescence settings.
    private FluorSettings settings;
    private ImagingConfiguration imConf;
-   private Map<String, String> initialFilters; //This map contains all initial configuration states for the the configuration groups to adjust fluorescence filter. This is populated during initialization and then used during finalization.
+   private Map<String, String> initialFilters;
+         //This map contains all initial configuration states for the the configuration groups to adjust fluorescence filter. This is populated during initialization and then used during finalization.
 
    public MultipleFluorescenceAcquisition(PWSAlbum display) {
       super(display);

@@ -18,15 +18,17 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -34,8 +36,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import javax.management.RuntimeErrorException;
-import java.util.Timer;
-import java.util.TimerTask;
 import org.micromanager.data.Image;
 
 /**
@@ -53,11 +53,14 @@ public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
          new ThreadFactoryBuilder().setNameFormat("PWS_ImageIO_Saver_Thread_%d")
                .setPriority(Thread.MAX_PRIORITY)
                .build()); // A single thread handles saving for the whole application.
-   private static final List<Future<Void>> threadFutures = new ArrayList<>(); // This list keeps track of the save tasks that are still running. The timer periodically cleans the list of finished tasks.
-   private final LinkedBlockingQueue<Image> imQueue = new LinkedBlockingQueue<>(); // A queue to pass images between threads.
+   private static final List<Future<Void>> threadFutures = new ArrayList<>();
+         // This list keeps track of the save tasks that are still running. The timer periodically cleans the list of finished tasks.
+   private final LinkedBlockingQueue<Image> imQueue = new LinkedBlockingQueue<>();
+         // A queue to pass images between threads.
    private final LinkedBlockingQueue<MetadataBase> mdQueue = new LinkedBlockingQueue<>(
          1); // A  queue to pass metadata between queues.
-   private boolean initialized = false; //Subclasses of this can only be run once, this varible checks to make sure that is the case.
+   private boolean initialized = false;
+         //Subclasses of this can only be run once, this varible checks to make sure that is the case.
    protected boolean configured = false; //subclasses must set this to `true` before running.
    private static final Timer timer;
 

@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.settings;
 
 import edu.bpl.pwsplugin.utils.JsonableParam;
@@ -34,8 +35,10 @@ public class PWSSettings extends JsonableParam {
    public int wvStop = 700; //the wavelength (nm) to stop scanning at.
    public int wvStep = 2; //The interval of wavelengths (nm) to scan in.
    public double exposure = 100; //The exposure time of the camera in milliseconds.
-   public boolean ttlTriggering = false; //Whether to attempt acquiring with the camera triggering a sequence of wavelengths via a TTL cable. Not all hardware supports this but it is much faster.
-   public boolean externalCamTriggering = false; //Whether the tunable filter will use a TTL cable to trigger the camera when it is done tuning. `ttlTriggering` must also be true for this to be true.
+   public boolean ttlTriggering = false;
+         //Whether to attempt acquiring with the camera triggering a sequence of wavelengths via a TTL cable. Not all hardware supports this but it is much faster.
+   public boolean externalCamTriggering = false;
+         //Whether the tunable filter will use a TTL cable to trigger the camera when it is done tuning. `ttlTriggering` must also be true for this to be true.
 
    public int[] getWavelengthArray() { //Generate the array of wavelengths used based on the start, stop, and step settings.
       int numWvs = java.lang.Math.abs(wvStart - wvStop) / wvStep + 1;

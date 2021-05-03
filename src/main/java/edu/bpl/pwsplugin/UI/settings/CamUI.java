@@ -1,12 +1,12 @@
-
 package edu.bpl.pwsplugin.UI.settings;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.hardware.cameras.Camera;
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import edu.bpl.pwsplugin.hardware.settings.CamSettings;
 import java.awt.Color;
-import java.util.Vector;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,9 +16,6 @@ import javax.swing.InputVerifier;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import mmcorej.DeviceType;

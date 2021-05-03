@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import edu.bpl.pwsplugin.Globals;
@@ -25,8 +26,6 @@ import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -94,7 +93,8 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
 
    public final List<String> getRequiredPaths() {
       Step.SimulatedStatus status = new Step.SimulatedStatus();
-      status.cellNum = 0; //This number is incremented before acquisition so Cell1 is always the first one.
+      status.cellNum =
+            0; //This number is incremented before acquisition so Cell1 is always the first one.
       status.workingDirectory = this.settings.directory;
       return this.getSimulatedFunction().apply(status).requiredPaths;
    }

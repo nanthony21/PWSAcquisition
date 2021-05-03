@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.utils;
 
 import com.google.gson.Gson;
@@ -41,7 +42,8 @@ public class GsonUtils {
    private static final GsonBuilder gsonBuilder = new GsonBuilder()
          .setPrettyPrinting() //This causes files to be saved in a more human-readable form.
          .registerTypeAdapterFactory(new MMTypeAdapterFactory())
-         .serializeNulls(); //Without `serializeNulls` null fields will be skipped, then we json is loaded the default values will be used instead of null.
+         .serializeNulls();
+         //Without `serializeNulls` null fields will be skipped, then we json is loaded the default values will be used instead of null.
 
    public static GsonBuilder builder() {
       return gsonBuilder;

@@ -18,12 +18,13 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionManagers;
 
+import edu.bpl.pwsplugin.FileSpecs;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
-import edu.bpl.pwsplugin.FileSpecs;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
@@ -32,15 +33,14 @@ import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import mmcorej.TaggedImage;
 import org.micromanager.data.Coords;
 import org.micromanager.data.Image;
 import org.micromanager.data.Pipeline;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import org.micromanager.data.internal.DefaultMetadata;
 
 
 class DynamicsAcquisition extends SingleAcquisitionBase<DynSettings> {

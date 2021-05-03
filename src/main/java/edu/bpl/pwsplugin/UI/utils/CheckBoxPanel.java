@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.UI.utils;
 
 import edu.bpl.pwsplugin.UI.utils.disablePanel.DisabledPanel;

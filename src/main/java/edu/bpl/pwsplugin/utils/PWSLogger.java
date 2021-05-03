@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.utils;
 
 import edu.bpl.pwsplugin.Globals;
@@ -39,10 +40,13 @@ import org.micromanager.internal.utils.ReportingUtils;
  */
 public class PWSLogger {
 
-   private final FileWriter logWriter; //This writer always writes to the `logPath` that SGILogger is constructed with
-   private FileWriter acqWriter = null; //When an experiment is run the `setAcquisitionPath` method is used to start a secondary log file in the acquisition path.
+   private final FileWriter logWriter;
+         //This writer always writes to the `logPath` that SGILogger is constructed with
+   private FileWriter acqWriter = null;
+         //When an experiment is run the `setAcquisitionPath` method is used to start a secondary log file in the acquisition path.
    private static final String LS = System.lineSeparator();
-   private final Integer mainCoreLogHandle; //This integer is used as a handle by MMCore to keep track of Core log files. We need to keep this handle in order to close the file.
+   private final Integer mainCoreLogHandle;
+         //This integer is used as a handle by MMCore to keep track of Core log files. We need to keep this handle in order to close the file.
    private Integer acqCoreLogHandle = null;
 
    public PWSLogger(Studio studio) throws Exception {

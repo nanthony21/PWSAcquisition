@@ -18,14 +18,15 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps.ChangeConfigGroup;
+import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.event.ItemEvent;
@@ -34,7 +35,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import net.miginfocom.swing.MigLayout;
-import org.micromanager.events.ConfigGroupChangedEvent;
 
 /**
  * @author Nick Anthony <nickmanthony at hotmail.com>
@@ -111,7 +111,8 @@ class ChangeConfigGroupUI extends
 
    @Override
    public SequencerSettings.ChangeConfigGroupSettings build() {
-      SequencerSettings.ChangeConfigGroupSettings settings = new SequencerSettings.ChangeConfigGroupSettings();
+      SequencerSettings.ChangeConfigGroupSettings settings =
+            new SequencerSettings.ChangeConfigGroupSettings();
       settings.configGroupName = (String) this.configGroupName.getSelectedItem();
       settings.configValue = (String) this.configValue.getSelectedItem();
       return settings;

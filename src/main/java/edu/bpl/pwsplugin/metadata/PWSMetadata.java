@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.metadata;
 
 import com.google.gson.JsonObject;
@@ -29,7 +30,8 @@ import java.util.List;
  */
 public class PWSMetadata extends MetadataBase {
 
-   private final List<Double> wavelengths; //The wavelengths associated with each image in the image cube.
+   private final List<Double> wavelengths;
+         //The wavelengths associated with each image in the image cube.
    private final Double exposure; //The exposure time that was used. milliseconds.
 
    public PWSMetadata(MetadataBase base, List<Double> wavelengths, Double exposure) {

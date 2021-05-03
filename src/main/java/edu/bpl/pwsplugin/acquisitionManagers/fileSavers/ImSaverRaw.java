@@ -18,28 +18,29 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
 import com.google.gson.JsonObject;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.utils.GsonUtils;
-import java.nio.file.Paths;
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.io.FileInfo;
+import ij.io.FileSaver;
+import ij.plugin.ContrastEnhancer;
+import ij.process.ImageConverter;
+import ij.process.ImageProcessor;
 import java.io.File;
 import java.io.FileWriter;
-import org.micromanager.data.Image;
-import org.micromanager.internal.utils.ReportingUtils;
-import org.micromanager.data.ImageJConverter;
-import ij.ImageStack;
-import ij.ImagePlus;
-import ij.process.ImageProcessor;
-import ij.io.FileSaver;
-import ij.io.FileInfo;
-import mmcorej.org.json.JSONException;
 import java.io.IOException;
-import ij.process.ImageConverter;
-import ij.plugin.ContrastEnhancer;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
+import mmcorej.org.json.JSONException;
+import org.micromanager.data.Image;
+import org.micromanager.data.ImageJConverter;
+import org.micromanager.internal.utils.ReportingUtils;
 
 
 public class ImSaverRaw extends SaverThread {
@@ -65,9 +66,11 @@ public class ImSaverRaw extends SaverThread {
 
    @Override
    public void configure(String savePath, String fileNamePrefix, Integer expectedFrames) {
-      expectedFrames_ = expectedFrames; // The number of image frames that are expected to be received via queue
+      expectedFrames_ =
+            expectedFrames; // The number of image frames that are expected to be received via queue
       savePath_ = savePath; // The file path to save to
-      filePrefix_ = fileNamePrefix; // The prefix to name the image file by. This is used by the analysis software to find images.
+      filePrefix_ =
+            fileNamePrefix; // The prefix to name the image file by. This is used by the analysis software to find images.
       this.configured = true;
    }
 

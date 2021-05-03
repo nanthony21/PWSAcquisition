@@ -1,10 +1,15 @@
-
 package edu.bpl.pwsplugin.UI.utils;
 
 
 import edu.bpl.pwsplugin.utils.JsonableParam;
+import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Font;;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -12,15 +17,11 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import net.miginfocom.swing.MigLayout;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import javax.swing.JScrollPane;
+import net.miginfocom.swing.MigLayout;
 import org.micromanager.internal.utils.ReportingUtils;
+
+;
 
 /**
  * @author Nick Anthony <nickmanthony at hotmail.com>

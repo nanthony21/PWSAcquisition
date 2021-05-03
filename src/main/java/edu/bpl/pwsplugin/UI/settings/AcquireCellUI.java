@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.UI.settings;
 
 import edu.bpl.pwsplugin.Globals;
@@ -105,7 +106,8 @@ class SimpleAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements
    private final ListCardUI<List<FluorSettings>, FluorSettings> fluorSettings = new ListCardUI(
          ArrayList.class, "", new FluorSettings());
    private final CheckBoxPanel fluorCBPanel = new CheckBoxPanel(fluorSettings, "Fluorescence");
-   private final AdvancedAcquireCellUI advancedUI;  // This reference to an `advancedUI` is used to get the values for settings that aren't displayed in this ui.
+   private final AdvancedAcquireCellUI advancedUI;
+         // This reference to an `advancedUI` is used to get the values for settings that aren't displayed in this ui.
 
 
    public SimpleAcquireCellUI(AdvancedAcquireCellUI advanceUI) {
@@ -206,8 +208,9 @@ class SimpleAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements
 
 class SimplePWSPanel extends JPanel {
 
-   private final ImprovedComponents.FormattedTextField exposure = new ImprovedComponents.FormattedTextField(
-         NumberFormat.getNumberInstance());
+   private final ImprovedComponents.FormattedTextField exposure =
+         new ImprovedComponents.FormattedTextField(
+               NumberFormat.getNumberInstance());
 
    public SimplePWSPanel() {
       super(new MigLayout());

@@ -21,10 +21,10 @@
 
 package edu.bpl.pwsplugin.acquisitionManagers;
 
+import edu.bpl.pwsplugin.FileSpecs;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
-import edu.bpl.pwsplugin.FileSpecs;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.configurations.SpectralCamera;
@@ -34,16 +34,16 @@ import edu.bpl.pwsplugin.metadata.PWSMetadata;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
-import org.micromanager.internal.utils.ReportingUtils;
-import org.micromanager.data.Image;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import org.micromanager.data.Coords;
+import org.micromanager.data.Image;
 import org.micromanager.data.Pipeline;
 import org.micromanager.data.PipelineErrorException;
+import org.micromanager.internal.utils.ReportingUtils;
 
 
 class PWSAcquisition extends SingleAcquisitionBase<PWSSettings> {
@@ -51,8 +51,10 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings> {
    //Used to acquire a single PWS file.
    int[] wv; //The array of wavelengths to image at.
    final String filtProp = "Wavelength"; //The property name of the filter that we want to tune.
-   Boolean hardwareSequence; // Whether or not to attempt to use TTL triggering between the camera and spectral filter.
-   Boolean useExternalTrigger; // Whether or not to let the spectral filter TTL trigger a new camera frame when it is done tuning.
+   Boolean hardwareSequence;
+         // Whether or not to attempt to use TTL triggering between the camera and spectral filter.
+   Boolean useExternalTrigger;
+         // Whether or not to let the spectral filter TTL trigger a new camera frame when it is done tuning.
    double exposure_; // The camera exposure.
    PWSAlbum album_;
    SpectralCamera conf;

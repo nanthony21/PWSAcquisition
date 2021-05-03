@@ -1,4 +1,3 @@
-
 package edu.bpl.pwsplugin.metadata;
 
 import com.google.gson.JsonArray;
@@ -18,12 +17,16 @@ import org.micromanager.internal.utils.ReportingUtils;
 
 public class MetadataBase { //All images should have this metadata.
 
-   private final List<Double> linearityPoly; //A polynomial describing how to transform from camera counts to intensity. Most, but not all, cameras are linera so this isn't needed.
+   private final List<Double> linearityPoly;
+         //A polynomial describing how to transform from camera counts to intensity. Most, but not all, cameras are linera so this isn't needed.
    private final String system; //the name of the system this acquisition was performed on.
-   private final Integer darkCounts; //The darkcounts of the camera. this is the number measured when no binning is used.
+   private final Integer darkCounts;
+         //The darkcounts of the camera. this is the number measured when no binning is used.
    private final String time; //A datetime string indicating the time of acquisition.
-   private final List<Double> affineTransform; //A 2x3 array indication the affine transform of the camera relative to the translation stage.
-   private DefaultMetadata MMmd; //the micro-manager metadata object containing all sorts of other information.
+   private final List<Double> affineTransform;
+         //A 2x3 array indication the affine transform of the camera relative to the translation stage.
+   private DefaultMetadata MMmd;
+         //the micro-manager metadata object containing all sorts of other information.
 
    public MetadataBase(List<Double> linearityPoly, String systemName, Integer darkCounts,
          List<Double> afTransform) {
@@ -56,7 +59,8 @@ public class MetadataBase { //All images should have this metadata.
    public void setMicroManagerMetadata(Image im) { //This must be called before saving.
       try {
          Metadata md = Globals.mm().acquisitions().generateMetadata(im, true);
-         this.MMmd = (DefaultMetadata) md; //This line populates the metadata with information like z position, binning, xy position, etc. very important in some cases.
+         this.MMmd =
+               (DefaultMetadata) md; //This line populates the metadata with information like z position, binning, xy position, etc. very important in some cases.
       } catch (Exception e) {
          throw new RuntimeException(e);
       }

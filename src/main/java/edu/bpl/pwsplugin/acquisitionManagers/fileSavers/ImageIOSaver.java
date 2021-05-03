@@ -18,34 +18,35 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
 import com.google.gson.JsonObject;
 import edu.bpl.pwsplugin.Globals;
-import java.nio.file.Paths;
-import org.micromanager.data.Image;
-import org.micromanager.internal.utils.ReportingUtils;
-import javax.imageio.ImageWriter;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.IIOImage;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
-import javax.imageio.stream.ImageOutputStream;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
+import edu.bpl.pwsplugin.utils.GsonUtils;
 import ij.ImagePlus;
 import ij.io.FileInfo;
 import ij.io.FileSaver;
 import ij.plugin.ContrastEnhancer;
 import ij.process.ImageConverter;
-import edu.bpl.pwsplugin.utils.GsonUtils;
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.io.File;
-import java.util.NoSuchElementException;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 import javax.imageio.spi.IIORegistry;
+import javax.imageio.stream.ImageOutputStream;
+import org.micromanager.data.Image;
+import org.micromanager.internal.utils.ReportingUtils;
 
 public class ImageIOSaver extends SaverExecutor {
 
@@ -78,7 +79,8 @@ public class ImageIOSaver extends SaverExecutor {
 
    @Override
    public Void call()
-         throws Exception { //This was tested using the TwelveMonkeys imageIO plugin for TIFF. In theory it should work for any ImageIO tiff plugin.
+         throws
+         Exception { //This was tested using the TwelveMonkeys imageIO plugin for TIFF. In theory it should work for any ImageIO tiff plugin.
       ImageWriter writer;
       try {
          writer = ImageIO.getImageWritersBySuffix("tif").next();

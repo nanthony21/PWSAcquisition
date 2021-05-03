@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.hardware.settings;
 
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
@@ -35,6 +36,8 @@ public class ImagingConfigurationSettings extends JsonableParam {
    public IlluminatorSettings illuminatorSettings = new IlluminatorSettings();
    public String configurationGroup = "";
    public String configurationName = "";
-   public String fluorescenceConfigGroup = ""; //The name of the configuration group used to control fluorescence filter.
-   public static final String MANUALFLUORESCENCENAME = "MANUAL CONTROL"; // If fluorescenceConfigGroup is equal to this then the software will to prompt the user to manually set the filter.
+   public String fluorescenceConfigGroup = "";
+         //The name of the configuration group used to control fluorescence filter.
+   public static final String MANUALFLUORESCENCENAME = "MANUAL CONTROL";
+         // If fluorescenceConfigGroup is equal to this then the software will to prompt the user to manually set the filter.
 }

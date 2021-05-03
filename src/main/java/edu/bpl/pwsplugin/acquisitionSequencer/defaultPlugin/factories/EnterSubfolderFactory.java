@@ -18,23 +18,17 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps.EnterSubfolderStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
+import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.io.File;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Paths;
-import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
@@ -102,7 +96,8 @@ class EnterSubfolderUI extends BuilderJPanel<SequencerSettings.EnterSubfolderSet
    public SequencerSettings.EnterSubfolderSettings build() {
       String p = this.relPath.getText();
       File f = new File(p);
-      SequencerSettings.EnterSubfolderSettings settings = new SequencerSettings.EnterSubfolderSettings();
+      SequencerSettings.EnterSubfolderSettings settings =
+            new SequencerSettings.EnterSubfolderSettings();
       settings.relativePath = p;
       return settings;
    }

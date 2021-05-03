@@ -18,13 +18,18 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.UI.utils.disablePanel;
 
-import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.LayoutManager2;
+import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * The <code>OverlapLayout</code> class is a layout manager that lays out a container's components
@@ -259,9 +264,8 @@ public class OverlapLayout implements LayoutManager2, java.io.Serializable {
    /**
     * Determine the minimum size on the Container
     *
-    * @param    target   the container in which to do the layout
-    * @return the minimum dimensions needed to lay out the subcomponents of the specified
-    * container
+    * @param target the container in which to do the layout
+    * @return the minimum dimensions needed to lay out the subcomponents of the specified container
     */
    public Dimension minimumLayoutSize(Container parent) {
       synchronized (parent.getTreeLock()) {
@@ -272,8 +276,8 @@ public class OverlapLayout implements LayoutManager2, java.io.Serializable {
    /**
     * Determine the preferred size on the Container
     *
+    * @param parent the container in which to do the layout
     * @return the preferred dimensions to lay out the subcomponents of the specified container
-    * @param    parent   the container in which to do the layout
     */
    public Dimension preferredLayoutSize(Container parent) {
       synchronized (parent.getTreeLock()) {
@@ -343,7 +347,7 @@ public class OverlapLayout implements LayoutManager2, java.io.Serializable {
     * Lays out the specified container using this layout.
     * <p>
     *
-    * @param    target   the container in which to do the layout
+    * @param target the container in which to do the layout
     */
    public void layoutContainer(Container parent) {
       synchronized (parent.getTreeLock()) {

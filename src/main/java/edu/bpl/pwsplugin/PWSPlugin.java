@@ -54,11 +54,11 @@ import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.PWSSettingsConsts;
-import org.micromanager.Studio;
 import org.micromanager.MenuPlugin;
+import org.micromanager.Studio;
 import org.micromanager.events.ShutdownCommencingEvent;
-import org.scijava.plugin.SciJavaPlugin;
 import org.scijava.plugin.Plugin;
+import org.scijava.plugin.SciJavaPlugin;
 
 @Plugin(type = MenuPlugin.class)
 public class PWSPlugin implements MenuPlugin, SciJavaPlugin {

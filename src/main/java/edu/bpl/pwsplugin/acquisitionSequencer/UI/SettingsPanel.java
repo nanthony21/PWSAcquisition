@@ -18,12 +18,13 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.Sequencer;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;

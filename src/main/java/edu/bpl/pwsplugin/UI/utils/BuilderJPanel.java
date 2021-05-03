@@ -1,4 +1,3 @@
-
 package edu.bpl.pwsplugin.UI.utils;
 
 import java.awt.LayoutManager;

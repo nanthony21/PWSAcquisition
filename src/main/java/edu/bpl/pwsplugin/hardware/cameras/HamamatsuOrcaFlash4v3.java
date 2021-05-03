@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.hardware.cameras;
 
 import edu.bpl.pwsplugin.Globals;
@@ -91,7 +92,8 @@ public class HamamatsuOrcaFlash4v3 extends DefaultCamera {
                   delayMs / 1000); //This is in units of seconds.
          } else {
             double exposurems = this.getExposure();
-            double readoutms = 12; //This is based on the frame rate calculation portion of the 13440-20CU camera. 9.7 us per line, reading two lines at once, 2048 lines -> 0.097*2048/2 ~= 10 ms. However testing has shown if we set this exactly then we end up missing every other frame and getting half our frame rate add a buffer of 2ms to be safe.
+            double readoutms =
+                  12; //This is based on the frame rate calculation portion of the 13440-20CU camera. 9.7 us per line, reading two lines at once, 2048 lines -> 0.097*2048/2 ~= 10 ms. However testing has shown if we set this exactly then we end up missing every other frame and getting half our frame rate add a buffer of 2ms to be safe.
             double intervalMs = (exposurems + readoutms + delayMs);
             Globals.core().setProperty(this._devName, "TRIGGER SOURCE",
                   "MASTER PULSE"); //Make sure that Master Pulse is triggering the camera.

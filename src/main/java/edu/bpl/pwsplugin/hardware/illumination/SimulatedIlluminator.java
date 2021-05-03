@@ -18,11 +18,11 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.hardware.illumination;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.Device;
-import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.IlluminatorSettings;
 import java.util.ArrayList;
 import java.util.List;

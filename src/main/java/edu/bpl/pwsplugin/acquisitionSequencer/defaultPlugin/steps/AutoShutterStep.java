@@ -18,10 +18,10 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.DefaultSequencerPlugin;
@@ -31,54 +31,60 @@ import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 import java.util.List;
 
 /**
- *
  * @author nicke
  */
 public class AutoShutterStep extends ContainerStep<SequencerSettings.AutoShutterSettings> {
-    public AutoShutterStep() {
-        super(new SequencerSettings.AutoShutterSettings(), DefaultSequencerPlugin.Type.AUTOSHUTTER.name());
-    }
 
-    @Override
-    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
-        SequencerFunction subStepFunction = super.getSubstepsFunction(callbacks);
-        return (status) -> {
-            Illuminator illum = Globals.getHardwareConfiguration().getImagingConfigurationByName(settings.configName).illuminator();
-            status.newStatusMessage(String.format("Enabling illuminator for config: %s", settings.configName));
-            illum.setShutter(true);
-            
-            long startTime = System.currentTimeMillis();
-            int msgId = -1;
-            String oldMsg = "";
-            while ((System.currentTimeMillis() - startTime) / 60000.0 < settings.warmupTimeMinutes) {
-                //Wait for the warmup time to expire.
-                Thread.sleep(1000); //This pause allows the thread to be cancelled
-                String msg = String.format(
-                        "Illuminator warming up. Waiting %.1f minutes before proceeding.", 
-                        settings.warmupTimeMinutes - ((System.currentTimeMillis() - startTime) / 60000.0));
-                if (!msg.equals(oldMsg)) {
-                    if (msgId == -1) {
-                        msgId = status.newStatusMessage(msg);
-                    } else {
-                        status.updateStatusMessage(msgId, msg);
-                    }
-                    oldMsg = msg;
-                }
+   public AutoShutterStep() {
+      super(new SequencerSettings.AutoShutterSettings(),
+            DefaultSequencerPlugin.Type.AUTOSHUTTER.name());
+   }
+
+   @Override
+   public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
+      SequencerFunction subStepFunction = super.getSubstepsFunction(callbacks);
+      return (status) -> {
+         Illuminator illum =
+               Globals.getHardwareConfiguration().getImagingConfigurationByName(settings.configName)
+                     .illuminator();
+         status.newStatusMessage(
+               String.format("Enabling illuminator for config: %s", settings.configName));
+         illum.setShutter(true);
+
+         long startTime = System.currentTimeMillis();
+         int msgId = -1;
+         String oldMsg = "";
+         while ((System.currentTimeMillis() - startTime) / 60000.0 < settings.warmupTimeMinutes) {
+            //Wait for the warmup time to expire.
+            Thread.sleep(1000); //This pause allows the thread to be cancelled
+            String msg = String.format(
+                  "Illuminator warming up. Waiting %.1f minutes before proceeding.",
+                  settings.warmupTimeMinutes - ((System.currentTimeMillis() - startTime)
+                        / 60000.0));
+            if (!msg.equals(oldMsg)) {
+               if (msgId == -1) {
+                  msgId = status.newStatusMessage(msg);
+               } else {
+                  status.updateStatusMessage(msgId, msg);
+               }
+               oldMsg = msg;
             }
-            
-            status = subStepFunction.apply(status);
-            status.newStatusMessage(String.format("Disabling illuminator for config: %s", settings.configName));
-            illum.setShutter(false);
-            return status;
-        };
-    }
+         }
 
-    @Override
-    protected SimFn getSimulatedFunction() {
-        SimFn subStepSimFn = this.getSubStepSimFunction();
-        return (Step.SimulatedStatus status) -> {
-            status = subStepSimFn.apply(status);
-            return status;
-        };
-    }   
+         status = subStepFunction.apply(status);
+         status.newStatusMessage(
+               String.format("Disabling illuminator for config: %s", settings.configName));
+         illum.setShutter(false);
+         return status;
+      };
+   }
+
+   @Override
+   protected SimFn getSimulatedFunction() {
+      SimFn subStepSimFn = this.getSubStepSimFunction();
+      return (Step.SimulatedStatus status) -> {
+         status = subStepSimFn.apply(status);
+         return status;
+      };
+   }
 }

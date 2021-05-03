@@ -1,4 +1,3 @@
-
 package edu.bpl.pwsplugin.UI.utils;
 
 import java.awt.LayoutManager;
@@ -6,9 +5,7 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import edu.bpl.pwsplugin.UI.utils.ImprovedComponents.Spinner;
 import javax.swing.JTextField;
-import org.micromanager.internal.utils.ReportingUtils;
 
 /**
  * @author Nick Anthony <nickmanthony at hotmail.com>

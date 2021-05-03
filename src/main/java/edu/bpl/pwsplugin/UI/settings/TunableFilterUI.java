@@ -18,20 +18,17 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.UI.settings;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
-import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
-import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.hardware.settings.TunableFilterSettings;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
 import mmcorej.DeviceType;
 import net.miginfocom.swing.MigLayout;
 

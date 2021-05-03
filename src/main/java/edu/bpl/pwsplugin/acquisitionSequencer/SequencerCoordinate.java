@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionSequencer;
 
 import com.google.gson.JsonArray;
@@ -57,7 +58,8 @@ public class SequencerCoordinate {
     * @param iterations_
     */
    private SequencerCoordinate(String uuid_, List<Step> treePath_, List<Integer> iterations_) {
-      sequenceRunUUID = uuid_; // Save the UUID that should be specific to this run of the sequencer. Allows us to later link acquisitions with the proper sequence file during analysis.
+      sequenceRunUUID =
+            uuid_; // Save the UUID that should be specific to this run of the sequencer. Allows us to later link acquisitions with the proper sequence file during analysis.
       iterations = iterations_;
       treePath = treePath_;
    }

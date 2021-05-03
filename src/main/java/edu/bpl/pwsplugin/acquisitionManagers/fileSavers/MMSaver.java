@@ -1,4 +1,3 @@
-
 package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
 import com.google.gson.JsonObject;
@@ -16,10 +15,10 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 import mmcorej.org.json.JSONException;
+import org.micromanager.data.Coords;
+import org.micromanager.data.Datastore;
 import org.micromanager.data.Image;
 import org.micromanager.internal.utils.ReportingUtils;
-import org.micromanager.data.Datastore;
-import org.micromanager.data.Coords;
 
 public class MMSaver extends SaverThread {
 
@@ -37,9 +36,11 @@ public class MMSaver extends SaverThread {
 
    @Override
    public void configure(String savePath, String fileNamePrefix, Integer expectedFrames) {
-      expectedFrames_ = expectedFrames; // The number of image frames that are expected to be received via queue
+      expectedFrames_ =
+            expectedFrames; // The number of image frames that are expected to be received via queue
       savePath_ = savePath; // The file path to save to
-      filePrefix_ = fileNamePrefix; // The prefix to name the image file by. This is used by the analysis software to find images.
+      filePrefix_ =
+            fileNamePrefix; // The prefix to name the image file by. This is used by the analysis software to find images.
       configured = true;
    }
 

@@ -1,15 +1,30 @@
 package edu.bpl.pwsplugin.UI.utils.disablePanel;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.AWTEvent;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.DefaultFocusTraversalPolicy;
+import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Set;
-import java.util.HashSet;
-import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 /*
  *  The DisablePanel will simulate the usage of a "Glass Pane" except that the
@@ -41,7 +56,8 @@ public class DisabledPanel extends JPanel {
 
    private static DisabledEventQueue queue = new DisabledEventQueue();
 
-   private static Map<Container, List<JComponent>> containers = new HashMap<Container, List<JComponent>>();
+   private static Map<Container, List<JComponent>> containers =
+         new HashMap<Container, List<JComponent>>();
 
    private JComponent glassPane;
 
@@ -68,9 +84,9 @@ public class DisabledPanel extends JPanel {
       glassPane = new GlassPane();
       add(glassPane);
 
-		if (disabledColor != null) {
-			glassPane.setBackground(disabledColor);
-		}
+      if (disabledColor != null) {
+         glassPane.setBackground(disabledColor);
+      }
 
       setFocusTraversalPolicy(new DefaultFocusTraversalPolicy());
    }
@@ -237,9 +253,9 @@ public class DisabledPanel extends JPanel {
 
          Set<KeyStroke> keyStrokes = getKeyStrokes(panel);
 
-			if (keyStrokes.size() == 0) {
-				return;
-			}
+         if (keyStrokes.size() == 0) {
+            return;
+         }
 
          panels.put(panel, keyStrokes);
 
@@ -248,9 +264,9 @@ public class DisabledPanel extends JPanel {
 
          EventQueue current = Toolkit.getDefaultToolkit().getSystemEventQueue();
 
-			if (current != this) {
-				current.push(queue);
-			}
+         if (current != this) {
+            current.push(queue);
+         }
 
          //  We need to track when a Window is closed so we can remove
          //  the references for all the DisabledPanels on that window.
@@ -278,9 +294,9 @@ public class DisabledPanel extends JPanel {
             InputMap im = component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 
             if (im != null && im.allKeys() != null) {
-					for (KeyStroke keyStroke : im.allKeys()) {
-						keyStrokes.add(keyStroke);
-					}
+               for (KeyStroke keyStroke : im.allKeys()) {
+                  keyStrokes.add(keyStroke);
+               }
             }
          }
 
@@ -292,10 +308,10 @@ public class DisabledPanel extends JPanel {
        * the default EventQueue when all panels using Key Bindings have been enabled.
        */
       public void removePanel(DisabledPanel panel) {
-			if (panels.remove(panel) != null
-					&& panels.size() == 0) {
-				pop();
-			}
+         if (panels.remove(panel) != null
+               && panels.size() == 0) {
+            pop();
+         }
       }
 
       /**
@@ -319,10 +335,10 @@ public class DisabledPanel extends JPanel {
 
                //  A binding was found so just return without dispatching it.
 
-					if (panelWindow == keyEvent.getComponent()
-							&& searchForKeyBinding(panel, keyStroke)) {
-						return;
-					}
+               if (panelWindow == keyEvent.getComponent()
+                     && searchForKeyBinding(panel, keyStroke)) {
+                  return;
+               }
             }
          }
 

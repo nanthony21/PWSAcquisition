@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.UI.settings;
 
 import edu.bpl.pwsplugin.Globals;
@@ -87,7 +88,7 @@ public class ImagingConfigUI extends SingleBuilderJPanel<ImagingConfigurationSet
             .itemStateChanged(null); // trigger the itemlistener to initialize
 
       String[] fluorConfigGroups = (String[]) ArrayUtils.addAll(configGroups,
-            new String[]{ImagingConfigurationSettings.MANUALFLUORESCENCENAME});
+            new String[] {ImagingConfigurationSettings.MANUALFLUORESCENCENAME});
       this.fluorescenceConfigGroup.setModel(new DefaultComboBoxModel<>(fluorConfigGroups));
 
       this.add(new JLabel("Name:"), "gapleft push");

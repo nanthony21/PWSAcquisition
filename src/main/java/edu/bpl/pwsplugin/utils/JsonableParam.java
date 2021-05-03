@@ -1,4 +1,3 @@
-
 package edu.bpl.pwsplugin.utils;
 
 import com.google.gson.Gson;
@@ -21,7 +20,8 @@ public class JsonableParam {
 
    private static final RuntimeTypeAdapterFactory<JsonableParam> adapter = RuntimeTypeAdapterFactory
          .of(JsonableParam.class);
-   private static final HashSet<Class<?>> registeredClasses = new HashSet<Class<?>>(); //Keeps track of which classes have been registered.
+   private static final HashSet<Class<?>> registeredClasses = new HashSet<Class<?>>();
+         //Keeps track of which classes have been registered.
 
    static {
       GsonUtils.builder()

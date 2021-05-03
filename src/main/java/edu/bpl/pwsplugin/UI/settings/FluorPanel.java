@@ -18,22 +18,23 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.UI.settings;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.settings.FluorSettings;
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
+import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
+import edu.bpl.pwsplugin.settings.FluorSettings;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
-import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.NoSuchElementException;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
@@ -110,7 +111,7 @@ public class FluorPanel extends BuilderJPanel<FluorSettings> {
          try { // Allow the panel to show up even if we don't have our connection to micromanager working (useful for testing).
             filters = Globals.core().getAvailableConfigs(configGroup).toArray();
          } catch (NullPointerException e) {
-            filters = new String[]{"None!"};
+            filters = new String[] {"None!"};
          }
          filterCombo.setModel(new DefaultComboBoxModel<>(filters));
          filterCombo.setSelectedItem(

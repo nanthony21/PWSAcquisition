@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.hardware.cameras;
 
 import edu.bpl.pwsplugin.hardware.Device;
@@ -45,10 +46,12 @@ public interface Camera extends Device {
    Image snapImage() throws MMDeviceException;
 
    void startSequence(int numImages, double delayMs, boolean externalTriggering)
-         throws MMDeviceException; //If the camera support "Trigger output" then this should start the seqeunce
+         throws
+         MMDeviceException; //If the camera support "Trigger output" then this should start the seqeunce
 
    void stopSequence()
-         throws MMDeviceException; // Clean up and reset the sequence. Only needed for cameras that support trigger output.
+         throws
+         MMDeviceException; // Clean up and reset the sequence. Only needed for cameras that support trigger output.
 
    boolean supportsExternalTriggering(); //True if the camera can have new image acquisitions triggered by an incoming TTL signal
 

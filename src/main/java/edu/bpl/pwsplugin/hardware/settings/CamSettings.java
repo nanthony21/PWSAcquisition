@@ -18,12 +18,11 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.hardware.settings;
 
-import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

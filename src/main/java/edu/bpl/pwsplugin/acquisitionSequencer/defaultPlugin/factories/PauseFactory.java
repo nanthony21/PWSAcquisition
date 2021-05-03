@@ -18,13 +18,14 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories;
 
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps.PauseStep;
+import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.BorderFactory;

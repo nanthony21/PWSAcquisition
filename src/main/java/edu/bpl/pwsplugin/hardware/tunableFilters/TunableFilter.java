@@ -18,14 +18,11 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.hardware.tunableFilters;
 
 import edu.bpl.pwsplugin.hardware.Device;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
-import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
-import edu.bpl.pwsplugin.hardware.illumination.SimulatedIlluminator;
-import edu.bpl.pwsplugin.hardware.illumination.XCite120LED;
-import edu.bpl.pwsplugin.hardware.settings.IlluminatorSettings;
 import edu.bpl.pwsplugin.hardware.settings.TunableFilterSettings;
 import java.util.function.Function;
 

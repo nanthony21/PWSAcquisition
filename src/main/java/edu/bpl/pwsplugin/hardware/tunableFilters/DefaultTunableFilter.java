@@ -1,4 +1,3 @@
-
 package edu.bpl.pwsplugin.hardware.tunableFilters;
 
 import edu.bpl.pwsplugin.Globals;

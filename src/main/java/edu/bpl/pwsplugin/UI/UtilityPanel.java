@@ -18,15 +18,17 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.UI;
 
 import com.cureos.numerics.Calcfc;
 import com.cureos.numerics.Cobyla;
 import com.cureos.numerics.CobylaExitStatus;
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import edu.bpl.pwsplugin.UI.utils.PWSAlbum;
-import edu.bpl.pwsplugin.hardware.configurations.HWConfiguration;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
+import edu.bpl.pwsplugin.hardware.configurations.HWConfiguration;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
 import java.beans.PropertyChangeEvent;
@@ -40,7 +42,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
@@ -162,40 +163,43 @@ class ExposurePanel extends JPanel implements PropertyChangeListener {
                - 1; //This should be the count when the image is saturated.
          Integer targetCounts = (int) Math.round(maxCounts * (targetIntensityPercent
                / 100.0)); //Calculate target counts from percentage based on camera information.
-         Calcfc opt = new Calcfc() { //This class is what we provide to the COBYLA optimizer to execute the optimization.
-            @Override
-            public double Compute(int n, int m, double[] x, double[] con) {
-               //My understanding is that the `con` constraint functions should be negative if they are invalid.
-               //con[0] = 95 - x[0]; //Don't go above 95%
-               con[1] = x[0] - 5; //Don't go below 5ms
+         Calcfc opt =
+               new Calcfc() { //This class is what we provide to the COBYLA optimizer to execute the optimization.
+                  @Override
+                  public double Compute(int n, int m, double[] x, double[] con) {
+                     //My understanding is that the `con` constraint functions should be negative if they are invalid.
+                     //con[0] = 95 - x[0]; //Don't go above 95%
+                     con[1] = x[0] - 5; //Don't go below 5ms
 
-               double newExposure = x[0];
-               try {
-                  Globals.core().setExposure(AutoExposeController.this.config.camera().getName(),
-                        newExposure);
-               } catch (Exception e) {
-                  throw new RuntimeException(e);
-               }
-               Image img = Globals.mm().live().snap(false).get(0); //Get an image
-               display.addImage(img);
-               List<Integer> pix = new ArrayList<>();
-               //Unfortunately getting the pixels from the image into a list is not straightforward.
-               for (int X = 0; X < img.getWidth(); X++) {
-                  for (int Y = 0; Y < img.getHeight(); Y++) {
-                     pix.add((int) img.getIntensityAt(X,
-                           Y)); //Converting from long to int here is potentially dangerous, but really even high-end cameras are only 16 bit.
+                     double newExposure = x[0];
+                     try {
+                        Globals.core()
+                              .setExposure(AutoExposeController.this.config.camera().getName(),
+                                    newExposure);
+                     } catch (Exception e) {
+                        throw new RuntimeException(e);
+                     }
+                     Image img = Globals.mm().live().snap(false).get(0); //Get an image
+                     display.addImage(img);
+                     List<Integer> pix = new ArrayList<>();
+                     //Unfortunately getting the pixels from the image into a list is not straightforward.
+                     for (int X = 0; X < img.getWidth(); X++) {
+                        for (int Y = 0; Y < img.getHeight(); Y++) {
+                           pix.add((int) img.getIntensityAt(X,
+                                 Y)); //Converting from long to int here is potentially dangerous, but really even high-end cameras are only 16 bit.
+                        }
+                     }
+                     Integer measured = percentile(pix,
+                           99); //The metric that we are optimizing is the intensity (camera counts) of the 99th percentile of camera pixels.
+                     Integer error = targetCounts - measured; //How far are we from being optimized.
+                     Globals.mm().logs().logMessage(
+                           String.format("AutoExposure: Count error of %d at exposure of %.2f ms",
+                                 error,
+                                 newExposure));
+                     return java.lang.Math
+                           .abs(error); //If we don't have abs() here then error can be negative, COBYLA tries to minimize error. so that's not good.
                   }
-               }
-               Integer measured = percentile(pix,
-                     99); //The metric that we are optimizing is the intensity (camera counts) of the 99th percentile of camera pixels.
-               Integer error = targetCounts - measured; //How far are we from being optimized.
-               Globals.mm().logs().logMessage(
-                     String.format("AutoExposure: Count error of %d at exposure of %.2f ms", error,
-                           newExposure));
-               return java.lang.Math
-                     .abs(error); //If we don't have abs() here then error can be negative, COBYLA tries to minimize error. so that's not good.
-            }
-         };
+               };
 
          double[] exposure = {
                initialExposure}; //Initial value of whatever the camera was initially set to.

@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.settings;
 
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
@@ -34,8 +35,10 @@ public class HWConfigurationSettings extends JsonableParam {
     The program only can use a single hardware configuration.
     */
 
-   public String systemName = ""; //The name of this microscope system. This will be saved in metadata.
-   public List<ImagingConfigurationSettings> configs = new ArrayList<>(); //A list of settings for various "Imaging Configurations"
+   public String systemName = "";
+         //The name of this microscope system. This will be saved in metadata.
+   public List<ImagingConfigurationSettings> configs = new ArrayList<>();
+         //A list of settings for various "Imaging Configurations"
 
    public ImagingConfigurationSettings getConfigurationByName(String name) {
       for (int i = 0; i < this.configs.size(); i++) {

@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionSequencer;
 
 import com.google.gson.Gson;
@@ -45,10 +46,14 @@ public class AcquisitionStatus {
    private final RuntimeSettings runTimeSettings;
    private String currentPath;
    protected Integer currentAcquisitionlNum; //The folder number we are currently acquiring.
-   private final List<String> statusMsg = new ArrayList<>(); //A string describing what is currently happening.
-   private final Function<AcquisitionStatus, Void> publishCallBack; //This callback should link to the `publish` method of the swingworker running the acquisition thread.
-   private final Function<Void, Void> pauseCallBack; // This callback should link to the `pausepoint` method of a pause button.
-   private final SequencerCoordinate coords; //This keeps track of where in the sequence we are. Callbacks can use this to determine where they are being called from.
+   private final List<String> statusMsg = new ArrayList<>();
+         //A string describing what is currently happening.
+   private final Function<AcquisitionStatus, Void> publishCallBack;
+         //This callback should link to the `publish` method of the swingworker running the acquisition thread.
+   private final Function<Void, Void> pauseCallBack;
+         // This callback should link to the `pausepoint` method of a pause button.
+   private final SequencerCoordinate coords;
+         //This keeps track of where in the sequence we are. Callbacks can use this to determine where they are being called from.
 
    public AcquisitionStatus(Function<AcquisitionStatus, Void> publishCallBack,
          Function<Void, Void> pauseCallBack, Step rootStep) {

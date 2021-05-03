@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package edu.bpl.pwsplugin.hardware.tunableFilters;
 
 import edu.bpl.pwsplugin.Globals;
@@ -20,7 +21,8 @@ import java.util.Map;
 public class Spectra3 implements TunableFilter {
 
    private final TunableFilterSettings _settings;
-   private final static Map<String, Integer> wvMap; // A map of color names used by the device adapter and their peak wavelengths
+   private final static Map<String, Integer> wvMap;
+         // A map of color names used by the device adapter and their peak wavelengths
    private final String devName;
 
    static {

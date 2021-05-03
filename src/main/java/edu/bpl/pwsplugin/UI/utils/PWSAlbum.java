@@ -23,15 +23,15 @@ package edu.bpl.pwsplugin.UI.utils;
 
 import edu.bpl.pwsplugin.Globals;
 import java.io.IOException;
+import javax.swing.SwingUtilities;
 import org.micromanager.data.Coords;
 import org.micromanager.data.Datastore;
 import org.micromanager.data.DatastoreFrozenException;
 import org.micromanager.data.DatastoreRewriteException;
 import org.micromanager.data.Image;
+import org.micromanager.data.RewritableDatastore;
 import org.micromanager.display.DisplayWindow;
 import org.micromanager.internal.utils.ReportingUtils;
-import javax.swing.SwingUtilities;
-import org.micromanager.data.RewritableDatastore;
 
 public class PWSAlbum {
 

@@ -18,13 +18,14 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.hardware.configurations;
 
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
-import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
+import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import java.util.List;
 import org.micromanager.data.Image;
 

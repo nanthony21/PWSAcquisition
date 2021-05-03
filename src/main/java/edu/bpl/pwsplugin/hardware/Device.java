@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.hardware;
 
 import edu.bpl.pwsplugin.Globals;
@@ -38,7 +39,8 @@ public interface Device {
    public void initialize() throws MMDeviceException; // One time initialization of device
 
    public void activate()
-         throws MMDeviceException; //Make sure this device is ready for usage, may be run many times.
+         throws
+         MMDeviceException; //Make sure this device is ready for usage, may be run many times.
 
    public static class IDException extends Exception {
 

@@ -1,22 +1,21 @@
-
 package edu.bpl.pwsplugin.UI.utils;
 
 import edu.bpl.pwsplugin.UI.settings.CamUI;
-import edu.bpl.pwsplugin.UI.settings.ImagingConfigUI;
-import edu.bpl.pwsplugin.UI.settings.TunableFilterUI;
 import edu.bpl.pwsplugin.UI.settings.DynPanel;
 import edu.bpl.pwsplugin.UI.settings.FluorPanel;
 import edu.bpl.pwsplugin.UI.settings.HWConfPanel;
 import edu.bpl.pwsplugin.UI.settings.IlluminatorUI;
+import edu.bpl.pwsplugin.UI.settings.ImagingConfigUI;
 import edu.bpl.pwsplugin.UI.settings.PWSPanel;
+import edu.bpl.pwsplugin.UI.settings.TunableFilterUI;
 import edu.bpl.pwsplugin.hardware.settings.CamSettings;
+import edu.bpl.pwsplugin.hardware.settings.IlluminatorSettings;
+import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
+import edu.bpl.pwsplugin.hardware.settings.TunableFilterSettings;
 import edu.bpl.pwsplugin.settings.DynSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
-import edu.bpl.pwsplugin.hardware.settings.IlluminatorSettings;
-import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
-import edu.bpl.pwsplugin.hardware.settings.TunableFilterSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import org.micromanager.internal.utils.ReportingUtils;
 

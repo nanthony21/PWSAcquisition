@@ -1,9 +1,9 @@
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
 import edu.bpl.pwsplugin.Globals;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import javax.swing.JButton;
-import java.util.concurrent.ExecutionException;
 import org.micromanager.internal.utils.ReportingUtils;
 
 public class PauseButton extends JButton {

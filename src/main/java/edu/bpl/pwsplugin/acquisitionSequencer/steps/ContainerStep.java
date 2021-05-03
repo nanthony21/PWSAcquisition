@@ -18,10 +18,11 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.ArrayList;
 import java.util.Collections;

@@ -18,28 +18,29 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.UI;
 
+import edu.bpl.pwsplugin.FileSpecs;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.settings.AcquireCellUI;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
+import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
-import edu.bpl.pwsplugin.FileSpecs;
+import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
-import edu.bpl.pwsplugin.hardware.MMDeviceException;
-import java.util.List;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -186,21 +187,22 @@ class AcquisitionPanel extends JPanel {
          });
       }
       final ThrowingFunction<Void, Void> F = f;
-      SwingWorker worker = new SwingWorker() {   //This function will run myFunc in a separate thread. `button` will be disabled while the function is running.
-         @Override
-         protected Object doInBackground() {
-            try {
-               F.apply(null);
-            } catch (RuntimeException e) {
-               Globals.mm().logs().showError(e); //This also logs the error.
-            } finally {
-               SwingUtilities.invokeLater(() -> {
-                  acqButton.setEnabled(true);
-               });
-            }
-            return null;
-         }
-      };
+      SwingWorker worker =
+            new SwingWorker() {   //This function will run myFunc in a separate thread. `button` will be disabled while the function is running.
+               @Override
+               protected Object doInBackground() {
+                  try {
+                     F.apply(null);
+                  } catch (RuntimeException e) {
+                     Globals.mm().logs().showError(e); //This also logs the error.
+                  } finally {
+                     SwingUtilities.invokeLater(() -> {
+                        acqButton.setEnabled(true);
+                     });
+                  }
+                  return null;
+               }
+            };
       acqButton.setEnabled(false);
       worker.execute();
    }

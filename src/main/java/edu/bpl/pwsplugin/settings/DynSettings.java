@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.settings;
 
 import edu.bpl.pwsplugin.utils.JsonableParam;
@@ -30,7 +31,8 @@ public class DynSettings extends JsonableParam {
 
    public String imConfigName = ""; //The name of the "Imaging Configuration" used.
    public double exposure = 50; //The exposure time of the camera in milliseconds.
-   public int wavelength = 550; //The wavelength that the tunable filter should be set to in nanometers.
+   public int wavelength = 550;
+         //The wavelength that the tunable filter should be set to in nanometers.
    public int numFrames = 200; //The number of images to take.
 
 }

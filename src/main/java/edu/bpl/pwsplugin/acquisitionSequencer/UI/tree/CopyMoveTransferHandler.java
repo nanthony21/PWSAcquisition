@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionSequencer.UI.tree;
 
 import java.awt.datatransfer.DataFlavor;
@@ -29,10 +30,6 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
-
-import static javax.swing.TransferHandler.COPY_OR_MOVE;
-import static javax.swing.TransferHandler.MOVE;
-
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -66,7 +63,8 @@ public class CopyMoveTransferHandler extends TransferHandler {
          throw new RuntimeException(e);
       }
 
-      DefaultMutableTreeNode dropNode; // The node at the end of the treepath for the requested drop location.
+      DefaultMutableTreeNode
+            dropNode; // The node at the end of the treepath for the requested drop location.
       try {
          dropNode = (DefaultMutableTreeNode) dl.getPath().getLastPathComponent();
       } catch (NullPointerException e) {

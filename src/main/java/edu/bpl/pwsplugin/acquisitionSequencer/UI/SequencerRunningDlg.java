@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
 import edu.bpl.pwsplugin.Globals;
@@ -197,7 +198,8 @@ class SequencerRunningDlg extends JDialog {
  */
 class DisplayTree extends JPanel {
 
-   TreeDragAndDrop tree = new TreeDragAndDrop(); //This tree is used to display the current status of the sequence, it is not user interactive.
+   TreeDragAndDrop tree = new TreeDragAndDrop();
+         //This tree is used to display the current status of the sequence, it is not user interactive.
    DisabledPanel disPan = new DisabledPanel(tree, new Color(1, 1, 1,
          1)); // Disabled panel with a transparent glass pane to block interaction with the tree.
    private final Step rootStep;

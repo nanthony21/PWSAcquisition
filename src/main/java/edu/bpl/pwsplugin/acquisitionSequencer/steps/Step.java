@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionSequencer.steps;
 
 import com.google.gson.Gson;
@@ -27,8 +28,8 @@ import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
+import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyableMutableTreeNode;
 import edu.bpl.pwsplugin.utils.GsonUtils;
 import edu.bpl.pwsplugin.utils.JsonableParam;
@@ -48,7 +49,8 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
    //Base class for a single step in the acquisition sequencer.
    protected T settings;
    private final String stepType;
-   private static final AtomicInteger COUNTER = new AtomicInteger(); //This static counter makes sure that each Step object has it's own uid during runtime.
+   private static final AtomicInteger COUNTER = new AtomicInteger();
+         //This static counter makes sure that each Step object has it's own uid during runtime.
    private final Integer uid = COUNTER.getAndIncrement();
 
 
@@ -96,18 +98,21 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
 
    public abstract List<String> validate(); //Return a list of any errors for this step.
 
-    public static class SimulatedStatus {
+   public static class SimulatedStatus {
 
       //A single instance of this class is passed between the simulation functions to keep track of multiple parameters.
       public Integer cellNum = 1; // The "Cell{X}" number that the acquisition is on.
-      public List<String> requiredPaths = new ArrayList<>(); // A list of file paths that will be saved. Used to determine if there are any file conflicts.
+      public List<String> requiredPaths = new ArrayList<>();
+            // A list of file paths that will be saved. Used to determine if there are any file conflicts.
       public String workingDirectory = ""; // The current folder we are in.
    }
 
    @FunctionalInterface
-    public static interface SimFn extends Function<SimulatedStatus, SimulatedStatus> {} //Recieves a SimulatedStatus and returns the same object.
+   public static interface SimFn extends Function<SimulatedStatus, SimulatedStatus> {
 
    } //Recieves a SimulatedStatus and returns the same object.
+
+} //Recieves a SimulatedStatus and returns the same object.
 
    protected SequencerFunction getCallback() {
       return null;

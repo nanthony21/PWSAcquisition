@@ -18,20 +18,18 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionManagers;
 
+import edu.bpl.pwsplugin.FileSpecs;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageIOSaver;
 import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
-import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.MMSaver;
-import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.SaverThread;
-import edu.bpl.pwsplugin.FileSpecs;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
 import mmcorej.DoubleVector;
 import org.micromanager.internal.utils.ReportingUtils;
 

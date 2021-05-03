@@ -1,4 +1,3 @@
-
 package edu.bpl.pwsplugin.acquisitionManagers.fileSavers;
 
 import edu.bpl.pwsplugin.metadata.MetadataBase;
@@ -11,7 +10,8 @@ public abstract class SaverThread extends Thread implements ImageSaver {
    //Each saverthread object is only good for one image, then a new instance must be created.
 
    private BlockingQueue<Image> q_ = new LinkedBlockingQueue<>();
-   protected boolean configured = false; //Subclass must toggle this to indicate it is safe to start the thread.
+   protected boolean configured = false;
+         //Subclass must toggle this to indicate it is safe to start the thread.
 
    protected BlockingQueue getQueue() { //Internal code can retrieve images with getQueue().poll(timeout, TimeUnit.SECONDS);
       return q_;

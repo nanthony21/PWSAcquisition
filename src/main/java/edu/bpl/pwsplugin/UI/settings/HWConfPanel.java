@@ -18,19 +18,18 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.UI.settings;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.ListScrollUI;
-import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
+import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
 import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;

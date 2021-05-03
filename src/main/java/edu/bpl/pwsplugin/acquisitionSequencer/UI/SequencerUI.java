@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.acquisitionSequencer.UI;
 
 import com.google.gson.JsonIOException;
@@ -74,7 +75,8 @@ public class SequencerUI extends BuilderJPanel<RootStep> implements PropertyChan
    */
    private final Sequencer sequencer_;
    SequenceTree seqTree; // The tree containing the steps defining a sequence.
-   NewStepsTree newStepsTree; // The tree containing all available steps. Drag from here to the sequence tree.
+   NewStepsTree newStepsTree;
+         // The tree containing all available steps. Drag from here to the sequence tree.
    SettingsPanel settingsPanel; //A panel displaying the settings for each selected step type.
    JButton runButton = new JButton("Run");
    JButton saveButton = new JButton("Save");

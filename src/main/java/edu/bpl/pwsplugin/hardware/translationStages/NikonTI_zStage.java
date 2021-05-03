@@ -18,6 +18,7 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
+
 package edu.bpl.pwsplugin.hardware.translationStages;
 
 import edu.bpl.pwsplugin.Globals;
@@ -40,7 +41,8 @@ public class NikonTI_zStage extends TranslationStage1d {
    private final String pfsStatusName;
    private final String pfsOffsetName;
    private boolean calibrated = false;
-   private double[] coef_; //Should be 3 elements giving the quadratic fit of x: um, y: offset. stored in order [intercept, linear, quadratic]
+   private double[] coef_;
+         //Should be 3 elements giving the quadratic fit of x: um, y: offset. stored in order [intercept, linear, quadratic]
 
    public NikonTI_zStage(TranslationStage1dSettings settings)
          throws MMDeviceException, IDException {
@@ -98,7 +100,8 @@ public class NikonTI_zStage extends TranslationStage1d {
    }
 
    private void calibrate()
-         throws MMDeviceException, InterruptedException { //TODO there is a major problem with this on the TI2 primarily because the z position only updates at ~1 hz when pfs is on.
+         throws MMDeviceException,
+         InterruptedException { //TODO there is a major problem with this on the TI2 primarily because the z position only updates at ~1 hz when pfs is on.
       //move pfs offset and measure zstage to calibrate pfsConversion.
       List<WeightedObservedPoint> observations = new ArrayList<>();
       double origOffset = this
@@ -189,7 +192,8 @@ public class NikonTI_zStage extends TranslationStage1d {
             if (!calibrated) {
                this.calibrate();
             }
-            double remainingRelUm = um; //This variable keeps track of how much further we need to go to achieve the original relative movement of `um`
+            double remainingRelUm =
+                  um; //This variable keeps track of how much further we need to go to achieve the original relative movement of `um`
             for (int i = 0; i < 10;
                   i++) { //Due to calibration errors the below code is not accurate enough on one iteration. We give it up to 10 iterations to get within `tolerance` of the correct value.
                double currentOffset = getPFSOffset();
