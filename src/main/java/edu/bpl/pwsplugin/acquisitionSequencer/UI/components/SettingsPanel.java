@@ -24,7 +24,6 @@ package edu.bpl.pwsplugin.acquisitionsequencer.UI.components;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
@@ -77,8 +76,8 @@ public class SettingsPanel extends JPanel implements TreeSelectionListener, Focu
          trees[i].tree().addFocusListener(this);
       }
 
-      for (SequencerConsts.Type type : SequencerConsts.Type.values()) {
-         panelTypeMapping.put(type.name(), sequencer.getFactory(type.name()).createUI());
+      for (String type : sequencer.getRegisteredFactories()) {
+         panelTypeMapping.put(type, sequencer.getFactory(type).createUI());
       }
 
       int maxH = 0;
@@ -100,7 +99,7 @@ public class SettingsPanel extends JPanel implements TreeSelectionListener, Focu
       cardPanel.setMinimumSize(dim);
    }
 
-   public void forceUpdateSettings(SequencerConsts.Type type, JsonableParam settings) {
+   public void forceUpdateSettings(String type, JsonableParam settings) {
       //Used to force an update to the settings represeting by the UI outside the operation handled by other methods of this class.
       try {
          panelTypeMapping.get(type).populateFields(settings);

@@ -44,7 +44,6 @@ import javax.swing.tree.TreeSelectionModel;
  */
 public class NewStepsTree extends TreeDragAndDrop {
 
-   private Step acquisitionStep;
    private final Sequencer sequencer_;
 
    public NewStepsTree(Sequencer sequencer) {
@@ -70,9 +69,6 @@ public class NewStepsTree extends TreeDragAndDrop {
             throw new RuntimeException(e);
          }
          Step node = factory.createStep();
-         if (type == SequencerConsts.Type.ACQ) {
-            acquisitionStep = node; //Save a reference to the acquisition step.
-         }
          node.setSettings(settings);
 
          String categoryName = factory.getCategory();
@@ -97,11 +93,5 @@ public class NewStepsTree extends TreeDragAndDrop {
       Dimension d = new Dimension(200, 200);
       setSize(d);
       setMinimumSize(d);
-   }
-
-   public AcquireCellSettings setDefaultAcquisitionSettings(PWSSettingsConsts.Systems system) {
-      //Assign the default settings for the system to the `acquire` setp and return an copy of the new settings.
-      acquisitionStep.setSettings(AcquireCellSettings.getDefaultSettings(system));
-      return (AcquireCellSettings) acquisitionStep.getSettings();
    }
 }

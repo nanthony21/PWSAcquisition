@@ -46,15 +46,15 @@ public class Sequencer {
 
 
 class FactoryRegistry {
-   private final Map<String, StepFactory> factoryMap = new HashMap<>();
+   private final Map<String, StepFactory> REGISTRY = new HashMap<>();
 
    public void registerFactory(String typeName, StepFactory factoryInstance)
          throws IllegalArgumentException {
-      if (factoryMap.containsKey(typeName)) {
+      if (REGISTRY.containsKey(typeName)) {
          throw new IllegalArgumentException(
                String.format("A StepFactory of type %s has already been registered.", typeName));
       }
-      factoryMap.put(typeName, factoryInstance);
+      REGISTRY.put(typeName, factoryInstance);
    }
 
    /**
@@ -64,7 +64,7 @@ class FactoryRegistry {
     * @return A StepFactory instance
     */
    public StepFactory getFactory(String typeName) {
-      return factoryMap.get(typeName);
+      return REGISTRY.get(typeName);
    }
 
    /**
@@ -72,14 +72,14 @@ class FactoryRegistry {
     * @return A set of all registered factory names
     */
    public Set<String> getRegisteredNames() {
-      return factoryMap.keySet();
+      return REGISTRY.keySet();
    }
 
    /**
     * Make sure all registered factories have been registered with the GSON type adapter.
     */
    public void registerGson() {
-      for (Map.Entry<String, StepFactory> entry : factoryMap.entrySet()) {
+      for (Map.Entry<String, StepFactory> entry : REGISTRY.entrySet()) {
          entry.getValue().registerGson();
       }
    }

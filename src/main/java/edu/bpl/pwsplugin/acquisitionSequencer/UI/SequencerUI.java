@@ -31,6 +31,7 @@ import edu.bpl.pwsplugin.acquisitionsequencer.UI.components.FileConflictDlg;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.components.NewStepsTree;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.components.SequenceTree;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.components.SettingsPanel;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.RootStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
@@ -67,7 +68,7 @@ import org.micromanager.internal.utils.ReportingUtils;
 /**
  * @author nick
  */
-public class SequencerUI extends BuilderJPanel<RootStep> implements PropertyChangeListener {
+public class SequencerUI extends BuilderJPanel<RootStep> {
 
    /*
    This is the main UI for the sequencer. It incorporates the other components into a panel for the user.
@@ -90,8 +91,6 @@ public class SequencerUI extends BuilderJPanel<RootStep> implements PropertyChan
 
    public SequencerUI(Sequencer sequencer) {
       super(new MigLayout("fill"), RootStep.class);
-      Globals.addPropertyChangeListener(
-            this); //Register to receive updates to hardware configuration.
 
       sequencer_ = sequencer;
       seqTree = new SequenceTree(sequencer_);
@@ -276,33 +275,6 @@ public class SequencerUI extends BuilderJPanel<RootStep> implements PropertyChan
 
    public void setActionButtonsEnabled(boolean enable) {
       runButton.setEnabled(enable);
-   }
-
-   @Override
-   public void propertyChange(PropertyChangeEvent evt) {
-      //We subscribe to the Globals property changes. This gets fired when a change in hardware configuration is detected.
-      //Update the default acquisition settings based on system name.
-      //TODO if the acquisition step is already selected then the change of settings here will be overwritten by the settings panel.
-      if (evt.getPropertyName().equals("config")) {
-         HWConfiguration cfg = (HWConfiguration) evt.getNewValue();
-         String sysName = cfg.getSettings().systemName;
-         for (PWSSettingsConsts.Systems sys : PWSSettingsConsts.Systems
-               .values()) { //Check if the system name is in our enum of official system names.
-            if (sys.name().toLowerCase()
-                  .equals(sysName.toLowerCase())) { //Check if noncapitalized names match
-               JsonableParam settings = newStepsTree.setDefaultAcquisitionSettings(sys);
-               settingsPanel.forceUpdateSettings(SequencerConsts.Type.ACQ,
-                     settings); //Make sure the settings UI is also updated. (Only needed when the acquisition UI is already visible.
-               Globals.logger().logMsg(String.format(
-                     "Set default sequencer acquisition settings to %s based on system name of %s",
-                     sys.name(), sysName));
-               return;
-            }
-         }
-         Globals.logger().logMsg(
-               String.format("System name %s did not match any default acquisition settings",
-                     sysName)); //We only get here if no match is found.
-      }
    }
 }
 
