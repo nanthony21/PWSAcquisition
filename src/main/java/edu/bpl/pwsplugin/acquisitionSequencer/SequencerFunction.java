@@ -19,12 +19,12 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionSequencer;
+package edu.bpl.pwsplugin.acquisitionsequencer;
 
 /**
- * @author nick
+ * The function that is executed at runtime of a sequence.
+ *
+ * @author Nick Anthony
  */
 @FunctionalInterface
-public interface SequencerFunction extends ThrowingFunction<AcquisitionStatus, AcquisitionStatus> {
-
-}
+public interface SequencerFunction extends ThrowingFunction<AcquisitionStatus, AcquisitionStatus> {}

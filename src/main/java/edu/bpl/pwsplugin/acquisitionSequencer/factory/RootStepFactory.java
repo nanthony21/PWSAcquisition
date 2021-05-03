@@ -19,14 +19,15 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionSequencer.factory;
+package edu.bpl.pwsplugin.acquisitionsequencer.factory;
 
+import clojure.lang.PersistentTreeMap.Seq;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStep;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.RootStep;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -39,21 +40,21 @@ import net.miginfocom.swing.MigLayout;
 /**
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class RootStepFactory extends StepFactory {
+public class RootStepFactory extends StepFactory<SequencerSettings.RootStepSettings> {
 
    //Should only exist once as the root of each experiment, sets the needed root parameters.
    @Override
-   public Class<? extends BuilderJPanel> getUI() {
+   public Class<RootStepUI> getUI() {
       return RootStepUI.class;
    }
 
    @Override
-   public Class<? extends JsonableParam> getSettings() {
+   public Class<SequencerSettings.RootStepSettings> getSettings() {
       return SequencerSettings.RootStepSettings.class;
    }
 
    @Override
-   public Class<? extends Step> getStep() {
+   public Class<RootStep> getStep() {
       return RootStep.class;
    }
 

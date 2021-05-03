@@ -28,7 +28,7 @@ import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.DirectorySelector;
 import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
-import edu.bpl.pwsplugin.acquisitionSequencer.ThrowingFunction;
+import edu.bpl.pwsplugin.acquisitionsequencer.ThrowingFunction;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import java.io.IOException;

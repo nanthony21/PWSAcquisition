@@ -19,17 +19,17 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionSequencer.UI;
+package edu.bpl.pwsplugin.acquisitionsequencer.UI;
 
 import com.google.gson.JsonIOException;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.Sequencer;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.RootStep;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.ContainerStep;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.RootStep;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.HWConfiguration;
 import edu.bpl.pwsplugin.settings.PWSSettingsConsts;

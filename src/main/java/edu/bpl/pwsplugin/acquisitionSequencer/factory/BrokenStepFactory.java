@@ -19,12 +19,12 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionSequencer.factory;
+package edu.bpl.pwsplugin.acquisitionsequencer.factory;
 
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.BrokenStep;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.BrokenStep;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import javax.swing.JLabel;
 import net.miginfocom.swing.MigLayout;

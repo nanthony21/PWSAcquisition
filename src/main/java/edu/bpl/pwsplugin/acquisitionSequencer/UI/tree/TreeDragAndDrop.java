@@ -1,4 +1,4 @@
-package edu.bpl.pwsplugin.acquisitionSequencer.UI.tree;
+package edu.bpl.pwsplugin.acquisitionsequencer.UI.tree;
 
 import java.awt.BorderLayout;
 import java.util.Enumeration;

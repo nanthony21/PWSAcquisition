@@ -19,13 +19,13 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionSequencer;
+package edu.bpl.pwsplugin.acquisitionsequencer;
 
 import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony at hotmail.com)
  */
 public interface ThrowingFunction<T, R> extends Function<T, R> {
 

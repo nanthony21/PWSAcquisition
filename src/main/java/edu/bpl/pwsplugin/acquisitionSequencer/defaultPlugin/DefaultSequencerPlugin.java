@@ -4,21 +4,21 @@
  * and open the template in the editor.
  */
 
-package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin;
+package edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerPlugin;
-import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories.AcquireCellFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories.AcquireFromPositionListFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories.AcquireTimeSeriesFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories.AutoShutterStepFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories.ChangeConfigGroupFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories.EnterSubfolderFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories.EveryNTimesFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories.FocusLockFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories.PauseFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories.SoftwareAutofocusFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories.ZStackFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.factories.AcquireCellFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.factories.AcquireFromPositionListFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.factories.AcquireTimeSeriesFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.factories.AutoShutterStepFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.factories.ChangeConfigGroupFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.factories.EnterSubfolderFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.factories.EveryNTimesFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.factories.FocusLockFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.factories.PauseFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.factories.SoftwareAutofocusFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.factories.ZStackFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

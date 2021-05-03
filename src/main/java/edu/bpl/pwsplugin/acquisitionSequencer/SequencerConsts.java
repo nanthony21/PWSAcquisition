@@ -19,11 +19,11 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionSequencer;
+package edu.bpl.pwsplugin.acquisitionsequencer;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.factory.BrokenStepFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.factory.RootStepFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.factory.BrokenStepFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.factory.RootStepFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 
 /**
  * @author nick

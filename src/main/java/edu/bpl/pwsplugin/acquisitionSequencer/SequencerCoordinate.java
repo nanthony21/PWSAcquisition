@@ -19,12 +19,12 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionSequencer;
+package edu.bpl.pwsplugin.acquisitionsequencer;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.util.ArrayList;
 import java.util.List;

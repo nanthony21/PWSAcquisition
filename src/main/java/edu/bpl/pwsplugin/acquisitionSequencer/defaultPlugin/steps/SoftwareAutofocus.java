@@ -19,15 +19,15 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps;
+package edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.steps;
 
 import edu.bpl.pwsplugin.Globals;
-import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.DefaultSequencerPlugin;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.DefaultSequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.EndpointStep;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import java.util.ArrayList;
 import java.util.List;
 import org.micromanager.AutofocusPlugin;

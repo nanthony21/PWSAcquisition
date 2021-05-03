@@ -19,11 +19,11 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionSequencer.UI.tree;
+package edu.bpl.pwsplugin.acquisitionsequencer.UI.tree;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.EndpointStep;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.IteratingContainerStep;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.ContainerStep;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.EndpointStep;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.IteratingContainerStep;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.ImageIcon;

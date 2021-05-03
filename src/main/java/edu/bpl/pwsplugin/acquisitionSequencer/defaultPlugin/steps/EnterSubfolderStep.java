@@ -19,14 +19,14 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps;
+package edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.steps;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.DefaultSequencerPlugin;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.DefaultSequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.ContainerStep;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.List;

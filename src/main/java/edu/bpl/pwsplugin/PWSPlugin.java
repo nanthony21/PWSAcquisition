@@ -50,8 +50,8 @@ Some other day:
 package edu.bpl.pwsplugin;
 
 import com.google.common.eventbus.Subscribe;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.PWSSettingsConsts;
 import org.micromanager.MenuPlugin;

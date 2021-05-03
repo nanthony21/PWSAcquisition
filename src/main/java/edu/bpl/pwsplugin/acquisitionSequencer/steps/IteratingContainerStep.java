@@ -19,7 +19,7 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionSequencer.steps;
+package edu.bpl.pwsplugin.acquisitionsequencer.steps;
 
 import edu.bpl.pwsplugin.utils.JsonableParam;
 

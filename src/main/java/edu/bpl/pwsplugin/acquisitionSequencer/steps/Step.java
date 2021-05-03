@@ -19,7 +19,7 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionSequencer.steps;
+package edu.bpl.pwsplugin.acquisitionsequencer.steps;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
@@ -28,9 +28,9 @@ import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyableMutableTreeNode;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
+import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.CopyableMutableTreeNode;
 import edu.bpl.pwsplugin.utils.GsonUtils;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.io.FileWriter;
@@ -111,8 +111,6 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
    public static interface SimFn extends Function<SimulatedStatus, SimulatedStatus> {
 
    } //Recieves a SimulatedStatus and returns the same object.
-
-} //Recieves a SimulatedStatus and returns the same object.
 
    protected SequencerFunction getCallback() {
       return null;
@@ -217,7 +215,7 @@ class StepTypeAdapter extends TypeAdapter<Step> {
             throw new IOException("Json Parse Error");
          } //This must be "stepType"
          String stepType = in.nextString();
-         Step step = SequencerConsts.getFactory(stepType).getStep().newInstance();
+         Step step = (Step) SequencerConsts.getFactory(stepType).getStep().newInstance();
          if (!in.nextName().equals("settings")) {
             throw new IOException("Json Parse Error");
          }
@@ -244,8 +242,10 @@ class StepTypeAdapter extends TypeAdapter<Step> {
                in.skipValue();
             } //Read out the rest of the failed json object before returning.
             in.endObject();
-            return SequencerConsts.getFactory(SequencerConsts.Type.BROKEN.name()).getStep()
-                  .newInstance();//Rather than allow an exception to break the whole loading process just insert the special "Broken step" where the error occured.
+            //Rather than allow an exception to break the whole loading process just insert the
+            // special "Broken step" where the error occurred.
+            return (Step) SequencerConsts.getFactory(SequencerConsts.Type.BROKEN.name()).getStep()
+                  .newInstance();
          } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
          }

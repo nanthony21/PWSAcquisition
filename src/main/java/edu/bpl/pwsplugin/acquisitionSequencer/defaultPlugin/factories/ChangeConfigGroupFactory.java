@@ -19,15 +19,15 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.factories;
+package edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.factories;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionSequencer.defaultPlugin.steps.ChangeConfigGroup;
-import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.steps.ChangeConfigGroup;
+import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;

@@ -19,13 +19,15 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionSequencer;
+package edu.bpl.pwsplugin.acquisitionsequencer;
 
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import org.micromanager.PositionList;
 
 /**
- * @author nick
+ * A collection of settings for the various types of steps.
+ *
+ * @author Nick Anthony
  */
 public class SequencerSettings {
 

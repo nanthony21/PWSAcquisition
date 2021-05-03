@@ -1,4 +1,4 @@
-package edu.bpl.pwsplugin.acquisitionSequencer.UI.tree;
+package edu.bpl.pwsplugin.acquisitionsequencer.UI.tree;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;

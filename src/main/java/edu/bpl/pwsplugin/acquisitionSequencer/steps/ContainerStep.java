@@ -19,10 +19,10 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionSequencer.steps;
+package edu.bpl.pwsplugin.acquisitionsequencer.steps;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.AcquisitionStatus;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerFunction;
+import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.ArrayList;
 import java.util.Collections;

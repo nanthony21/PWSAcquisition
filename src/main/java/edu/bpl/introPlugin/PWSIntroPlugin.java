@@ -19,7 +19,7 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.introPlugin;
+package edu.bpl.introplugin;
 
 import java.util.List;
 import javax.swing.Icon;
@@ -29,12 +29,12 @@ import org.micromanager.Studio;
 import org.scijava.plugin.Plugin;
 
 /**
- * Simply changess the image shown when the software starts up.
+ * Simply changes the image shown when the software starts up.
  *
  * @author nick
  */
 @Plugin(type = IntroPlugin.class)
-public class PWSIntroPlugin implements IntroPlugin {
+public class PwsIntroPlugin implements IntroPlugin {
 
    public List<String> getConfigFilePaths() {
       return null;
@@ -57,7 +57,7 @@ public class PWSIntroPlugin implements IntroPlugin {
 
 
    public String getHelpText() {
-      return "This just changees the Image displayed at startup.";
+      return "This just changes the Image displayed at startup.";
    }
 
 

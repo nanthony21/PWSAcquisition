@@ -19,14 +19,14 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionSequencer.UI;
+package edu.bpl.pwsplugin.acquisitionsequencer.UI;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.Sequencer;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyMoveTransferHandler;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeRenderers;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.ContainerStep;
+import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
+import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.CopyMoveTransferHandler;
+import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.TreeDragAndDrop;
+import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.TreeRenderers;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;

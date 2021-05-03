@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 
-package edu.bpl.pwsplugin.acquisitionSequencer;
+package edu.bpl.pwsplugin.acquisitionsequencer;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 import java.util.List;
 
 /**

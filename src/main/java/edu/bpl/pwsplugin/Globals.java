@@ -2,7 +2,7 @@ package edu.bpl.pwsplugin;
 
 import edu.bpl.pwsplugin.UI.PluginFrame;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
-import edu.bpl.pwsplugin.acquisitionSequencer.Sequencer;
+import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.HWConfiguration;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;

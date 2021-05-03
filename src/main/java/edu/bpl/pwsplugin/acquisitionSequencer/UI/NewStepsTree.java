@@ -19,15 +19,15 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionSequencer.UI;
+package edu.bpl.pwsplugin.acquisitionsequencer.UI;
 
-import edu.bpl.pwsplugin.acquisitionSequencer.Sequencer;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.CopyOnlyTransferHandler;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeDragAndDrop;
-import edu.bpl.pwsplugin.acquisitionSequencer.UI.tree.TreeRenderers;
-import edu.bpl.pwsplugin.acquisitionSequencer.factory.StepFactory;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
+import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.CopyOnlyTransferHandler;
+import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.TreeDragAndDrop;
+import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.TreeRenderers;
+import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.settings.PWSSettingsConsts;
 import edu.bpl.pwsplugin.utils.JsonableParam;
