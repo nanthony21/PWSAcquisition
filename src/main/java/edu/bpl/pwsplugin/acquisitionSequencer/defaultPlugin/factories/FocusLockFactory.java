@@ -19,14 +19,14 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.factories;
+package edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories;
 
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.steps.FocusLock;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.steps.FocusLock;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
@@ -69,11 +69,6 @@ public class FocusLockFactory extends StepFactory {
    @Override
    public String getCategory() {
       return "Focus";
-   }
-
-   @Override
-   public SequencerConsts.Type getType() {
-      return SequencerConsts.Type.PFS;
    }
 }
 

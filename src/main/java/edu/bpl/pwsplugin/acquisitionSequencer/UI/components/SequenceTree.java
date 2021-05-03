@@ -19,7 +19,7 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionsequencer.UI;
+package edu.bpl.pwsplugin.acquisitionsequencer.UI.components;
 
 import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
@@ -40,7 +40,7 @@ import javax.swing.tree.TreeSelectionModel;
 /**
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-class SequenceTree extends TreeDragAndDrop implements KeyListener {
+public class SequenceTree extends TreeDragAndDrop implements KeyListener {
 
    public SequenceTree(Sequencer sequencer) {
       super();

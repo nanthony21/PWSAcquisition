@@ -47,8 +47,6 @@ public abstract class StepFactory {
 
    public abstract String getCategory();
 
-   public abstract SequencerConsts.Type getType();
-
    public BuilderJPanel createUI() {
       try {
          return getUI().newInstance();

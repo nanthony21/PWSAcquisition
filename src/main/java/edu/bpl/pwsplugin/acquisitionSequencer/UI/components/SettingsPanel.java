@@ -19,7 +19,7 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionsequencer.UI;
+package edu.bpl.pwsplugin.acquisitionsequencer.UI.components;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
@@ -51,7 +51,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListener, MouseListener {
+public class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListener, MouseListener {
 
    Map<String, BuilderJPanel> panelTypeMapping = new HashMap<>();
    Step lastSelectedNode = null;
@@ -98,8 +98,6 @@ class SettingsPanel extends JPanel implements TreeSelectionListener, FocusListen
       Dimension dim = new Dimension(maxW, maxH);
       cardPanel.setSize(dim);
       cardPanel.setMinimumSize(dim);
-
-      showPanelForType(SequencerConsts.Type.ACQ.name());
    }
 
    public void forceUpdateSettings(SequencerConsts.Type type, JsonableParam settings) {

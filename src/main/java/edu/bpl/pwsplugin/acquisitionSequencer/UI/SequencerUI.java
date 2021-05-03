@@ -27,6 +27,10 @@ import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
+import edu.bpl.pwsplugin.acquisitionsequencer.UI.components.FileConflictDlg;
+import edu.bpl.pwsplugin.acquisitionsequencer.UI.components.NewStepsTree;
+import edu.bpl.pwsplugin.acquisitionsequencer.UI.components.SequenceTree;
+import edu.bpl.pwsplugin.acquisitionsequencer.UI.components.SettingsPanel;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.RootStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
@@ -37,7 +41,6 @@ import edu.bpl.pwsplugin.utils.GsonUtils;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.Window;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -47,16 +50,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultTreeModel;
 import net.miginfocom.swing.MigLayout;
@@ -75,17 +74,18 @@ public class SequencerUI extends BuilderJPanel<RootStep> implements PropertyChan
    */
    private final Sequencer sequencer_;
    SequenceTree seqTree; // The tree containing the steps defining a sequence.
-   NewStepsTree newStepsTree;
-         // The tree containing all available steps. Drag from here to the sequence tree.
+   NewStepsTree newStepsTree; // The tree containing all available steps. Drag from here to the sequence tree.
    SettingsPanel settingsPanel; //A panel displaying the settings for each selected step type.
    JButton runButton = new JButton("Run");
    JButton saveButton = new JButton("Save");
    JButton loadButton = new JButton("Load");
    private static final FileDialogs.FileType STEPFILETYPE = new FileDialogs.FileType(
-         "PWS Acquisition Sequence", "Sequence (.pwsseq)", "newAcqSequence.pwsseq", true,
+         "PWS Acquisition Sequence", "Sequence (.pwsseq)",
+         "newAcqSequence.pwsseq", true,
          "pwsseq"); // The specification for how to save a Step to a file.
    private static final FileDialogs.FileType LOADSTEPFILETYPE = new FileDialogs.FileType(
-         "PWS Acquisition Sequence", "Sequence (.(rt)pwsseq)", "sequence.rtpwsseq", true,
+         "PWS Acquisition Sequence", "Sequence (.(rt)pwsseq)",
+         "sequence.rtpwsseq", true,
          "rtpwsseq", "pwsseq");
 
    public SequencerUI(Sequencer sequencer) {
@@ -140,7 +140,7 @@ public class SequencerUI extends BuilderJPanel<RootStep> implements PropertyChan
 
       this.saveButton.addActionListener((evt) -> {
          try {
-            Step rootStep = this.build();
+            RootStep rootStep = this.build();
             JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
             String path = FileDialogs.save(topFrame, "Save Sequence", STEPFILETYPE).getPath();
             if (path == null) {
@@ -269,7 +269,6 @@ public class SequencerUI extends BuilderJPanel<RootStep> implements PropertyChan
       return (RootStep) seqTree.tree().getModel().getRoot();
    }
 
-
    @Override
    public void populateFields(RootStep rootStep) {
       ((DefaultTreeModel) seqTree.tree().getModel()).setRoot(rootStep);
@@ -307,56 +306,3 @@ public class SequencerUI extends BuilderJPanel<RootStep> implements PropertyChan
    }
 }
 
-class FileConflictDlg extends JDialog {
-
-   //A dialog that displays all the conflicting files detected and asks for permission to overwrite.
-   //Use the getresult method to get a boolean for if it is ok to overwrite the files.
-   private boolean result;
-
-   public FileConflictDlg(Window owner, String dir, List<Path> conflicts) {
-      super(owner);
-      this.setTitle("File Conflict!");
-      this.setModal(true);
-      this.setLocationRelativeTo(this.getOwner());
-
-      JPanel cont = new JPanel(new MigLayout("fill"));
-      JTextArea textTop = new JTextArea(
-            String.format("The following files already exist at %s:", dir));
-      textTop.setWrapStyleWord(true);
-      textTop.setLineWrap(true);
-      textTop.setOpaque(false);
-      textTop.setEditable(false);
-      textTop.setFocusable(false);
-      cont.add(textTop, "wrap, growx, span");
-      JTextArea text = new JTextArea();
-      text.setText(String.join("\n",
-            conflicts.stream().map(Object::toString).collect(Collectors.toList())));
-      text.setWrapStyleWord(true);
-      text.setLineWrap(true);
-      text.setOpaque(false);
-      text.setEditable(false);
-      JScrollPane scroll = new JScrollPane(text);
-      cont.add(scroll, "wrap, grow, span, width 15sp, height 15sp");
-      JButton okButton = new JButton("Overwrite");
-      okButton.addActionListener((evt) -> {
-         result = true;
-         this.setVisible(false);
-      });
-      cont.add(okButton);
-      JButton cancelButton = new JButton("Cancel");
-      cancelButton.addActionListener((evt) -> {
-         result = false;
-         this.setVisible(false);
-      });
-      cont.add(cancelButton);
-      this.setContentPane(cont);
-      this.pack();
-      this.setMinimumSize(this.getSize());
-   }
-
-   public boolean getResult() {
-      //Make visible which will block until the user performs an action that hides the dialog, then return the result.
-      this.setVisible(true);
-      return this.result;
-   }
-}

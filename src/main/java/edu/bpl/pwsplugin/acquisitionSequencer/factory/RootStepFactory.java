@@ -40,7 +40,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-public class RootStepFactory extends StepFactory<SequencerSettings.RootStepSettings> {
+public class RootStepFactory extends StepFactory {
 
    //Should only exist once as the root of each experiment, sets the needed root parameters.
    @Override
@@ -71,11 +71,6 @@ public class RootStepFactory extends StepFactory<SequencerSettings.RootStepSetti
    @Override
    public String getCategory() {
       throw new UnsupportedOperationException();
-   }
-
-   @Override
-   public SequencerConsts.Type getType() {
-      return SequencerConsts.Type.ROOT;
    }
 }
 

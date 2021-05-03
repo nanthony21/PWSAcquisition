@@ -19,13 +19,13 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.factories;
+package edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionsequencer.defaultPlugin.steps.AcquireFromPositionList;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.steps.AcquireFromPositionList;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
@@ -68,11 +68,6 @@ public class AcquireFromPositionListFactory extends StepFactory {
    @Override
    public String getCategory() {
       return "Sequencing";
-   }
-
-   @Override
-   public SequencerConsts.Type getType() {
-      return SequencerConsts.Type.POS;
    }
 }
 

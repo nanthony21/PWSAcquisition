@@ -27,6 +27,7 @@ import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerCoordinate;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionsequencer.ThrowingFunction;
+import edu.bpl.pwsplugin.acquisitionsequencer.UI.components.PauseButton;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.TreeRenderers;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;

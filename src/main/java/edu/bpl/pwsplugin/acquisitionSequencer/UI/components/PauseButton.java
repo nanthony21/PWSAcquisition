@@ -1,4 +1,4 @@
-package edu.bpl.pwsplugin.acquisitionsequencer.UI;
+package edu.bpl.pwsplugin.acquisitionsequencer.UI.components;
 
 import edu.bpl.pwsplugin.Globals;
 import java.util.concurrent.ExecutionException;

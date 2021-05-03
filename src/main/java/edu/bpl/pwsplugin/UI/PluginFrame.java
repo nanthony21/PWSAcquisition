@@ -47,7 +47,7 @@ public class PluginFrame extends JFrame {
 
    private final JTabbedPane tabs = new JTabbedPane();
    private final AcquisitionPanel acqPanel = new AcquisitionPanel();
-   private final SequencerUI sequencePanel = Globals.sequencer().ui();
+   private final SequencerUI sequencePanel = new SequencerUI(Globals.sequencer());
    private final UtilityPanel utilityPanel = new UtilityPanel();
    private final ConfigurationDialog configDialog = new ConfigurationDialog(this);
 

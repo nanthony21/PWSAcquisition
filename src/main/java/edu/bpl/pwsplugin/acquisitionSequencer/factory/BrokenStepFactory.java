@@ -64,11 +64,6 @@ public class BrokenStepFactory extends StepFactory {
    public String getCategory() {
       throw new UnsupportedOperationException();
    }
-
-   @Override
-   public SequencerConsts.Type getType() {
-      return SequencerConsts.Type.BROKEN;
-   }
 }
 
 class BrokenStepUI extends BuilderJPanel<JsonableParam> {

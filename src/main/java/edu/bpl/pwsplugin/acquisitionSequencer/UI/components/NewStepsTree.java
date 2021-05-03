@@ -19,13 +19,14 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.pwsplugin.acquisitionsequencer.UI;
+package edu.bpl.pwsplugin.acquisitionsequencer.UI.components;
 
 import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.CopyOnlyTransferHandler;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.TreeRenderers;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
@@ -41,10 +42,9 @@ import javax.swing.tree.TreeSelectionModel;
 /**
  * @author Nick Anthony <nickmanthony at hotmail.com>
  */
-class NewStepsTree extends TreeDragAndDrop {
+public class NewStepsTree extends TreeDragAndDrop {
 
    private Step acquisitionStep;
-   private static final SequencerConsts.Type[] EXCLUDED_TYPES = {SequencerConsts.Type.EVERYN};
    private final Sequencer sequencer_;
 
    public NewStepsTree(Sequencer sequencer) {
@@ -60,10 +60,6 @@ class NewStepsTree extends TreeDragAndDrop {
             .values()) { //Add a node for each step type to the appropriate category folder.
          if (type == SequencerConsts.Type.ROOT || type == SequencerConsts.Type.BROKEN) {
             continue; // ignore this special case
-         }
-
-         if (Arrays.stream(EXCLUDED_TYPES).anyMatch(type::equals)) {
-            continue;
          }
 
          JsonableParam settings;
