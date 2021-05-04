@@ -48,8 +48,8 @@ public class AutoShutterStepFactory extends StepFactory {
 
    //Should only exist once as the root of each experiment, sets the needed root parameters.
    @Override
-   public Class<? extends BuilderJPanel> getUI() {
-      return AutoShutterUI.class;
+   public BuilderJPanel<?> createUI() {
+      return new AutoShutterUI();
    }
 
    @Override
@@ -58,8 +58,8 @@ public class AutoShutterStepFactory extends StepFactory {
    }
 
    @Override
-   public Class<? extends Step> getStep() {
-      return AutoShutterStep.class;
+   public Step<?> createStep() {
+      return new AutoShutterStep();
    }
 
    @Override

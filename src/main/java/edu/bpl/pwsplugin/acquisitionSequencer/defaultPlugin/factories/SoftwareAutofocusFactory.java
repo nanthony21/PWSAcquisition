@@ -39,8 +39,8 @@ import net.miginfocom.swing.MigLayout;
 public class SoftwareAutofocusFactory extends StepFactory {
 
    @Override
-   public Class<? extends BuilderJPanel> getUI() {
-      return SoftwareAutoFocusUI.class;
+   public BuilderJPanel<?> createUI() {
+      return new SoftwareAutoFocusUI();
    }
 
    @Override
@@ -49,8 +49,8 @@ public class SoftwareAutofocusFactory extends StepFactory {
    }
 
    @Override
-   public Class<? extends Step> getStep() {
-      return SoftwareAutofocus.class;
+   public Step<?> createStep() {
+      return new SoftwareAutofocus();
    }
 
    @Override

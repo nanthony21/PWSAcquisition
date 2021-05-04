@@ -42,6 +42,10 @@ public class Sequencer {
    public Set<String> getRegisteredFactories() {
       return registry_.getRegisteredNames();
    }
+
+   public void registerGson() {
+      registry_.registerGson();
+   }
 }
 
 

@@ -36,8 +36,8 @@ public class BrokenStepFactory extends StepFactory {
 
    //A step only used for a placeholder when we unsucessfully try to load a step.
    @Override
-   public Class<? extends BuilderJPanel> getUI() {
-      return BrokenStepUI.class;
+   public BuilderJPanel<?> createUI() {
+      return new BrokenStepUI();
    }
 
    @Override
@@ -46,8 +46,8 @@ public class BrokenStepFactory extends StepFactory {
    }
 
    @Override
-   public Class<? extends Step> getStep() {
-      return BrokenStep.class;
+   public Step<?> createStep() {
+      return new BrokenStep();
    }
 
    @Override

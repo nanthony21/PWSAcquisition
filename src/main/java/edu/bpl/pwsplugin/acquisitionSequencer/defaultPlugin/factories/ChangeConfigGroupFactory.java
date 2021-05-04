@@ -42,8 +42,8 @@ import net.miginfocom.swing.MigLayout;
 public class ChangeConfigGroupFactory extends StepFactory {
 
    @Override
-   public Class<? extends BuilderJPanel> getUI() {
-      return ChangeConfigGroupUI.class;
+   public BuilderJPanel<?> createUI() {
+      return new ChangeConfigGroupUI();
    }
 
    @Override
@@ -52,8 +52,8 @@ public class ChangeConfigGroupFactory extends StepFactory {
    }
 
    @Override
-   public Class<? extends Step> getStep() {
-      return ChangeConfigGroup.class;
+   public Step<?> createStep() {
+      return new ChangeConfigGroup();
    }
 
    @Override

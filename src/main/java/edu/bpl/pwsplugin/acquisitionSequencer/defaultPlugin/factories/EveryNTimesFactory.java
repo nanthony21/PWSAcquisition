@@ -39,8 +39,8 @@ import net.miginfocom.swing.MigLayout;
 public class EveryNTimesFactory extends StepFactory {
 
    @Override
-   public Class<? extends BuilderJPanel> getUI() {
-      return EveryNTimesUI.class;
+   public BuilderJPanel<?> createUI() {
+      return new EveryNTimesUI();
    }
 
    @Override
@@ -49,8 +49,8 @@ public class EveryNTimesFactory extends StepFactory {
    }
 
    @Override
-   public Class<? extends Step> getStep() {
-      return EveryNTimes.class;
+   public Step<?> createStep() {
+      return new EveryNTimes();
    }
 
    @Override

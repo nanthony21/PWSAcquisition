@@ -40,8 +40,8 @@ import net.miginfocom.swing.MigLayout;
 public class ZStackFactory extends StepFactory {
 
    @Override
-   public Class<? extends BuilderJPanel> getUI() {
-      return ZStackUI.class;
+   public BuilderJPanel<?> createUI() {
+      return new ZStackUI();
    }
 
    @Override
@@ -50,8 +50,8 @@ public class ZStackFactory extends StepFactory {
    }
 
    @Override
-   public Class<? extends Step> getStep() {
-      return ZStackStep.class;
+   public Step<?> createStep() {
+      return new ZStackStep();
    }
 
    @Override

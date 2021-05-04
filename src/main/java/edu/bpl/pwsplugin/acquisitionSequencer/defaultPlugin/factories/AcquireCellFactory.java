@@ -37,8 +37,8 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 public class AcquireCellFactory extends StepFactory {
 
    @Override
-   public Class<? extends BuilderJPanel> getUI() {
-      return AcquireCellUI.class;
+   public BuilderJPanel<?> createUI() {
+      return new AcquireCellUI();
    }
 
    @Override
@@ -47,8 +47,8 @@ public class AcquireCellFactory extends StepFactory {
    }
 
    @Override
-   public Class<? extends Step> getStep() {
-      return AcquireCell.class;
+   public Step<?> createStep() {
+      return new AcquireCell();
    }
 
    @Override

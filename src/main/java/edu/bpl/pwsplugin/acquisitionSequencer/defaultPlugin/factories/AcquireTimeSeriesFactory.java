@@ -43,8 +43,8 @@ import net.miginfocom.swing.MigLayout;
 public class AcquireTimeSeriesFactory extends StepFactory {
 
    @Override
-   public Class<? extends BuilderJPanel> getUI() {
-      return TimeSeriesUI.class;
+   public BuilderJPanel<?> createUI() {
+      return new TimeSeriesUI();
    }
 
    @Override
@@ -53,8 +53,8 @@ public class AcquireTimeSeriesFactory extends StepFactory {
    }
 
    @Override
-   public Class<? extends Step> getStep() {
-      return AcquireTimeSeries.class;
+   public Step<?> createStep() {
+      return new AcquireTimeSeries();
    }
 
    @Override

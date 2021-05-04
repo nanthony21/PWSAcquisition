@@ -41,8 +41,8 @@ import net.miginfocom.swing.MigLayout;
 public class EnterSubfolderFactory extends StepFactory {
 
    @Override
-   public Class<? extends BuilderJPanel> getUI() {
-      return EnterSubfolderUI.class;
+   public BuilderJPanel<?> createUI() {
+      return new EnterSubfolderUI();
    }
 
    @Override
@@ -51,8 +51,8 @@ public class EnterSubfolderFactory extends StepFactory {
    }
 
    @Override
-   public Class<? extends Step> getStep() {
-      return EnterSubfolderStep.class;
+   public Step<?> createStep() {
+      return new EnterSubfolderStep();
    }
 
    @Override

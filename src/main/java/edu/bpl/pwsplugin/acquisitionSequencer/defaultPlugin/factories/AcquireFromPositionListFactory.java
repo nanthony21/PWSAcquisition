@@ -41,8 +41,8 @@ import org.micromanager.internal.positionlist.PositionListDlg;
 public class AcquireFromPositionListFactory extends StepFactory {
 
    @Override
-   public Class<? extends BuilderJPanel> getUI() {
-      return AcquirePostionsUI.class;
+   public BuilderJPanel<?> createUI() {
+      return new AcquirePostionsUI();
    }
 
    @Override
@@ -51,8 +51,8 @@ public class AcquireFromPositionListFactory extends StepFactory {
    }
 
    @Override
-   public Class<? extends Step> getStep() {
-      return AcquireFromPositionList.class;
+   public Step<?> createStep() {
+      return new AcquireFromPositionList();
    }
 
    @Override

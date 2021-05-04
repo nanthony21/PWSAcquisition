@@ -84,10 +84,10 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
          //registered with Gson. Let's do that now to make sure.
          //They also register themselves when they are instantiated but that may not happen in time.
          PWSSettingsConsts.registerGson();
-         SequencerConsts.registerGson();
          Step.registerGsonType();
          PWSPluginSettings.registerGsonType();
          Globals.init(studio_);
+         Globals.sequencer().registerGson();
          initialized_ = true;
       }
       Globals.frame().setVisible(true);

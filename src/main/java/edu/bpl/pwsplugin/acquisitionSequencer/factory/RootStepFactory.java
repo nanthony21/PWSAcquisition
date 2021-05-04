@@ -44,8 +44,8 @@ public class RootStepFactory extends StepFactory {
 
    //Should only exist once as the root of each experiment, sets the needed root parameters.
    @Override
-   public Class<RootStepUI> getUI() {
-      return RootStepUI.class;
+   public RootStepUI createUI() {
+      return new RootStepUI();
    }
 
    @Override
@@ -54,8 +54,8 @@ public class RootStepFactory extends StepFactory {
    }
 
    @Override
-   public Class<RootStep> getStep() {
-      return RootStep.class;
+   public RootStep createStep() {
+      return new RootStep();
    }
 
    @Override

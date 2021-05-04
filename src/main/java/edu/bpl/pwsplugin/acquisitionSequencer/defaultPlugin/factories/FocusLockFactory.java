@@ -42,8 +42,8 @@ import net.miginfocom.swing.MigLayout;
 public class FocusLockFactory extends StepFactory {
 
    @Override
-   public Class<? extends BuilderJPanel> getUI() {
-      return FocusLockUI.class;
+   public BuilderJPanel<?> createUI() {
+      return new FocusLockUI();
    }
 
    @Override
@@ -52,8 +52,8 @@ public class FocusLockFactory extends StepFactory {
    }
 
    @Override
-   public Class<? extends Step> getStep() {
-      return FocusLock.class;
+   public Step<?> createStep() {
+      return new FocusLock();
    }
 
    @Override

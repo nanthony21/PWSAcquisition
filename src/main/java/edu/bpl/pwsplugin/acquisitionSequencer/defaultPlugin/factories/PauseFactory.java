@@ -40,8 +40,8 @@ import net.miginfocom.swing.MigLayout;
 public class PauseFactory extends StepFactory {
 
    @Override
-   public Class<? extends BuilderJPanel> getUI() {
-      return PauseStepUI.class;
+   public BuilderJPanel<?> createUI() {
+      return new PauseStepUI();
    }
 
    @Override
@@ -50,8 +50,8 @@ public class PauseFactory extends StepFactory {
    }
 
    @Override
-   public Class<? extends Step> getStep() {
-      return PauseStep.class;
+   public Step<?> createStep() {
+      return new PauseStep();
    }
 
    @Override
