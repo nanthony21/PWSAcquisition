@@ -27,6 +27,7 @@ import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFactoryManager;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings.RootStepSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.components.FileConflictDlg;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.components.NewStepsTree;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.components.SequenceTree;
@@ -267,11 +268,26 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
    public class API {
       public void loadSequence(String filePath) throws IOException {
          SequencerUI.this.sequencer.loadSequence(filePath);
-         SequencerUI.this.populateFields(SequencerUI.this.sequencer.getRootStep());
+         refreshUI();
       }
 
       public void runSequence() {
          SequencerUI.this.runAction();
+      }
+
+      public boolean isSequenceRunning() {
+         return SequencerUI.this.sequencer.isRunning();
+      }
+
+      public void setSavePath(String path) {
+         RootStepSettings settings = SequencerUI.this.sequencer.getRootStep().getSettings();
+         settings.directory = path;
+         SequencerUI.this.sequencer.getRootStep().setSettings(settings);
+         refreshUI();
+      }
+
+      private void refreshUI() {
+         SequencerUI.this.populateFields(SequencerUI.this.sequencer.getRootStep());
       }
    }
 }

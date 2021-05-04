@@ -13,16 +13,17 @@ import java.util.List;
 
 public class Sequencer {
    private final SequencerFactoryManager factoryManager = new SequencerFactoryManager();
+   private boolean running = false;
    private RootStep rootStep = (RootStep) factoryManager.getFactory(Type.ROOT.name()).createStep();
    private ThrowingFunction<AcquisitionStatus, Void> publishCallback;
    private ThrowingFunction<Void, Void> pauseCallback;
 
-   public Sequencer() {
-
-   }
-
    public SequencerFactoryManager getFactoryManager() {
       return factoryManager;
+   }
+
+   public boolean isRunning() {
+      return running;
    }
 
    public void runSequence() {
@@ -30,6 +31,7 @@ public class Sequencer {
             pauseCallback, rootStep);
       SequencerFunction rootFunc = rootStep.getFunction(new ArrayList<>());
       try {
+         running = true;
          AcquisitionStatus finalStatus = rootFunc.apply(startingStatus);
       } catch (RuntimeException rte) { // Interrupted exception is caused by the user cancelling. No need to warn the user.
          Throwable exc = rte.getCause();
@@ -51,6 +53,8 @@ public class Sequencer {
          Globals.mm().logs()
                .showError("Unexpected Throwable thrown from acquisition. Programming error");
          Globals.mm().logs().logError(th);
+      } finally {
+         running = false;
       }
    }
 
