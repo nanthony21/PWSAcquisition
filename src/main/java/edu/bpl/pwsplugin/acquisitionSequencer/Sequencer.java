@@ -6,12 +6,10 @@
 
 package edu.bpl.pwsplugin.acquisitionsequencer;
 
-import edu.bpl.pwsplugin.acquisitionsequencer.UI.SequencerUI;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,18 +19,20 @@ import java.util.Set;
  * @author nick
  */
 public class Sequencer {
-   private final FactoryRegistry registry_ = new FactoryRegistry();
+   private final FactoryRegistry registry = new FactoryRegistry();
 
+   /**
+    *
+    */
    public Sequencer() {
-
       //TODO plugin loading instead of hard coding.
       for (SequencerConsts.Type stepType : SequencerConsts.Type.values()) {
-         registry_.registerFactory(stepType.name(), SequencerConsts.getFactory(stepType.name()));
+         registry.registerFactory(stepType.name(), SequencerConsts.getFactory(stepType.name()));
       }
 
       SequencerPlugin defaultPlugin = new DefaultSequencerPlugin();
       for (String stepType : defaultPlugin.getAvailableStepNames()) {
-         registry_.registerFactory(stepType, defaultPlugin.getFactory(stepType));
+         registry.registerFactory(stepType, defaultPlugin.getFactory(stepType));
       }
 
       Step.registerGsonType(this);
@@ -40,15 +40,15 @@ public class Sequencer {
    }
 
    public StepFactory getFactory(String typeName) {
-      return registry_.getFactory(typeName);
+      return registry.getFactory(typeName);
    }
 
    public Set<String> getRegisteredFactories() {
-      return registry_.getRegisteredNames();
+      return registry.getRegisteredNames();
    }
 
    public void registerGson() {
-      registry_.registerGson();
+      registry.registerGson();
    }
 }
 
