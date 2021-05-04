@@ -9,6 +9,7 @@ package edu.bpl.pwsplugin.acquisitionsequencer;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.SequencerUI;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,9 @@ public class Sequencer {
       for (String stepType : defaultPlugin.getAvailableStepNames()) {
          registry_.registerFactory(stepType, defaultPlugin.getFactory(stepType));
       }
+
+      Step.registerGsonType(this);
+      registerGson();
    }
 
    public StepFactory getFactory(String typeName) {

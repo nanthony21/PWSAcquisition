@@ -28,9 +28,11 @@ import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.CopyableMutableTreeNode;
+import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.utils.GsonUtils;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.io.FileWriter;
@@ -148,8 +150,20 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
       return SequencerConsts.getFactory(this.getType()).getName();
    }*/
 
-   public static void registerGsonType() { //This must be called for GSON loading/saving to work.
-      GsonUtils.builder().registerTypeAdapterFactory(StepTypeAdapter.FACTORY);
+   public static void registerGsonType(Sequencer sequencer) { //This must be called for GSON loading/saving to work.
+      //This custom adapter enables Steps to be Jsonified by GSON even though they have a circular parent/child reference.
+      TypeAdapterFactory factory = new TypeAdapterFactory() {
+         @Override
+         @SuppressWarnings("unchecked") // we use a runtime check to make sure the 'T's equal
+         public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
+            if (Step.class.isAssignableFrom(type.getRawType())) { //Allow subtypes to use this factory.
+               return (TypeAdapter<T>) new StepTypeAdapter(gson, sequencer);
+            }
+            return null;
+         }
+      };
+
+      GsonUtils.builder().registerTypeAdapterFactory(factory);
    }
 
    public void saveToJson(String savePath) throws IOException {
@@ -165,24 +179,15 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
    }
 }
 
+
 class StepTypeAdapter extends TypeAdapter<Step> {
 
-   //This custom adapter enables Steps to be Jsonified by GSON even though they have a circular parent/child reference.
-   public static final TypeAdapterFactory FACTORY = new TypeAdapterFactory() {
-      @Override
-      @SuppressWarnings("unchecked") // we use a runtime check to make sure the 'T's equal
-      public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-         if (Step.class.isAssignableFrom(type.getRawType())) { //Allow subtypes to use this factory.
-            return (TypeAdapter<T>) new StepTypeAdapter(gson);
-         }
-         return null;
-      }
-   };
-
    private final Gson gson;
+   private final Sequencer sequencer;
 
-   private StepTypeAdapter(Gson gson) {
+   public StepTypeAdapter(Gson gson, Sequencer sequencer) {
       this.gson = gson;
+      this.sequencer = sequencer;
    }
 
    @Override
@@ -193,8 +198,8 @@ class StepTypeAdapter extends TypeAdapter<Step> {
       out.name("stepType");
       out.value(step.getType());
       out.name("settings");
-      gson.toJson(step.getSettings(), SequencerConsts.getFactory(step.getType()).getSettings(),
-            out);
+      JsonableParam settings = step.getSettings();
+      gson.toJson(settings, settings.getClass(), out);
       if (step.getAllowsChildren()) {
          out.name("children");
          gson.toJson(Collections.list(step.children()), List.class, out); // recursion!
@@ -215,12 +220,13 @@ class StepTypeAdapter extends TypeAdapter<Step> {
             throw new IOException("Json Parse Error");
          } //This must be "stepType"
          String stepType = in.nextString();
-         Step step = (Step) SequencerConsts.getFactory(stepType).createStep();
+         StepFactory factory = sequencer.getFactory(stepType);
+         Step step = (Step) factory.createStep();
          if (!in.nextName().equals("settings")) {
             throw new IOException("Json Parse Error");
          }
          JsonableParam settings = gson
-               .fromJson(in, SequencerConsts.getFactory(stepType).getSettings());
+               .fromJson(in, factory.getSettings());
          step.setSettings(settings);
          if (step.getAllowsChildren()) {
             if (!in.nextName().equals("children")) {

@@ -58,6 +58,8 @@ public class TreeRenderers {
                .getTreeCellRendererComponent(tree, value, selected, expanded, isLeaf, row, focused);
          if (value instanceof ContainerStep) {
             ContainerStep node = (ContainerStep) value;
+            String factoryName = sequencer.getFactory(node.getType()).getName();
+            comp.setText(factoryName);
             //The container step is empty, set the icon to draw attention to this issue.
             if (node.getChildCount() == 0) {
                ImageIcon image = new ImageIcon(
@@ -66,8 +68,7 @@ public class TreeRenderers {
                   throw new RuntimeException("Icon failed to load");
                }
                comp.setIcon(image);
-               String factoryName = sequencer.getFactory(node.getType()).getName();
-               comp.setText("<html>" + factoryName + "<font color=red> (empty)</font></html>");
+               comp.setText("<html>" + comp.getText() + "<font color=red> (empty)</font></html>");
                return comp;
             } else {
                ImageIcon image = new ImageIcon(
@@ -81,7 +82,7 @@ public class TreeRenderers {
          } else if (value instanceof EndpointStep) {
             EndpointStep node = (EndpointStep) value;
             String factoryName = sequencer.getFactory(node.getType()).getName();
-            comp.setText("<html>" + factoryName + "<font color=red> (empty)</font></html>");
+            comp.setText(factoryName);
             ImageIcon image = new ImageIcon(
                   getClass().getResource("/edu/bpl/icons/endpointNode.png"));
             if (image == null) {

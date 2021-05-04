@@ -50,6 +50,7 @@ Some other day:
 package edu.bpl.pwsplugin;
 
 import com.google.common.eventbus.Subscribe;
+import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
@@ -84,10 +85,11 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
          //registered with Gson. Let's do that now to make sure.
          //They also register themselves when they are instantiated but that may not happen in time.
          PWSSettingsConsts.registerGson();
-         Step.registerGsonType();
          PWSPluginSettings.registerGsonType();
-         Globals.init(studio_);
-         Globals.sequencer().registerGson();
+         Sequencer sequencer = new Sequencer();
+
+         Globals.init(studio_, sequencer);
+
          initialized_ = true;
       }
       Globals.frame().setVisible(true);

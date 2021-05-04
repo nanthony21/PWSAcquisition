@@ -37,7 +37,7 @@ public class Globals {
       return instance;
    }
 
-   public static void init(Studio studio) {
+   public static void init(Studio studio, Sequencer sequencer) {
       //This must be called before anything else to initialize all the variables.
       instance().studio_ = studio;
       try {
@@ -46,7 +46,7 @@ public class Globals {
          throw new RuntimeException(e);
       }
       instance().acqMan_ = new AcquisitionManager();
-      instance().sequencer_ = new Sequencer();
+      instance().sequencer_ = sequencer;
       instance().frame = new PluginFrame();
       try {
          instance().config = new HWConfiguration(
