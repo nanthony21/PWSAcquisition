@@ -53,10 +53,11 @@ public class AcquireTimeSeries
             //interval. the handle must take as input the Cell number to start at. It
             //will return the number of new acquisitions that it tood.
             double lastAcqTime = 0;
-            for (currentIteration = 0; currentIteration < settings.numFrames; currentIteration++) {
+            for (int i = 0; i < settings.numFrames; i++) {
+               currentIteration++;
                // wait for the specified frame interval before proceeding to next frame
-               status.coords().setIterationOfCurrentStep(currentIteration);
-               if (currentIteration != 0) {
+               status.coords().setIterationOfCurrentStep(i);
+               if (i != 0) {
                   //No pause for the first iteration
                   Integer msgId = status.newStatusMessage("Waiting"); //This will be updated below.
                   int count = 0;
@@ -79,9 +80,9 @@ public class AcquireTimeSeries
                      System.currentTimeMillis(); //Save the current time so we can figure out when to start the next acquisition.
                status = stepFunction.apply(status);
                status.newStatusMessage(
-                     String.format("Finished time step %d of %d", currentIteration + 1,
-                           settings.numFrames));
+                     String.format("Finished time step %d of %d", i + 1, settings.numFrames));
             }
+            currentIteration = 0;
             return status;
          }
       };

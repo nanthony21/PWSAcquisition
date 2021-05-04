@@ -52,12 +52,12 @@ public class AcquireFromPositionList
       PositionList list = this.getSettings().posList;
       SequencerFunction stepFunction = super.getSubstepsFunction(callbacks);
       return (status) -> {
-         Globals.core().setTimeoutMs(
-               30000); //set timeout to 30 seconds. Otherwise we get an error if a position move takes greater than 5 seconds. (default timeout)
-         for (currentIteration = 0; currentIteration < list.getNumberOfPositions();
-               currentIteration++) {
-            MultiStagePosition pos = list.getPosition(currentIteration);
-            status.coords().setIterationOfCurrentStep(currentIteration);
+         //set timeout to 30 seconds. Otherwise we get an error if a position move takes greater than 5 seconds. (default timeout)
+         Globals.core().setTimeoutMs(30000);
+         for (int i = 0; i < list.getNumberOfPositions(); i++) {
+            currentIteration++;
+            MultiStagePosition pos = list.getPosition(i);
+            status.coords().setIterationOfCurrentStep(i);
             String label = pos.getLabel();
             status.newStatusMessage(String.format("Moving to position %s", label));
             Callable<Void> preMoveRoutine = () -> {
@@ -94,13 +94,14 @@ public class AcquireFromPositionList
                };
             }
             preMoveRoutine.call();
-            pos.goToPosition(pos, Globals
-                  .core()); //Yes, I know this is weird. It's a static method that needs a position and the core as input.
+            //Yes, I know this is weird. It's a static method that needs a position and the core as input.
+            pos.goToPosition(pos, Globals.core());
             postMoveRoutine.call();
             status = stepFunction.apply(status);
-            pos.goToPosition(pos, Globals
-                  .core()); //Just in case the substep took us to new positions we want to make sure to move back to our position to avoid confusion.
+            //Just in case the substep took us to new positions we want to make sure to move back to our position to avoid confusion.
+            pos.goToPosition(pos, Globals.core());
          }
+         currentIteration = 0;
          return status;
       };
    }

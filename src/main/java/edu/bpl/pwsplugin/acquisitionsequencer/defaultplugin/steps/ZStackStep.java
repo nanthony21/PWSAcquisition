@@ -54,17 +54,21 @@ public class ZStackStep extends IteratingContainerStep<SequencerSettings.ZStackS
             if (settings.absolute) {
                zStage.setPosUm(settings.startingPosition);
             }
-            for (currentIteration = 0; currentIteration < settings.numStacks; currentIteration++) {
-               status.coords().setIterationOfCurrentStep(
-                     currentIteration); //Update the coordinates to indicate which iteration of this step we are on.
+            for (int i = 0; i < settings.numStacks; i++) {
+               currentIteration++;
+               //Update the coordinates to indicate which iteration of this step we are on.
+               status.coords().setIterationOfCurrentStep(i);
                status.newStatusMessage(
-                     String.format("Moving to z-slice %d of %d", currentIteration + 1,
+                     String.format("Moving to z-slice %d of %d", i + 1,
                            settings.numStacks));
                zStage.setPosRelativeUm(settings.intervalUm);
                status = subStepFunc.apply(status);
             }
-            zStage.setPosRelativeUm(-settings.intervalUm
-                  * settings.numStacks); //Make sure to return to the initial position before finishing. The reason we use relative movement is that in the case of a hardware autofocus (PFS) the absolute value may change, expecially if we have moved to difference XY positions.
+            //Make sure to return to the initial position before finishing. The reason we use
+            // relative movement is that in the case of a hardware autofocus (PFS) the absolute
+            // value may change, expecially if we have moved to difference XY positions.
+            zStage.setPosRelativeUm(-settings.intervalUm * settings.numStacks);
+            currentIteration = 0;
             return status;
          }
       };
