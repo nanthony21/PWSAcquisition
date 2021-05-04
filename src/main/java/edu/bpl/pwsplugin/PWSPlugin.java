@@ -87,7 +87,7 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
          PWSPluginSettings.registerGsonType();
          Sequencer sequencer = new Sequencer();
 
-         Globals.init(studio_, sequencer);
+         Globals.init(studio_);
 
          initialized_ = true;
       }

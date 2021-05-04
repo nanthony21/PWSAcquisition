@@ -68,6 +68,7 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
    This is the main UI for the sequencer. It incorporates the other components into a panel for the user.
    */
    private final Sequencer sequencer;
+   private final API api = new API();
    SequenceTree seqTree; // The tree containing the steps defining a sequence.
    NewStepsTree newStepsTree; // The tree containing all available steps. Drag from here to the sequence tree.
    SettingsPanel settingsPanel; //A panel displaying the settings for each selected step type.
@@ -94,45 +95,7 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
       this.settingsPanel.setBorder(BorderFactory.createEtchedBorder());
 
       //Button action handlers.
-      this.runButton.addActionListener((evt) -> {
-         try {
-            RootStep rootStep = this.build();
-            sequencer.setRootStep(rootStep);
-            List<String> errors = sequencer.validateSequence();
-            if (!errors.isEmpty()) {
-               Globals.mm().logs().showError(String.join("\n", errors));
-               return;
-            }
-
-            //Validate the hardware state
-            List<String> errs = Globals.getHardwareConfiguration().validate();
-            if (!errs.isEmpty()) {
-               String msg = String.format(
-                     "The following errors were detected. Do you want to proceed with imaging?:\n %s",
-                     String.join("\n", errs));
-               int result = JOptionPane.showConfirmDialog(this, msg, "Errors!",
-                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-                     null);
-
-               if (result == JOptionPane.NO_OPTION) {
-                  Globals.mm().logs().logMessage("Aborting due to errors.");
-                  return;
-               }
-            }
-
-            boolean success = resolveFileConflicts(rootStep);
-            if (!success) {
-               return;
-            }
-            SequencerRunningDlg dlg = new SequencerRunningDlg(
-                  SwingUtilities.getWindowAncestor(this),
-                  "Acquisition Sequence Running",
-                  sequencer);
-         } catch (BuilderPanelException | MMDeviceException | RuntimeException e) {
-            //This puts the error message over the plugin UI rather than the main Micro-Manager UI
-            ReportingUtils.showError(e, this);
-         }
-      }); //Run starting at cell 1.
+      this.runButton.addActionListener((evt) -> { runAction(); });
 
       this.saveButton.addActionListener((evt) -> {
          try {
@@ -201,6 +164,46 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
       this.add(loadButton, "cell 0 5");
    }
 
+   protected void runAction() {
+      try {
+         RootStep rootStep = this.build();
+         sequencer.setRootStep(rootStep);
+         List<String> errors = sequencer.validateSequence();
+         if (!errors.isEmpty()) {
+            Globals.mm().logs().showError(String.join("\n", errors));
+            return;
+         }
+
+         //Validate the hardware state
+         List<String> errs = Globals.getHardwareConfiguration().validate();
+         if (!errs.isEmpty()) {
+            String msg = String.format(
+                  "The following errors were detected. Do you want to proceed with imaging?:\n %s",
+                  String.join("\n", errs));
+            int result = JOptionPane.showConfirmDialog(this, msg, "Errors!",
+                  JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                  null);
+
+            if (result == JOptionPane.NO_OPTION) {
+               Globals.mm().logs().logMessage("Aborting due to errors.");
+               return;
+            }
+         }
+
+         boolean success = resolveFileConflicts(rootStep);
+         if (!success) {
+            return;
+         }
+         SequencerRunningDlg dlg = new SequencerRunningDlg(
+               SwingUtilities.getWindowAncestor(this),
+               "Acquisition Sequence Running",
+               sequencer);
+      } catch (BuilderPanelException | MMDeviceException | RuntimeException e) {
+         //This puts the error message over the plugin UI rather than the main Micro-Manager UI
+         ReportingUtils.showError(e, this);
+      }
+   }
+
    private boolean resolveFileConflicts(RootStep step) {
       //returns true if it is ok to proceed, false if cancel.
       String dir = step.getSettings().directory;
@@ -255,6 +258,21 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
 
    public void setActionButtonsEnabled(boolean enable) {
       runButton.setEnabled(enable);
+   }
+
+   public API getAPI() {
+      return api;
+   }
+
+   public class API {
+      public void loadSequence(String filePath) throws IOException {
+         SequencerUI.this.sequencer.loadSequence(filePath);
+         SequencerUI.this.populateFields(SequencerUI.this.sequencer.getRootStep());
+      }
+
+      public void runSequence() {
+         SequencerUI.this.runAction();
+      }
    }
 }
 

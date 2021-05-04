@@ -4,6 +4,7 @@ import edu.bpl.pwsplugin.UI.PluginFrame;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFactoryManager;
+import edu.bpl.pwsplugin.acquisitionsequencer.UI.SequencerUI;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.HWConfiguration;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
@@ -24,7 +25,7 @@ public class Globals {
    private PWSLogger logger_;
    private HWConfiguration config;
    private PluginFrame frame;
-   private Sequencer sequencer;
+   private SequencerUI.API sequencer;
    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
    private Globals() {
@@ -38,7 +39,7 @@ public class Globals {
       return instance;
    }
 
-   public static void init(Studio studio, Sequencer sequencer) {
+   public static void init(Studio studio) {
       //This must be called before anything else to initialize all the variables.
       instance().studio_ = studio;
       try {
@@ -47,8 +48,8 @@ public class Globals {
          throw new RuntimeException(e);
       }
       instance().acqMan_ = new AcquisitionManager();
-      instance().sequencer = sequencer;
       instance().frame = new PluginFrame();
+      instance().sequencer = instance().frame.getSequencePanel().getAPI();
       try {
          instance().config = new HWConfiguration(
                new HWConfigurationSettings()); //Set these even though they should be overridden when the settings are loaded.
@@ -118,7 +119,7 @@ public class Globals {
       return instance().config;
    }
 
-   public static Sequencer sequencer() {
+   public static SequencerUI.API sequencer() {
       return instance().sequencer;
    }
 

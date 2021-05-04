@@ -24,6 +24,7 @@ package edu.bpl.pwsplugin.UI;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.PWSPlugin;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
+import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.SequencerUI;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.RootStepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.RootStep;
@@ -47,7 +48,7 @@ public class PluginFrame extends JFrame {
 
    private final JTabbedPane tabs = new JTabbedPane();
    private final AcquisitionPanel acqPanel = new AcquisitionPanel();
-   private final SequencerUI sequencePanel = new SequencerUI(Globals.sequencer());
+   private final SequencerUI sequencePanel = new SequencerUI(new Sequencer());
    private final UtilityPanel utilityPanel = new UtilityPanel();
    private final ConfigurationDialog configDialog = new ConfigurationDialog(this);
 
@@ -144,6 +145,10 @@ public class PluginFrame extends JFrame {
       utilityPanel.setActionButtonsEnabled(enable);
       acqPanel.setActionButtonsEnabled(enable);
       sequencePanel.setActionButtonsEnabled(enable);
+   }
+
+   public SequencerUI getSequencePanel() {
+      return sequencePanel;
    }
 }
 
