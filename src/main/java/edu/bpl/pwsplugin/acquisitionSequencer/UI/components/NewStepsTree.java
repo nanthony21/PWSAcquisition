@@ -54,15 +54,15 @@ public class NewStepsTree extends TreeDragAndDrop {
       DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
       Map<String, DefaultMutableTreeNode> categories = new HashMap<>();
-
-      for (SequencerConsts.Type type : SequencerConsts.Type
-            .values()) { //Add a node for each step type to the appropriate category folder.
-         if (type == SequencerConsts.Type.ROOT || type == SequencerConsts.Type.BROKEN) {
+      //Add a node for each step type to the appropriate category folder.
+      for (String type : sequencer.getRegisteredFactories()) {
+         if (type.equals(SequencerConsts.Type.ROOT.name())
+               || type.equals(SequencerConsts.Type.BROKEN.name())) {
             continue; // ignore this special case
          }
 
          JsonableParam settings;
-         StepFactory factory = sequencer_.getFactory(type.name());
+         StepFactory factory = sequencer_.getFactory(type);
          try {
             settings = factory.getSettings().newInstance();
          } catch (InstantiationException | IllegalAccessException e) {
