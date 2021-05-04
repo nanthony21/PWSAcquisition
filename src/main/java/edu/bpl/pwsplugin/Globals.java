@@ -3,6 +3,7 @@ package edu.bpl.pwsplugin;
 import edu.bpl.pwsplugin.UI.PluginFrame;
 import edu.bpl.pwsplugin.acquisitionManagers.AcquisitionManager;
 import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFactoryManager;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.HWConfiguration;
 import edu.bpl.pwsplugin.settings.HWConfigurationSettings;
@@ -23,7 +24,7 @@ public class Globals {
    private PWSLogger logger_;
    private HWConfiguration config;
    private PluginFrame frame;
-   private Sequencer sequencer_;
+   private Sequencer sequencer;
    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
    private Globals() {
@@ -46,7 +47,7 @@ public class Globals {
          throw new RuntimeException(e);
       }
       instance().acqMan_ = new AcquisitionManager();
-      instance().sequencer_ = sequencer;
+      instance().sequencer = sequencer;
       instance().frame = new PluginFrame();
       try {
          instance().config = new HWConfiguration(
@@ -118,7 +119,7 @@ public class Globals {
    }
 
    public static Sequencer sequencer() {
-      return instance().sequencer_;
+      return instance().sequencer;
    }
 
    public static void setHardwareConfigurationSettings(

@@ -21,10 +21,12 @@
 
 package edu.bpl.pwsplugin.acquisitionsequencer.UI;
 
+import clojure.lang.PersistentTreeMap.Seq;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.disablePanel.DisabledPanel;
 import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFactoryManager;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerCoordinate;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionsequencer.ThrowingFunction;
@@ -67,7 +69,7 @@ class SequencerRunningDlg extends JDialog {
    DisplayTree tree;
    AcquisitionThread acqThread;
 
-   public SequencerRunningDlg(Window owner, String title, Step rootStep, Sequencer sequencer) {
+   public SequencerRunningDlg(Window owner, String title, Sequencer sequencer) {
       super(owner, title, Dialog.ModalityType.MODELESS);
       this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE); //Must close by interrupting
       this.setLocationRelativeTo(owner);
@@ -75,7 +77,7 @@ class SequencerRunningDlg extends JDialog {
       ((DefaultCaret) statusMsg.getCaret()).setUpdatePolicy(
             DefaultCaret.NEVER_UPDATE); // this should prevent automatic scrollin got the bottom of the textarea when it updates
       JScrollPane textScroll = new JScrollPane(statusMsg);
-      tree = new DisplayTree(rootStep, sequencer);
+      tree = new DisplayTree(sequencer.getRootStep(), sequencer.getFactoryManager());
       JPanel contentPane = new JPanel(new MigLayout("fill"));
       this.setContentPane(contentPane);
       contentPane.add(new JLabel("Status: "), "cell 0 0");
@@ -86,19 +88,8 @@ class SequencerRunningDlg extends JDialog {
       contentPane.add(cancelButton, "cell 0 3, gapright push, align center");
       this.pack();
       this.setResizable(true);
-      acqThread = new AcquisitionThread(rootStep, 1); //This starts the thread.
+      acqThread = new AcquisitionThread(sequencer); //This starts the thread.
       cancelButton.addActionListener((evt) -> {
-         //The acquisition engine doesn't deal well with InterruptedException. Manually cancel any acquisitions before trying to cancel the thread.
-            /*if (Globals.mm().acquisitions().isAcquisitionRunning()) { #If we use MDA this will be useful, right now it's pointless.
-                Globals.mm().acquisitions().haltAcquisition();
-                do {
-                    try {
-                        Thread.sleep(100); // Wait for the acquisition to stop.
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt(); // reset the interrupt flag.
-                    }
-                } while (Globals.mm().acquisitions().isAcquisitionRunning());
-            }*/
          acqThread.cancel(true);
          cancelButton.setText("Awaiting...");
       });
@@ -118,12 +109,10 @@ class SequencerRunningDlg extends JDialog {
    }
 
    class AcquisitionThread extends SwingWorker<Void, AcquisitionStatus> {
+      private final Sequencer sequencer;
 
-      SequencerFunction rootFunc;
-      private final AcquisitionStatus startingStatus;
-
-      public AcquisitionThread(Step root, Integer startingCellNum) {
-         this.rootFunc = root.getFunction(new ArrayList<>());
+      public AcquisitionThread(Sequencer sequencer) {
+         this.sequencer = sequencer;
          ThrowingFunction<AcquisitionStatus, Void> publishCallback = (status) -> {
             this.publish(status);
             return null;
@@ -133,34 +122,14 @@ class SequencerRunningDlg extends JDialog {
             return nullInput;
          };
          Globals.frame().setActionButtonsEnabled(false);
-         startingStatus = new AcquisitionStatus(publishCallback, pauseCallback, root);
+         sequencer.setCallbacks(publishCallback, pauseCallback);
          this.execute();
       }
 
       @Override
       public Void doInBackground() {
          try {
-            AcquisitionStatus status = rootFunc.apply(this.startingStatus);
-         } catch (RuntimeException rte) { // Interrupted exception is caused by the user cancelling. No need to warn the user.
-            Throwable exc = rte.getCause();
-            if (exc instanceof InterruptedException) { //Interrupted exceptions are caused by the user cancelling, no need to report it.
-               Globals.mm().logs().showMessage("User cancelled acquisition.");
-            } else if (exc == null) {
-               Globals.mm().logs().showError(
-                     String.format("Error in sequencer. see core log file. %s", rte.getMessage()));
-               Globals.mm().logs().logError(rte);
-            } else if (exc instanceof Exception) {
-               Globals.mm().logs().showError(
-                     String.format("Error in sequencer. See core log file. %s", exc.getMessage()));
-               Globals.mm().logs().logError(exc);
-            } else {
-               Globals.mm().logs()
-                     .showError("Acquisition threw a throwable that was not an exception! How?");
-            }
-         } catch (Throwable th) {
-            Globals.mm().logs()
-                  .showError("Unexpected Throwable thrown from acquisition. Programming error");
-            Globals.mm().logs().logError(th);
+            sequencer.runSequence();
          } finally {
             SwingUtilities.invokeLater(() -> {
                finished();
@@ -185,11 +154,10 @@ class SequencerRunningDlg extends JDialog {
 
       @Override
       protected void process(List<AcquisitionStatus> chunks) {
-         AcquisitionStatus currentStatus = chunks
-               .get(chunks.size() - 1); //Use only the most recently published status
+         //Use only the most recently published status
+         AcquisitionStatus currentStatus = chunks.get(chunks.size() - 1);
          SequencerRunningDlg.this.updateStatus(currentStatus);
       }
-      //public void done() This method has a bug where it can run before the thread actually exits. Use invokelater instead.
    }
 }
 
@@ -205,7 +173,7 @@ class DisplayTree extends JPanel {
    DisabledPanel disPan = new DisabledPanel(tree, new Color(1, 1, 1, 1));
    private final Step rootStep;
 
-   public DisplayTree(Step rootStep, Sequencer sequencer) {
+   public DisplayTree(Step rootStep, SequencerFactoryManager sequencerFactoryManager) {
       super(new BorderLayout());
       super.add(disPan);
 
@@ -215,7 +183,8 @@ class DisplayTree extends JPanel {
 
       ((DefaultTreeModel) tree.tree().getModel()).setRoot(rootStep);
       tree.expandTree();
-      tree.tree().setCellRenderer(new TreeRenderers.SequenceRunningTreeRenderer(sequencer));
+      tree.tree().setCellRenderer(new TreeRenderers.SequenceRunningTreeRenderer(
+            sequencerFactoryManager));
    }
 
    public void updateCurrentCoords(SequencerCoordinate coord) {

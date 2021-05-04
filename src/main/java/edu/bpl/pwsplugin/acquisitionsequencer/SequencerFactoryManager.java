@@ -18,14 +18,14 @@ import java.util.Set;
  *
  * @author nick
  */
-public class Sequencer {
+public class SequencerFactoryManager {
+
    private final FactoryRegistry registry = new FactoryRegistry();
 
    /**
     *
     */
-   public Sequencer() {
-      //TODO plugin loading instead of hard coding.
+   public SequencerFactoryManager() {
       for (SequencerConsts.Type stepType : SequencerConsts.Type.values()) {
          registry.registerFactory(stepType.name(), SequencerConsts.getFactory(stepType.name()));
       }
@@ -50,45 +50,45 @@ public class Sequencer {
    public void registerGson() {
       registry.registerGson();
    }
-}
 
 
-class FactoryRegistry {
-   private final Map<String, StepFactory> REGISTRY = new HashMap<>();
+   private static class FactoryRegistry {
 
-   public void registerFactory(String typeName, StepFactory factoryInstance)
-         throws IllegalArgumentException {
-      if (REGISTRY.containsKey(typeName)) {
-         throw new IllegalArgumentException(
-               String.format("A StepFactory of type %s has already been registered.", typeName));
+      private final Map<String, StepFactory> registry_ = new HashMap<>();
+
+      public void registerFactory(String typeName, StepFactory factoryInstance)
+            throws IllegalArgumentException {
+         if (registry_.containsKey(typeName)) {
+            throw new IllegalArgumentException(
+                  String.format("A StepFactory of type %s has already been registered.", typeName));
+         }
+         registry_.put(typeName, factoryInstance);
       }
-      REGISTRY.put(typeName, factoryInstance);
-   }
 
-   /**
-    * Will return null if a factory hasn't been registered for this typeName.
-    * 
-    * @param typeName The name the factory was registered under
-    * @return A StepFactory instance
-    */
-   public StepFactory getFactory(String typeName) {
-      return REGISTRY.get(typeName);
-   }
+      /**
+       * Will return null if a factory hasn't been registered for this typeName.
+       *
+       * @param typeName The name the factory was registered under
+       * @return A StepFactory instance
+       */
+      public StepFactory getFactory(String typeName) {
+         return registry_.get(typeName);
+      }
 
-   /**
-    *
-    * @return A set of all registered factory names
-    */
-   public Set<String> getRegisteredNames() {
-      return REGISTRY.keySet();
-   }
+      /**
+       * @return A set of all registered factory names
+       */
+      public Set<String> getRegisteredNames() {
+         return registry_.keySet();
+      }
 
-   /**
-    * Make sure all registered factories have been registered with the GSON type adapter.
-    */
-   public void registerGson() {
-      for (Map.Entry<String, StepFactory> entry : REGISTRY.entrySet()) {
-         entry.getValue().registerGson();
+      /**
+       * Make sure all registered factories have been registered with the GSON type adapter.
+       */
+      public void registerGson() {
+         for (Map.Entry<String, StepFactory> entry : registry_.entrySet()) {
+            entry.getValue().registerGson();
+         }
       }
    }
 }

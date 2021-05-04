@@ -21,18 +21,10 @@
 
 package edu.bpl.pwsplugin.acquisitionsequencer;
 
-import com.google.gson.Gson;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
-import edu.bpl.pwsplugin.utils.GsonUtils;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Function;
 import org.apache.commons.lang.StringUtils;
 
@@ -45,23 +37,30 @@ public class AcquisitionStatus {
    //There should be only a single instance of this created per acquisition.
    private final RuntimeSettings runTimeSettings;
    private String currentPath;
-   protected Integer currentAcquisitionlNum; //The folder number we are currently acquiring.
-   private final List<String> statusMsg = new ArrayList<>();
-         //A string describing what is currently happening.
+   protected Integer currentAcquisitionNum; //The folder number we are currently acquiring.
+   //A string describing what is currently happening.
    private final Function<AcquisitionStatus, Void> publishCallBack;
-         //This callback should link to the `publish` method of the swingworker running the acquisition thread.
+   //This callback should link to the `publish` method of the swingworker running the acquisition thread.
    private final Function<Void, Void> pauseCallBack;
-         // This callback should link to the `pausepoint` method of a pause button.
+   // This callback should link to the `pausepoint` method of a pause button.
+   private final List<String> statusMsg = new ArrayList<>();
+   //This keeps track of where in the sequence we are. Callbacks can use this to determine where they are being called from.
    private final SequencerCoordinate coords;
-         //This keeps track of where in the sequence we are. Callbacks can use this to determine where they are being called from.
 
+   /**
+    * Create a new Status object
+    *
+    * @param publishCallBack
+    * @param pauseCallBack
+    * @param rootStep
+    */
    public AcquisitionStatus(Function<AcquisitionStatus, Void> publishCallBack,
-         Function<Void, Void> pauseCallBack, Step rootStep) {
-      //Create a new status object
+         Function<Void, Void> pauseCallBack, Step<?> rootStep) {
       this.publishCallBack = publishCallBack;
       this.pauseCallBack = pauseCallBack;
       runTimeSettings = new RuntimeSettings(rootStep);
       coords = new SequencerCoordinate(runTimeSettings.getUUID());
+      currentAcquisitionNum = 1;
    }
 
    public synchronized Integer newStatusMessage(String message) {
@@ -89,8 +88,10 @@ public class AcquisitionStatus {
    }
 
    public void allowPauseHere() {
-      pauseCallBack.apply(
-            null); //If the pause button was armed then block this thread until it is disarmed.
+      if (pauseCallBack != null) {
+         //If the pause button was armed then block this thread until it is disarmed.
+         pauseCallBack.apply(null);
+      }
    }
 
    public synchronized String getSavePath() {
@@ -103,13 +104,13 @@ public class AcquisitionStatus {
    }
 
    public synchronized void setAcquisitionlNum(Integer num) {
-      currentAcquisitionlNum = num;
+      currentAcquisitionNum = num;
       Globals.acqManager().setCellNum(num);
       this.publish();
    }
 
    public synchronized Integer getAcquisitionlNum() {
-      return currentAcquisitionlNum;
+      return currentAcquisitionNum;
    }
 
    public synchronized SequencerCoordinate coords() {
@@ -120,38 +121,13 @@ public class AcquisitionStatus {
       return this.runTimeSettings;
    }
 
-   public static class RuntimeSettings {
-
-      private final String dateString = new Timestamp(new Date().getTime()).toString();
-      private final String uuid = UUID.randomUUID().toString();
-      private final Step rootStep;
-
-      public RuntimeSettings(Step root) {
-         rootStep = root;
-      }
-
-      public String getUUID() {
-         return uuid;
-      }
-
-      public Step getRootStep() {
-         return rootStep;
-      }
-
-      public void saveToJson(String directory) throws IOException {
-         String savePath = Paths.get(directory, "sequence.rtpwsseq").toString();
-         try (FileWriter writer = new FileWriter(
-               savePath)) { //Writer is automatically closed at the end of this statement.
-            Gson gson = GsonUtils.getGson();
-            String json = gson.toJson(this);
-            writer.write(json);
-         }
-      }
-   }
-
    private void publish() {
-      //Send a copy of this object back to the swingworker so it can be accessed from the `process` method.
-      //We really only have one instance of this class which is not really how the publish/process mechanism is designed, but it still works as a convenient way to make UI events happen in response to calling this publish method.
-      publishCallBack.apply(this);
+      if (publishCallBack != null) {
+         //Send a copy of this object back to the swingworker so it can be accessed from the
+         // `process` method. We really only have one instance of this class which is not really
+         // how the publish/process mechanism is designed, but it still works as a convenient way
+         // to make UI events happen in response to calling this publish method.
+         publishCallBack.apply(this);
+      }
    }
 }

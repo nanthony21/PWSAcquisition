@@ -23,7 +23,7 @@ package edu.bpl.pwsplugin.acquisitionsequencer.UI.components;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFactoryManager;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import edu.bpl.pwsplugin.utils.JsonableParam;
@@ -57,11 +57,11 @@ public class SettingsPanel extends JPanel implements TreeSelectionListener, Focu
    JPanel cardPanel = new JPanel(new CardLayout());
    JLabel nameLabel = new JLabel();
    JLabel descriptionLabel = new JLabel();
-   private final Sequencer sequencer_;
+   private final SequencerFactoryManager sequencer_FactoryManager_;
 
-   public SettingsPanel(Sequencer sequencer, TreeDragAndDrop... trees) {
+   public SettingsPanel(SequencerFactoryManager sequencerFactoryManager, TreeDragAndDrop... trees) {
       super(new MigLayout());
-      sequencer_ = sequencer;
+      sequencer_FactoryManager_ = sequencerFactoryManager;
       nameLabel.setFont(new Font("serif", Font.BOLD, 12));
       descriptionLabel.setFont(new Font("serif", Font.ITALIC, 11));
 
@@ -76,8 +76,8 @@ public class SettingsPanel extends JPanel implements TreeSelectionListener, Focu
          trees[i].tree().addFocusListener(this);
       }
 
-      for (String type : sequencer.getRegisteredFactories()) {
-         panelTypeMapping.put(type, sequencer.getFactory(type).createUI());
+      for (String type : sequencerFactoryManager.getRegisteredFactories()) {
+         panelTypeMapping.put(type, sequencerFactoryManager.getFactory(type).createUI());
       }
 
       int maxH = 0;
@@ -143,8 +143,8 @@ public class SettingsPanel extends JPanel implements TreeSelectionListener, Focu
    }
 
    private BuilderJPanel showPanelForType(String type) {
-      nameLabel.setText(sequencer_.getFactory(type).getName());
-      descriptionLabel.setText("<html>" + sequencer_.getFactory(type).getDescription()
+      nameLabel.setText(sequencer_FactoryManager_.getFactory(type).getName());
+      descriptionLabel.setText("<html>" + sequencer_FactoryManager_.getFactory(type).getDescription()
             + "</html>"); //The html tags here should enable text wrapping.
       ((CardLayout) cardPanel.getLayout()).show(cardPanel, type.toString());
       return panelTypeMapping.get(type);

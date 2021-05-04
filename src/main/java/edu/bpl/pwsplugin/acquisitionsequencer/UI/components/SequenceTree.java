@@ -21,7 +21,7 @@
 
 package edu.bpl.pwsplugin.acquisitionsequencer.UI.components;
 
-import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFactoryManager;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.CopyMoveTransferHandler;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.TreeDragAndDrop;
@@ -42,26 +42,26 @@ import javax.swing.tree.TreeSelectionModel;
  */
 public class SequenceTree extends TreeDragAndDrop implements KeyListener {
 
-   public SequenceTree(Sequencer sequencer) {
+   public SequenceTree(SequencerFactoryManager sequencerFactoryManager) {
       super();
       tree.setTransferHandler(new CopyMoveTransferHandler());
       tree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
 
       JsonableParam settings;
       try {
-         settings = sequencer.getFactory(SequencerConsts.Type.ROOT.name()).getSettings()
+         settings = sequencerFactoryManager.getFactory(SequencerConsts.Type.ROOT.name()).getSettings()
                .newInstance();
       } catch (InstantiationException | IllegalAccessException e) {
          throw new RuntimeException(e);
       }
 
-      ContainerStep root = ((ContainerStep) sequencer.getFactory(SequencerConsts.Type.ROOT.name())
+      ContainerStep root = ((ContainerStep) sequencerFactoryManager.getFactory(SequencerConsts.Type.ROOT.name())
             .createStep());
 
       model.setRoot(root);
       tree.setRootVisible(true);
       tree.setShowsRootHandles(false);
-      tree.setCellRenderer(new TreeRenderers.SequenceTreeRenderer(sequencer));
+      tree.setCellRenderer(new TreeRenderers.SequenceTreeRenderer(sequencerFactoryManager));
 
       Dimension d = new Dimension(200, 200);
       setSize(d);

@@ -21,19 +21,15 @@
 
 package edu.bpl.pwsplugin.acquisitionsequencer.UI.components;
 
-import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFactoryManager;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.CopyOnlyTransferHandler;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.TreeDragAndDrop;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.TreeRenderers;
-import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
-import edu.bpl.pwsplugin.settings.AcquireCellSettings;
-import edu.bpl.pwsplugin.settings.PWSSettingsConsts;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.Dimension;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -44,25 +40,25 @@ import javax.swing.tree.TreeSelectionModel;
  */
 public class NewStepsTree extends TreeDragAndDrop {
 
-   private final Sequencer sequencer_;
+   private final SequencerFactoryManager sequencer_FactoryManager_;
 
-   public NewStepsTree(Sequencer sequencer) {
+   public NewStepsTree(SequencerFactoryManager sequencerFactoryManager) {
       super();
-      sequencer_ = sequencer;
+      sequencer_FactoryManager_ = sequencerFactoryManager;
       tree.setTransferHandler(new CopyOnlyTransferHandler());
       this.tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
       DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
       Map<String, DefaultMutableTreeNode> categories = new HashMap<>();
       //Add a node for each step type to the appropriate category folder.
-      for (String type : sequencer.getRegisteredFactories()) {
+      for (String type : sequencerFactoryManager.getRegisteredFactories()) {
          if (type.equals(SequencerConsts.Type.ROOT.name())
                || type.equals(SequencerConsts.Type.BROKEN.name())) {
             continue; // ignore this special case
          }
 
          JsonableParam settings;
-         StepFactory factory = sequencer_.getFactory(type);
+         StepFactory factory = sequencer_FactoryManager_.getFactory(type);
          try {
             settings = factory.getSettings().newInstance();
          } catch (InstantiationException | IllegalAccessException e) {
@@ -88,7 +84,7 @@ public class NewStepsTree extends TreeDragAndDrop {
       model.setRoot(root);
       tree.setRootVisible(false);
       tree.setShowsRootHandles(true);
-      tree.setCellRenderer(new TreeRenderers.NewStepsTreeRenderer(sequencer));
+      tree.setCellRenderer(new TreeRenderers.NewStepsTreeRenderer(sequencerFactoryManager));
 
       Dimension d = new Dimension(200, 200);
       setSize(d);

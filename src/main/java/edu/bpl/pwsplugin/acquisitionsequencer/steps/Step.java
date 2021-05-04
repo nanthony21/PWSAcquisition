@@ -28,7 +28,7 @@ import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFactoryManager;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.CopyableMutableTreeNode;
@@ -150,14 +150,14 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
       return SequencerConsts.getFactory(this.getType()).getName();
    }*/
 
-   public static void registerGsonType(Sequencer sequencer) { //This must be called for GSON loading/saving to work.
+   public static void registerGsonType(SequencerFactoryManager sequencerFactoryManager) { //This must be called for GSON loading/saving to work.
       //This custom adapter enables Steps to be Jsonified by GSON even though they have a circular parent/child reference.
       TypeAdapterFactory factory = new TypeAdapterFactory() {
          @Override
          @SuppressWarnings("unchecked") // we use a runtime check to make sure the 'T's equal
          public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
             if (Step.class.isAssignableFrom(type.getRawType())) { //Allow subtypes to use this factory.
-               return (TypeAdapter<T>) new StepTypeAdapter(gson, sequencer);
+               return (TypeAdapter<T>) new StepTypeAdapter(gson, sequencerFactoryManager);
             }
             return null;
          }
@@ -183,11 +183,11 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
 class StepTypeAdapter extends TypeAdapter<Step> {
 
    private final Gson gson;
-   private final Sequencer sequencer;
+   private final SequencerFactoryManager sequencerFactoryManager;
 
-   public StepTypeAdapter(Gson gson, Sequencer sequencer) {
+   public StepTypeAdapter(Gson gson, SequencerFactoryManager sequencerFactoryManager) {
       this.gson = gson;
-      this.sequencer = sequencer;
+      this.sequencerFactoryManager = sequencerFactoryManager;
    }
 
    @Override
@@ -220,7 +220,7 @@ class StepTypeAdapter extends TypeAdapter<Step> {
             throw new IOException("Json Parse Error");
          } //This must be "stepType"
          String stepType = in.nextString();
-         StepFactory factory = sequencer.getFactory(stepType);
+         StepFactory factory = sequencerFactoryManager.getFactory(stepType);
          Step step = (Step) factory.createStep();
          if (!in.nextName().equals("settings")) {
             throw new IOException("Json Parse Error");

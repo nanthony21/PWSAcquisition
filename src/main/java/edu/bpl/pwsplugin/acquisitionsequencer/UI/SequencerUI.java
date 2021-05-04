@@ -26,24 +26,18 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFactoryManager;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.components.FileConflictDlg;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.components.NewStepsTree;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.components.SequenceTree;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.components.SettingsPanel;
-import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.RootStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
-import edu.bpl.pwsplugin.hardware.configurations.HWConfiguration;
-import edu.bpl.pwsplugin.settings.PWSSettingsConsts;
 import edu.bpl.pwsplugin.utils.GsonUtils;
-import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.Font;
 import java.awt.Insets;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -73,7 +67,7 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
    /*
    This is the main UI for the sequencer. It incorporates the other components into a panel for the user.
    */
-   private final Sequencer sequencer_;
+   private final Sequencer sequencer;
    SequenceTree seqTree; // The tree containing the steps defining a sequence.
    NewStepsTree newStepsTree; // The tree containing all available steps. Drag from here to the sequence tree.
    SettingsPanel settingsPanel; //A panel displaying the settings for each selected step type.
@@ -92,10 +86,10 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
    public SequencerUI(Sequencer sequencer) {
       super(new MigLayout("fill"), RootStep.class);
 
-      sequencer_ = sequencer;
-      seqTree = new SequenceTree(sequencer_);
-      newStepsTree = new NewStepsTree(sequencer_);
-      settingsPanel = new SettingsPanel(sequencer_, seqTree, newStepsTree);
+      this.sequencer = sequencer;
+      seqTree = new SequenceTree(sequencer.getFactoryManager());
+      newStepsTree = new NewStepsTree(sequencer.getFactoryManager());
+      settingsPanel = new SettingsPanel(sequencer.getFactoryManager(), seqTree, newStepsTree);
 
       this.settingsPanel.setBorder(BorderFactory.createEtchedBorder());
 
@@ -103,7 +97,8 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
       this.runButton.addActionListener((evt) -> {
          try {
             RootStep rootStep = this.build();
-            List<String> errors = verifySequence(rootStep, new ArrayList<>());
+            sequencer.setRootStep(rootStep);
+            List<String> errors = sequencer.validateSequence();
             if (!errors.isEmpty()) {
                Globals.mm().logs().showError(String.join("\n", errors));
                return;
@@ -113,7 +108,7 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
             List<String> errs = Globals.getHardwareConfiguration().validate();
             if (!errs.isEmpty()) {
                String msg = String.format(
-                     "The following errors were detected. Do you want to proceeed with imaging?:\n %s",
+                     "The following errors were detected. Do you want to proceed with imaging?:\n %s",
                      String.join("\n", errs));
                int result = JOptionPane.showConfirmDialog(this, msg, "Errors!",
                      JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
@@ -130,24 +125,25 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
                return;
             }
             SequencerRunningDlg dlg = new SequencerRunningDlg(
-                  SwingUtilities.getWindowAncestor(this), "Acquisition Sequence Running",
-                  rootStep,
+                  SwingUtilities.getWindowAncestor(this),
+                  "Acquisition Sequence Running",
                   sequencer);
          } catch (BuilderPanelException | MMDeviceException | RuntimeException e) {
-            ReportingUtils.showError(e,
-                  this); //This puts the error message over the plugin UI rather than the main Micro-Manager UI
+            //This puts the error message over the plugin UI rather than the main Micro-Manager UI
+            ReportingUtils.showError(e, this);
          }
       }); //Run starting at cell 1.
 
       this.saveButton.addActionListener((evt) -> {
          try {
-            RootStep rootStep = this.build();
             JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
             String path = FileDialogs.save(topFrame, "Save Sequence", STEPFILETYPE).getPath();
             if (path == null) {
                return; // file dialog must have been cancelled.
             }
-            rootStep.saveToJson(path);
+            RootStep rootStep = this.build();
+            sequencer.setRootStep(rootStep);
+            sequencer.saveSequence(path);
          } catch (IOException | BuilderPanelException e) {
             Globals.mm().logs().showError(e);
          }
@@ -162,22 +158,15 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
             }
             String path = f.getPath();
 
-            RootStep rootStep;
-            try (FileReader reader = new FileReader(path)) {
-               if (path.endsWith(
-                     "rtpwsseq")) { //Loading from a runtime settings file (the kind automatically saved when an acquisition is run.
-                  rootStep = (RootStep) GsonUtils.getGson()
-                        .fromJson(reader, AcquisitionStatus.RuntimeSettings.class).getRootStep();
-               } else {
-                  rootStep = GsonUtils.getGson().fromJson(reader, RootStep.class);
-               }
+            try {
+               sequencer.loadSequence(path);
             } catch (IOException ioe) {
                Globals.mm().logs().showError(ioe);
                return;
             }
-            this.populateFields(rootStep);
-            this.seqTree
-                  .setRootNodeSelected(); // Change the selection to make sure the UI updates properly.
+            this.populateFields(sequencer.getRootStep());
+            // Change the selection to make sure the UI updates properly.
+            this.seqTree.setRootNodeSelected();
          } catch (NullPointerException | JsonIOException | ClassCastException e) {
             Globals.mm().logs().showError(e);
          }
@@ -252,17 +241,6 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
          }
       }
       return success;
-   }
-
-   private List<String> verifySequence(Step parent, List<String> errs) {
-      //Recursively validate all steps below `parent` and add the errors to `errs`
-      errs.addAll(parent.validate());
-      if (parent instanceof ContainerStep) {
-         for (Step substep : ((ContainerStep<?>) parent).getSubSteps()) {
-            errs.addAll(verifySequence(substep, new ArrayList<>()));
-         }
-      }
-      return errs;
    }
 
    @Override
