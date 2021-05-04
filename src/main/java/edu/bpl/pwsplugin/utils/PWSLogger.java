@@ -33,20 +33,21 @@ import org.micromanager.Studio;
 import org.micromanager.internal.utils.ReportingUtils;
 
 /**
- * @author nick This logger is responsible for writing log files. I saves it's own "PWSLog", it also
+ * This logger is responsible for writing log files. It saves it's own "PWSLog", it also
  * redirects micro-managers CoreLog to be saved in custom locations. A single file will be saved to
  * during a single session of Micro-Manager. A copy of the log file will also be saved to the
  * acquisition directory when an acquisition is being run.
+ *
+ * @author Nick Anthony
  */
 public class PWSLogger {
-
+   //This writer always writes to the `logPath` that SGILogger is constructed with
    private final FileWriter logWriter;
-         //This writer always writes to the `logPath` that SGILogger is constructed with
+   //When an experiment is run the `setAcquisitionPath` method is used to start a secondary log file in the acquisition path.
    private FileWriter acqWriter = null;
-         //When an experiment is run the `setAcquisitionPath` method is used to start a secondary log file in the acquisition path.
    private static final String LS = System.lineSeparator();
+   //This integer is used as a handle by MMCore to keep track of Core log files. We need to keep this handle in order to close the file.
    private final Integer mainCoreLogHandle;
-         //This integer is used as a handle by MMCore to keep track of Core log files. We need to keep this handle in order to close the file.
    private Integer acqCoreLogHandle = null;
 
    public PWSLogger(Studio studio) throws Exception {

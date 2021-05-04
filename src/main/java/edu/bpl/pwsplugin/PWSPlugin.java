@@ -74,8 +74,8 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
    @Override
    public void setContext(Studio studio) {
       studio_ = studio;
-      studio.events().registerForEvents(
-            this); //This allows us to run cleanup when shutdown begins, see `closeRequested`
+      //This allows us to run cleanup when shutdown begins, see `closeRequested`
+      studio.events().registerForEvents(this);
    }
 
    @Override
