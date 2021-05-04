@@ -18,9 +18,8 @@
 //               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
-/*
+
 package edu.bpl.pwsAF;
-//import org.micromanager.autofocus.internal.oughtafocus.ImgSharpnessAnalysis;
 import org.micromanager.imageprocessing.ImgSharpnessAnalysis;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
@@ -35,10 +34,11 @@ import org.micromanager.internal.MMStudio;
  * @author nick
  */
 public class ImgCornerAutofocus {
+
     private final ImgSharpnessAnalysis evaluator_ = new ImgSharpnessAnalysis();
     private final Map<Corners, Rectangle> rois_ = new HashMap<>();
-    
-    
+
+
     public ImgCornerAutofocus(int imgWidth, int imgHeight, double radius) {
         RoiManager manager = new RoiManager(imgWidth, imgHeight, radius);
         evaluator_.setComputationMethod(ImgSharpnessAnalysis.Method.Redondo);
@@ -46,7 +46,8 @@ public class ImgCornerAutofocus {
             rois_.put(corner, manager.getCornerRoi(corner));
         }
     }
-    
+
+
     /*
     public Map<Corners, Double> evaluateGradient(Image img) {
 
@@ -192,5 +193,3 @@ enum Corners {
     BL,
     BR;
 }
-
-*/
