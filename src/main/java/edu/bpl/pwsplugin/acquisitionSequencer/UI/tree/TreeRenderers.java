@@ -21,6 +21,7 @@
 
 package edu.bpl.pwsplugin.acquisitionsequencer.UI.tree;
 
+import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.IteratingContainerStep;
@@ -39,12 +40,13 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 public class TreeRenderers {
 
    public static class SequenceTreeRenderer extends DefaultTreeCellRenderer {
-
+      private final Sequencer sequencer;
       //Empty ContainerSteps that are empty are rendered as red text with a special icon.
       //ContainerSteps and Endpoint steps each have a custom icon.
       //A red outline is drawn around active steps.
-      public SequenceTreeRenderer() {
+      public SequenceTreeRenderer(Sequencer sequencer) {
          super();
+         this.sequencer = sequencer;
          setBorderSelectionColor(
                Color.RED); //This helps us to see which tree is active when there are multiple trees in use.
       }
@@ -56,15 +58,16 @@ public class TreeRenderers {
                .getTreeCellRendererComponent(tree, value, selected, expanded, isLeaf, row, focused);
          if (value instanceof ContainerStep) {
             ContainerStep node = (ContainerStep) value;
-            if (node.getChildCount()
-                  == 0) { //The container step is empty, set the icon to draw attention to this issue.
+            //The container step is empty, set the icon to draw attention to this issue.
+            if (node.getChildCount() == 0) {
                ImageIcon image = new ImageIcon(
                      getClass().getResource("/edu/bpl/icons/emptyContainerNode.png"));
                if (image == null) {
                   throw new RuntimeException("Icon failed to load");
                }
                comp.setIcon(image);
-               comp.setText("<html>" + comp.getText() + "<font color=red> (empty)</font></html>");
+               String factoryName = sequencer.getFactory(node.getType()).getName();
+               comp.setText("<html>" + factoryName + "<font color=red> (empty)</font></html>");
                return comp;
             } else {
                ImageIcon image = new ImageIcon(
@@ -76,6 +79,9 @@ public class TreeRenderers {
                return comp;
             }
          } else if (value instanceof EndpointStep) {
+            EndpointStep node = (EndpointStep) value;
+            String factoryName = sequencer.getFactory(node.getType()).getName();
+            comp.setText("<html>" + factoryName + "<font color=red> (empty)</font></html>");
             ImageIcon image = new ImageIcon(
                   getClass().getResource("/edu/bpl/icons/endpointNode.png"));
             if (image == null) {
@@ -90,11 +96,12 @@ public class TreeRenderers {
    }
 
    public static class NewStepsTreeRenderer extends DefaultTreeCellRenderer {
-
+      private final Sequencer sequencer;
       //This is used for a tree displaying which Step types are available. It is the same as `SequenceTreeRenderer` except that
       //empty ContainerSteps aren't rendered as red or with a special error icon.
-      public NewStepsTreeRenderer() {
+      public NewStepsTreeRenderer(Sequencer sequencer) {
          super();
+         this.sequencer = sequencer;
          setBorderSelectionColor(
                Color.RED); //This helps us to see which tree is active when there are multiple trees in use.
       }
@@ -105,14 +112,18 @@ public class TreeRenderers {
          JLabel comp = (JLabel) super
                .getTreeCellRendererComponent(tree, value, selected, expanded, isLeaf, row, focused);
          if (value instanceof ContainerStep) {
+            ContainerStep node = (ContainerStep) value;
             ImageIcon image = new ImageIcon(
                   getClass().getResource("/edu/bpl/icons/containerNode.png"));
             if (image == null) {
                throw new RuntimeException("Icon failed to load");
             }
+            comp.setText(sequencer.getFactory(node.getType()).getName());
             comp.setIcon(image);
             return comp;
          } else if (value instanceof EndpointStep) {
+            EndpointStep node = (EndpointStep) value;
+            comp.setText(sequencer.getFactory(node.getType()).getName());
             ImageIcon image = new ImageIcon(
                   getClass().getResource("/edu/bpl/icons/endpointNode.png"));
             if (image == null) {
@@ -132,8 +143,8 @@ public class TreeRenderers {
     */
    public static class SequenceRunningTreeRenderer extends SequenceTreeRenderer {
 
-      public SequenceRunningTreeRenderer() {
-         super();
+      public SequenceRunningTreeRenderer(Sequencer sequencer) {
+         super(sequencer);
       }
 
       @Override

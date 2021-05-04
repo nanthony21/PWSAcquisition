@@ -143,10 +143,10 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
       };
    }
 
-   @Override
+   /*@Override
    public String toString() { //this determines how it is labeled in a JTree
       return SequencerConsts.getFactory(this.getType()).getName();
-   }
+   }*/
 
    public static void registerGsonType() { //This must be called for GSON loading/saving to work.
       GsonUtils.builder().registerTypeAdapterFactory(StepTypeAdapter.FACTORY);
@@ -215,7 +215,7 @@ class StepTypeAdapter extends TypeAdapter<Step> {
             throw new IOException("Json Parse Error");
          } //This must be "stepType"
          String stepType = in.nextString();
-         Step step = (Step) SequencerConsts.getFactory(stepType).getStep().newInstance();
+         Step step = (Step) SequencerConsts.getFactory(stepType).createStep();
          if (!in.nextName().equals("settings")) {
             throw new IOException("Json Parse Error");
          }
@@ -234,21 +234,14 @@ class StepTypeAdapter extends TypeAdapter<Step> {
          }
          in.endObject();
          return step;
-      } catch (InstantiationException | IllegalAccessException e) {
-         throw new RuntimeException(e);
       } catch (IOException | JsonIOException | IllegalStateException ioe) {
-         try {
-            while (in.hasNext()) {
-               in.skipValue();
-            } //Read out the rest of the failed json object before returning.
-            in.endObject();
-            //Rather than allow an exception to break the whole loading process just insert the
-            // special "Broken step" where the error occurred.
-            return (Step) SequencerConsts.getFactory(SequencerConsts.Type.BROKEN.name()).getStep()
-                  .newInstance();
-         } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-         }
+         while (in.hasNext()) {
+            in.skipValue();
+         } //Read out the rest of the failed json object before returning.
+         in.endObject();
+         //Rather than allow an exception to break the whole loading process just insert the
+         // special "Broken step" where the error occurred.
+         return (Step) SequencerConsts.getFactory(SequencerConsts.Type.BROKEN.name()).createStep();
       }
    }
 }

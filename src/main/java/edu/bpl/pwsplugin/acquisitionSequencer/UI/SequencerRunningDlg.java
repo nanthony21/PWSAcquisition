@@ -24,6 +24,7 @@ package edu.bpl.pwsplugin.acquisitionsequencer.UI;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.disablePanel.DisabledPanel;
 import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
+import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerCoordinate;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionsequencer.ThrowingFunction;
@@ -66,7 +67,7 @@ class SequencerRunningDlg extends JDialog {
    DisplayTree tree;
    AcquisitionThread acqThread;
 
-   public SequencerRunningDlg(Window owner, String title, Step rootStep) {
+   public SequencerRunningDlg(Window owner, String title, Step rootStep, Sequencer sequencer) {
       super(owner, title, Dialog.ModalityType.MODELESS);
       this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE); //Must close by interrupting
       this.setLocationRelativeTo(owner);
@@ -74,7 +75,7 @@ class SequencerRunningDlg extends JDialog {
       ((DefaultCaret) statusMsg.getCaret()).setUpdatePolicy(
             DefaultCaret.NEVER_UPDATE); // this should prevent automatic scrollin got the bottom of the textarea when it updates
       JScrollPane textScroll = new JScrollPane(statusMsg);
-      tree = new DisplayTree(rootStep);
+      tree = new DisplayTree(rootStep, sequencer);
       JPanel contentPane = new JPanel(new MigLayout("fill"));
       this.setContentPane(contentPane);
       contentPane.add(new JLabel("Status: "), "cell 0 0");
@@ -198,14 +199,13 @@ class SequencerRunningDlg extends JDialog {
  * @author LCPWS3
  */
 class DisplayTree extends JPanel {
-
+   //This tree is used to display the current status of the sequence, it is not user interactive.
    TreeDragAndDrop tree = new TreeDragAndDrop();
-         //This tree is used to display the current status of the sequence, it is not user interactive.
-   DisabledPanel disPan = new DisabledPanel(tree, new Color(1, 1, 1,
-         1)); // Disabled panel with a transparent glass pane to block interaction with the tree.
+   // Disabled panel with a transparent glass pane to block interaction with the tree.
+   DisabledPanel disPan = new DisabledPanel(tree, new Color(1, 1, 1, 1));
    private final Step rootStep;
 
-   public DisplayTree(Step rootStep) {
+   public DisplayTree(Step rootStep, Sequencer sequencer) {
       super(new BorderLayout());
       super.add(disPan);
 
@@ -215,7 +215,7 @@ class DisplayTree extends JPanel {
 
       ((DefaultTreeModel) tree.tree().getModel()).setRoot(rootStep);
       tree.expandTree();
-      tree.tree().setCellRenderer(new TreeRenderers.SequenceRunningTreeRenderer());
+      tree.tree().setCellRenderer(new TreeRenderers.SequenceRunningTreeRenderer(sequencer));
    }
 
    public void updateCurrentCoords(SequencerCoordinate coord) {

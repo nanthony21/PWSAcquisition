@@ -88,7 +88,7 @@ public class NewStepsTree extends TreeDragAndDrop {
       model.setRoot(root);
       tree.setRootVisible(false);
       tree.setShowsRootHandles(true);
-      tree.setCellRenderer(new TreeRenderers.NewStepsTreeRenderer());
+      tree.setCellRenderer(new TreeRenderers.NewStepsTreeRenderer(sequencer));
 
       Dimension d = new Dimension(200, 200);
       setSize(d);

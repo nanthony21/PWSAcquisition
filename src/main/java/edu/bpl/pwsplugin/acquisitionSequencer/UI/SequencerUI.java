@@ -130,7 +130,9 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
                return;
             }
             SequencerRunningDlg dlg = new SequencerRunningDlg(
-                  SwingUtilities.getWindowAncestor(this), "Acquisition Sequence Running", rootStep);
+                  SwingUtilities.getWindowAncestor(this), "Acquisition Sequence Running",
+                  rootStep,
+                  sequencer);
          } catch (BuilderPanelException | MMDeviceException | RuntimeException e) {
             ReportingUtils.showError(e,
                   this); //This puts the error message over the plugin UI rather than the main Micro-Manager UI
