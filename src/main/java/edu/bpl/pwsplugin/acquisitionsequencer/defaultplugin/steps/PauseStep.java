@@ -55,6 +55,11 @@ public class PauseStep extends EndpointStep<SequencerSettings.PauseStepSettings>
    }
 
    @Override
+   public boolean isRunning() {
+      return false;
+   }
+
+   @Override
    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
       SequencerSettings.PauseStepSettings settings = this.settings;
       return new SequencerFunction() {

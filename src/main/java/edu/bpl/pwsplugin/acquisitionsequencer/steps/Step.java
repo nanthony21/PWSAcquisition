@@ -145,11 +145,6 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
       };
    }
 
-   /*@Override
-   public String toString() { //this determines how it is labeled in a JTree
-      return SequencerConsts.getFactory(this.getType()).getName();
-   }*/
-
    public static void registerGsonType(SequencerFactoryManager sequencerFactoryManager) { //This must be called for GSON loading/saving to work.
       //This custom adapter enables Steps to be Jsonified by GSON even though they have a circular parent/child reference.
       TypeAdapterFactory factory = new TypeAdapterFactory() {
@@ -177,6 +172,8 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
          writer.write(json);
       }
    }
+
+   public abstract boolean isRunning();
 }
 
 

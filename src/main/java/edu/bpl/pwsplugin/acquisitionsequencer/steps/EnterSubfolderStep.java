@@ -106,4 +106,9 @@ public class EnterSubfolderStep extends ContainerStep<SequencerSettings.EnterSub
       return errs;
    }
 
+   @Override
+   public boolean isRunning() {
+      return false;
+   }
+
 }

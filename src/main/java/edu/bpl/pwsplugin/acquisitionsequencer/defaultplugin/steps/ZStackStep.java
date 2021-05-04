@@ -37,9 +37,15 @@ import java.util.List;
 public class ZStackStep extends IteratingContainerStep<SequencerSettings.ZStackSettings> {
 
    private Integer currentIteration = 0;
+   private boolean running = false;
 
    public ZStackStep() {
       super(new SequencerSettings.ZStackSettings(), DefaultSequencerPlugin.Type.ZSTACK.name());
+   }
+
+   @Override
+   public boolean isRunning() {
+      return running;
    }
 
    @Override
@@ -49,6 +55,8 @@ public class ZStackStep extends IteratingContainerStep<SequencerSettings.ZStackS
       return new SequencerFunction() {
          @Override
          public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
+            running = true;
+            currentIteration = 0;
             TranslationStage1d zStage =
                   Globals.getHardwareConfiguration().getImagingConfigurations().get(0).zStage();
             if (settings.absolute) {
@@ -62,13 +70,16 @@ public class ZStackStep extends IteratingContainerStep<SequencerSettings.ZStackS
                      String.format("Moving to z-slice %d of %d", i + 1,
                            settings.numStacks));
                zStage.setPosRelativeUm(settings.intervalUm);
+               running = false;
                status = subStepFunc.apply(status);
+               running = true;
             }
             //Make sure to return to the initial position before finishing. The reason we use
             // relative movement is that in the case of a hardware autofocus (PFS) the absolute
             // value may change, expecially if we have moved to difference XY positions.
             zStage.setPosRelativeUm(-settings.intervalUm * settings.numStacks);
             currentIteration = 0;
+            running = false;
             return status;
          }
       };

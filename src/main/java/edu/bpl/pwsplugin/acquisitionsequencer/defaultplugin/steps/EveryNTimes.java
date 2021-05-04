@@ -42,6 +42,11 @@ public class EveryNTimes extends ContainerStep<SequencerSettings.EveryNTimesSett
    }
 
    @Override
+   public boolean isRunning() {
+      return false;
+   }
+
+   @Override
    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
       SequencerFunction stepFunction = super.getSubstepsFunction(callbacks);
       iteration = 0; //initialize

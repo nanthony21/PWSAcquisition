@@ -55,4 +55,9 @@ public class BrokenStep extends ContainerStep<JsonableParam> {
       errs.add("The BROKEN step is caused by an error and can not be run. It must be replaced.");
       return errs;
    }
+
+   @Override
+   public boolean isRunning() {
+      return false;
+   }
 }

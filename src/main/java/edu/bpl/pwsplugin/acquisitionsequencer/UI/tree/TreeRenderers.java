@@ -25,8 +25,10 @@ import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFactoryManager;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.IteratingContainerStep;
+import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTree;
@@ -143,6 +145,8 @@ public class TreeRenderers {
     * status of running sequence.
     */
    public static class SequenceRunningTreeRenderer extends SequenceTreeRenderer {
+      Font selectedFont = new Font("Arial", Font.BOLD, 11);
+      Font unselectedFont = new Font("Arial", Font.PLAIN, 11);
 
       public SequenceRunningTreeRenderer(SequencerFactoryManager sequencerFactoryManager) {
          super(sequencerFactoryManager);
@@ -153,7 +157,11 @@ public class TreeRenderers {
             boolean expanded, boolean isLeaf, int row, boolean focused) {
          JLabel comp = (JLabel) super
                .getTreeCellRendererComponent(tree, value, selected, expanded, isLeaf, row, focused);
-
+         if (((Step<?>) value).isRunning()) {
+            comp.setFont(selectedFont);
+         } else {
+            comp.setFont(unselectedFont);
+         }
          if (value instanceof IteratingContainerStep) { //For a step which acts as a for-loop (IteratingContainerStep) add an indicator of which iteration we are on to the text.
             String initText = comp.getText();
             int currentIteration = ((IteratingContainerStep) value).getCurrentIteration();

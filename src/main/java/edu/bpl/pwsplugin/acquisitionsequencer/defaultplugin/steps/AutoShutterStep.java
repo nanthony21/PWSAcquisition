@@ -34,10 +34,14 @@ import java.util.List;
  * @author nicke
  */
 public class AutoShutterStep extends ContainerStep<SequencerSettings.AutoShutterSettings> {
-
    public AutoShutterStep() {
       super(new SequencerSettings.AutoShutterSettings(),
             DefaultSequencerPlugin.Type.AUTOSHUTTER.name());
+   }
+
+   @Override
+   public boolean isRunning() {
+      return false;
    }
 
    @Override

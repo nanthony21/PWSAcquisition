@@ -38,14 +38,21 @@ import javax.swing.tree.TreeNode;
  * @author nick
  */
 public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings> {
+   private boolean running = false;
 
    public FocusLock() {
       super(new SequencerSettings.FocusLockSettings(), DefaultSequencerPlugin.Type.PFS.name());
    }
 
    @Override
+   public boolean isRunning() {
+      return running;
+   }
+
+   @Override
    protected SequencerFunction getCallback() {
       return (status) -> {
+         running = true;
          Step[] path =
                status.coords().getTreePath(); //Indicates our current location in the tree of steps.
          if (path[path.length - 1].getType().equals(DefaultSequencerPlugin.Type.ACQ
@@ -71,6 +78,7 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
                      (long) (settings.delay * 1000.0)); //Does this actually serve any purpose?
             }
          }
+         running = false;
          return status;
       };
    }
@@ -80,6 +88,7 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
       SequencerFunction subStepFunction = super.getSubstepsFunction(callbacks);
       SequencerSettings.FocusLockSettings settings = this.getSettings();
       return (status) -> {
+         running = true;
          //FocusLock A function that turns on the PFS, runs substep and then turns it off.
          TranslationStage1d zstage =
                Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
@@ -99,8 +108,11 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
             zstage.setAutoFocusEnabled(
                   false); //If we failed then make sure to completely disable autofocus.
          }
+         running = false;
          AcquisitionStatus newstatus = subStepFunction.apply(status);
+         running = true;
          zstage.setAutoFocusEnabled(false);
+         running = false;
          return newstatus;
       };
    }

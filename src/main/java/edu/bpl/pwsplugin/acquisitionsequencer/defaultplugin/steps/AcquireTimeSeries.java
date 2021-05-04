@@ -36,10 +36,16 @@ public class AcquireTimeSeries
       extends IteratingContainerStep<SequencerSettings.AcquireTimeSeriesSettings> {
 
    private Integer currentIteration = 0;
+   private boolean running = false;
 
    public AcquireTimeSeries() {
       super(new SequencerSettings.AcquireTimeSeriesSettings(),
             DefaultSequencerPlugin.Type.TIME.name());
+   }
+
+   @Override
+   public boolean isRunning() {
+      return running;
    }
 
    @Override
@@ -53,6 +59,8 @@ public class AcquireTimeSeries
             //interval. the handle must take as input the Cell number to start at. It
             //will return the number of new acquisitions that it tood.
             double lastAcqTime = 0;
+            running = true;
+            currentIteration = 0;
             for (int i = 0; i < settings.numFrames; i++) {
                currentIteration++;
                // wait for the specified frame interval before proceeding to next frame
@@ -76,13 +84,16 @@ public class AcquireTimeSeries
                            (System.currentTimeMillis() - lastAcqTime) / 1000));
                   }
                }
-               lastAcqTime =
-                     System.currentTimeMillis(); //Save the current time so we can figure out when to start the next acquisition.
+               //Save the current time so we can figure out when to start the next acquisition.
+               lastAcqTime = System.currentTimeMillis();
+               running = false;
                status = stepFunction.apply(status);
+               running = true;
                status.newStatusMessage(
                      String.format("Finished time step %d of %d", i + 1, settings.numFrames));
             }
             currentIteration = 0;
+            running = false;
             return status;
          }
       };

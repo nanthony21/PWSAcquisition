@@ -168,4 +168,9 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
       }
       return errs;
    }
+
+   @Override
+   public boolean isRunning() {
+      return false;
+   }
 }

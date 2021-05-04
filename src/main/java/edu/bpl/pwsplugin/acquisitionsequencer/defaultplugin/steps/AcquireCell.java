@@ -46,10 +46,16 @@ import java.util.NoSuchElementException;
  * @author nick
  */
 public class AcquireCell extends EndpointStep<AcquireCellSettings> {
+   private boolean running = false;
 
    //Represents the acquisition of a single "CellXXX" folder, it can contain multiple PWS, Dynamics, and Fluorescence acquisitions.
    public AcquireCell() {
       super(new AcquireCellSettings(), DefaultSequencerPlugin.Type.ACQ.name());
+   }
+
+   @Override
+   public boolean isRunning() {
+      return running;
    }
 
    @Override
@@ -59,6 +65,7 @@ public class AcquireCell extends EndpointStep<AcquireCellSettings> {
       return new SequencerFunction() {
          @Override
          public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
+            running = true;
             status.setAcquisitionlNum(status.getAcquisitionlNum() + 1);
             status.newStatusMessage(
                   String.format("Acquiring Cell %d", status.getAcquisitionlNum()));
@@ -85,6 +92,7 @@ public class AcquireCell extends EndpointStep<AcquireCellSettings> {
             }
             saveSequenceCoordsFile(status);
             status.allowPauseHere();
+            running = false;
             return status;
          }
       };

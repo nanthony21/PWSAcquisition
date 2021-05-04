@@ -34,17 +34,23 @@ import org.micromanager.MultiStagePosition;
 import org.micromanager.PositionList;
 
 /**
- * @author nick
+ * @author Nick Anthony
  */
 public class AcquireFromPositionList
       extends IteratingContainerStep<SequencerSettings.AcquirePositionsSettings> {
 
    //Executes `step` at each position in the positionlist and increments the cell number each time.
    private Integer currentIteration = 0;
+   private boolean running = false;
 
    public AcquireFromPositionList() {
       super(new SequencerSettings.AcquirePositionsSettings(),
             DefaultSequencerPlugin.Type.POS.name());
+   }
+
+   @Override
+   public boolean isRunning() {
+      return running;
    }
 
    @Override
@@ -54,6 +60,8 @@ public class AcquireFromPositionList
       return (status) -> {
          //set timeout to 30 seconds. Otherwise we get an error if a position move takes greater than 5 seconds. (default timeout)
          Globals.core().setTimeoutMs(30000);
+         running = true;
+         currentIteration = 0;
          for (int i = 0; i < list.getNumberOfPositions(); i++) {
             currentIteration++;
             MultiStagePosition pos = list.getPosition(i);
@@ -97,11 +105,14 @@ public class AcquireFromPositionList
             //Yes, I know this is weird. It's a static method that needs a position and the core as input.
             pos.goToPosition(pos, Globals.core());
             postMoveRoutine.call();
+            running = false;
             status = stepFunction.apply(status);
+            running = true;
             //Just in case the substep took us to new positions we want to make sure to move back to our position to avoid confusion.
             pos.goToPosition(pos, Globals.core());
          }
          currentIteration = 0;
+         running = false;
          return status;
       };
    }

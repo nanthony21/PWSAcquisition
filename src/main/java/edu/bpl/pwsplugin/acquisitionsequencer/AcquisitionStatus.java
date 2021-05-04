@@ -38,11 +38,11 @@ public class AcquisitionStatus {
    private final RuntimeSettings runTimeSettings;
    private String currentPath;
    protected Integer currentAcquisitionNum; //The folder number we are currently acquiring.
-   //A string describing what is currently happening.
-   private final Function<AcquisitionStatus, Void> publishCallBack;
    //This callback should link to the `publish` method of the swingworker running the acquisition thread.
    private final Function<Void, Void> pauseCallBack;
    // This callback should link to the `pausepoint` method of a pause button.
+   private final Function<AcquisitionStatus, Void> publishCallBack;
+   //A string describing what is currently happening.
    private final List<String> statusMsg = new ArrayList<>();
    //This keeps track of where in the sequence we are. Callbacks can use this to determine where they are being called from.
    private final SequencerCoordinate coords;
@@ -64,8 +64,9 @@ public class AcquisitionStatus {
    }
 
    public synchronized Integer newStatusMessage(String message) {
-      Integer indentation = this.coords.getTreePath().length
-            - 2; //The length of the treepath controls the indentation of messages for more readable log. The rootstep doesn't log anything so a 2 length treepath should have no indentation.
+      //The length of the treepath controls the indentation of messages for more readable log.
+      // The rootstep doesn't log anything so a 2 length treepath should have no indentation.
+      Integer indentation = this.coords.getTreePath().length - 2;
       String indent = StringUtils.repeat("  ", indentation);
       this.statusMsg.add(indent + message);
       Globals.logger().logSequence(message);

@@ -36,10 +36,16 @@ import org.micromanager.AutofocusPlugin;
  * @author nick
  */
 public class SoftwareAutofocus extends EndpointStep<SequencerSettings.SoftwareAutoFocusSettings> {
+   private boolean running = false;
 
    public SoftwareAutofocus() {
       super(new SequencerSettings.SoftwareAutoFocusSettings(),
             DefaultSequencerPlugin.Type.AF.name());
+   }
+
+   @Override
+   public boolean isRunning() {
+      return running;
    }
 
    @Override
@@ -48,11 +54,13 @@ public class SoftwareAutofocus extends EndpointStep<SequencerSettings.SoftwareAu
       return new SequencerFunction() {
          @Override
          public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
+            running = true;
             AutofocusPlugin af = initializeAFPlugin(settings.exposureMs);
             double z = af.fullFocus();
             double score = af.getCurrentFocusScore();
             status.newStatusMessage(
                   String.format("Autofocus terminated at Z=%.2f with score=%.2f", z, score));
+            running = false;
             return status;
             //TODO add compatibility with our custom zStages
          }
