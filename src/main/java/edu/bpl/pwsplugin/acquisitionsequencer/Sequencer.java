@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This object can be `waited` on to wait for the status of `running` to change.
+ */
 public class Sequencer {
    private final SequencerFactoryManager factoryManager = new SequencerFactoryManager();
    private boolean running = false;
@@ -31,7 +34,10 @@ public class Sequencer {
             pauseCallback, rootStep);
       SequencerFunction rootFunc = rootStep.getFunction(new ArrayList<>());
       try {
-         running = true;
+         synchronized (this) {
+            running = true;
+            this.notifyAll(); // If the sequencer is being waited on then notify that the running status is now updated.
+         }
          AcquisitionStatus finalStatus = rootFunc.apply(startingStatus);
       } catch (RuntimeException rte) { // Interrupted exception is caused by the user cancelling. No need to warn the user.
          Throwable exc = rte.getCause();
@@ -54,7 +60,10 @@ public class Sequencer {
                .showError("Unexpected Throwable thrown from acquisition. Programming error");
          Globals.mm().logs().logError(th);
       } finally {
-         running = false;
+         synchronized (this) {
+            running = false;
+            this.notifyAll(); // If the sequencer is being waited on then notify that the running status is now updated.
+         }
       }
    }
 

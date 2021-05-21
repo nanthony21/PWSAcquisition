@@ -273,6 +273,15 @@ public class SequencerUI extends BuilderJPanel<RootStep> {
 
       public void runSequence() {
          SequencerUI.this.runAction();
+         synchronized (SequencerUI.this.sequencer) {
+            while (!SequencerUI.this.sequencer.isRunning()) {
+               try {
+                  SequencerUI.this.sequencer.wait();
+               } catch (InterruptedException ie) {
+                  break;
+               }
+            } // Wait for the sequencer to actually start running before returning.
+         }
       }
 
       public boolean isSequenceRunning() {
