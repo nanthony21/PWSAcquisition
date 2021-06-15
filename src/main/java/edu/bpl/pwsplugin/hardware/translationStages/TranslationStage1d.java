@@ -59,6 +59,10 @@ public abstract class TranslationStage1d implements Device {
 
    public abstract void setPosRelativeUm(double um) throws MMDeviceException, InterruptedException;
 
+   public abstract boolean supportsEscape();
+   public abstract void toggleEscape() throws MMDeviceException;
+   public abstract boolean isEscaped();
+
    public abstract boolean hasAutoFocus();
 
    //The following only need to be implemented if `hasAutoFocus` is true

@@ -66,6 +66,21 @@ public class SimulationStage1d extends TranslationStage1d {
    }
 
    @Override
+   public  boolean supportsEscape() {
+      return false;
+   }
+
+   @Override
+   public void toggleEscape() {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public  boolean isEscaped() {
+      return false;
+   }
+
+   @Override
    public boolean hasAutoFocus() {
       return false;
    }
