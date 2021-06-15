@@ -42,7 +42,6 @@ public class LivePWS implements ProcessorPlugin, SciJavaPlugin {
                @Override
                public void processImage(Image image, ProcessorContext context) {
                   //byte[] b = image.getByteArray();
-                  configurator.getSettings
                   context.outputImage(image.copyAtCoords(image.getCoords()));
 //                  new DefaultImage(b,
 //                        image.getWidth(),
