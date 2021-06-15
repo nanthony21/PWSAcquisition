@@ -272,8 +272,8 @@ public class NikonTI_zStage extends TranslationStage1d {
    }
 
    @Override
-   public void toggleEscape() throws MMDeviceException {
-      if (isEscaped()) {
+   public void setEscaped(boolean escape) throws MMDeviceException {
+      if (!escape) { // Refocus
          try {
             this.setPosUm(escapeRefocusPos_);
             if (escapeAFEnabled_) {

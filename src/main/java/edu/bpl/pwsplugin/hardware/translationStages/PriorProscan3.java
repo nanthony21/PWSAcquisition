@@ -72,7 +72,7 @@ public class PriorProscan3 extends TranslationStage1d {
    }
 
    @Override
-   public void toggleEscape() {
+   public void setEscaped(boolean escape) {
       throw new UnsupportedOperationException();
    }
 

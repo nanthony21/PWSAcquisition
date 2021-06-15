@@ -71,7 +71,7 @@ public class SimulationStage1d extends TranslationStage1d {
    }
 
    @Override
-   public void toggleEscape() {
+   public void setEscaped(boolean escape) {
       throw new UnsupportedOperationException();
    }
 

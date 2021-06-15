@@ -27,6 +27,7 @@ import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.IteratingContainerStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
+import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
 import java.util.List;
 import java.util.concurrent.Callable;
 import org.micromanager.AutofocusPlugin;
@@ -68,13 +69,14 @@ public class AcquireFromPositionList
             status.coords().setIterationOfCurrentStep(i);
             String label = pos.getLabel();
             status.newStatusMessage(String.format("Moving to position %s", label));
+            TranslationStage1d zStage = Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
             Callable<Void> preMoveRoutine = () -> {
                return null;
             };
             Callable<Void> postMoveRoutine = () -> {
                return null;
             };
-            if (label.contains("APFS")) {
+            if (label.contains("*APFS*")) {
                //Turn off pfs before moving. after moving run autofocus to get back i the right range. then enable pfs again.
                preMoveRoutine = () -> {
                   Globals.core().enableContinuousFocus(false);
@@ -84,7 +86,7 @@ public class AcquireFromPositionList
                   PFSFuncs.autoFocusThenPFS();
                   return null;
                };
-            } else if (label.contains("ZPFS")) {
+            } else if (label.contains("*ZPFS*")) {
                //Turn off pfs, move, reenable pfs. make sure to set a coordinate for z-nonpfs for this to work.
                preMoveRoutine = () -> {
                   Globals.core().enableContinuousFocus(false);
@@ -94,10 +96,20 @@ public class AcquireFromPositionList
                   PFSFuncs.pauseThenPFS();
                   return null;
                };
-            } else if (label.contains("PFS")) {
+            } else if (label.contains("*PFS*")) {
                //If the position name has PFS then turn on pfs for this acquisition and then turn off.
                postMoveRoutine = () -> {
                   PFSFuncs.alignPFS();
+                  return null;
+               };
+            } else if (label.contains("*ESC*")) {
+               preMoveRoutine = () -> {
+                  zStage.setEscaped(true);
+                  return null;
+               };
+
+               postMoveRoutine = () -> {
+                  zStage.setEscaped(false);
                   return null;
                };
             }
@@ -151,7 +163,7 @@ public class AcquireFromPositionList
 
 
 class PFSFuncs {
-
+   // TODO use the TranslationStage1D api to do this rather than going straight to the core.
    static void alignPFS() throws Exception {
       if (Globals.core().isContinuousFocusEnabled()) {
          Globals.core().enableContinuousFocus(true);
