@@ -45,7 +45,7 @@ public class NikonTI2_zStage extends TranslationStage1d {
    private boolean escaped_ = false; // Is the stage currently escaped?
    private boolean escapeAFEnabled_ = false; // Was the PFS on when the stage was escaped.
    private double escapeRefocusPos_ = 0; // What was the position before escaping?
-   private final double ESCAPE_POSITION = 1000.; // Hardcoded z position to move to during escape.
+   private final double ESCAPE_POSITION = 500.; // Hardcoded z position to move to during escape.
 
    public NikonTI2_zStage(TranslationStage1dSettings settings)
          throws MMDeviceException, IDException {

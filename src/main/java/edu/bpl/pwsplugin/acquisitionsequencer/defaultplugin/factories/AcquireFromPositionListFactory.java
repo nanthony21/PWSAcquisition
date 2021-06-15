@@ -58,9 +58,10 @@ public class AcquireFromPositionListFactory extends StepFactory {
    @Override
    public String getDescription() {
       return "Perform enclosed steps at each position in the list. Special commands can be enclosed in "
-            + "\"*\". Position names containing: \"*ZPFS*\": Disable PFS for this position then reenable. "
-            + "\"*APFS*\": Software autofocus followed by enabling PFS. "
-            + "\"*PFS*\": Enable PFS and then disable. \"*ESC*\": Escape the stage before moving to "
+            + "\"-\". Position names containing:\n\"-ZPFS-\": Disable PFS for this position then reenable."
+            + "\n\"-APFS-\": Software autofocus followed by enabling PFS. "
+            + "\n\"-PFS-\": Enable PFS and then disable. "
+            + "\n\"-ESC-\": Escape the stage before moving to "
             + "position and then refocus.";
    }
 

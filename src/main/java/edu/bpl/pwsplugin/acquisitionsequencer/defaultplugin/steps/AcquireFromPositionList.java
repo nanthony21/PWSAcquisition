@@ -76,7 +76,7 @@ public class AcquireFromPositionList
             Callable<Void> postMoveRoutine = () -> {
                return null;
             };
-            if (label.contains("*APFS*")) {
+            if (label.contains("-APFS-")) {
                //Turn off pfs before moving. after moving run autofocus to get back i the right range. then enable pfs again.
                preMoveRoutine = () -> {
                   Globals.core().enableContinuousFocus(false);
@@ -86,7 +86,7 @@ public class AcquireFromPositionList
                   PFSFuncs.autoFocusThenPFS();
                   return null;
                };
-            } else if (label.contains("*ZPFS*")) {
+            } else if (label.contains("-ZPFS-")) {
                //Turn off pfs, move, reenable pfs. make sure to set a coordinate for z-nonpfs for this to work.
                preMoveRoutine = () -> {
                   Globals.core().enableContinuousFocus(false);
@@ -96,13 +96,13 @@ public class AcquireFromPositionList
                   PFSFuncs.pauseThenPFS();
                   return null;
                };
-            } else if (label.contains("*PFS*")) {
+            } else if (label.contains("-PFS-")) {
                //If the position name has PFS then turn on pfs for this acquisition and then turn off.
                postMoveRoutine = () -> {
                   PFSFuncs.alignPFS();
                   return null;
                };
-            } else if (label.contains("*ESC*")) {
+            } else if (label.contains("-ESC-")) {
                preMoveRoutine = () -> {
                   zStage.setEscaped(true);
                   return null;
