@@ -115,13 +115,13 @@ public class AcquireFromPositionList
             }
             preMoveRoutine.call();
             //Yes, I know this is weird. It's a static method that needs a position and the core as input.
-            pos.goToPosition(pos, Globals.core());
+            MultiStagePosition.goToPosition(pos, Globals.core());
             postMoveRoutine.call();
             running = false;
             status = stepFunction.apply(status);
             running = true;
             //Just in case the substep took us to new positions we want to make sure to move back to our position to avoid confusion.
-            pos.goToPosition(pos, Globals.core());
+            MultiStagePosition.goToPosition(pos, Globals.core());
          }
          currentIteration = 0;
          running = false;
