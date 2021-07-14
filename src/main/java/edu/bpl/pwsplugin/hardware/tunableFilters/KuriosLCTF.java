@@ -55,14 +55,15 @@ public class KuriosLCTF extends DefaultTunableFilter {
                   "Kurios LCTF reports a spectral range of `%s` rather than `Visible`", prop));
          }
          prop = Globals.core().getProperty(devName, "Bandwidth");
-         if (!prop.equals("Medium")) {
-            errs.add("Kurios LCTF `Bandwidth` must be set to `Medium` bandwidth.");
+         if (!prop.equals("Narrow")) {
+            errs.add(
+                  "Kurios LCTF `Bandwidth` must be set to `Narrow` bandwidth."); //TODO this was decided arbitrarily.
          }
 
          prop = Globals.core().getProperty(devName, "Sequence Bandwidth");
-         if (!prop.equals("Medium")) {
+         if (!prop.equals("Narrow")) {
             errs.add(
-                  "Kurios LCTF `Sequencing Bandwidth` must be set to `Medium` bandwidth.");
+                  "Kurios LCTF `Sequencing Bandwidth` must be set to `Narrow` bandwidth."); //TODO this was decided arbitrarily.
          }
       } catch (Exception e) {
          Globals.mm().logs().logError(e);
