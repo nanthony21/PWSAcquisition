@@ -24,6 +24,7 @@ package edu.bpl.pwsplugin.hardware.translationStages;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
+import edu.bpl.pwsplugin.hardware.translationStages.NikonTI2_zStage.EscapeStatus;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,10 +43,8 @@ public class NikonTI_zStage extends TranslationStage1d {
    private final String pfsOffsetName;
    private boolean calibrated = false;
    private double[] coef_; //Should be 3 elements giving the quadratic fit of x: um, y: offset. stored in order [intercept, linear, quadratic]
-   private boolean escaped_ = false; // Is the stage currently escaped?
-   private boolean escapeAFEnabled_ = false; // Was the PFS on when the stage was escaped.
-   private double escapeRefocusPos_ = 0; // What was the position before escaping?
-   private final double ESCAPE_POSITION = 500.; // Hardcoded z position to move to during escape.
+   private final EscapeStatus escStatus = new EscapeStatus();
+   private final static double ESCAPE_POSITION = 500.; // Hardcoded z position to move to during escape.
 
 
    public NikonTI_zStage(TranslationStage1dSettings settings)
@@ -275,8 +274,8 @@ public class NikonTI_zStage extends TranslationStage1d {
    public void setEscaped(boolean escape) throws MMDeviceException {
       if (!escape) { // Refocus
          try {
-            this.setPosUm(escapeRefocusPos_);
-            if (escapeAFEnabled_) {
+            this.setPosUm(escStatus.escapeRefocusPos);
+            if (escStatus.escapeAFEnabled) {
                runFullFocus();
                Thread.sleep(1000); //Without this we will sometimes not actually re-enable pfs for some reason.
                setAutoFocusEnabled(true);
@@ -285,11 +284,11 @@ public class NikonTI_zStage extends TranslationStage1d {
             throw new MMDeviceException(ie);
          }
       } else {
-         escapeAFEnabled_ = getAutoFocusEnabled();
-         if (escapeAFEnabled_) {
+         escStatus.escapeAFEnabled = getAutoFocusEnabled();
+         if (escStatus.escapeAFEnabled) {
             setAutoFocusEnabled(false);
          }
-         escapeRefocusPos_ = getPosUm();
+         escStatus.escapeRefocusPos = getPosUm();
 
          try {
             this.setPosUm(this.ESCAPE_POSITION);
@@ -297,12 +296,12 @@ public class NikonTI_zStage extends TranslationStage1d {
             throw new MMDeviceException(ie);
          }
       }
-      escaped_ = !isEscaped();
+      escStatus.escaped = !isEscaped();
    }
 
    @Override
    public  boolean isEscaped() {
-      return escaped_;
+      return escStatus.escaped;
    }
 
    @Override
@@ -508,4 +507,11 @@ public class NikonTI_zStage extends TranslationStage1d {
 
     }
     */
+
+
+   static class EscapeStatus {
+      public boolean escaped = false;
+      public double escapeRefocusPos = 0;
+      public boolean escapeAFEnabled = false;
+   }
 }
