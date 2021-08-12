@@ -335,11 +335,16 @@ public class NikonTI2_zStage extends TranslationStage1d {
    public void setEscaped(boolean escape) throws MMDeviceException {
       if (!escape) {  // Refocus
          try {
-            this.setPosUm(escStatus.escapeRefocusPos);
-            if (escStatus.escapeAFEnabled) {
+            if (escStatus.escapeAFEnabled) {  // Fancy refocus with PFS
+               this.setPosUm(escStatus.escapeRefocusPos - 50);  // Move to a position that should be safe from bumping the sample at the new position but should be close enough to refocus.
                runFullFocus();
                Thread.sleep(1000); //Without this we will sometimes not actually re-enable pfs for some reason.
                setAutoFocusEnabled(true);
+            } else { //Basic refocus
+               this.setPosUm(escStatus.escapeRefocusPos);
+            }
+            if (escStatus.escapeAFEnabled) {
+
             }
          } catch (InterruptedException ie) {
             throw new MMDeviceException(ie);
@@ -357,7 +362,7 @@ public class NikonTI2_zStage extends TranslationStage1d {
             throw new MMDeviceException(ie);
          }
       }
-      escStatus.escaped = !isEscaped();  // Toggle escaped status.
+      escStatus.escaped = escape;  // Set escaped status.
    }
 
    @Override

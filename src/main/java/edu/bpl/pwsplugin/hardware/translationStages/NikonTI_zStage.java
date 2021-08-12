@@ -274,16 +274,21 @@ public class NikonTI_zStage extends TranslationStage1d {
    public void setEscaped(boolean escape) throws MMDeviceException {
       if (!escape) { // Refocus
          try {
-            this.setPosUm(escStatus.escapeRefocusPos);
-            if (escStatus.escapeAFEnabled) {
+            if (escStatus.escapeAFEnabled) {  // Fancy refocus with PFS
+               this.setPosUm(escStatus.escapeRefocusPos - 50);  // Move to a position that should be safe from bumping the sample at the new position but should be close enough to refocus.
                runFullFocus();
                Thread.sleep(1000); //Without this we will sometimes not actually re-enable pfs for some reason.
                setAutoFocusEnabled(true);
+            } else { //Basic refocus
+               this.setPosUm(escStatus.escapeRefocusPos);
+            }
+            if (escStatus.escapeAFEnabled) {
+
             }
          } catch (InterruptedException ie) {
             throw new MMDeviceException(ie);
          }
-      } else {
+      } else {  // Escape
          escStatus.escapeAFEnabled = getAutoFocusEnabled();
          if (escStatus.escapeAFEnabled) {
             setAutoFocusEnabled(false);
@@ -296,7 +301,7 @@ public class NikonTI_zStage extends TranslationStage1d {
             throw new MMDeviceException(ie);
          }
       }
-      escStatus.escaped = !isEscaped();
+      escStatus.escaped = escape; // Set escape status
    }
 
    @Override
@@ -375,8 +380,7 @@ public class NikonTI_zStage extends TranslationStage1d {
       } catch (Exception e) {
          throw new RuntimeException(e); //This shouldn't happen.
       }
-      if (result
-            == 0.0) { //HFE returns 0 if no focus was found, otherwise it returns the absolute position of the Z stage when focused.
+      if (result == 0.0) { //HFE returns 0 if no focus was found, otherwise it returns the absolute position of the Z stage when focused.
          throw new MMDeviceException("Nikon PFS: No focus lock was found.");
       }
       return result;
