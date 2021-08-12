@@ -132,8 +132,7 @@ class ExposurePanel extends JPanel implements PropertyChangeListener {
    }
 
    class AutoExposeController {
-
-      Integer wavelength = 500;
+      //TODO allow the thread to be cancelled. Clear the image window if a new sequence is started.
       ImagingConfiguration config;
 
       public AutoExposeController(ImagingConfiguration conf, Integer wavelength)
@@ -230,7 +229,6 @@ class ExposurePanel extends JPanel implements PropertyChangeListener {
    }
 
    class AutoExposureThread extends SwingWorker<Void, Void> {
-
       private final AutoExposeController aec;
       private double exposureResult = 0;
       private final Integer targetIntensityPercent;
