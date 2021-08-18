@@ -53,10 +53,10 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
    protected SequencerFunction getCallback() {
       return (status) -> {
          running = true;
-         Step[] path =
-               status.coords().getTreePath(); //Indicates our current location in the tree of steps.
-         if (path[path.length - 1].getType().equals(DefaultSequencerPlugin.Type.ACQ
-               .name())) { //If the current  step is an acquisition then check for refocus.
+         //Indicates our current location in the tree of steps.
+         Step[] path = status.coords().getTreePath();
+         //If the current  step is an acquisition then check for refocus.
+         if (path[path.length - 1].getType().equals(DefaultSequencerPlugin.Type.ACQ.name())) {
             TranslationStage1d zStage =
                   Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
             if (!zStage.hasAutoFocus()) {
@@ -65,7 +65,7 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
                return status;
             }
             if (!zStage.getAutoFocusLocked()) { //Check if focused. and log.
-               status.newStatusMessage("Focus Lock: Focus is unlocked. Reacquiring.");
+               status.newStatusMessage("Focus Lock: Focus is unlocked. Reacquiring focus.");
                try {
                   zStage.runFullFocus(); // This can fail and throw an exception, don't let that crash the whole experiment.
                } catch (MMDeviceException e) {
@@ -84,7 +84,8 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
    }
 
    @Override
-   public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
+   public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {  // TODO Nikon TI freezes if this runs while PFS is not enabled.
+
       SequencerFunction subStepFunction = super.getSubstepsFunction(callbacks);
       SequencerSettings.FocusLockSettings settings = this.getSettings();
       return (status) -> {
@@ -93,6 +94,7 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
          TranslationStage1d zstage =
                Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
          try {
+            status.newStatusMessage("Focus Lock: Finding initial focus.");
             double startingZ =
                   zstage.getPosUm(); //After finding focus lock we will move back to this z position.
             zstage.runFullFocus();
