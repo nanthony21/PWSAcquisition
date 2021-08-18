@@ -337,14 +337,12 @@ public class NikonTI2_zStage extends TranslationStage1d {
          try {
             if (escStatus.escapeAFEnabled) {  // Fancy refocus with PFS
                this.setPosUm(escStatus.escapeRefocusPos - 50);  // Move to a position that should be safe from bumping the sample at the new position but should be close enough to refocus.
+               softwareAutoFocus();
                runFullFocus();
                Thread.sleep(1000); //Without this we will sometimes not actually re-enable pfs for some reason.
                setAutoFocusEnabled(true);
             } else { //Basic refocus
                this.setPosUm(escStatus.escapeRefocusPos);
-            }
-            if (escStatus.escapeAFEnabled) {
-
             }
          } catch (InterruptedException ie) {
             throw new MMDeviceException(ie);
@@ -425,7 +423,7 @@ public class NikonTI2_zStage extends TranslationStage1d {
       //Throws MMDevice exception if focus is not found.
       AutofocusPlugin hfe;
       double result;
-      try { //TODO add some smart software autofocus here so the image is actually focused.
+      try {
          //Rather than simply run the PFS `fullFocus` method we call the "HardwareFocusExtender"
          //plugin which will repeatedly move Z and then try to enable PFS, this can be slow
          //but is much more reliable than any other alternative.
@@ -435,16 +433,64 @@ public class NikonTI2_zStage extends TranslationStage1d {
          hfe.setPropertyValue("ZDrive", this.getZDriveDeviceName());
          hfe.setPropertyValue("StepSize (um)",
                "5"); //These are the default values of the plugin. are they ok?
-         hfe.setPropertyValue("Lower limit (relative, um)", "300");
+         hfe.setPropertyValue("Lower limit (relative, um)", "100");
          hfe.setPropertyValue("Upper limit (relative, um)", "100");
          result = hfe.fullFocus();
       } catch (Exception e) {
          throw new RuntimeException(e); //This shouldn't happen.
       }
-      if (result
-            == 0.0) { //HFE returns 0 if no focus was found, otherwise it returns the absolute position of the Z stage when focused.
+      //HFE returns 0 if no focus was found, otherwise it returns the absolute position of the Z stage when focused.
+      if (result == 0.0) {
          throw new MMDeviceException("Nikon PFS: No focus lock was found.");
       }
+      return result;
+   }
+
+   private double softwareAutoFocus() throws MMDeviceException {
+      // First do a coarse autofocus for maximum brightness. then do a software autofocus for sharpness.
+      //Then attempt to lock PFS
+
+      boolean liveWasOn = Globals.mm().live().isLiveModeOn();
+      if (liveWasOn) {
+         Globals.mm().live().setLiveModeOn(false);
+      }
+
+      Globals.mm().getAutofocusManager().setAutofocusMethodByName("OughtaFocus");
+      AutofocusPlugin oughta = Globals.mm().getAutofocusManager().getAutofocusMethod();
+      double result;
+
+      //Configure to search by image brightness
+      try {
+         oughta.setPropertyValue("SearchRange_um", "200");
+         oughta.setPropertyValue("Tolerance_um", "1");
+         oughta.setPropertyValue("CropFactor", "1");
+         oughta.setPropertyValue("Exposure", String.valueOf(Globals.getHardwareConfiguration().getActiveConfiguration().camera().getExposure()));
+         oughta.setPropertyValue("ShowImages", "No");
+         oughta.setPropertyValue("Maximize", "Mean");
+         oughta.setPropertyValue("Channel", "");
+         result = oughta.fullFocus();
+      } catch (Exception e) {
+         throw new RuntimeException(e);
+      }
+
+      //Configure to search by image sharpness over a smaller range and tighter tolerance.
+      try {
+         oughta.setPropertyValue("SearchRange_um", "20");
+         oughta.setPropertyValue("Tolerance_um", "0.1");
+         oughta.setPropertyValue("CropFactor", "1");
+         oughta.setPropertyValue("Exposure", String.valueOf(Globals.getHardwareConfiguration().getActiveConfiguration().camera().getExposure()));
+         oughta.setPropertyValue("ShowImages", "No");
+         oughta.setPropertyValue("Maximize", "Redondo");
+         oughta.setPropertyValue("Channel", "");
+         result = oughta.fullFocus();
+      } catch (Exception e) {
+         throw new RuntimeException(e);
+      }
+
+      if (liveWasOn) {
+         Globals.mm().live().setLiveModeOn(true);
+      }
+
       return result;
    }
 
