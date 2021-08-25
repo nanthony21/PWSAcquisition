@@ -60,11 +60,13 @@ public class ChangeConfigGroup extends ContainerStep<SequencerSettings.ChangeCon
          running = false;
          status = subStepFunc.apply(status);
          running = true;
-         Globals.core().setConfig(settings.configGroupName, origConfValue);
-         Globals.core().waitForConfig(settings.configGroupName, origConfValue);
-         status.newStatusMessage(
-               String.format("Changing %s config group back to original setting, %s",
-                     settings.configGroupName, origConfValue));
+         if (settings.resetWhenFinished) {
+            Globals.core().setConfig(settings.configGroupName, origConfValue);
+            Globals.core().waitForConfig(settings.configGroupName, origConfValue);
+            status.newStatusMessage(
+                  String.format("Changing %s config group back to original setting, %s",
+                        settings.configGroupName, origConfValue));
+         }
          running = false;
          return status;
       };

@@ -67,6 +67,7 @@ public class SequencerSettings {
 
       public String configGroupName;
       public String configValue;
+      public boolean resetWhenFinished = true;
    }
 
    public static class AcquireTimeSeriesSettings extends JsonableParam {

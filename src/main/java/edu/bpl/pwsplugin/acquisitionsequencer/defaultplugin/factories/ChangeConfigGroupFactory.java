@@ -32,8 +32,10 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -58,9 +60,9 @@ public class ChangeConfigGroupFactory extends StepFactory {
 
    @Override
    public String getDescription() {
-      return "Change one of the Micro-Manager configuration groups and then "
+      return "Change one of the Micro-Manager configuration groups and then optionally "
             + "change back to the original setting at the end."
-            + " This could be used to change the objective, etc.";
+            + " This could be used to change the objective, fluorescence filter, etc.";
    }
 
    @Override
@@ -79,18 +81,22 @@ class ChangeConfigGroupUI extends
 
    JComboBox<String> configGroupName = new JComboBox<>();
    JComboBox<String> configValue = new JComboBox<>();
+   JCheckBox resetWhenFinished = new JCheckBox("Recover original setting when finished.");
 
    public ChangeConfigGroupUI() {
-      super(new MigLayout(), SequencerSettings.ChangeConfigGroupSettings.class);
+      super(new MigLayout("fillx"), SequencerSettings.ChangeConfigGroupSettings.class);
 
       configGroupName.addItemListener(this);
+
+      resetWhenFinished.setHorizontalTextPosition(SwingConstants.LEFT);
 
       updateConfigGroupComboBox();
 
       this.add(new JLabel("Group Name:"), "gapleft push");
-      this.add(configGroupName, "wrap");
+      this.add(configGroupName, "wrap, al right, growx");
       this.add(new JLabel("Setting:"), "gapleft push");
-      this.add(configValue);
+      this.add(configValue, "wrap, al right, growx");
+      this.add(resetWhenFinished, "span, gapleft push");
    }
 
    private void updateConfigGroupComboBox() {
@@ -102,6 +108,7 @@ class ChangeConfigGroupUI extends
    public void populateFields(SequencerSettings.ChangeConfigGroupSettings settings) {
       this.configGroupName.setSelectedItem(settings.configGroupName);
       this.configValue.setSelectedItem(settings.configValue);
+      this.resetWhenFinished.setSelected(settings.resetWhenFinished);
    }
 
    @Override
@@ -110,6 +117,7 @@ class ChangeConfigGroupUI extends
             new SequencerSettings.ChangeConfigGroupSettings();
       settings.configGroupName = (String) this.configGroupName.getSelectedItem();
       settings.configValue = (String) this.configValue.getSelectedItem();
+      settings.resetWhenFinished = this.resetWhenFinished.isSelected();
       return settings;
    }
 
