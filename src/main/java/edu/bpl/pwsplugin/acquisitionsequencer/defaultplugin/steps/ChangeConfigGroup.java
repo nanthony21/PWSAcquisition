@@ -27,6 +27,7 @@ import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -79,6 +80,18 @@ public class ChangeConfigGroup extends ContainerStep<SequencerSettings.ChangeCon
          status = subStepSimFn.apply(status);
          return status;
       };
+   }
+
+   @Override
+   public List<String> validate() {
+      List<String> errs = new ArrayList<>();
+      if (!Globals.core().isGroupDefined(settings.configGroupName)) {
+         errs.add(String.format("Configuration group %s is not defined", settings.configGroupName));
+      }
+      if (!Globals.core().isConfigDefined(settings.configGroupName, settings.configValue)) {
+         errs.add(String.format("Value %s for configuration group %s is not defined", settings.configValue, settings.configGroupName));
+      }
+      return errs;
    }
 
 }

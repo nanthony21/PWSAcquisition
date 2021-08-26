@@ -101,11 +101,10 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
    public abstract List<String> validate(); //Return a list of any errors for this step.
 
    public static class SimulatedStatus {
-
       //A single instance of this class is passed between the simulation functions to keep track of multiple parameters.
       public Integer cellNum = 1; // The "Cell{X}" number that the acquisition is on.
+      // A list of file paths that will be saved. Used to determine if there are any file conflicts.
       public List<String> requiredPaths = new ArrayList<>();
-            // A list of file paths that will be saved. Used to determine if there are any file conflicts.
       public String workingDirectory = ""; // The current folder we are in.
    }
 
