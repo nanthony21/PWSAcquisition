@@ -98,8 +98,7 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
             double startingZ =
                   zstage.getPosUm(); //After finding focus lock we will move back to this z position.
             zstage.runFullFocus();
-            Thread.sleep(
-                  1000); //Without this we will sometimes not actually re-enable pfs for some reason.
+            Thread.sleep(1000); //Without this we will sometimes not actually re-enable pfs for some reason.
             zstage.setAutoFocusEnabled(true);
             zstage.setPosUm(
                   startingZ); //Move back to our starting position, except now PFS should be locked.

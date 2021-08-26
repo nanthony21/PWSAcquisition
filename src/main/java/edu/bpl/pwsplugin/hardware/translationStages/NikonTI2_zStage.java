@@ -337,7 +337,7 @@ public class NikonTI2_zStage extends TranslationStage1d {
          try {
             if (escStatus.escapeAFEnabled) {  // Fancy refocus with PFS
                this.setPosUm(escStatus.escapeRefocusPos - 50);  // Move to a position that should be safe from bumping the sample at the new position but should be close enough to refocus.
-               softwareAutoFocus();
+               Globals.softwareAutoFocus();
                runFullFocus();
                Thread.sleep(1000); //Without this we will sometimes not actually re-enable pfs for some reason.
                setAutoFocusEnabled(true);
@@ -443,54 +443,6 @@ public class NikonTI2_zStage extends TranslationStage1d {
       if (result == 0.0) {
          throw new MMDeviceException("Nikon PFS: No focus lock was found.");
       }
-      return result;
-   }
-
-   private double softwareAutoFocus() throws MMDeviceException {
-      // First do a coarse autofocus for maximum brightness. then do a software autofocus for sharpness.
-      //Then attempt to lock PFS
-
-      boolean liveWasOn = Globals.mm().live().isLiveModeOn();
-      if (liveWasOn) {
-         Globals.mm().live().setLiveModeOn(false);
-      }
-
-      Globals.mm().getAutofocusManager().setAutofocusMethodByName("OughtaFocus");
-      AutofocusPlugin oughta = Globals.mm().getAutofocusManager().getAutofocusMethod();
-      double result;
-
-      //Configure to search by image brightness
-      try {
-         oughta.setPropertyValue("SearchRange_um", "200");
-         oughta.setPropertyValue("Tolerance_um", "1");
-         oughta.setPropertyValue("CropFactor", "1");
-         oughta.setPropertyValue("Exposure", String.valueOf(Globals.getHardwareConfiguration().getActiveConfiguration().camera().getExposure()));
-         oughta.setPropertyValue("ShowImages", "No");
-         oughta.setPropertyValue("Maximize", "Mean");
-         oughta.setPropertyValue("Channel", "");
-         result = oughta.fullFocus();
-      } catch (Exception e) {
-         throw new RuntimeException(e);
-      }
-
-      //Configure to search by image sharpness over a smaller range and tighter tolerance.
-      try {
-         oughta.setPropertyValue("SearchRange_um", "20");
-         oughta.setPropertyValue("Tolerance_um", "0.1");
-         oughta.setPropertyValue("CropFactor", "1");
-         oughta.setPropertyValue("Exposure", String.valueOf(Globals.getHardwareConfiguration().getActiveConfiguration().camera().getExposure()));
-         oughta.setPropertyValue("ShowImages", "No");
-         oughta.setPropertyValue("Maximize", "Redondo");
-         oughta.setPropertyValue("Channel", "");
-         result = oughta.fullFocus();
-      } catch (Exception e) {
-         throw new RuntimeException(e);
-      }
-
-      if (liveWasOn) {
-         Globals.mm().live().setLiveModeOn(true);
-      }
-
       return result;
    }
 

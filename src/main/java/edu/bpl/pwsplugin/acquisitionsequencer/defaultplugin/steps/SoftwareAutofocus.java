@@ -55,14 +55,14 @@ public class SoftwareAutofocus extends EndpointStep<SequencerSettings.SoftwareAu
          @Override
          public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
             running = true;
-            AutofocusPlugin af = initializeAFPlugin(settings.exposureMs);
-            double z = af.fullFocus();
-            double score = af.getCurrentFocusScore();
+            Globals.core().setExposure(settings.exposureMs);
+            double[] out = Globals.softwareAutoFocus();
+            double z = out[0];
+            double score = out[1];
             status.newStatusMessage(
                   String.format("Autofocus terminated at Z=%.2f with score=%.2f", z, score));
             running = false;
             return status;
-            //TODO add compatibility with our custom zStages
          }
       };
    }
