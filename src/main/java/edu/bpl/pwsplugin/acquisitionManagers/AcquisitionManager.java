@@ -35,15 +35,15 @@ public class AcquisitionManager {
    There should only be one of these objects for a given set of hardware in order to avoid trying to run multiple acquisitions at once.
    This should be the only way to access any of sublevel acquisition managers.
    */
-   private final Acquisition pwsManager_ = new PWSAcquisition(new PWSAlbum("PWS"));
-   private final Acquisition dynManager_ = new DynamicsAcquisition(new PWSAlbum("Dynamics"));
-   private final Acquisition flManager_ = new MultipleFluorescenceAcquisition(
+   private final Acquisition<PWSSettings> pwsManager_ = new PWSAcquisition(new PWSAlbum("PWS"));
+   private final Acquisition<DynSettings> dynManager_ = new DynamicsAcquisition(new PWSAlbum("Dynamics"));
+   private final Acquisition<List<FluorSettings>> flManager_ = new MultipleFluorescenceAcquisition(
          new PWSAlbum("Fluorescence"));
    private volatile boolean acquisitionRunning_ = false;
    private int cellNum_;
    private String savePath_;
 
-   private void run(Acquisition manager)
+   private void run(Acquisition<?> manager)
          throws InterruptedException, Exception { //All acquisitions should be run with this.
       if (acquisitionRunning_) {
          throw new IllegalStateException(
@@ -51,8 +51,8 @@ public class AcquisitionManager {
       }
       acquisitionRunning_ = true;
       try {
-         if (Globals.mm().live().getIsLiveModeOn()) {
-            Globals.mm().live().setLiveMode(false);
+         if (Globals.mm().live().isLiveModeOn()) {
+            Globals.mm().live().setLiveModeOn(false);
          }
          manager.acquireImages(savePath_, cellNum_);
       } catch (InterruptedException ie) {

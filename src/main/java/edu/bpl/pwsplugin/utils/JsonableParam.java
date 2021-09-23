@@ -28,7 +28,7 @@ public class JsonableParam {
             .registerTypeAdapterFactory(adapter); //Register the runtime type adapter with Gson.
    }
 
-   public static synchronized final void registerClass(
+   public static synchronized void registerClass(
          Class<? extends JsonableParam> c) { //Each subclass of JsonableParam must be registered with this method or loading from JSON will not work.
       if (!registeredClasses.contains(c)) {
          registeredClasses.add(c);
@@ -37,7 +37,7 @@ public class JsonableParam {
    }
 
    public JsonableParam() {
-      this.registerClass(
+      JsonableParam.registerClass(
             this.getClass()); //Automatically register the class at instantiation. Really though we want to explicitly register each class elsewhere, otherwise Gson won't work for the class until the first time it is instantiated.
    }
 

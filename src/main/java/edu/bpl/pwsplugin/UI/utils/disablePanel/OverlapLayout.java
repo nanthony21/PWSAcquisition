@@ -67,7 +67,7 @@ public class OverlapLayout implements LayoutManager2, java.io.Serializable {
    private static final int MINIMUM = 1;
 
    //  Indicates how a component is painted
-   private boolean overlapAbove;
+   private final boolean overlapAbove;
 
    private Point overlapPosition;
 
@@ -78,10 +78,10 @@ public class OverlapLayout implements LayoutManager2, java.io.Serializable {
    private Insets popupInsets = new Insets(0, 0, 0, 0);
 
    //  Track original order in which the components where added
-   private List<Component> components = new ArrayList<Component>();
+   private final List<Component> components = new ArrayList<Component>();
 
    //  Track a constraint added to a component
-   private HashMap<Component, Boolean> constraints = new HashMap<Component, Boolean>();
+   private final HashMap<Component, Boolean> constraints = new HashMap<Component, Boolean>();
 
    /**
     * Convenience constructor to provide for "stacking" of components. Each component will be
@@ -104,7 +104,7 @@ public class OverlapLayout implements LayoutManager2, java.io.Serializable {
     * Create an overlapping layout.
     *
     * @param overlapPosition a Point defining the relative amount of overlap
-    * @param overlayAbove    when true components are painted above the previous component,
+    * @param overlapAbove    when true components are painted above the previous component,
     *                        otherwise they are painted below.
     */
    public OverlapLayout(Point overlapPosition, boolean overlapAbove) {
@@ -254,7 +254,7 @@ public class OverlapLayout implements LayoutManager2, java.io.Serializable {
    /**
     * Removes the specified component from the layout.
     *
-    * @param comp the component to be removed
+    * @param component the component to be removed
     */
    public void removeLayoutComponent(Component component) {
       components.remove(component);
@@ -264,7 +264,7 @@ public class OverlapLayout implements LayoutManager2, java.io.Serializable {
    /**
     * Determine the minimum size on the Container
     *
-    * @param target the container in which to do the layout
+    * @param parent the container in which to do the layout
     * @return the minimum dimensions needed to lay out the subcomponents of the specified container
     */
    public Dimension minimumLayoutSize(Container parent) {
@@ -347,7 +347,7 @@ public class OverlapLayout implements LayoutManager2, java.io.Serializable {
     * Lays out the specified container using this layout.
     * <p>
     *
-    * @param target the container in which to do the layout
+    * @param parent the container in which to do the layout
     */
    public void layoutContainer(Container parent) {
       synchronized (parent.getTreeLock()) {

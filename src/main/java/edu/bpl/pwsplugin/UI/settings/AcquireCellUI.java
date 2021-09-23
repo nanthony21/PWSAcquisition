@@ -49,6 +49,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * @author nick
  */
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> {
 
    AdvancedAcquireCellUI advancedUI = new AdvancedAcquireCellUI();
