@@ -13,6 +13,7 @@ import edu.bpl.pwsplugin.utils.PWSLogger;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import mmcorej.CMMCore;
+import org.micromanager.AutofocusPlugin;
 import org.micromanager.Studio;
 import org.micromanager.internal.utils.ReportingUtils;
 
@@ -132,5 +133,57 @@ public class Globals {
       } catch (MMDeviceException e) {
          Globals.mm().logs().showError(e);
       }
+
+   }
+
+   public static double[] softwareAutoFocus() {
+      // First do a coarse autofocus for maximum brightness. then do a software autofocus for sharpness.
+      // Return two doubles, the final autofocus `result` (should be a z value) and the `score`.
+      // Autofocus process will use the current camera exposure time.
+
+      boolean liveWasOn = Globals.mm().live().isLiveModeOn();
+      if (liveWasOn) {
+         Globals.mm().live().setLiveModeOn(false);
+      }
+
+      Globals.mm().getAutofocusManager().setAutofocusMethodByName("OughtaFocus");
+      AutofocusPlugin oughta = Globals.mm().getAutofocusManager().getAutofocusMethod();
+      double result;
+      double score;
+
+      //Configure to search by image brightness
+      try {
+         oughta.setPropertyValue("SearchRange_um", "200");
+         oughta.setPropertyValue("Tolerance_um", "1");
+         oughta.setPropertyValue("CropFactor", "1");
+         oughta.setPropertyValue("Exposure", String.valueOf(Globals.getHardwareConfiguration().getActiveConfiguration().camera().getExposure()));
+         oughta.setPropertyValue("ShowImages", "No");
+         oughta.setPropertyValue("Maximize", "Mean");
+         oughta.setPropertyValue("Channel", "");
+         oughta.fullFocus();
+      } catch (Exception e) {
+         throw new RuntimeException(e);
+      }
+
+      //Configure to search by image sharpness over a smaller range and tighter tolerance.
+      try {
+         oughta.setPropertyValue("SearchRange_um", "20");
+         oughta.setPropertyValue("Tolerance_um", "0.1");
+         oughta.setPropertyValue("CropFactor", "1");
+         oughta.setPropertyValue("Exposure", String.valueOf(Globals.getHardwareConfiguration().getActiveConfiguration().camera().getExposure()));
+         oughta.setPropertyValue("ShowImages", "No");
+         oughta.setPropertyValue("Maximize", "Redondo");
+         oughta.setPropertyValue("Channel", "");
+         result = oughta.fullFocus();
+         score = oughta.getCurrentFocusScore();
+      } catch (Exception e) {
+         throw new RuntimeException(e);
+      }
+
+      if (liveWasOn) {
+         Globals.mm().live().setLiveModeOn(true);
+      }
+      double[] ans = {result, score};
+      return ans;
    }
 }

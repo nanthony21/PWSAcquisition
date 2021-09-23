@@ -335,11 +335,14 @@ public class NikonTI2_zStage extends TranslationStage1d {
    public void setEscaped(boolean escape) throws MMDeviceException {
       if (!escape) {  // Refocus
          try {
-            this.setPosUm(escStatus.escapeRefocusPos);
-            if (escStatus.escapeAFEnabled) {
+            if (escStatus.escapeAFEnabled) {  // Fancy refocus with PFS
+               this.setPosUm(escStatus.escapeRefocusPos - 50);  // Move to a position that should be safe from bumping the sample at the new position but should be close enough to refocus.
+               Globals.softwareAutoFocus();
                runFullFocus();
                Thread.sleep(1000); //Without this we will sometimes not actually re-enable pfs for some reason.
                setAutoFocusEnabled(true);
+            } else { //Basic refocus
+               this.setPosUm(escStatus.escapeRefocusPos);
             }
          } catch (InterruptedException ie) {
             throw new MMDeviceException(ie);
@@ -357,7 +360,7 @@ public class NikonTI2_zStage extends TranslationStage1d {
             throw new MMDeviceException(ie);
          }
       }
-      escStatus.escaped = !isEscaped();  // Toggle escaped status.
+      escStatus.escaped = escape;  // Set escaped status.
    }
 
    @Override
@@ -420,7 +423,7 @@ public class NikonTI2_zStage extends TranslationStage1d {
       //Throws MMDevice exception if focus is not found.
       AutofocusPlugin hfe;
       double result;
-      try { //TODO add some smart software autofocus here so the image is actually focused.
+      try {
          //Rather than simply run the PFS `fullFocus` method we call the "HardwareFocusExtender"
          //plugin which will repeatedly move Z and then try to enable PFS, this can be slow
          //but is much more reliable than any other alternative.
@@ -430,14 +433,14 @@ public class NikonTI2_zStage extends TranslationStage1d {
          hfe.setPropertyValue("ZDrive", this.getZDriveDeviceName());
          hfe.setPropertyValue("StepSize (um)",
                "5"); //These are the default values of the plugin. are they ok?
-         hfe.setPropertyValue("Lower limit (relative, um)", "300");
+         hfe.setPropertyValue("Lower limit (relative, um)", "100");
          hfe.setPropertyValue("Upper limit (relative, um)", "100");
          result = hfe.fullFocus();
       } catch (Exception e) {
          throw new RuntimeException(e); //This shouldn't happen.
       }
-      if (result
-            == 0.0) { //HFE returns 0 if no focus was found, otherwise it returns the absolute position of the Z stage when focused.
+      //HFE returns 0 if no focus was found, otherwise it returns the absolute position of the Z stage when focused.
+      if (result == 0.0) {
          throw new MMDeviceException("Nikon PFS: No focus lock was found.");
       }
       return result;

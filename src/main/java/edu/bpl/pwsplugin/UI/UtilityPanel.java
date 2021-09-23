@@ -31,6 +31,7 @@ import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.HWConfiguration;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
+import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -55,18 +57,23 @@ import org.micromanager.data.Image;
 
 class UtilityPanel extends JPanel {
 
-   ExposurePanel expPanel = new ExposurePanel();
+   private final ExposurePanel expPanel = new ExposurePanel();
+   private final MotionPanel motionPanel = new MotionPanel();
 
    public UtilityPanel() {
       super(new MigLayout());
 
       expPanel.setBorder(BorderFactory.createEtchedBorder());
+      motionPanel.setBorder(BorderFactory.createEtchedBorder());
 
       this.add(new JLabel("<html><B>Auto Exposure</B></html>"), "wrap");
-      this.add(expPanel);
+      this.add(expPanel, "wrap");
+      this.add(new JLabel("<html><B>ZStage Control</B></html>"), "wrap");
+      this.add(motionPanel, "wrap");
    }
 
    public void setActionButtonsEnabled(boolean enable) {
+      motionPanel.setActionButtonsEnabled(enable);
       expPanel.runBtn.setEnabled(enable);
    }
 }
@@ -200,8 +207,8 @@ class ExposurePanel extends JPanel implements PropertyChangeListener {
                   }
                };
 
-         double[] exposure = {
-               initialExposure}; //Initial value of whatever the camera was initially set to.
+         //Initial value of whatever the camera was initially set to.
+         double[] exposure = {initialExposure};
          double rhoBegin = 20; //The tuning sensitivity at first.
          double rhoEnd = 2; //The tuning sensitivity at the end to finalize.
          CobylaExitStatus status = Cobyla
@@ -263,4 +270,42 @@ class ExposurePanel extends JPanel implements PropertyChangeListener {
       }
 
    }
+}
+
+class MotionPanel extends JPanel {
+   private final JButton escButton = new JButton("Escape");
+
+   public MotionPanel() {
+      super(new MigLayout());
+
+      add(new JLabel("Escape:"));
+      add(escButton);
+
+      escButton.addActionListener((evt) -> {
+         TranslationStage1d z = Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
+         if (!z.supportsEscape()) {
+            return;
+         }
+         try {
+            if (escButton.getText().equals("Escape")) {
+               z.setEscaped(true);
+            } else {
+               z.setEscaped(false);
+            }
+         } catch (MMDeviceException mmde) {
+            Globals.mm().logs().showError(mmde);
+         }
+
+         if (z.isEscaped()) {
+            escButton.setText("Refocus");
+         } else {
+            escButton.setText("Escape");
+         }
+      });
+   }
+
+   public void setActionButtonsEnabled(boolean enabled) {
+      escButton.setEnabled(enabled);
+   }
+
 }
