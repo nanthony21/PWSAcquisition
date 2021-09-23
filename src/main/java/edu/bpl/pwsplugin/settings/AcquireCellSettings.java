@@ -75,7 +75,7 @@ public class AcquireCellSettings extends JsonableParam {
             pwsSettings.ttlTriggering = true;
             return settings;
          case LCPWS3:
-            pwsSettings.exposure = 100;
+            pwsSettings.exposure = 75;
             pwsSettings.externalCamTriggering = false;
             pwsSettings.ttlTriggering = true;
             return settings;
