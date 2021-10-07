@@ -178,31 +178,26 @@ public class NikonTI2_zStage extends TranslationStage1d {
       }
    }
 
-   private void calibrate()
-         throws MMDeviceException,
-         InterruptedException { //TODO there is a major problem with this on the TI2 primarily because the z position only updates at ~1 hz when pfs is on.
+   //TODO there is a major problem with this on the TI2 primarily because the z position only updates at ~1 hz when pfs is on.
+   private void calibrate() throws MMDeviceException, InterruptedException {
       //move pfs offset and measure zstage to calibrate pfsConversion.
       List<WeightedObservedPoint> observations = new ArrayList<>();
-      double origOffset = this
-            .getPFSOffset(); //It is vital that we go back to this settings at the end.
-      this.setPFSOffset(getMaximumPFSOffset()
-            / 20); //Move somewhere close to the starting point (0) but not quite.
+      double origOffset = getPFSOffset(); //It is vital that we go back to this setting at the end.
+      setPFSOffset(getMaximumPFSOffset() / 20); //Move somewhere close to the starting point (0) but not quite.
       try {
-         Globals.core().fullFocus();
-         this.setAutoFocusEnabled(true);
+         Globals.core().fullFocus(); // Turns on PFS waits to lock and then disables. This essentially just makes sure we lock before proceeding.
+         setAutoFocusEnabled(true);
          double zOrig = 0; //This will actually get initialized on the first iteration.
-         for (int offset = 0; offset < getMaximumPFSOffset();
-               offset += (getMaximumPFSOffset() / 4) - 1) {
-            this.setPFSOffset(offset);
+         for (int offset = 0; offset < getMaximumPFSOffset(); offset += (getMaximumPFSOffset() / 4) - 1) {
+            setPFSOffset(offset);
             if (offset == 0) {
-               zOrig = this
-                     .getPosUm(); //All um measurement are relative to the measurement at pfsOffset = 0
+               //All um measurement are relative to the measurement at pfsOffset = 0
+               zOrig = getPosUm();
             }
-            double x = this.getPosUm() - zOrig;
-            double y = this.getPFSOffset();
-            observations.add(new WeightedObservedPoint(1, x, y));
-            Globals.logger()
-                  .logDebug(String.format("Nikon Calibrate: position: %f, offset: %f", x, y));
+            double zPosUm = getPosUm() - zOrig;
+            double actualOffset = getPFSOffset();
+            observations.add(new WeightedObservedPoint(1, zPosUm, actualOffset));
+            Globals.logger().logDebug(String.format("Nikon Calibrate: position: %f, offset: %f", zPosUm, actualOffset));
          }
       } catch (InterruptedException | MMDeviceException ie) {
          throw ie;
@@ -214,8 +209,8 @@ public class NikonTI2_zStage extends TranslationStage1d {
       Globals.logger().logDebug("Nikon Calibrate: coefficients: " + Arrays.toString(coef_));
 
       double offsetStep = (this.getPFSOffset() - origOffset) / 3.0;
-      for (int i = 3; i >= 0;
-            i--) { //Going all the way back to the original offset in one step often causes us to lose lock, take it slow.
+      // Going all the way back to the original offset in one step often causes us to lose lock, take it slow.
+      for (int i = 3; i >= 0; i--) {
          this.setPFSOffset(origOffset + offsetStep * i);
       }
       this.setPFSOffset(origOffset);
@@ -297,9 +292,6 @@ public class NikonTI2_zStage extends TranslationStage1d {
       Globals.logger().logDebug(String.format("Nikon Move Absolute Begin: %.2f", um));
       try {
          if (this.getAutoFocusEnabled()) {
-            if (!calibrated) {
-               this.calibrate();
-            }
             double currentUm = this.getPosUm();
             double relativeUm = um - currentUm;
             this.setPosRelativeUm(relativeUm); // PFS can only be adjusted in a relative context.

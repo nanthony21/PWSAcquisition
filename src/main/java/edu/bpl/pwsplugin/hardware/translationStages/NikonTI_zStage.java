@@ -236,9 +236,6 @@ public class NikonTI_zStage extends TranslationStage1d {
       Globals.logger().logDebug(String.format("Nikon Move Absolute Begin: %.2f", um));
       try {
          if (this.getAutoFocusEnabled()) {
-            if (!calibrated) {
-               this.calibrate();
-            }
             double currentUm = this.getPosUm();
             double relativeUm = um - currentUm;
             this.setPosRelativeUm(relativeUm); // PFS can only be adjusted in a relative context.

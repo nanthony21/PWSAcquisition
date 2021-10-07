@@ -84,30 +84,27 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
    }
 
    @Override
-   public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {  // TODO Nikon TI freezes if this runs while PFS is not enabled.
+   public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
 
       SequencerFunction subStepFunction = super.getSubstepsFunction(callbacks);
       SequencerSettings.FocusLockSettings settings = this.getSettings();
       return (status) -> {
          running = true;
          //FocusLock A function that turns on the PFS, runs substep and then turns it off.
-         TranslationStage1d zstage =
-               Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
-         try {
-            status.newStatusMessage("Focus Lock: Finding initial focus.");
-            double startingZ =
-                  zstage.getPosUm(); //After finding focus lock we will move back to this z position.
-            zstage.runFullFocus();
-            Thread.sleep(1000); //Without this we will sometimes not actually re-enable pfs for some reason.
-            zstage.setAutoFocusEnabled(true);
-            zstage.setPosUm(
-                  startingZ); //Move back to our starting position, except now PFS should be locked.
-            Thread.sleep((long) (settings.delay * 1000.0));
-
-         } catch (MMDeviceException e) {
-            status.newStatusMessage("Focus Lock: Error: Focus lock failed to find initial focus.");
-            zstage.setAutoFocusEnabled(
-                  false); //If we failed then make sure to completely disable autofocus.
+         TranslationStage1d zstage = Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
+         if (!zstage.getAutoFocusLocked()) {  // If Focus is already locked then we don't really need to do any initialization.
+            try {
+               status.newStatusMessage("Focus Lock: Finding initial focus.");
+               double startingZ = zstage.getPosUm(); //After finding focus lock we will move back to this z position.
+               zstage.runFullFocus();
+               Thread.sleep(1000); //Without this we will sometimes not actually re-enable pfs for some reason.
+               zstage.setAutoFocusEnabled(true);
+               zstage.setPosUm(startingZ); //Move back to our starting position, except now PFS should be locked.
+               Thread.sleep((long) (settings.delay * 1000.0));
+            } catch (MMDeviceException e) {
+               status.newStatusMessage("Focus Lock: Error: Focus lock failed to find initial focus.");
+               zstage.setAutoFocusEnabled(false); //If we failed then make sure to completely disable autofocus.
+            }
          }
          running = false;
          AcquisitionStatus newstatus = subStepFunction.apply(status);
@@ -130,6 +127,10 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
    @Override
    public List<String> validate() {
       List<String> errs = super.validate();
+
+      if (!Globals.getHardwareConfiguration().getActiveConfiguration().zStage().hasAutoFocus()) {
+         errs.add("Optical Focus Lock can not be used for a Z stage that does not support hardware autofocus.");
+      }
 
       //Check that the focus lock doesn't contain any illegal steps such as another focus lock step
       Enumeration<Step> en =
