@@ -28,6 +28,7 @@ import edu.bpl.pwsplugin.acquisitionManagers.fileSavers.ImageSaver;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
+import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
 import edu.bpl.pwsplugin.metadata.FluorescenceMetadata;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.settings.FluorSettings;
@@ -48,8 +49,11 @@ class MultipleFluorescenceAcquisition extends
    //Acquires multiple fluorescence images from a list of fluorescence settings.
    private FluorSettings settings;
    private ImagingConfiguration imConf;
+   //This map contains all initial configuration states for the configuration groups to adjust fluorescence filter. This is populated during initialization and then used during finalization.
    private Map<String, String> initialFilters;
-         //This map contains all initial configuration states for the the configuration groups to adjust fluorescence filter. This is populated during initialization and then used during finalization.
+   private final TranslationStage1d zStage_ = Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
+   private boolean needToReenableFocusLock_ = false;
+   private Double originalZPos_ = null; // If using offsets we will record this position and return to it at the end.
 
    public MultipleFluorescenceAcquisition(PWSAlbum display) {
       super(display);
@@ -98,6 +102,18 @@ class MultipleFluorescenceAcquisition extends
             }
          }
       }
+
+      if (originalZPos_ != null) {
+         try {
+            zStage_.setPosUm(originalZPos_);
+         } catch (InterruptedException e) {
+            throw new MMDeviceException(e);
+         }
+         originalZPos_ = null;
+      }
+      if (needToReenableFocusLock_) {
+         zStage_.setAutoFocusEnabled(true);
+      }
    }
 
    @Override
@@ -106,8 +122,7 @@ class MultipleFluorescenceAcquisition extends
       //Imaging configuration isn't set at this point. A single set of acquisitions may contain multiple imaging configurations so we need to consider initialization for each one.
       initialFilters = new HashMap<>();
       for (FluorSettings settings : settingsList) {
-         ImagingConfiguration imagingConf = Globals.getHardwareConfiguration()
-               .getImagingConfigurationByName(settings.imConfigName);
+         ImagingConfiguration imagingConf = Globals.getHardwareConfiguration().getImagingConfigurationByName(settings.imConfigName);
          String confGroup = imagingConf.getFluorescenceConfigGroup();
          if (confGroup != null) {
             String filt;
@@ -121,26 +136,44 @@ class MultipleFluorescenceAcquisition extends
             initialFilters.put(ImagingConfigurationSettings.MANUALFLUORESCENCENAME, null);
          }
       }
+
+      boolean hasOffset = false;
+      for (FluorSettings settings : getSettingsList()) {
+         if (settings.focusOffset != 0) {
+            hasOffset = true;
+            break;
+         }
+      }
+
+      if (hasOffset) {
+         originalZPos_ = zStage_.getPosUm();
+      }
+
+      if (zStage_.getAutoFocusEnabled() && hasOffset) {
+         needToReenableFocusLock_ = true;
+         zStage_.setAutoFocusEnabled(false);  // We don't want to use focus lock for moving around to fluorescence offsets, it's too slow. We will disable and then re-enable at the end.
+      } else {
+         needToReenableFocusLock_ = false;
+      }
    }
 
    @Override
-   protected void runSingleImageAcquisition(ImageSaver imSaver, MetadataBase metadata)
-         throws Exception {
-      Globals.logger().logDebug(String.format("Multiple Fluorescence Acquisition beginning. %s",
-            this.settings.toJsonString()));
+   protected void runSingleImageAcquisition(ImageSaver imSaver, MetadataBase metadata) throws Exception {
+      Globals.logger().logDebug(String.format("Multiple Fluorescence Acquisition beginning. %s", this.settings.toJsonString()));
       boolean spectralMode = imConf.hasTunableFilter();
       String fluorConfigGroup = imConf.getFluorescenceConfigGroup();
       if (fluorConfigGroup != null) {
          Globals.core().setConfig(fluorConfigGroup, this.settings.filterConfigName);
-         Globals.core().waitForConfig(fluorConfigGroup,
-               this.settings.filterConfigName); // Wait for the device to be ready.
+         Globals.core().waitForConfig(fluorConfigGroup, this.settings.filterConfigName); // Wait for the device to be ready.
       } else {
          ReportingUtils.showMessage("Set the correct fluorescence filter and click `OK`.");
       }
       if (spectralMode) {
          imConf.tunableFilter().setWavelength(settings.tfWavelength);
       }
-      imConf.zStage().setPosRelativeUm(settings.focusOffset);
+      if (settings.focusOffset != 0) {
+         zStage_.setPosUm(originalZPos_ + settings.focusOffset);
+      }
       try {
          imSaver.beginSavingThread();
          imConf.camera().setExposure(settings.exposure);
@@ -153,12 +186,10 @@ class MultipleFluorescenceAcquisition extends
          } else {
             wv = null;
          }
-         FluorescenceMetadata flmd = new FluorescenceMetadata(metadata, settings.filterConfigName,
-               imConf.camera().getExposure(),
-               wv); //This must happen after we have set our exposure.
-         Pipeline pipeline = Globals.mm().data()
-               .copyApplicationPipeline(Globals.mm().data().createRAMDatastore(),
-                     true); //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
+         //This must happen after we have set our exposure.
+         FluorescenceMetadata flmd = new FluorescenceMetadata(metadata, settings.filterConfigName, imConf.camera().getExposure(), wv);
+         //The on-the-fly processor pipeline of micromanager (for image rotation, flatfielding, etc.)
+         Pipeline pipeline = Globals.mm().data().copyApplicationPipeline(Globals.mm().data().createRAMDatastore(), true);
          Coords coords = img.getCoords();
          pipeline.insertImage(img); //Add image to the data pipeline for processing
          img = pipeline.getDatastore().getImage(coords); //Retrieve the processed image.
@@ -166,8 +197,9 @@ class MultipleFluorescenceAcquisition extends
          this.displayImage(img);
          imSaver.addImage(img);
       } finally {
-         imConf.zStage().setPosRelativeUm(-settings.focusOffset);
          Globals.logger().logDebug("Multiple Fluorescence Acquisition ending.");
       }
    }
+
+
 }

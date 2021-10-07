@@ -87,6 +87,9 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>> {
       this.settingsList = settingList;
    }
 
+   public List<S> getSettingsList() {
+      return settingsList;
+   }
 
    private MetadataBase initializeMetadata(ImagingConfiguration imConf) throws Exception {
       if (Globals.core().getPixelSizeUm()
@@ -123,8 +126,7 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>> {
 
    protected abstract Integer numFrames();
 
-   protected void displayImage(
-         Image img) { //Call this from within the implementation to add images to the display.
+   protected void displayImage(Image img) { //Call this from within the implementation to add images to the display.
       this.display.addImage(img);
    }
 }
