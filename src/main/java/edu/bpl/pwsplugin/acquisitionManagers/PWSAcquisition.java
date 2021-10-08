@@ -46,7 +46,7 @@ import org.micromanager.data.PipelineErrorException;
 import org.micromanager.internal.utils.ReportingUtils;
 
 
-class PWSAcquisition extends SingleAcquisitionBase<PWSSettings> {
+class PWSAcquisition extends SingleAcquisitionBase<PWSSettings> {  //TODO if someone closes the PWSAlbum there is no way to open it up again.
 
    //Used to acquire a single PWS file.
    int[] wv; //The array of wavelengths to image at.
@@ -56,7 +56,7 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings> {
    Boolean useExternalTrigger;
          // Whether or not to let the spectral filter TTL trigger a new camera frame when it is done tuning.
    double exposure_; // The camera exposure.
-   PWSAlbum album_;
+   private final PWSAlbum album_;
    SpectralCamera conf;
    PWSSettings settings;
 

@@ -30,6 +30,7 @@ import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
+import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.settings.AcquireCellSettings;
 import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.utils.GsonUtils;
@@ -39,6 +40,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -146,12 +148,23 @@ public class AcquireCell extends EndpointStep<AcquireCellSettings> {
       if ((!settings.fluorSettings.isEmpty()) && settings.fluorEnabled) {
          for (FluorSettings flSettings : settings.fluorSettings) {
             String confName = flSettings.imConfigName;
+            ImagingConfiguration imConf = null;
             try {
-               Globals.getHardwareConfiguration().getImagingConfigurationByName(confName);
+               imConf = Globals.getHardwareConfiguration().getImagingConfigurationByName(confName);
             } catch (NoSuchElementException nsee) {
                errs.add(String.format(
                      "Fluorescence Acquisition: No imaging configuration by the name `%s` was found in the hardware configuration.",
                      confName));
+            }
+
+            if (flSettings.filterConfigName == null) {
+               errs.add("Fluorescence Acquisition: filter configuration name is empty.");
+            } else if (imConf != null) {
+               List<String> l = Arrays.asList(Globals.core().getAvailableConfigs(imConf.getFluorescenceConfigGroup()).toArray());
+               if (!l.contains(flSettings.filterConfigName)) {
+                  errs.add(String.format("Fluorescence Acquisition: Filter %s is not a part of the fluorescence configuration group.",
+                        flSettings.filterConfigName));
+               }
             }
          }
       }

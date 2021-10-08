@@ -109,8 +109,8 @@ public class SettingsPanel extends JPanel implements TreeSelectionListener, Focu
    }
 
    @Override
-   public void valueChanged(
-         TreeSelectionEvent e) { //When a new node is selected in a tree, show the settings for the node.
+   public void valueChanged(TreeSelectionEvent e) {
+      //When a new node is selected in a tree, show the settings for the node.
       Object node = e.getPath().getLastPathComponent();
       if (node instanceof Step) { // Some nodes may be default nodes used as folders. We don't want to respond to those selections.
          saveSettingsOfLastNode();

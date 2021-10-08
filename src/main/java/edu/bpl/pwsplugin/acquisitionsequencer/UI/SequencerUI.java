@@ -61,9 +61,9 @@ import org.micromanager.internal.utils.ReportingUtils;
 
 
 /**
- * @author nick
+ * @author Nick Anthony
  */
-public class SequencerUI extends BuilderJPanel<RootStep> {
+public class SequencerUI extends BuilderJPanel<RootStep> {  //TODO we also need to save the default settings for the `newsteps`.
 
    /*
    This is the main UI for the sequencer. It incorporates the other components into a panel for the user.

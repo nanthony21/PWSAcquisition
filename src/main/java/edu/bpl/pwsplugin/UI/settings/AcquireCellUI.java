@@ -141,9 +141,9 @@ class SimpleAcquireCellUI extends BuilderJPanel<AcquireCellSettings> implements
       super.add(fluorCBPanel, "spanx");
       super.add(systemDefault, "wrap");
 
+      //We can't yet reference Globals on initialization. at least initialize an empty state. the property change listener should get fired afterward.
       Globals.addPropertyChangeListener(this);
-      this.setConfigNames(
-            new ArrayList()); //We can't yet reference Globals on initialization. at least initialize an empty state. the property change listener should get fired afterward.
+      this.setConfigNames(new ArrayList());
    }
 
    @Override
