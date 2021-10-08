@@ -179,6 +179,7 @@ public class NikonTI2_zStage extends TranslationStage1d {
    }
 
    //TODO there is a major problem with this on the TI2 primarily because the z position only updates at ~1 hz when pfs is on.
+   // TODO rather than calibrate over the full PFS range. Limit it to a reasonable um range. That way the polynomial is more accurate for what we actually care about.
    private void calibrate() throws MMDeviceException, InterruptedException {
       //move pfs offset and measure zstage to calibrate pfsConversion.
       List<WeightedObservedPoint> observations = new ArrayList<>();

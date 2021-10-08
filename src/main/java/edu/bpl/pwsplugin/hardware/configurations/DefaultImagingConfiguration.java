@@ -41,11 +41,6 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
    protected DefaultImagingConfiguration(ImagingConfigurationSettings settings) {
       this.settings = settings;
    }
-    
-    
-    /*public ImagingConfigurationSettings settings() {
-        return settings;
-    }*/
 
    @Override
    public TranslationStage1d zStage() {
@@ -74,10 +69,10 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
       }
       try {
          boolean liveMode = false;
-         if (Globals.mm().live().getIsLiveModeOn()) {
+         if (Globals.mm().live().isLiveModeOn()) {
             liveMode = true;
-            Globals.mm().live().setLiveMode(
-                  false); //We need to turn off live mode for this step or we can get errors.
+            //We need to turn off live mode for this step or we can get errors.
+            Globals.mm().live().setLiveModeOn(false);
          }
          Globals.core().setConfig(settings.configurationGroup,
                settings.configurationName); //Get this process started, it can sometimes take some time.
@@ -89,11 +84,8 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
          Globals.core().waitForConfig(settings.configurationGroup,
                settings.configurationName); //Make sure to let the config group change finish before proceeding.
          if (liveMode) {
-            Globals.mm().live().setLiveMode(true); //Reenable live mode if it was on.
+            Globals.mm().live().setLiveModeOn(true); //Reenable live mode if it was on.
          }
-        /*} catch (InterruptedException ie) { //Exception no longer thrown in the body here?
-            Thread.currentThread().interrupt();
-            throw new MMDeviceException(ie);*/
       } catch (Exception e) {
          throw new MMDeviceException(e);
       }

@@ -49,7 +49,7 @@ public interface Device {
       }
    }
 
-   public static class AutoFinder<T extends Device, S> {
+   public static class AutoFinder<T extends Device, S> {  // TODO keep a registry of created instances and make sure not to create duplicate instances for the same device.
 
       private final Class[] subClasses;
       private final Class sClass;
