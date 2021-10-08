@@ -51,8 +51,8 @@ class MultipleFluorescenceAcquisition extends
    private ImagingConfiguration imConf;
    //This map contains all initial configuration states for the configuration groups to adjust fluorescence filter. This is populated during initialization and then used during finalization.
    private Map<String, String> initialFilters;
-   private final TranslationStage1d zStage_ = Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
-   private boolean needToReenableFocusLock_ = false;
+   private TranslationStage1d zStage_;
+   private boolean needToReEnableFocusLock_ = false;  // Keeps track of if we disabled focus lock during the initialization.
    private Double originalZPos_ = null; // If using offsets we will record this position and return to it at the end.
 
    public MultipleFluorescenceAcquisition(PWSAlbum display) {
@@ -111,14 +111,15 @@ class MultipleFluorescenceAcquisition extends
          }
          originalZPos_ = null;
       }
-      if (needToReenableFocusLock_) {
+      if (needToReEnableFocusLock_) {
          zStage_.setAutoFocusEnabled(true);
       }
+      zStage_ = null;
    }
 
    @Override
-   protected void initializeAcquisitions(List<FluorSettings> settingsList)
-         throws MMDeviceException {
+   protected void initializeAcquisitions(List<FluorSettings> settingsList) throws MMDeviceException {
+
       //Imaging configuration isn't set at this point. A single set of acquisitions may contain multiple imaging configurations so we need to consider initialization for each one.
       initialFilters = new HashMap<>();
       for (FluorSettings settings : settingsList) {
@@ -145,15 +146,16 @@ class MultipleFluorescenceAcquisition extends
          }
       }
 
+      zStage_ = Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
       if (hasOffset) {
          originalZPos_ = zStage_.getPosUm();
       }
 
       if (zStage_.getAutoFocusEnabled() && hasOffset) {
-         needToReenableFocusLock_ = true;
+         needToReEnableFocusLock_ = true;
          zStage_.setAutoFocusEnabled(false);  // We don't want to use focus lock for moving around to fluorescence offsets, it's too slow. We will disable and then re-enable at the end.
       } else {
-         needToReenableFocusLock_ = false;
+         needToReEnableFocusLock_ = false;
       }
    }
 
