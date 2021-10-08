@@ -43,7 +43,7 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>> {
 
    //A base class for an acquisition that acquires from a list of settings and puts the resulting images all into a shared display.
    //Images are saved to individual numbered folders.
-   private List<S> settingsList;
+   protected List<S> settingsList;
    private final PWSAlbum display;
 
    protected ListAcquisitionBase(PWSAlbum album) {
@@ -87,10 +87,6 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>> {
       this.settingsList = settingList;
    }
 
-   public List<S> getSettingsList() {
-      return settingsList;
-   }
-
    private MetadataBase initializeMetadata(ImagingConfiguration imConf) throws Exception {
       if (Globals.core().getPixelSizeUm()
             == 0.0) { //This information gets saved to the metadata below in the form of an affine transform.
@@ -124,6 +120,10 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>> {
 
    protected abstract FileSpecs.Type getFileType(); //Return the type enumerator for this acquisition, used for file saving information.
 
+   /**
+    *
+    * @return The number of image planes that will be acquired in a single Acquisition (e.g. Fluorescence=1, PWS=101)
+    */
    protected abstract Integer numFrames();
 
    protected void displayImage(Image img) { //Call this from within the implementation to add images to the display.
