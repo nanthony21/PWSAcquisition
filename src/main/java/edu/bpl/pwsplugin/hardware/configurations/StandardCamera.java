@@ -21,6 +21,7 @@
 
 package edu.bpl.pwsplugin.hardware.configurations;
 
+import edu.bpl.pwsplugin.hardware.HardwareManager;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
@@ -38,8 +39,8 @@ public class StandardCamera extends DefaultImagingConfiguration {
 
    protected StandardCamera(ImagingConfigurationSettings settings) throws MMDeviceException {
       super(settings);
-      _cam = Camera.getAutomaticInstance(settings.camSettings);
-      _illum = Illuminator.getAutomaticInstance(settings.illuminatorSettings);
+      _cam = (Camera) HardwareManager.instance().getDevice(settings.camSettings);
+      _illum = (Illuminator) HardwareManager.instance().getDevice(settings.illuminatorSettings);
       if ((_illum == null) || (_cam == null)) {
          throw new MMDeviceException("StandardCamera failed to initialize");
       }

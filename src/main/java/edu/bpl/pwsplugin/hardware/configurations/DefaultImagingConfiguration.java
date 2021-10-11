@@ -22,8 +22,10 @@
 package edu.bpl.pwsplugin.hardware.configurations;
 
 import edu.bpl.pwsplugin.Globals;
+import edu.bpl.pwsplugin.hardware.HardwareManager;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.settings.ImagingConfigurationSettings;
+import edu.bpl.pwsplugin.hardware.settings.TranslationStage1dSettings;
 import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +50,7 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
    }
 
    private void initialize() throws MMDeviceException { //One-time initialization of devices
-      zStage = TranslationStage1d.getAutomaticInstance();
+      zStage = (TranslationStage1d) HardwareManager.instance().getDevice(new TranslationStage1dSettings());
       if (zStage == null) {
          throw new MMDeviceException("No supported Z-stage was found.");
       }

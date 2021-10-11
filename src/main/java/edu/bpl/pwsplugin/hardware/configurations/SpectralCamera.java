@@ -21,6 +21,7 @@
 
 package edu.bpl.pwsplugin.hardware.configurations;
 
+import edu.bpl.pwsplugin.hardware.HardwareManager;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
 import edu.bpl.pwsplugin.hardware.cameras.Camera;
 import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
@@ -40,9 +41,9 @@ public class SpectralCamera extends DefaultImagingConfiguration {
 
    protected SpectralCamera(ImagingConfigurationSettings settings) throws MMDeviceException {
       super(settings);
-      _cam = Camera.getAutomaticInstance(settings.camSettings);
-      _filt = TunableFilter.getAutomaticInstance(settings.filtSettings);
-      _illum = Illuminator.getAutomaticInstance(settings.illuminatorSettings);
+      _cam = (Camera) HardwareManager.instance().getDevice(settings.camSettings);
+      _filt = (TunableFilter) HardwareManager.instance().getDevice(settings.filtSettings);
+      _illum = (Illuminator) HardwareManager.instance().getDevice(settings.illuminatorSettings);
       if ((_illum == null) || (_filt == null) || (_cam == null)) {
          throw new MMDeviceException(String.format(
                "SpectralCamera failed to initialize. Camera: %s. Filter: %s. Illuminator: %s.",
