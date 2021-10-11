@@ -11,7 +11,6 @@ import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public class HardwareManager {
    private final Map<JsonableParam, Device> map_ = new HashMap<>();
@@ -40,25 +39,5 @@ public class HardwareManager {
          map_.put(settings, dev);
       }
       return dev;
-   }
-
-   /*private Device checkCached(JsonableParam settings) {
-      return map_.getOrDefault(settings, null);
-   }
-
-   private void saveCache(JsonableParam settings, Device dev) {
-      if (!map_.containsKey(settings)) {
-         map_.put(settings, dev);
-      }
-   }*/
-
-   @Override
-   public String toString() {
-      StringBuilder sb = new StringBuilder();
-      for (Entry entry : map_.entrySet()) {
-         sb.append(entry.getValue().toString());
-         sb.append("\n");
-      }
-      return sb.toString();
    }
 }
