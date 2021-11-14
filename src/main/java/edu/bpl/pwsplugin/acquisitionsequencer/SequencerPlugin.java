@@ -10,11 +10,21 @@ import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 import java.util.List;
 
 /**
- * @author LCPWS3
+ * A plugin can implement this interface to define it's own steps for the sequencer to run.
+ * @author Nick Anthony
  */
 public interface SequencerPlugin {
 
-   public StepFactory getFactory(String name);
+   /**
+    * Return a StepFactory associated with a given name returned by `getAvailableStepNames`.
+    * @param name
+    * @return
+    */
+   StepFactory getFactory(String name);
 
-   public List<String> getAvailableStepNames();
+   /**
+    * Return a list of the step type names handled by the factory.
+    * @return
+    */
+   List<String> getAvailableStepNames();
 }
