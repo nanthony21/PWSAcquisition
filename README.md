@@ -8,6 +8,10 @@ A set of Micro-Manager plugins that are used for the acquisition PWS and other i
 A graph-based acquisition engine allows extremely flexible automated imaging to describe nearly any conceivable imaging session. A simple user interface provides
 users an intuitive drag-and-drop method of defining the automation sequence they want.
 
+![Alt Text](docs/resources/acqSequencer.gif)
+
+
+
 ### Reliable hardware autofocus  
 The reliability of hardware autofocus z stage devices during automated imaging is enhanced with software autofocus in the event of a hardware autofocus failure. This allows the usage of hardware autofocus over the course of multi-day experiments when under normal circumstances focus lock would have broken after only an hour.
 
