@@ -23,28 +23,17 @@
 TODO
 1:
 kurios still goes one item too far in sequencing. Only when external triggering isn't used. Device adapter: starts at 502 instead of 500
-
-sharpness plugin. auto zscan. clicking on graph of sharpness go to position. Disable click and drag to zoom. Disable right click. secretly poll z position in the background
-
-ZStage autofocus routine bumps the sample? It seems like it shouldn't though. Maybe I'm wrong.
-test software autofocus
-test focus lock in realistic situation, ethanol cells and weird dishes.
-
-
-2:
-Add checkbox to enable sharpness measurement. Add label when no ROI is drawn.
-auto-scan z for focus sharpness.
+Add an optional timeout to pause step  so it can be used as a delay.
+Multiple instances of the ZStage are created for each configuration.
 
 3:
 comments and tooltips. Fix "external TTL" tooltip
-clear autoexposure display when re-running
 
 
 4:
 Transmission imaging
 
 Nikon:
-    Sometimes TI2 PFS becomes disabled during calibration.
 
 Dialogs:
     Autofocus: open timed dialog for if retry should happen
@@ -61,79 +50,87 @@ Some other day:
 package edu.bpl.pwsplugin;
 
 import com.google.common.eventbus.Subscribe;
-import edu.bpl.pwsplugin.acquisitionSequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionSequencer.steps.Step;
+import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
+import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFactoryManager;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.PWSSettingsConsts;
-import org.micromanager.Studio;
 import org.micromanager.MenuPlugin;
+import org.micromanager.Studio;
 import org.micromanager.events.ShutdownCommencingEvent;
-import org.scijava.plugin.SciJavaPlugin;
 import org.scijava.plugin.Plugin;
-   
+import org.scijava.plugin.SciJavaPlugin;
+
 @Plugin(type = MenuPlugin.class)
 public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
-    //This class implements the functionality that Micro-Manager needs in order to accept our code as a plugin.
+   //This class implements the functionality that Micro-Manager needs in order to accept our code as a plugin.
 
-    public static String menuName = "PWS Acquisition";
-    public static String versionNumber = "0.5";
-        
-    private Studio studio_;  
-    private boolean initialized_ = false;
-    
-    @Override
-    public void setContext(Studio studio) {
-        studio_ = studio;
-        studio.events().registerForEvents(this); //This allows us to run cleanup when shutdown begins, see `closeRequested`
-    } 
-    
-    @Override
-    public void onPluginSelected() { //This is fired when the user requests to open the plugin.
-        if (!initialized_) {
-            //In order for json serial/deserialization to work, each class must be 
-            //registered with Gson. Let's do that now to make sure.
-            //They also register themselves when they are instantiated but that may not happen in time.
-            PWSSettingsConsts.registerGson();
-            SequencerConsts.registerGson();
-            Step.registerGsonType();
-            PWSPluginSettings.registerGsonType();
-            Globals.init(studio_);       
-            initialized_ = true;
-        }
-        Globals.frame().setVisible(true);
-    }
-    
-    @Override
-    public String getSubMenu() {
-        return "Acquisition Tools";
-    }
+   public static String menuName = "PWS Acquisition";
+   public static String versionNumber = "0.5";
 
-    @Override
-    public String getHelpText() {
-        return "Partial Wave Spectroscopic Microscopy";
-    }
+   private Studio studio_;
+   private boolean initialized_ = false;
 
-    @Override
-    public String getName() {
-        return menuName;
-    }
+   @Override
+   public void setContext(Studio studio) {
+      studio_ = studio;
+      //This allows us to run cleanup when shutdown begins, see `closeRequested`
+      studio.events().registerForEvents(this);
+   }
 
-    @Override
-    public String getVersion() {
-        return versionNumber;
-    }
+   @Override
+   public void onPluginSelected() { //This is fired when the user requests to open the plugin.
+      if (!initialized_) {
+         //In order for json serial/deserialization to work, each class must be
+         //registered with Gson. Let's do that now to make sure.
+         //They also register themselves when they are instantiated but that may not happen in time.
+         PWSSettingsConsts.registerGson();
+         PWSPluginSettings.registerGsonType();
+         Sequencer sequencer = new Sequencer();
 
-    @Override
-    public String getCopyright() {
-        return "Backman Biophotonics Lab";
-    }
-    
-    @Subscribe
-    public void closeRequested( ShutdownCommencingEvent sce){ //This is fired when micro-manager indicates that it is closing.
-        if (Globals.frame() != null) {
-            if (!sce.getIsCancelled()) {
-                Globals.frame().dispose(); //This should also cause settings to be saved.
-            }
-        }
+         Globals.init(studio_);
+
+         initialized_ = true;
+      }
+      Globals.frame().setVisible(true);
+   }
+
+   @Override
+   public String getSubMenu() {
+      return "Acquisition Tools";
+   }
+
+   @Override
+   public String getHelpText() {
+      return "Partial Wave Spectroscopic Microscopy";
+   }
+
+   @Override
+   public String getName() {
+      return menuName;
+   }
+
+   @Override
+   public String getVersion() {
+      return versionNumber;
+   }
+
+   @Override
+   public String getCopyright() {
+      return "Backman Biophotonics Lab";
+   }
+
+   @Subscribe
+   public void closeRequested(
+         ShutdownCommencingEvent sce) { //This is fired when micro-manager indicates that it is closing.
+      if (Globals.frame() != null) {
+         if (!sce.getIsCancelled()) {
+            Globals.frame().dispose(); //This should also cause settings to be saved.
+         }
+      }
+   }
+
+   //API
+   public Globals api() {
+      return Globals.instance();
    }
 }
