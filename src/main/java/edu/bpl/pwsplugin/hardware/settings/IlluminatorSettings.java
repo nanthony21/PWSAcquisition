@@ -24,7 +24,7 @@ package edu.bpl.pwsplugin.hardware.settings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class IlluminatorSettings extends JsonableParam {
 

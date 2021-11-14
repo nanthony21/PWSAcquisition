@@ -30,7 +30,7 @@ import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import java.util.List;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public interface ImagingConfiguration {
 

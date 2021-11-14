@@ -31,7 +31,7 @@ import javax.swing.WindowConstants;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 class ConfigurationDialog extends JDialog {
 

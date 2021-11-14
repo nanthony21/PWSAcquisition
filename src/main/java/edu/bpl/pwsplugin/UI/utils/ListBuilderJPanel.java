@@ -25,7 +25,7 @@ import java.awt.LayoutManager;
 
 /**
  * @param <T> The class of the object that hold settings. Must be an iterable.
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public abstract class ListBuilderJPanel<T extends Iterable> extends BuilderJPanel<T> {
 

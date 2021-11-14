@@ -36,7 +36,7 @@ import org.micromanager.PositionList;
 import org.micromanager.internal.positionlist.PositionListDlg;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class AcquireFromPositionListFactory extends StepFactory {
 

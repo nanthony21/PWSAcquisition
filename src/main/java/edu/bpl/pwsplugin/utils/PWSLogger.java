@@ -38,7 +38,7 @@ import org.micromanager.internal.utils.ReportingUtils;
  * during a single session of Micro-Manager. A copy of the log file will also be saved to the
  * acquisition directory when an acquisition is being run.
  *
- * @author Nick Anthony
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class PWSLogger {
    //This writer always writes to the `logPath` that SGILogger is constructed with

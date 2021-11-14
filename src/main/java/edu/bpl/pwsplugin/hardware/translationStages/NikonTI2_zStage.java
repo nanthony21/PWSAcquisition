@@ -34,7 +34,7 @@ import org.apache.commons.math3.fitting.WeightedObservedPoint;
 import org.micromanager.AutofocusPlugin;
 
 /**
- * @author nicke
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class NikonTI2_zStage extends TranslationStage1d {
 

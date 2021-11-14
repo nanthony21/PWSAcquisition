@@ -38,7 +38,7 @@ import javax.swing.tree.TreeNode;
 
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> {
 

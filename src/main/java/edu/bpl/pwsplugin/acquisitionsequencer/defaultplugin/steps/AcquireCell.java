@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class AcquireCell extends EndpointStep<AcquireCellSettings> {
    private boolean running = false;

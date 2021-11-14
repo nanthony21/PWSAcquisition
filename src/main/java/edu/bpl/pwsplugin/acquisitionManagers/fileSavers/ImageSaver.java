@@ -28,7 +28,7 @@ import org.micromanager.data.Image;
 /**
  * Basic interface that must be implemented for a class to act as an image saver.
  *
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public interface ImageSaver {
 

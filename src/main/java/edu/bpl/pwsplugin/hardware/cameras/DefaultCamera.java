@@ -30,7 +30,7 @@ import mmcorej.MMCoreJ;
 import org.micromanager.data.Image;
 
 /**
- * @author nicke
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public abstract class DefaultCamera implements Camera {
 

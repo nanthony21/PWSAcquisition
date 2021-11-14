@@ -28,7 +28,7 @@ import java.util.function.Function;
 import org.micromanager.data.Image;
 
 /**
- * @author nicke
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public interface Camera extends Device {
 
@@ -55,27 +55,10 @@ public interface Camera extends Device {
 
    boolean supportsExternalTriggering(); //True if the camera can have new image acquisitions triggered by an incoming TTL signal
 
-   //public abstract void configureExternalTriggering(boolean enable, double triggerDelayMs) throws MMDeviceException; //Turn external triggering on or off.
    boolean supportsTriggerOutput(); //True if the camera can send a TTL trigger at the end of each new image it acquires.
 
-    /*public static Camera getInstance(CamSettings settings) {
-        if (null == settings.camType) {
-            throw new NullPointerException("This shouldn't ever happen"); //This shouldn't ever happen.
-        } else switch (settings.camType) {
-            case HamamatsuOrca4V3:
-                return new HamamatsuOrcaFlash4v3(settings);
-            case HamamatsuEMCCD:
-                return new HamamatsuEMCCD(settings);
-            case Simulated:
-                return new SimulatedCamera(settings);
-            case HamamatsuOrcaFlash2_8:
-                return new HamamatsuOrcaFlash2_8(settings);
-            default:
-                return null; //This shouldn't ever happen.
-        }
-    }*/
 
-   public static Camera getAutomaticInstance(CamSettings settings) {
+   static Camera getAutomaticInstance(CamSettings settings) {
       Function<String, CamSettings> generator = (devName) -> {
          CamSettings sets = (CamSettings) settings.copy();
          sets.name = devName;
@@ -96,7 +79,7 @@ public interface Camera extends Device {
       return finder.getAutoInstance(settings.name);
    }
 
-   public enum Types {
+   enum Types {
       HamamatsuOrca4V3,
       HamamatsuEMCCD,
       Simulated,

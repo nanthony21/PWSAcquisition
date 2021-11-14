@@ -24,7 +24,7 @@ package edu.bpl.pwsplugin.hardware.settings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class TunableFilterSettings extends JsonableParam {
 

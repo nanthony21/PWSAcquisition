@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class AcquireCellSettings extends JsonableParam {
     /*Contains all settings for a single "Cell" folder acquisition. Can include

@@ -30,7 +30,7 @@ import mmcorej.DeviceType;
 
 
 /**
- * @author nicke
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public abstract class TranslationStage1d implements Device {
 

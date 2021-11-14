@@ -7,7 +7,7 @@ import edu.bpl.pwsplugin.hardware.settings.TunableFilterSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class PWSSettingsConsts {
 

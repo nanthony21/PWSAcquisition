@@ -24,7 +24,7 @@ package edu.bpl.pwsplugin.acquisitionsequencer.UI.tree;
 import java.awt.datatransfer.DataFlavor;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class DataFlavors {
 

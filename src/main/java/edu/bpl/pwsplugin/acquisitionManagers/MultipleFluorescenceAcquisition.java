@@ -42,7 +42,7 @@ import org.micromanager.internal.utils.ReportingUtils;
 
 /**
  * Acquires multiple fluorescence images from a list of fluorescence settings.
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings> {
    //Some weird stuff can happen with the display when different iterations have different resolutions. that's ok though.

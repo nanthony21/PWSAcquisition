@@ -6,7 +6,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.util.List;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class Transferables {
 

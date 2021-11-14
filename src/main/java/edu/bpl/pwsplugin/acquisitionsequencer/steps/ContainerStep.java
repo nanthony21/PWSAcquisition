@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 import javax.swing.tree.TreeNode;
 
 /**
- * @author Nick Anthony
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public abstract class ContainerStep<T extends JsonableParam> extends Step<T> {
    //A `Step` that takes other `Step`s and wraps functionality around them.

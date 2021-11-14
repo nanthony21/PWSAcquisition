@@ -29,7 +29,7 @@ import java.util.function.Function;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class AcquisitionStatus {
 

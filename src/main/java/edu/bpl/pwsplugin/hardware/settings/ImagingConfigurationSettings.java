@@ -25,7 +25,7 @@ import edu.bpl.pwsplugin.hardware.configurations.ImagingConfiguration;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class ImagingConfigurationSettings extends JsonableParam {
 

@@ -35,7 +35,7 @@ import org.micromanager.MultiStagePosition;
 import org.micromanager.PositionList;
 
 /**
- * @author Nick Anthony
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class AcquireFromPositionList
       extends IteratingContainerStep<SequencerSettings.AcquirePositionsSettings> {

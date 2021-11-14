@@ -24,7 +24,7 @@ import org.micromanager.internal.utils.ReportingUtils;
 ;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class ListScrollUI<T extends List<S>, S extends JsonableParam> extends
       ListBuilderJPanel<T> implements MouseListener {

@@ -31,7 +31,7 @@ import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
 import java.util.List;
 
 /**
- * @author nicke
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class AutoShutterStep extends ContainerStep<SequencerSettings.AutoShutterSettings> {
    public AutoShutterStep() {

@@ -33,7 +33,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class EnterSubfolderStep extends ContainerStep<SequencerSettings.EnterSubfolderSettings> {
 

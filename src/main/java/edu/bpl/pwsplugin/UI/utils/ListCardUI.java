@@ -44,7 +44,7 @@ import org.micromanager.internal.utils.ReportingUtils;
 /**
  * @param <T> The class of the object that hold settings. Must be an list of `jsonableparam`s.
  * @param <S> The subclass of `JsonableParam` that holds settings for each item of the list.
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class ListCardUI<T extends List<S>, S extends JsonableParam> extends
       ListBuilderJPanel<T> implements ItemListener {

@@ -18,7 +18,7 @@ import java.lang.reflect.Type;
 
 
 /**
- * @author Nick Anthony
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class PWSPluginSettings extends JsonableParam {
 

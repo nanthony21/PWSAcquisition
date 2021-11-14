@@ -5,7 +5,7 @@ import javax.swing.JPanel;
 
 /**
  * @param <T> The class of the `settings` object.
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public abstract class BuilderJPanel<T> extends JPanel {
 

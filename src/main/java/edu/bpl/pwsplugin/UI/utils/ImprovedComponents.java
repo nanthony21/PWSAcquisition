@@ -28,7 +28,7 @@ import javax.swing.SpinnerModel;
 import javax.swing.text.DefaultFormatter;
 
 /**
- * @author nicke
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class ImprovedComponents {
 

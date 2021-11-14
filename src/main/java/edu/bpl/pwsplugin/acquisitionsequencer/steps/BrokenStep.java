@@ -27,7 +27,7 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.List;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class BrokenStep extends ContainerStep<JsonableParam> {
 

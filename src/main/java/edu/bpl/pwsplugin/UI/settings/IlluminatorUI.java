@@ -31,7 +31,7 @@ import mmcorej.DeviceType;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class IlluminatorUI extends BuilderJPanel<IlluminatorSettings> {
 

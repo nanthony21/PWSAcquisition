@@ -30,7 +30,7 @@ import java.util.List;
 import mmcorej.DeviceType;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class DefaultIlluminator implements Illuminator {
 

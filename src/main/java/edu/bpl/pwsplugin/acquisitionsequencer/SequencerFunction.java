@@ -24,7 +24,7 @@ package edu.bpl.pwsplugin.acquisitionsequencer;
 /**
  * The function that is executed at runtime of a sequence.
  *
- * @author Nick Anthony
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 @FunctionalInterface
 public interface SequencerFunction extends ThrowingFunction<AcquisitionStatus, AcquisitionStatus> {}

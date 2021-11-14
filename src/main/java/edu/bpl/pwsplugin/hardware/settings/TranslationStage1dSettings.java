@@ -24,7 +24,7 @@ package edu.bpl.pwsplugin.hardware.settings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /**
- * @author nicke
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class TranslationStage1dSettings extends JsonableParam {
 

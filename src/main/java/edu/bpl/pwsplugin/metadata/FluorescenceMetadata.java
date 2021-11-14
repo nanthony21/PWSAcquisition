@@ -25,7 +25,7 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class FluorescenceMetadata extends MetadataBase {
 

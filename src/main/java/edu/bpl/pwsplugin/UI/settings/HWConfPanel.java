@@ -40,7 +40,7 @@ import net.miginfocom.swing.MigLayout;
 import org.micromanager.internal.utils.ReportingUtils;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class HWConfPanel extends BuilderJPanel<HWConfigurationSettings> {
 

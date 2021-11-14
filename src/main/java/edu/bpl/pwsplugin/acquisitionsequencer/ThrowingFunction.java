@@ -25,7 +25,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * @author Nick Anthony (nickmanthony at hotmail.com)
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public interface ThrowingFunction<T, R> extends Function<T, R> {
 

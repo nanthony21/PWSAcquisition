@@ -24,7 +24,7 @@ package edu.bpl.pwsplugin;
 import java.nio.file.Path;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 
 public class FileSpecs {

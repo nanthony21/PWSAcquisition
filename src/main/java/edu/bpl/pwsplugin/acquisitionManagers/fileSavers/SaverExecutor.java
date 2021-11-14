@@ -45,7 +45,7 @@ import org.micromanager.data.Image;
  * task that can be submitted to an executor. Rather than having two queues (images, and metadata)
  * why not have one queue containing Image/metadata pairs.
  *
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public abstract class SaverExecutor implements ImageSaver, Callable<Void> {
 

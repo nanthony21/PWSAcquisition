@@ -24,7 +24,7 @@ package edu.bpl.pwsplugin.acquisitionsequencer.UI.tree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public abstract class CopyableMutableTreeNode extends DefaultMutableTreeNode {
    //Creates a copy of a tree node and compares as equal to it's parent or another copy with the same parent.

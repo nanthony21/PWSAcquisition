@@ -33,7 +33,7 @@ import java.util.List;
 import org.micromanager.AutofocusPlugin;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class SoftwareAutofocus extends EndpointStep<SequencerSettings.SoftwareAutoFocusSettings> {
    private boolean running = false;

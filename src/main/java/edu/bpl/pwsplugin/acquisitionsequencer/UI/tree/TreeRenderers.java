@@ -37,7 +37,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 /**
  * This class contains a collection of renderers that determine how the items of a JTree will look.
  *
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class TreeRenderers {
 

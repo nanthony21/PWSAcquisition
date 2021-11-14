@@ -28,7 +28,7 @@ import java.util.function.Function;
 import mmcorej.DeviceType;
 
 /**
- * @author nicke
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public interface Device {
 
@@ -49,17 +49,17 @@ public interface Device {
       }
    }
 
-   public static class AutoFinder<T extends Device, S> {  // TODO keep a registry of created instances and make sure not to create duplicate instances for the same device.
+   public static class AutoFinder<T extends Device, S> {
 
-      private final Class[] subClasses;
-      private final Class sClass;
+      private final Class<? extends T>[] subClasses;
+      private final Class settingClass;
       private final Function<String, S> sGen;
 
       public AutoFinder(Class settingsClass, Function<String, S> settingsGenerator,
             Class<? extends T>... clazz) {
          //In order for this to work the `clazz` classes must throw an IDException from the constructor if the device is not recognized.
          subClasses = clazz;
-         sClass = settingsClass;
+         settingClass = settingsClass;
          sGen = settingsGenerator;
       }
 
@@ -67,10 +67,10 @@ public interface Device {
          //this is called from within `getAutomaticInstance`. attempts instantiating subclasses for `devName`.
          //If it isn't recognized then we get an `IDException` and continue searching. Any other exception gets raised.
          S settings = sGen.apply(devName);
-         for (Class clz : subClasses) {
+         for (Class<? extends T> clz : subClasses) {
             T device;
             try {
-               device = (T) clz.getDeclaredConstructor(sClass).newInstance(settings);
+               device = (T) clz.getDeclaredConstructor(settingClass).newInstance(settings);
             } catch (InvocationTargetException e) {
                if (e.getCause() instanceof Device.IDException) {
                   continue; //This just means the device wasn't identified. Try the next device
@@ -89,7 +89,7 @@ public interface Device {
       }
 
       public T scanAllDevices(DeviceType dType) {
-         //Detect which stage is connected automatically, assumes that only one is connected.
+         //Detect which device is connected automatically, assumes that only one is connected.
          for (String devLabel : Globals.core().getLoadedDevicesOfType(dType)) {
             T device = getAutoInstance(devLabel);
             if (device != null) {

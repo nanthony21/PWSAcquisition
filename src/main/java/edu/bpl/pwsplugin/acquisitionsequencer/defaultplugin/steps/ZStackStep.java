@@ -32,7 +32,7 @@ import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
 import java.util.List;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class ZStackStep extends IteratingContainerStep<SequencerSettings.ZStackSettings> {
 

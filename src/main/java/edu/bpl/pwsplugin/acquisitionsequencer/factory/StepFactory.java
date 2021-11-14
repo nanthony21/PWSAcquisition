@@ -30,7 +30,7 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
  * Responsible for generating instances of a `Step`, the settings for the `Step` and a UI to set
  * the settings graphically.
  *
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public abstract class StepFactory {
 

@@ -31,7 +31,7 @@ import org.micromanager.internal.MMStudio;
 
 /**
  *
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class ImgCornerAutofocus {
 
@@ -78,7 +78,7 @@ public class ImgCornerAutofocus {
  * Provides ROIs at the 4 corners of the image based on a specified distance from
  * the image corners that the ROIS should extend.
  * 
- * @author Nick Anthony
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 class RoiManager {
     private double radius_ = 95;  // The percentage radius (from center of image to corner of image to draw the corner of the ROI rectangles

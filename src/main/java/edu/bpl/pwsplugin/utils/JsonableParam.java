@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.HashSet;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 
 

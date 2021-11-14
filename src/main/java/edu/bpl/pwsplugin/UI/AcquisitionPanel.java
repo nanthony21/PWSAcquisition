@@ -49,7 +49,7 @@ import org.apache.commons.io.FileUtils;
 import org.micromanager.internal.utils.ReportingUtils;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 class AcquisitionPanel extends JPanel {
 

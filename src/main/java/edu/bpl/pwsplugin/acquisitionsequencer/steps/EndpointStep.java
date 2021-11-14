@@ -25,7 +25,7 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public abstract class EndpointStep<T extends JsonableParam> extends Step<T> {
 

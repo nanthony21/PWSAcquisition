@@ -52,7 +52,7 @@ import net.miginfocom.swing.MigLayout;
 import org.micromanager.data.Image;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 
 class UtilityPanel extends JPanel {

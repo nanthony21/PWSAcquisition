@@ -30,7 +30,7 @@ import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import java.util.List;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class AcquireTimeSeries
       extends IteratingContainerStep<SequencerSettings.AcquireTimeSeriesSettings> {

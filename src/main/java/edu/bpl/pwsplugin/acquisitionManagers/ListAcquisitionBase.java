@@ -37,7 +37,7 @@ import org.micromanager.data.Image;
 import org.micromanager.internal.utils.ReportingUtils;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 abstract class ListAcquisitionBase<S> implements Acquisition<List<S>> {
 

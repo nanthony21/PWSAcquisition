@@ -34,7 +34,7 @@ import org.micromanager.PositionList;
 import org.micromanager.StagePosition;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class GsonUtils {
    //This class provides custom code related to the use of GSON to convert objects to/from JSON.

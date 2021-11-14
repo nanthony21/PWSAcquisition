@@ -34,7 +34,7 @@ import mmcorej.DoubleVector;
 import org.micromanager.internal.utils.ReportingUtils;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 abstract class SingleAcquisitionBase<S> implements Acquisition<S> {
    //A base class an acquisition manager that handles instantiation of a the required metadata for every type of image.

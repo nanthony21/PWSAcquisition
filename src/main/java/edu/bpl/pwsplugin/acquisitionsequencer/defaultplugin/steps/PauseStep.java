@@ -46,7 +46,7 @@ import javax.swing.text.DefaultCaret;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class PauseStep extends EndpointStep<SequencerSettings.PauseStepSettings> {
 

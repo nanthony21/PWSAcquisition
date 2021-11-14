@@ -58,7 +58,7 @@ import net.miginfocom.swing.MigLayout;
  * This is the window that appears while the sequence is running. Displays log information and
  * allows pausing/cancelling.
  *
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 class SequencerRunningDlg extends JDialog {
 

@@ -13,7 +13,7 @@ import net.miginfocom.swing.MigLayout;
 import org.micromanager.internal.utils.FileDialogs;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class DirectorySelector extends JPanel {
    //This is just a convenience class that combines a textField with a button

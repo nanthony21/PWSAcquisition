@@ -35,7 +35,7 @@ import java.util.List;
 import javax.swing.tree.TreeNode;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings> {
    private boolean running = false;

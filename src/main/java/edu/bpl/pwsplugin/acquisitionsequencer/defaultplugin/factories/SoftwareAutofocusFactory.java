@@ -34,7 +34,7 @@ import javax.swing.JLabel;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class SoftwareAutofocusFactory extends StepFactory {
 

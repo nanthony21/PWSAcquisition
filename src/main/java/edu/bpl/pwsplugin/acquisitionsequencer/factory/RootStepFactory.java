@@ -38,7 +38,7 @@ import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class RootStepFactory extends StepFactory {
 

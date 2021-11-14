@@ -26,7 +26,7 @@ import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.util.List;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class DynamicsMetadata extends MetadataBase {
 

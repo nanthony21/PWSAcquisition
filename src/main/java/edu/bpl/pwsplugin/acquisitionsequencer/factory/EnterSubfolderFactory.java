@@ -36,7 +36,7 @@ import javax.swing.text.DocumentFilter;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class EnterSubfolderFactory extends StepFactory {
 

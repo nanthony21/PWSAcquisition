@@ -61,7 +61,7 @@ import org.micromanager.internal.utils.ReportingUtils;
 
 
 /**
- * @author Nick Anthony
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class SequencerUI extends BuilderJPanel<RootStep> {  //TODO we also need to save the default settings for the `newsteps`.
 

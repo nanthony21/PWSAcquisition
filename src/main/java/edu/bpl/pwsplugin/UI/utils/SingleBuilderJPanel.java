@@ -8,7 +8,7 @@ import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
 /**
- * @author Nick Anthony <nickmanthony at hotmail.com>
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public abstract class SingleBuilderJPanel<T> extends BuilderJPanel<T> {
 

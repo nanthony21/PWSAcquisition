@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * This is the top level container for an instance of the sequencer.
  *
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class SequencerFactoryManager {
 

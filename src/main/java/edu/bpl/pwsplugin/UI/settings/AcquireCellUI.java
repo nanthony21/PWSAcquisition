@@ -47,7 +47,7 @@ import javax.swing.JTabbedPane;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class AcquireCellUI extends BuilderJPanel<AcquireCellSettings> {

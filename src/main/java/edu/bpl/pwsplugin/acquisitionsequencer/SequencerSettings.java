@@ -27,7 +27,7 @@ import org.micromanager.PositionList;
 /**
  * A collection of settings for the various types of steps.
  *
- * @author Nick Anthony
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class SequencerSettings {
 

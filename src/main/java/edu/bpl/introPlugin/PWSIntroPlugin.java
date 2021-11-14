@@ -31,7 +31,7 @@ import org.scijava.plugin.Plugin;
 /**
  * Simply changes the image shown when the software starts up.
  *
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 @Plugin(type = IntroPlugin.class)
 public class PwsIntroPlugin implements IntroPlugin {

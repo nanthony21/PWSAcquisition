@@ -27,7 +27,7 @@ import edu.bpl.pwsplugin.acquisitionsequencer.factory.RootStepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 
 /**
- * @author nick
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class SequencerConsts {
 
