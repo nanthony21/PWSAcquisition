@@ -133,7 +133,7 @@ public class OverlapLayout implements LayoutManager2, java.io.Serializable {
    /**
     * Get the include invisible property
     *
-    * @returns the include invisible property
+    * @return the include invisible property
     */
    public boolean isIncludeInvisible() {
       return includeInvisible;
@@ -152,7 +152,7 @@ public class OverlapLayout implements LayoutManager2, java.io.Serializable {
    /**
     * Get the overlapping position of each component
     *
-    * @returns the Point representing the overlapped position
+    * @return the Point representing the overlapped position
     */
    public Point getOverlapPosition() {
       return overlapPosition;
@@ -170,7 +170,7 @@ public class OverlapLayout implements LayoutManager2, java.io.Serializable {
    /**
     * Get the popup insets
     *
-    * @returns the popup insets
+    * @return the popup insets
     */
    public Insets getPopupInsets() {
       return popupInsets;

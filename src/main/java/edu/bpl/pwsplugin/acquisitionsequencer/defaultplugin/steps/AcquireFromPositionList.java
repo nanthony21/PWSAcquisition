@@ -55,20 +55,14 @@ public class AcquireFromPositionList
       return (status) -> {
          //set timeout to 30 seconds. Otherwise we get an error if a position move takes greater than 5 seconds. (default timeout)
          Globals.core().setTimeoutMs(30000);
-         currentIteration = 0;
-         for (int i = 0; i < list.getNumberOfPositions(); i++) {
-            currentIteration++;
-            MultiStagePosition pos = list.getPosition(i);
-            status.coords().setIterationOfCurrentStep(i);
+         for (int currentIteration = 0; currentIteration < list.getNumberOfPositions(); currentIteration++) {
+            MultiStagePosition pos = list.getPosition(currentIteration);
+            status.coords().setIterationOfCurrentStep(currentIteration);
             String label = pos.getLabel();
             status.newStatusMessage(String.format("Moving to position %s", label));
             TranslationStage1d zStage = Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
-            Callable<Void> preMoveRoutine = () -> {
-               return null;
-            };
-            Callable<Void> postMoveRoutine = () -> {
-               return null;
-            };
+            Callable<Void> preMoveRoutine = () -> null;
+            Callable<Void> postMoveRoutine = () -> null;
             if (label.contains("-APFS-")) {
                //Turn off pfs before moving. after moving run autofocus to get back i the right range. then enable pfs again.
                preMoveRoutine = () -> {

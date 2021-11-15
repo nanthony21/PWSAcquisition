@@ -21,11 +21,23 @@
 
 package edu.bpl.pwsplugin.acquisitionManagers;
 
+/**
+ * The basic requirements for an acquisition managed by the `AcquisitionManager class.
+ * @param <S> The settings class that configures this acquisition.
+ */
 interface Acquisition<S> {
 
-   // The basic requirements for an acquisition managed by the `AcquisitionManager class.
-   public void acquireImages(String savePath, int cellNum)
-         throws Exception; //Begin the acquisition process.
+   /**
+    * Begin acquiring images with the save location determined by the args
+    * @param savePath The path to save to
+    * @param cellNum  The number of acquisition (determines folder naming).
+    * @throws Exception
+    */
+   void acquireImages(String savePath, int cellNum) throws Exception;
 
-   public void setSettings(S settings);
+   /**
+    *
+    * @param settings The settings to configure the acquisition with.
+    */
+   void setSettings(S settings);
 }

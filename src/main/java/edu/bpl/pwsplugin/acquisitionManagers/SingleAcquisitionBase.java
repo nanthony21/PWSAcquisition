@@ -34,13 +34,11 @@ import mmcorej.DoubleVector;
 import org.micromanager.internal.utils.ReportingUtils;
 
 /**
+ * A base class for an acquisition manager that handles instantiation of the required metadata for every type of image.
+ * This class assumes that the same imaging configuration will be used throughout the whole imaging process, which may not be true.
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 abstract class SingleAcquisitionBase<S> implements Acquisition<S> {
-   //A base class an acquisition manager that handles instantiation of a the required metadata for every type of image.
-   //This class assumes that the same imaging configuration will be used throughout the whole imaging process, which may not be true.
-
-
    @Override
    public void acquireImages(String savePath, int cellNum) throws Exception {
       MetadataBase metadata = this.initializeMetadata();
