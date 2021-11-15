@@ -34,10 +34,10 @@ import org.micromanager.PositionList;
 import org.micromanager.StagePosition;
 
 /**
+ * This class provides custom code related to the use of GSON to convert objects to/from JSON.
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class GsonUtils {
-   //This class provides custom code related to the use of GSON to convert objects to/from JSON.
 
    private static final GsonBuilder gsonBuilder = new GsonBuilder()
          .setPrettyPrinting() //This causes files to be saved in a more human-readable form.

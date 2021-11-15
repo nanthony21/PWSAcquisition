@@ -31,14 +31,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author N2-LiveCell
+ * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public abstract class DefaultImagingConfiguration implements ImagingConfiguration {
-
    protected ImagingConfigurationSettings settings;
    private boolean initialized_ = false;
    protected TranslationStage1d zStage;
-   private boolean activated_ = false;
 
    protected DefaultImagingConfiguration(ImagingConfigurationSettings settings) {
       this.settings = settings;
@@ -49,7 +47,11 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
       return zStage;
    }
 
-   private void initialize() throws MMDeviceException { //One-time initialization of devices
+   /**
+    * One-time initialization of devices
+    * @throws MMDeviceException
+    */
+   private void initialize() throws MMDeviceException {
       zStage = (TranslationStage1d) HardwareManager.instance().getDevice(new TranslationStage1dSettings());
       if (zStage == null) {
          throw new MMDeviceException("No supported Z-stage was found.");
@@ -63,9 +65,13 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
    }
 
    //We only want the following functions to be accessed by the HWConfigrartion
+
+   /**
+    * Actually configure the hardware to use this configuration.
+    * @throws MMDeviceException
+    */
    @Override
-   public void activateConfiguration()
-         throws MMDeviceException { //Actually configure the hardware to use this configuration.
+   public void activateConfiguration() throws MMDeviceException {
       if (!initialized_) {
          this.initialize(); //If we haven't yet then run the one-time initialization for the the devices.
       }
@@ -91,13 +97,10 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
       } catch (Exception e) {
          throw new MMDeviceException(e);
       }
-      activated_ = true;
    }
 
    @Override
-   public void deactivateConfiguration() {
-      activated_ = false;
-   }
+   public void deactivateConfiguration() {}
 
    @Override
    public String getFluorescenceConfigGroup() {
@@ -122,20 +125,5 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
       errs.addAll(zStage.validate());
       return errs;
    }
-    
-    /*boolean isActive() throws MMDeviceException {
-        if (!activated_) { return false; }
-        try { //Even if the `activated_` flag is true we still check that the configuration group is properly set, just to make sure.
-            boolean active = Globals.core().getCurrentConfig(settings.configurationGroup).equals(settings.configurationName);
-            return active;
-        } catch (InterruptedException ie) {
-            Thread.currentThread().interrupt();
-            throw new MMDeviceException(ie);
-        } catch (Exception e) {
-            throw new MMDeviceException(e);
-        }
-    }*/
-
-
 }
 

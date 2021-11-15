@@ -18,12 +18,11 @@ import java.lang.reflect.Type;
 
 
 /**
+ * This is just a container for all the other settings. this is the main object that gets
+ * passed around, saved, loaded, etc.
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class PWSPluginSettings extends JsonableParam {
-
-   //This is just a container for all the other settings. this is the main object that gets
-   //passed around, saved, loaded, etc.
    public HWConfigurationSettings hwConfiguration = new HWConfigurationSettings();
    public AcquireCellSettings acquisitionSettings = new AcquireCellSettings();
    public RootStep sequenceRoot = new RootStepFactory().createStep();
@@ -34,7 +33,10 @@ public class PWSPluginSettings extends JsonableParam {
       return (PWSPluginSettings) JsonableParam.fromJson(str, PWSPluginSettings.class);
    }
 
-   public static void registerGsonType() { //This must be called for GSON loading/saving to work.
+   /**
+    * This must be called for GSON loading/saving to work.
+    */
+   public static void registerGsonType() {
       GsonUtils.builder().registerTypeAdapter(PWSPluginSettings.class, new PWSSettingsGson());
    }
 }
@@ -42,7 +44,14 @@ public class PWSPluginSettings extends JsonableParam {
 final class PWSSettingsGson implements JsonDeserializer<PWSPluginSettings>,
       JsonSerializer<PWSPluginSettings> {
 
-   //This defines custom behavior to save and load these settings using GSON.
+   /**
+    * This defines custom behavior to save and load these settings using GSON.
+    * @param jsonElement
+    * @param type
+    * @param context
+    * @return
+    * @throws JsonParseException
+    */
    @Override
    public PWSPluginSettings deserialize(final JsonElement jsonElement,
          final java.lang.reflect.Type type, final JsonDeserializationContext context)

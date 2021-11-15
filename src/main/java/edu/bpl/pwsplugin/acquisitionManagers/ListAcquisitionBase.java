@@ -37,12 +37,11 @@ import org.micromanager.data.Image;
 import org.micromanager.internal.utils.ReportingUtils;
 
 /**
+ * A base class for an acquisition that acquires from a list of settings and puts the resulting
+ * images all into a shared display. Images are saved to individual numbered folders.
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 abstract class ListAcquisitionBase<S> implements Acquisition<List<S>> {
-
-   //A base class for an acquisition that acquires from a list of settings and puts the resulting images all into a shared display.
-   //Images are saved to individual numbered folders.
    protected List<S> settingsList;
    private final PWSAlbum display;
 
@@ -55,7 +54,7 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>> {
    public void acquireImages(String savePath, int cellNum) throws Exception {
       this.display
             .clear(); //The implementation of `runSingleImageAcquisition` call `displayImage` to add images to the display throughout the imaging process.
-      this.initializeAcquisitions(settingsList);
+      initializeAcquisitions();
       try {
          for (int i = 0; i < this.settingsList.size(); i++) {
             S settings = this.settingsList.get(i);
@@ -82,8 +81,12 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>> {
       }
    }
 
+   /**
+    * Set the list of settings to iterate over.
+    * @param settingList
+    */
    @Override
-   public void setSettings(List<S> settingList) {
+   public final void setSettings(List<S> settingList) {
       this.settingsList = settingList;
    }
 
@@ -107,18 +110,43 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>> {
       return metadata;
    }
 
+   /**
+    * Configure the acquisition with these settings.
+    * @param settings
+    */
    protected abstract void setCurrentSettings(S settings);
 
+   /**
+    *
+    * @return The ImagingConfiguration we are currnetly configured to use.
+    */
    protected abstract ImagingConfiguration getImgConfig();
 
+   /**
+    * Clean up the acquisitions.
+    * @throws Exception
+    */
    protected abstract void finalizeAcquisitions() throws Exception;
 
-   protected abstract void initializeAcquisitions(List<S> settings) throws Exception;
+   /**
+    * Setup before starting the list of acquisitions.
+    * @throws Exception
+    */
+   protected abstract void initializeAcquisitions() throws Exception;
 
+   /**
+    * Run a single acquisitions
+    * @param saver
+    * @param md
+    * @throws Exception
+    */
    protected abstract void runSingleImageAcquisition(ImageSaver saver, MetadataBase md)
          throws Exception;
 
-   protected abstract FileSpecs.Type getFileType(); //Return the type enumerator for this acquisition, used for file saving information.
+   /**
+    * @return The type enumerator for this acquisition, used for file saving information.
+    */
+   protected abstract FileSpecs.Type getFileType();
 
    /**
     *
@@ -126,6 +154,10 @@ abstract class ListAcquisitionBase<S> implements Acquisition<List<S>> {
     */
    protected abstract Integer numFrames();
 
+   /**
+    * Add an image to the display
+    * @param img
+    */
    protected void displayImage(Image img) { //Call this from within the implementation to add images to the display.
       this.display.addImage(img);
    }

@@ -19,7 +19,7 @@
 //               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
 //
 
-package edu.bpl.introplugin;
+package edu.bpl.introPlugin;
 
 import java.util.List;
 import javax.swing.Icon;

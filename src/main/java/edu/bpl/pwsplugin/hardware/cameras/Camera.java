@@ -32,12 +32,21 @@ import org.micromanager.data.Image;
  */
 public interface Camera extends Device {
 
+   /**
+    * Turn transmission of TTL pulses on or off.
+    * @param enable
+    * @throws MMDeviceException
+    */
    void configureTriggerOutput(boolean enable)
-         throws MMDeviceException; //Turn transmission of TTL pulses on or off.
+         throws MMDeviceException;
 
    double getExposure() throws MMDeviceException;
 
-   String getName(); //Get the device name used in Micro-Manager.
+   /**
+    * Get the device name used in Micro-Manager.
+    * @return
+    */
+   String getName();
 
    CamSettings getSettings();
 
@@ -45,18 +54,36 @@ public interface Camera extends Device {
 
    Image snapImage() throws MMDeviceException;
 
+   /**
+    * If the camera support "Trigger output" then this should start the seqeunce
+    * @param numImages
+    * @param delayMs
+    * @param externalTriggering
+    * @throws MMDeviceException
+    */
    void startSequence(int numImages, double delayMs, boolean externalTriggering)
          throws
-         MMDeviceException; //If the camera support "Trigger output" then this should start the seqeunce
+         MMDeviceException;
 
+   /**
+    * Clean up and reset the sequence. Only needed for cameras that support trigger output.
+    * @throws MMDeviceException
+    */
    void stopSequence()
          throws
-         MMDeviceException; // Clean up and reset the sequence. Only needed for cameras that support trigger output.
+         MMDeviceException;
 
-   boolean supportsExternalTriggering(); //True if the camera can have new image acquisitions triggered by an incoming TTL signal
+   /**
+    * True if the camera can have new image acquisitions triggered by an incoming TTL signal
+    * @return
+    */
+   boolean supportsExternalTriggering();
 
-   boolean supportsTriggerOutput(); //True if the camera can send a TTL trigger at the end of each new image it acquires.
-
+   /**
+    * True if the camera can send a TTL trigger at the end of each new image it acquires.
+    * @return
+    */
+   boolean supportsTriggerOutput();
 
    static Camera getAutomaticInstance(CamSettings settings) {
       Function<String, CamSettings> generator = (devName) -> {

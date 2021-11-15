@@ -66,6 +66,7 @@ public abstract class TranslationStage1d implements Device {
    public abstract boolean hasAutoFocus();
 
    //The following only need to be implemented if `hasAutoFocus` is true
+
    public void setAutoFocusEnabled(boolean enable) throws MMDeviceException {
       throw new UnsupportedOperationException();
    }
@@ -78,10 +79,14 @@ public abstract class TranslationStage1d implements Device {
       throw new UnsupportedOperationException();
    }
 
+   /**
+    * Search for a zStage position where the continuous focus can be locked.
+    * Returns the position (microns) where lock is achievable. Throws an exception
+    * if no lock is possible.
+    * @return
+    * @throws MMDeviceException
+    */
    public double runFullFocus() throws MMDeviceException {
-      //Search for a zStage position where the continuous focus can be locked.
-      //Returns the position (microns) where lock is achievable. Throws an exception
-      //if no lock is possible.
       throw new UnsupportedOperationException();
    }
 
@@ -95,77 +100,6 @@ public abstract class TranslationStage1d implements Device {
       NikonTI2,
       PriorProscan3
    }
-      
-    /*private static final List<Class<? extends TranslationStage1d>> subClasses = 
-            Arrays.asList(
-                    NikonTI2_zStage.class,
-                    NikonTI_zStage.class,
-                    SimulationStage1d.class
-            );*/
-    
-    /*public static TranslationStage1d getInstance(TranslationStage1dSettings settings) {
-        if (null == settings.stageType) {
-            throw new RuntimeException("This shouldn't ever happen.");
-        } else switch (settings.stageType) {
-            case NikonTI:
-                try {
-                    return new NikonTI_zStage(settings);
-                } catch (Exception e) {
-                    Globals.mm().logs().logError(e);
-                    return null;
-                }
-            case NikonTI2:
-                try {
-                    return new NikonTI2_zStage(settings);
-                } catch (Exception e) {
-                    Globals.mm().logs().logError(e);
-                    return null;
-                } 
-            case Simulated:
-                try {
-                    return new SimulationStage1d(settings);
-                } catch (IDException e) {
-                    Globals.mm().logs().logError(e);
-                    return null;
-                } 
-            default:
-                return null; //This shouldn't ever happen.
-        }
-    }*/
-    
-    /*private static TranslationStage1d getAutoInstance(String devName) {
-        //this is called from within `getAutomaticInstance`. attempts instantiating subclasses for `devName`.
-        //If it isn't recognized then we get an `IDException` and continue searching. Any other exception gets raised.
-        TranslationStage1dSettings settings = new TranslationStage1dSettings();
-        settings.deviceName = devName;
-        for (Class clz : subClasses) {
-            TranslationStage1d stage;
-            try {
-                stage = (TranslationStage1d) clz.getDeclaredConstructor(TranslationStage1dSettings.class).newInstance(settings);
-            } catch (InvocationTargetException e) { 
-                if (e.getCause() instanceof IDException) {
-                    continue; //This just means the device wasn't identified. Try the next device
-                } else {
-                    throw new RuntimeException(e.getCause());
-                }
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException me) {
-                throw new RuntimeException(me);
-            }
-            return stage; //We only get this far if the object successfully initializes.
-        }
-        return null; //Nothing was identified.
-    }
-    
-    public static TranslationStage1d getAutomaticInstance() {
-        //Detect which stage is connected automatically, assumes that only one is connected.
-        for (String devLabel : Globals.core().getLoadedDevicesOfType(DeviceType.StageDevice)) {
-            TranslationStage1d stage = getAutoInstance(devLabel);
-            if (stage != null) {
-                return stage;
-            }
-        }
-        return null; //Nothing was identified.
-    }*/
 
    public static TranslationStage1d getAutomaticInstance() {
 
