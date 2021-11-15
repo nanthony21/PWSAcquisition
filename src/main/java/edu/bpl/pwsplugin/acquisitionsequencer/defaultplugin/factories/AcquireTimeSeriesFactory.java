@@ -24,8 +24,6 @@ package edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.steps.AcquireTimeSeries;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
@@ -49,7 +47,7 @@ public class AcquireTimeSeriesFactory extends StepFactory {
 
    @Override
    public Class<? extends JsonableParam> getSettings() {
-      return SequencerSettings.AcquireTimeSeriesSettings.class;
+      return AcquireTimeSeriesFactory.AcquireTimeSeriesSettings.class;
    }
 
    @Override
@@ -71,16 +69,23 @@ public class AcquireTimeSeriesFactory extends StepFactory {
    public String getCategory() {
       return "Sequencing";
    }
+
+   public static class AcquireTimeSeriesSettings extends JsonableParam {
+
+      public int numFrames = 1;
+      public double frameIntervalMinutes = 1;
+
+   }
 }
 
 
-class TimeSeriesUI extends SingleBuilderJPanel<SequencerSettings.AcquireTimeSeriesSettings> {
+class TimeSeriesUI extends SingleBuilderJPanel<AcquireTimeSeriesFactory.AcquireTimeSeriesSettings> {
 
    ImprovedComponents.Spinner numFrames;
    ImprovedComponents.Spinner frameIntervalMinutes;
 
    public TimeSeriesUI() {
-      super(new MigLayout("insets 5 0 0 0"), SequencerSettings.AcquireTimeSeriesSettings.class);
+      super(new MigLayout("insets 5 0 0 0"), AcquireTimeSeriesFactory.AcquireTimeSeriesSettings.class);
 
       numFrames = new ImprovedComponents.Spinner(new SpinnerNumberModel(1, 1, 1000000000, 1));
       frameIntervalMinutes = new ImprovedComponents.Spinner(

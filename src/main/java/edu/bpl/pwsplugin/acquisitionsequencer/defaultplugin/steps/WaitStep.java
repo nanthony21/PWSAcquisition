@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WaitStep extends EndpointStep<WaitStepSettings> {
-   private boolean running_ = false;
 
    public WaitStep() {
       super(new WaitStepSettings(), Type.WAIT.name());
@@ -18,10 +17,8 @@ public class WaitStep extends EndpointStep<WaitStepSettings> {
    protected SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
       WaitStepSettings settings = getSettings();
       return (status) -> {
-         running_ = true;
          status.newStatusMessage(String.format("Waiting for %.1f seconds", settings.waitTime));
          Thread.sleep((int) (settings.waitTime * 1000));
-         running_ = false;
          return status;
       };
    }
@@ -38,10 +35,5 @@ public class WaitStep extends EndpointStep<WaitStepSettings> {
          errs.add(String.format("A wait time of %f seconds is not permitted", getSettings().waitTime));
       }
       return errs;
-   }
-
-   @Override
-   public boolean isRunning() {
-      return running_;
    }
 }

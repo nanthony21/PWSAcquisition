@@ -23,8 +23,6 @@ package edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.steps.AcquireFromPositionList;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
@@ -47,7 +45,7 @@ public class AcquireFromPositionListFactory extends StepFactory {
 
    @Override
    public Class<? extends JsonableParam> getSettings() {
-      return SequencerSettings.AcquirePositionsSettings.class;
+      return AcquirePositionsSettings.class;
    }
 
    @Override
@@ -74,15 +72,20 @@ public class AcquireFromPositionListFactory extends StepFactory {
    public String getCategory() {
       return "Sequencing";
    }
+
+   public static class AcquirePositionsSettings extends JsonableParam {
+
+      public PositionList posList = new PositionList();
+   }
 }
 
-class AcquirePostionsUI extends BuilderJPanel<SequencerSettings.AcquirePositionsSettings> {
+class AcquirePostionsUI extends BuilderJPanel<AcquireFromPositionListFactory.AcquirePositionsSettings> {
 
    PositionListDlg dlg;
 
    public AcquirePostionsUI() {
       super(new MigLayout("insets 0 0 0 0, fill"),
-            SequencerSettings.AcquirePositionsSettings.class);
+            AcquireFromPositionListFactory.AcquirePositionsSettings.class);
       dlg = new PositionListDlg(Globals.mm(), new PositionList());
       Container pane = dlg
             .getContentPane(); //We create a dialog, then steal in contents and put them in our own window, kind of hacky.
@@ -91,15 +94,15 @@ class AcquirePostionsUI extends BuilderJPanel<SequencerSettings.AcquirePositions
    }
 
    @Override
-   public SequencerSettings.AcquirePositionsSettings build() {
-      SequencerSettings.AcquirePositionsSettings settings =
-            new SequencerSettings.AcquirePositionsSettings();
+   public AcquireFromPositionListFactory.AcquirePositionsSettings build() {
+      AcquireFromPositionListFactory.AcquirePositionsSettings settings =
+            new AcquireFromPositionListFactory.AcquirePositionsSettings();
       settings.posList = dlg.getPositionList();
       return settings;
    }
 
    @Override
-   public void populateFields(SequencerSettings.AcquirePositionsSettings settings) {
+   public void populateFields(AcquireFromPositionListFactory.AcquirePositionsSettings settings) {
       dlg.setPositionList(settings.posList);
    }
 }

@@ -29,12 +29,11 @@ import java.util.function.Function;
 import org.apache.commons.lang.StringUtils;
 
 /**
+ * This object acts as a go-between between the UI and the acquisition thread.
+ * There should be only a single instance of this created per acquisition.
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class AcquisitionStatus {
-
-   //This object acts as a go-between between the UI and the acquisition thread.
-   //There should be only a single instance of this created per acquisition.
    private final RuntimeSettings runTimeSettings;
    private String currentPath;
    protected Integer currentAcquisitionNum; //The folder number we are currently acquiring.
@@ -63,6 +62,11 @@ public class AcquisitionStatus {
       currentAcquisitionNum = 1;
    }
 
+   /**
+    * Sends notification that a new message should be displayed to the user
+    * @param message the message to display
+    * @return The length of the formatted message. can be used for formatting the message later.
+    */
    public synchronized Integer newStatusMessage(String message) {
       //The length of the treepath controls the indentation of messages for more readable log.
       // The rootstep doesn't log anything so a 2 length treepath should have no indentation.
@@ -74,8 +78,12 @@ public class AcquisitionStatus {
       return this.statusMsg.size() - 1; //This can be used as a pointer to update the message later.
    }
 
-   public synchronized void updateStatusMessage(Integer idx,
-         String msg) { //Idx is the number that was returned by `newStatusMessage`
+   /**
+    * Change an existing message.
+    * @param idx Idx is the number that was returned by `newStatusMessage`
+    * @param msg The new message contents
+    */
+   public synchronized void updateStatusMessage(Integer idx, String msg) {
       //Find the original indentation so we can replicate it.
       String oldMsg = this.statusMsg.get(idx);
       int index = oldMsg.indexOf(oldMsg.trim());
@@ -84,10 +92,17 @@ public class AcquisitionStatus {
       this.publish();
    }
 
+   /**
+    *
+    * @return The full string containing all status messages
+    */
    public synchronized List<String> getStatusMessage() {
       return this.statusMsg;
    }
 
+   /**
+    * Call this from within the sequence thread whenever we should allow a pausecallback to execute.
+    */
    public void allowPauseHere() {
       if (pauseCallBack != null) {
          //If the pause button was armed then block this thread until it is disarmed.
@@ -95,21 +110,37 @@ public class AcquisitionStatus {
       }
    }
 
+   /**
+    *
+    * @return The current path the sequencer is set to save to.
+    */
    public synchronized String getSavePath() {
       return currentPath;
    }
 
+   /**
+    * Set a new save path
+    * @param path The new path
+    */
    public synchronized void setSavePath(String path) {
       Globals.acqManager().setSavePath(path);
       currentPath = path;
    }
 
+   /**
+    * Set the number of acquisition that we are on
+    * @param num The number.
+    */
    public synchronized void setAcquisitionlNum(Integer num) {
       currentAcquisitionNum = num;
       Globals.acqManager().setCellNum(num);
       this.publish();
    }
 
+   /**
+    *
+    * @return Get the currently set acquisition number.
+    */
    public synchronized Integer getAcquisitionlNum() {
       return currentAcquisitionNum;
    }
@@ -122,6 +153,9 @@ public class AcquisitionStatus {
       return this.runTimeSettings;
    }
 
+   /**
+    * Execute the callback to notify a change to this object.
+    */
    private void publish() {
       if (publishCallBack != null) {
          //Send a copy of this object back to the swingworker so it can be accessed from the

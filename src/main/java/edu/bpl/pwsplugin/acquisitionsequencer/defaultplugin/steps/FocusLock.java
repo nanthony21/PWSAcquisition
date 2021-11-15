@@ -26,6 +26,7 @@ import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.FocusLockFactory.FocusLockSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import edu.bpl.pwsplugin.hardware.MMDeviceException;
@@ -37,16 +38,11 @@ import javax.swing.tree.TreeNode;
 /**
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings> {
+public class FocusLock extends ContainerStep<FocusLockSettings> {
    private boolean running = false;
 
    public FocusLock() {
-      super(new SequencerSettings.FocusLockSettings(), DefaultSequencerPlugin.Type.PFS.name());
-   }
-
-   @Override
-   public boolean isRunning() {
-      return running;
+      super(new FocusLockSettings(), DefaultSequencerPlugin.Type.PFS.name());
    }
 
    @Override
@@ -87,7 +83,7 @@ public class FocusLock extends ContainerStep<SequencerSettings.FocusLockSettings
    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
 
       SequencerFunction subStepFunction = super.getSubstepsFunction(callbacks);
-      SequencerSettings.FocusLockSettings settings = this.getSettings();
+      FocusLockSettings settings = this.getSettings();
       return (status) -> {
          running = true;
          //FocusLock A function that turns on the PFS, runs substep and then turns it off.

@@ -21,12 +21,15 @@
 
 package edu.bpl.pwsplugin.acquisitionsequencer.steps;
 
+import com.google.gson.Gson;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
+import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -38,6 +41,7 @@ import javax.swing.tree.TreeNode;
 
 
 /**
+ * Represents the mandatory initial step of the experiment. Sets the root save path and other parameters.
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> {
@@ -132,6 +136,18 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
       return errs;
    }
 
+   public void saveToJson(String savePath) throws IOException {
+      if (!savePath.endsWith(".pwsseq")) {
+         savePath = savePath + ".pwsseq"; //Make sure the extension is there.
+      }
+      try (FileWriter writer = new FileWriter(
+            savePath)) { //Writer is automatically closed at the end of this statement.
+         Gson gson = GsonUtils.getGson();
+         String json = gson.toJson(this);
+         writer.write(json);
+      }
+   }
+
    private List<String> validateSubfolderSteps() {
       //Make sure that we don't have multiple "EnterSubFolderSteps" for the same subfolder.
       List<String> errs = new ArrayList<>();
@@ -167,10 +183,5 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
          usedPaths.add(fullPath);
       }
       return errs;
-   }
-
-   @Override
-   public boolean isRunning() {
-      return false;
    }
 }

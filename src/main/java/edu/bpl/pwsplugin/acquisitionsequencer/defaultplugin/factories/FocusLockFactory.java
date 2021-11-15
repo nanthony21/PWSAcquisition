@@ -24,8 +24,6 @@ package edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
 import edu.bpl.pwsplugin.UI.utils.SingleBuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.steps.FocusLock;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
@@ -48,7 +46,7 @@ public class FocusLockFactory extends StepFactory {
 
    @Override
    public Class<? extends JsonableParam> getSettings() {
-      return SequencerSettings.FocusLockSettings.class;
+      return FocusLockFactory.FocusLockSettings.class;
    }
 
    @Override
@@ -70,14 +68,18 @@ public class FocusLockFactory extends StepFactory {
    public String getCategory() {
       return "Focus";
    }
+
+   public static class FocusLockSettings extends JsonableParam {
+      public double delay = 1; //Seconds delay after focus
+   }
 }
 
-class FocusLockUI extends SingleBuilderJPanel<SequencerSettings.FocusLockSettings> {
+class FocusLockUI extends SingleBuilderJPanel<FocusLockFactory.FocusLockSettings> {
 
    ImprovedComponents.Spinner delay;
 
    public FocusLockUI() {
-      super(new MigLayout(), SequencerSettings.FocusLockSettings.class);
+      super(new MigLayout(), FocusLockFactory.FocusLockSettings.class);
 
       delay = new ImprovedComponents.Spinner(new SpinnerNumberModel(1.0, 0.0, 30.0, 1.0));
       ((ImprovedComponents.Spinner.DefaultEditor) delay.getEditor()).getTextField().setColumns(4);

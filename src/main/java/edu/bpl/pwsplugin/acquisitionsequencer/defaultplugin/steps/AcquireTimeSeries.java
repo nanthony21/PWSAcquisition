@@ -23,8 +23,9 @@ package edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.steps;
 
 import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.AcquireTimeSeriesFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.AcquireTimeSeriesFactory.AcquireTimeSeriesSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.IteratingContainerStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import java.util.List;
@@ -33,25 +34,19 @@ import java.util.List;
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class AcquireTimeSeries
-      extends IteratingContainerStep<SequencerSettings.AcquireTimeSeriesSettings> {
+      extends IteratingContainerStep<AcquireTimeSeriesSettings> {
 
    private Integer currentIteration = 0;
-   private boolean running = false;
 
    public AcquireTimeSeries() {
-      super(new SequencerSettings.AcquireTimeSeriesSettings(),
+      super(new AcquireTimeSeriesFactory.AcquireTimeSeriesSettings(),
             DefaultSequencerPlugin.Type.TIME.name());
-   }
-
-   @Override
-   public boolean isRunning() {
-      return running;
    }
 
    @Override
    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
       SequencerFunction stepFunction = super.getSubstepsFunction(callbacks);
-      SequencerSettings.AcquireTimeSeriesSettings settings = this.settings;
+      AcquireTimeSeriesFactory.AcquireTimeSeriesSettings settings = this.settings;
       return new SequencerFunction() {
          @Override
          public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
@@ -59,7 +54,6 @@ public class AcquireTimeSeries
             //interval. the handle must take as input the Cell number to start at. It
             //will return the number of new acquisitions that it tood.
             double lastAcqTime = 0;
-            running = true;
             currentIteration = 0;
             for (int i = 0; i < settings.numFrames; i++) {
                currentIteration++;
@@ -86,14 +80,11 @@ public class AcquireTimeSeries
                }
                //Save the current time so we can figure out when to start the next acquisition.
                lastAcqTime = System.currentTimeMillis();
-               running = false;
                status = stepFunction.apply(status);
-               running = true;
                status.newStatusMessage(
                      String.format("Finished time step %d of %d", i + 1, settings.numFrames));
             }
             currentIteration = 0;
-            running = false;
             return status;
          }
       };

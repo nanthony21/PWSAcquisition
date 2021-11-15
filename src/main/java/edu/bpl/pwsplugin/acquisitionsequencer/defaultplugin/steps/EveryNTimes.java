@@ -25,6 +25,7 @@ import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.EveryNTimesFactory.EveryNTimesSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import java.util.List;
@@ -32,25 +33,20 @@ import java.util.List;
 /**
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public class EveryNTimes extends ContainerStep<SequencerSettings.EveryNTimesSettings> {
+public class EveryNTimes extends ContainerStep<EveryNTimesSettings> {
 
    int iteration = 0;
    int simulatedIteration = 0;
 
    public EveryNTimes() {
-      super(new SequencerSettings.EveryNTimesSettings(), DefaultSequencerPlugin.Type.EVERYN.name());
-   }
-
-   @Override
-   public boolean isRunning() {
-      return false;
+      super(new EveryNTimesSettings(), DefaultSequencerPlugin.Type.EVERYN.name());
    }
 
    @Override
    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
       SequencerFunction stepFunction = super.getSubstepsFunction(callbacks);
       iteration = 0; //initialize
-      SequencerSettings.EveryNTimesSettings settings = this.settings;
+      EveryNTimesSettings settings = this.settings;
       return new SequencerFunction() {
          @Override
          public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {

@@ -26,6 +26,7 @@ import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.PauseFactory.PauseStepSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import java.awt.Dialog;
@@ -48,20 +49,15 @@ import net.miginfocom.swing.MigLayout;
 /**
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public class PauseStep extends EndpointStep<SequencerSettings.PauseStepSettings> {
+public class PauseStep extends EndpointStep<PauseStepSettings> {
 
    public PauseStep() {
-      super(new SequencerSettings.PauseStepSettings(), DefaultSequencerPlugin.Type.PAUSE.name());
-   }
-
-   @Override
-   public boolean isRunning() {
-      return false;
+      super(new PauseStepSettings(), DefaultSequencerPlugin.Type.PAUSE.name());
    }
 
    @Override
    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
-      SequencerSettings.PauseStepSettings settings = this.settings;
+      PauseStepSettings settings = this.settings;
       return new SequencerFunction() {
          @Override
          public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {

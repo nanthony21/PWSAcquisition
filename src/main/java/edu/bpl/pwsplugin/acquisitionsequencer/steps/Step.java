@@ -52,6 +52,7 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
    private final String stepType;
    private static final AtomicInteger COUNTER = new AtomicInteger(); //This static counter makes sure that each Step object has it's own uid during runtime.
    private final Integer uid = COUNTER.getAndIncrement();
+   private boolean isRunning_ = false;
 
 
    /**
@@ -147,9 +148,7 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
     * Recieves a SimulatedStatus and returns the same object.
     */
    @FunctionalInterface
-   public interface SimFn extends Function<SimulatedStatus, SimulatedStatus> {
-
-   }
+   public interface SimFn extends Function<SimulatedStatus, SimulatedStatus> {}
 
    /**
     * Subclasses can override to define a callback function that will be run before each child step.
@@ -187,25 +186,15 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
             status = func.apply(status);
          }
          //Run the function for this step subclass.
+         isRunning_ = true;
          status = stepFunc.apply(status);
+         isRunning_ = false;
          status.coords().moveUpTree(); //Set the path back to where it was as we exit this step
          return status;
       };
    }
 
-   public void saveToJson(String savePath) throws IOException {
-      if (!savePath.endsWith(".pwsseq")) {
-         savePath = savePath + ".pwsseq"; //Make sure the extension is there.
-      }
-      try (FileWriter writer = new FileWriter(
-            savePath)) { //Writer is automatically closed at the end of this statement.
-         Gson gson = GsonUtils.getGson();
-         String json = gson.toJson(this);
-         writer.write(json);
-      }
-   }
-
-   public abstract boolean isRunning();
+   public final boolean isRunning() { return isRunning_; }
 }
 
 

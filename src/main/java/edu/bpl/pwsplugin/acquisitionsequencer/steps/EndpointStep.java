@@ -25,11 +25,10 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 
 
 /**
+ * A `Step` which is an endpoint (does not support containing any substeps
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public abstract class EndpointStep<T extends JsonableParam> extends Step<T> {
-
-   //A `Step` which is an endpoint (does not support containing any substeps
    public EndpointStep(T settings, String type) {
       super(settings, type);
       this.setAllowsChildren(false);
