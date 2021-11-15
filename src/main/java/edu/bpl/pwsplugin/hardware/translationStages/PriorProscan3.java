@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class PriorProscan3 extends TranslationStage1d {
 
-   public PriorProscan3(TranslationStage1dSettings settings) throws Device.IDException {
+   public PriorProscan3(TranslationStage1dSettings settings)  {
       super(settings);
    }
 

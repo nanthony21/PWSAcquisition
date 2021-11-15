@@ -48,7 +48,7 @@ public class NikonTI_zStage extends TranslationStage1d {
 
 
    public NikonTI_zStage(TranslationStage1dSettings settings)
-         throws MMDeviceException, IDException {
+         throws MMDeviceException {
       super(settings);
       try {
          String nikonHub = null;

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class KuriosLCTF extends DefaultTunableFilter {
 
-   public KuriosLCTF(TunableFilterSettings settings) throws Device.IDException {
+   public KuriosLCTF(TunableFilterSettings settings)  {
       super(settings, "Wavelength");
    }
 

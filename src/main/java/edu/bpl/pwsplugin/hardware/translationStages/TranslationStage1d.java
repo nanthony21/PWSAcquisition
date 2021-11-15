@@ -44,13 +44,8 @@ public abstract class TranslationStage1d implements Device {
    public void initialize() {
    } //Nothing to do here
 
-   public TranslationStage1d(TranslationStage1dSettings settings) throws IDException {
+   public TranslationStage1d(TranslationStage1dSettings settings) {
       this.settings = settings;
-      if (!this.identify()) {
-         throw new Device.IDException(
-               String.format("Failed to identify class %s for device name %s",
-                     this.getClass().toString(), settings.deviceName));
-      }
    }
 
    public abstract double getPosUm() throws MMDeviceException;

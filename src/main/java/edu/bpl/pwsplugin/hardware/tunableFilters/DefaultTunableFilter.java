@@ -19,15 +19,10 @@ public abstract class DefaultTunableFilter implements TunableFilter {
    private final String wvProp;
 
    public DefaultTunableFilter(TunableFilterSettings settings, String wvPropertyLabel)
-         throws Device.IDException {
+          {
       _settings = settings;
       this.devName = settings.name;
       this.wvProp = wvPropertyLabel;
-      if (!this.identify()) {
-         throw new Device.IDException(
-               String.format("Failed to identify class %s for device name %s",
-                     this.getClass().toString(), settings.name));
-      }
    }
 
    @Override

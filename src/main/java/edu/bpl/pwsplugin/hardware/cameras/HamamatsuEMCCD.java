@@ -8,7 +8,7 @@ import java.util.List;
 
 public class HamamatsuEMCCD extends DefaultCamera {
 
-   public HamamatsuEMCCD(CamSettings settings) throws Device.IDException {
+   public HamamatsuEMCCD(CamSettings settings) {
       super(settings);
    }
 
