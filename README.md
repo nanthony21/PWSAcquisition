@@ -25,8 +25,8 @@ Additional hardware abstraction extends Micro-Manager's built-in device interfac
 This plugin appears as a panel in the "Image Inspector". It provides a graph of image sharpness vs Z
 position. This helps with the vital task of achieving precisely focused images before PWS acquisition.
 
-#
-API documentation can be found [here](https://nanthony21.github.io/PWSAcquisition/)
+# Documentation
+API documentation can be found [here](https://nanthony21.github.io/PWSAcquisition/).
 
 # Dependencies  
 The plugins included in this repository have a few dependencies that are not included with Micro-Manager:
