@@ -37,7 +37,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public class ZStackFactory extends StepFactory {
+public class ZStackFactory implements StepFactory {
 
    @Override
    public BuilderJPanel<?> createUI() {

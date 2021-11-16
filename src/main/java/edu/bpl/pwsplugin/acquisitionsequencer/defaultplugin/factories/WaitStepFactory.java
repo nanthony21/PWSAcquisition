@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.SpinnerNumberModel;
 import net.miginfocom.swing.MigLayout;
 
-public class WaitStepFactory extends StepFactory {
+public class WaitStepFactory implements StepFactory {
 
    @Override
    public BuilderJPanel<?> createUI() {

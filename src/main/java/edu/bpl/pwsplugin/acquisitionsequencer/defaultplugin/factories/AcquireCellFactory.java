@@ -34,7 +34,7 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 /**
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public class AcquireCellFactory extends StepFactory {
+public class AcquireCellFactory implements StepFactory {
 
    @Override
    public BuilderJPanel<?> createUI() {

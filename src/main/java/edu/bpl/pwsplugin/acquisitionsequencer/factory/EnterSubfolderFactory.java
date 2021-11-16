@@ -38,7 +38,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public class EnterSubfolderFactory extends StepFactory {
+public class EnterSubfolderFactory implements StepFactory {
 
    @Override
    public BuilderJPanel<?> createUI() {

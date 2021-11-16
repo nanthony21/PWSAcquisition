@@ -32,18 +32,37 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
  *
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public abstract class StepFactory {
+public interface StepFactory {
 
-   //A factory to provide access to a `Step` class, a JsonableParam settings class, and a UI JPanel to adjust the settings. The `Step` must have a no-args constructor to work with the GSON type adapter.
-   public abstract BuilderJPanel<?> createUI();
+   /**
+    *
+    * @return A User interface for generating/displaying settings for the `Step`
+    */
+   BuilderJPanel<?> createUI();
 
-   public abstract Class<? extends JsonableParam> getSettings();
+   /**
+    *
+    * @return The class that acts as a container for settings to initialize the `Step`
+    */
+   Class<? extends JsonableParam> getSettings();
 
-   public abstract Step<?> createStep();
+   /**
+    *
+    * @return A new instance of the `Step`
+    */
+   Step<?> createStep();
 
-   public abstract String getDescription();
+   /**
+    *
+    * @return A text description of what the `Step` does.
+    */
+   String getDescription();
 
-   public abstract String getName();
+   /**
+    *
+    * @return A name ot refer to the `Step` by.
+    */
+   String getName();
 
-   public abstract String getCategory();
+   String getCategory();
 }

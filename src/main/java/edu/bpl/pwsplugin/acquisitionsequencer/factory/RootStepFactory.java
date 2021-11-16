@@ -40,7 +40,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public class RootStepFactory extends StepFactory {
+public class RootStepFactory implements StepFactory {
 
    //Should only exist once as the root of each experiment, sets the needed root parameters.
    @Override

@@ -34,7 +34,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public class EveryNTimesFactory extends StepFactory {
+public class EveryNTimesFactory implements StepFactory {
 
    @Override
    public BuilderJPanel<?> createUI() {

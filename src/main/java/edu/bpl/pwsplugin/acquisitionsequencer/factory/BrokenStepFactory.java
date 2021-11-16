@@ -30,11 +30,11 @@ import javax.swing.JLabel;
 import net.miginfocom.swing.MigLayout;
 
 /**
+ * A step only used for a placeholder when we unsucessfully try to load a step.
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public class BrokenStepFactory extends StepFactory {
+public class BrokenStepFactory implements StepFactory {
 
-   //A step only used for a placeholder when we unsucessfully try to load a step.
    @Override
    public BuilderJPanel<?> createUI() {
       return new BrokenStepUI();

@@ -35,7 +35,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public class PauseFactory extends StepFactory {
+public class PauseFactory implements StepFactory {
 
    @Override
    public BuilderJPanel<?> createUI() {

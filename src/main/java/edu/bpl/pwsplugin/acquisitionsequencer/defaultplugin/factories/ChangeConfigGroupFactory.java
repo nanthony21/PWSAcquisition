@@ -39,7 +39,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public class ChangeConfigGroupFactory extends StepFactory {
+public class ChangeConfigGroupFactory implements StepFactory {
 
    @Override
    public BuilderJPanel<?> createUI() {

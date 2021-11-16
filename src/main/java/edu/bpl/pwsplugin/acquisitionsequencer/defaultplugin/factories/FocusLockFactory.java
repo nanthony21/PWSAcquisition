@@ -37,7 +37,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public class FocusLockFactory extends StepFactory {
+public class FocusLockFactory implements StepFactory {
 
    @Override
    public BuilderJPanel<?> createUI() {

@@ -36,7 +36,7 @@ import org.micromanager.internal.positionlist.PositionListDlg;
 /**
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public class AcquireFromPositionListFactory extends StepFactory {
+public class AcquireFromPositionListFactory implements StepFactory {
 
    @Override
    public BuilderJPanel<?> createUI() {

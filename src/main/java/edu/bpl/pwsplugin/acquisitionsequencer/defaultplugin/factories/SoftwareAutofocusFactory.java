@@ -34,7 +34,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public class SoftwareAutofocusFactory extends StepFactory {
+public class SoftwareAutofocusFactory implements StepFactory {
 
    @Override
    public BuilderJPanel<?> createUI() {

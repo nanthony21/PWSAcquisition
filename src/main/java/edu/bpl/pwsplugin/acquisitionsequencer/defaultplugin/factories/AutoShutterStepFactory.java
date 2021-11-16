@@ -42,7 +42,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public class AutoShutterStepFactory extends StepFactory {
+public class AutoShutterStepFactory implements StepFactory {
 
    //Should only exist once as the root of each experiment, sets the needed root parameters.
    @Override

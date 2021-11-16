@@ -46,23 +46,6 @@ public class ImgCornerAutofocus {
             rois_.put(corner, manager.getCornerRoi(corner));
         }
     }
-
-
-    /*
-    public Map<Corners, Double> evaluateGradient(Image img) {
-
-        for (Map.Entry<Corners, Rectangle> entry : rois_.entrySet()) {
-            proc.setRoi(entry.getValue());
-            ImageProcessor subProc = proc.crop();
-        }        
-        Map<Corners, Double> sharpMap = new HashMap<>();
-        for (Map.Entry<Corners, Rectangle> entry : rois_.entrySet()) {
-            double sharpness = evaluator_.evaluate(img, entry.getValue());
-            sharpMap.put(entry.getKey(), sharpness);
-        }
-        return sharpMap;
-    } 
-    */
     
     public double fullFocus() {
         return 0;
