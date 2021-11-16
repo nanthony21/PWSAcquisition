@@ -46,7 +46,7 @@ public class ZStackFactory extends StepFactory {
 
    @Override
    public Class<? extends JsonableParam> getSettings() {
-      return SequencerSettings.ZStackSettings.class;
+      return ZStackFactory.ZStackSettings.class;
    }
 
    @Override
@@ -68,10 +68,19 @@ public class ZStackFactory extends StepFactory {
    public String getCategory() {
       return "Sequencing";
    }
+
+   public static class ZStackSettings extends JsonableParam {
+
+      public double intervalUm = 1.0;
+      public int numStacks = 2;
+      public boolean absolute = false;
+      public double startingPosition = 0; //Only used if absolute is true
+   }
+
 }
 
 
-class ZStackUI extends BuilderJPanel<SequencerSettings.ZStackSettings> {
+class ZStackUI extends BuilderJPanel<ZStackFactory.ZStackSettings> {
 
    private final ImprovedComponents.Spinner intervalUm = new ImprovedComponents.Spinner(
          new SpinnerNumberModel(1.0, -100.0, 100.0, 0.5));
@@ -85,7 +94,7 @@ class ZStackUI extends BuilderJPanel<SequencerSettings.ZStackSettings> {
    private final JButton absolute = new JButton(ABSOLUTE);
 
    public ZStackUI() {
-      super(new MigLayout(), SequencerSettings.ZStackSettings.class);
+      super(new MigLayout(), ZStackFactory.ZStackSettings.class);
 
       //Layout
       //add(new JLabel("Stage:"), "gapleft push");
@@ -125,8 +134,8 @@ class ZStackUI extends BuilderJPanel<SequencerSettings.ZStackSettings> {
     }*/
 
    @Override
-   public SequencerSettings.ZStackSettings build() {
-      SequencerSettings.ZStackSettings settings = new SequencerSettings.ZStackSettings();
+   public ZStackFactory.ZStackSettings build() {
+      ZStackFactory.ZStackSettings settings = new ZStackFactory.ZStackSettings();
       settings.numStacks = (Integer) numStacks.getValue();
       settings.intervalUm = (Double) intervalUm.getValue();
       settings.startingPosition = (Double) startingPosition
@@ -137,7 +146,7 @@ class ZStackUI extends BuilderJPanel<SequencerSettings.ZStackSettings> {
    }
 
    @Override
-   public void populateFields(SequencerSettings.ZStackSettings settings) {
+   public void populateFields(ZStackFactory.ZStackSettings settings) {
       numStacks.setValue(settings.numStacks);
       intervalUm.setValue(settings.intervalUm);
       startingPosition.setValue(settings.startingPosition);

@@ -32,42 +32,28 @@ import java.util.function.Function;
  */
 public interface TunableFilter extends Device {
 
-   public void setWavelength(int wavelength) throws MMDeviceException;
+   void setWavelength(int wavelength) throws MMDeviceException;
 
-   public int getWavelength() throws MMDeviceException;
+   int getWavelength() throws MMDeviceException;
 
-   public boolean supportsSequencing();
+   boolean supportsSequencing();
 
-   public int getMaxSequenceLength() throws MMDeviceException;
+   int getMaxSequenceLength() throws MMDeviceException;
 
-   public void loadSequence(int[] wavelengthSequence) throws MMDeviceException;
+   void loadSequence(int[] wavelengthSequence) throws MMDeviceException;
 
-   public void startSequence() throws MMDeviceException;
+   void startSequence() throws MMDeviceException;
 
-   public void stopSequence() throws MMDeviceException;
+   void stopSequence() throws MMDeviceException;
 
-   public boolean isBusy() throws MMDeviceException;
+   boolean isBusy() throws MMDeviceException;
 
-   public double getDelayMs() throws MMDeviceException;
+   double getDelayMs() throws MMDeviceException;
 
-   public TunableFilterSettings getSettings();
-            
-    /*public static TunableFilter getInstance(TunableFilterSettings settings) {
-        if (null == settings.filterType) {
-            throw new RuntimeException("This shouldn't ever happen.");
-        } else switch (settings.filterType) {
-            case VARISPECLCTF:
-                return new VarispecLCTF(settings);
-            case KURIOSLCTF:
-                return new KuriosLCTF(settings);
-            case Simulated:
-                return new SimulatedFilter(settings);
-            default:
-                return null; //This shouldn't ever happen.
-        }
-    }*/
+   TunableFilterSettings getSettings();
 
-   public static TunableFilter getAutomaticInstance(TunableFilterSettings settings) {
+
+   static TunableFilter getAutomaticInstance(TunableFilterSettings settings) {
       Function<String, TunableFilterSettings> generator = (devName) -> {
          TunableFilterSettings sets = (TunableFilterSettings) settings.copy();
          sets.name = devName;
@@ -87,7 +73,7 @@ public interface TunableFilter extends Device {
       return finder.getAutoInstance(settings.name);
    }
 
-   public enum Types {
+   enum Types {
       VARISPECLCTF,
       KURIOSLCTF,
       Simulated,

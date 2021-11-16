@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class XCite120LED extends DefaultIlluminator {
 
-   public XCite120LED(IlluminatorSettings settings) throws Device.IDException {
+   public XCite120LED(IlluminatorSettings settings)  {
       super(settings);
    }
 

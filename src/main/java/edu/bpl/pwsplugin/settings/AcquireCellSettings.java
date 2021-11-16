@@ -26,13 +26,11 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Contains all settings for a single "Cell" folder acquisition. Can include
+ *     One PWS acquisition, one Dynamics acquisition, and multiple fluorescence acquisitions.
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class AcquireCellSettings extends JsonableParam {
-    /*Contains all settings for a single "Cell" folder acquisition. Can include
-    One PWS acquisition, one Dynamics acquisition, and multiple fluorescence acquisitions.
-    */
-
    public boolean pwsEnabled = true;
    public PWSSettings pwsSettings = new PWSSettings();
 
@@ -42,9 +40,12 @@ public class AcquireCellSettings extends JsonableParam {
    public boolean fluorEnabled = true;
    public List<FluorSettings> fluorSettings = Arrays.asList(new FluorSettings());
 
-
+   /**
+    * This convenience function is used to generate the default settings for various systems used by Northwestern.
+    * @param sys
+    * @return
+    */
    public static AcquireCellSettings getDefaultSettings(PWSSettingsConsts.Systems sys) {
-      //This convenience function is used to generate the default settings for various systems used by Northwestern.
       AcquireCellSettings settings = new AcquireCellSettings();
       PWSSettings pwsSettings = settings.pwsSettings;
       DynSettings dynSettings = settings.dynSettings;

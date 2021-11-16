@@ -26,61 +26,75 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.function.Function;
 import mmcorej.DeviceType;
+import org.micromanager.internal.utils.ReportingUtils;
 
 /**
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public interface Device {
 
-   public boolean identify(); //Return true if the settings indicate a device that is supported by this class.
+   /**
+    * Return true if the settings indicate a device that is supported by this class.
+    * @return
+    */
+   boolean identify();
 
-   public List<String> validate(); //Return a list of strings for every error detected in the configuration. return empty list if no errors found.
+   /**
+    * Return a list of strings for every error detected in the configuration. return empty list if no errors found.
+    * @return
+    */
+   List<String> validate();
 
-   public void initialize() throws MMDeviceException; // One time initialization of device
+   /**
+    *  One time initialization of device
+    * @throws MMDeviceException
+    */
+   void initialize() throws MMDeviceException;
 
-   public void activate()
-         throws
-         MMDeviceException; //Make sure this device is ready for usage, may be run many times.
+   /**
+    * Make sure this device is ready for usage, may be run many times.
+    * @throws MMDeviceException
+    */
+   void activate() throws MMDeviceException;
 
-   public static class IDException extends Exception {
-
-      public IDException(String s) {
-         super(s);
-      }
-   }
-
-   public static class AutoFinder<T extends Device, S> {
+   class AutoFinder<T extends Device, S> {
 
       private final Class<? extends T>[] subClasses;
       private final Class settingClass;
       private final Function<String, S> sGen;
 
-      public AutoFinder(Class settingsClass, Function<String, S> settingsGenerator,
+      /**
+       *
+       * @param settingsClass
+       * @param settingsGenerator
+       * @param clazz
+       */
+      public AutoFinder(Class<?> settingsClass, Function<String, S> settingsGenerator,
             Class<? extends T>... clazz) {
-         //In order for this to work the `clazz` classes must throw an IDException from the constructor if the device is not recognized.
          subClasses = clazz;
          settingClass = settingsClass;
          sGen = settingsGenerator;
       }
 
+      /**
+       * This is called from within `getAutomaticInstance`. attempts instantiating subclasses for `devName`.
+       * If it isn't recognized then we continue searching. Any other exception gets raised.
+       * @param devName
+       * @return
+       */
       public T getAutoInstance(String devName) {
-         //this is called from within `getAutomaticInstance`. attempts instantiating subclasses for `devName`.
-         //If it isn't recognized then we get an `IDException` and continue searching. Any other exception gets raised.
          S settings = sGen.apply(devName);
          for (Class<? extends T> clz : subClasses) {
             T device;
             try {
                device = (T) clz.getDeclaredConstructor(settingClass).newInstance(settings);
-            } catch (InvocationTargetException e) {
-               if (e.getCause() instanceof Device.IDException) {
-                  continue; //This just means the device wasn't identified. Try the next device
-               } else {
-                  throw new RuntimeException(e.getCause());
+               if (!device.identify()) {
+                  continue; // The device didn't detect itself in the configuration.
                }
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException me) {
+            } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException me) {
                throw new RuntimeException(me);
             }
-            Globals.mm().logs().logMessage(
+            ReportingUtils.logMessage(
                   String.format("Autofinder found device of type %s for device label %s.",
                         device.getClass().toString(), devName));
             return device; //We only get this far if the object successfully initializes.
@@ -88,15 +102,19 @@ public interface Device {
          return null; //Nothing was identified.
       }
 
+      /**
+       * Detect which device is connected automatically, assumes that only one is connected.
+       * @param dType
+       * @return
+       */
       public T scanAllDevices(DeviceType dType) {
-         //Detect which device is connected automatically, assumes that only one is connected.
          for (String devLabel : Globals.core().getLoadedDevicesOfType(dType)) {
             T device = getAutoInstance(devLabel);
             if (device != null) {
                return device;
             }
          }
-         Globals.mm().logs().logMessage("Autofinder found no devices.");
+         ReportingUtils.logMessage("Autofinder found no devices.");
          return null; //Nothing was identified.
       }
    }

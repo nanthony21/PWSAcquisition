@@ -14,8 +14,10 @@ import org.micromanager.data.internal.DefaultMetadata;
 import org.micromanager.internal.propertymap.PropertyMapJSONSerializer;
 import org.micromanager.internal.utils.ReportingUtils;
 
-
-public class MetadataBase { //All images should have this metadata.
+/**
+ * Basic metadata that all images should have.
+ */
+public class MetadataBase {
 
    private final List<Double> linearityPoly;
          //A polynomial describing how to transform from camera counts to intensity. Most, but not all, cameras are linera so this isn't needed.
@@ -47,6 +49,10 @@ public class MetadataBase { //All images should have this metadata.
 
    }
 
+   /**
+    * Copy Constructor
+    * @param base The metadata to create a copy of
+    */
    protected MetadataBase(MetadataBase base) {
       this.linearityPoly = base.linearityPoly;
       this.system = base.system;
@@ -65,11 +71,11 @@ public class MetadataBase { //All images should have this metadata.
          throw new RuntimeException(e);
       }
    }
-    
-    /*public final List<Double> linearityPoly() { return linearityPoly; }
-    public final String systemName() { return system; }
-    public final Integer darkCounts() { return darkCounts; }*/
 
+   /**
+    * Convert this object to a json representation.
+    * @return A JSONObject with all the metadata.
+    */
    public JsonObject toJson() {
       JsonObject md = new JsonObject();
       if (this.linearityPoly.size() > 0) {

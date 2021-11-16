@@ -46,7 +46,7 @@ public class NikonTI2_zStage extends TranslationStage1d {
    private final static double ESCAPE_POSITION = 500.; // Hardcoded z position to move to during escape.
 
    public NikonTI2_zStage(TranslationStage1dSettings settings)
-         throws MMDeviceException, IDException {
+         throws MMDeviceException {
       super(settings);
       Globals.logger().logDebug("Creating new instance of NikonTI2");
       try {

@@ -9,22 +9,9 @@ import java.util.function.Function;
 
 public interface Illuminator extends Device {
 
-   public void setShutter(boolean on) throws MMDeviceException;
-    
-    /*public static Illuminator getInstance(IlluminatorSettings settings) {
-        if (null == settings.illuminatorType) {
-            throw new RuntimeException("Programming Error: Illumator type " + settings.illuminatorType + " is not supported.");
-        } else switch (settings.illuminatorType) {
-            case XCite120LED:
-                return new XCite120LED(settings);
-            case Simulated:
-                return new SimulatedIlluminator(settings);
-            default:
-                throw new RuntimeException("Programming Error: Illumator type " + settings.illuminatorType + " is not supported.");
-        }
-    }*/
+   void setShutter(boolean on) throws MMDeviceException;
 
-   public static Illuminator getAutomaticInstance(IlluminatorSettings settings) {
+   static Illuminator getAutomaticInstance(IlluminatorSettings settings) {
       Function<String, IlluminatorSettings> generator = (devName) -> {
          IlluminatorSettings sets = (IlluminatorSettings) settings.copy();
          sets.name = devName;
@@ -47,7 +34,7 @@ public interface Illuminator extends Device {
       return illum;
    }
 
-   public enum Types {
+   enum Types {
       XCite120LED,
       Simulated,
    }

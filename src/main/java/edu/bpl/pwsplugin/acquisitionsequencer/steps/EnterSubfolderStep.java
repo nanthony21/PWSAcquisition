@@ -33,6 +33,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 /**
+ * Tells the sequencer to create and work within a new subfolder. The acquisition number is reset in the new folder.
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class EnterSubfolderStep extends ContainerStep<SequencerSettings.EnterSubfolderSettings> {
@@ -105,10 +106,4 @@ public class EnterSubfolderStep extends ContainerStep<SequencerSettings.EnterSub
       }
       return errs;
    }
-
-   @Override
-   public boolean isRunning() {
-      return false;
-   }
-
 }

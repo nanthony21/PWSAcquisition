@@ -34,10 +34,10 @@ import org.micromanager.PositionList;
 import org.micromanager.StagePosition;
 
 /**
+ * This class provides custom code related to the use of GSON to convert objects to/from JSON.
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class GsonUtils {
-   //This class provides custom code related to the use of GSON to convert objects to/from JSON.
 
    private static final GsonBuilder gsonBuilder = new GsonBuilder()
          .setPrettyPrinting() //This causes files to be saved in a more human-readable form.
@@ -54,17 +54,17 @@ public class GsonUtils {
    }
 }
 
-
+/**
+ * Type adapters for Micro-Manager classes. These specify how certain objects should be translated to/from JSON.
+ * Even though Gson can automatically Jsonify these classes, by using these custom
+ * TypeAdapters we protect a minor change in internal Micro-Manager code from breaking
+ * all of our configuration files. E.G. if something about one of the classes changes
+ * we would get errors when trying to load a configuration file. With these type adapter we will get a compile error here first.
+ * These adapters could potentially be replaced by adding Gson's @SerializedName annotation to the fields of the classes.
+ */
 class MMTypeAdapterFactory implements TypeAdapterFactory {
-   //Type adapters for Micro-Manager classes. These specify how certain objects should be translated to/from JSON.
-   //Even though Gson can automatically Jsonify these classes, by using these custom
-   //TypeAdapters we protect a minor change in internal Micro-Manager code from breaking
-   //all of our configuration files. E.G. if something about one of the classes changes
-   //we would get errors when trying to load a configuration file. With these type adapter we will get a compile error here first.
-   //These adapters could potentially be replaced by adding Gson's @SerializedName annotation to the fields of the classes.
 
    @Override
-   //@SuppressWarnings("unchecked") // we use a runtime check to make sure the 'T's equal
    public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
       if (PositionList.class
             .isAssignableFrom(type.getRawType())) { //Allow subtypes to use this factory.

@@ -38,13 +38,8 @@ public class DefaultIlluminator implements Illuminator {
    //Classes can inherit from this to implement more specific validation or other functionality.
    protected final IlluminatorSettings settings;
 
-   public DefaultIlluminator(IlluminatorSettings settings) throws Device.IDException {
+   public DefaultIlluminator(IlluminatorSettings settings)  {
       this.settings = settings;
-      if (!this.identify()) {
-         throw new Device.IDException(
-               String.format("Failed to identify class %s for device name %s",
-                     this.getClass().toString(), settings.name));
-      }
    }
 
    @Override

@@ -23,13 +23,11 @@ package edu.bpl.pwsplugin.settings;
 
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
-//Make sure that everything here that extends jsonableparam gets registered on startup in the plugin class.
-
+/**
+ * Make sure that everything here that extends jsonableparam gets registered on startup in the plugin class.
+ * These settings describe a single acquisition of PWS.
+ */
 public class PWSSettings extends JsonableParam {
-
-   /* These settings describe a single acquisition of PWS.
-
-    */
    public String imConfigName = ""; //The "Imaging Configuration" to be used.
    public int wvStart = 500; //The wavelengh (nm) to start scanning at.
    public int wvStop = 700; //the wavelength (nm) to stop scanning at.
@@ -50,5 +48,4 @@ public class PWSSettings extends JsonableParam {
       }
       return wvs;
    }
-
 }

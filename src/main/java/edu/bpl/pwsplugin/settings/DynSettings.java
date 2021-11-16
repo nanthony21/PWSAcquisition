@@ -24,11 +24,10 @@ package edu.bpl.pwsplugin.settings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /**
+ * Settings for a single Dynamics acquisition.
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class DynSettings extends JsonableParam {
-   //Settings for a single Dynamics acquisition.
-
    public String imConfigName = ""; //The name of the "Imaging Configuration" used.
    public double exposure = 50; //The exposure time of the camera in milliseconds.
    public int wavelength = 550;

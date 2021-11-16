@@ -25,6 +25,7 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.AutoShutterStepFactory.AutoShutterSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import edu.bpl.pwsplugin.hardware.illumination.Illuminator;
@@ -33,15 +34,10 @@ import java.util.List;
 /**
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public class AutoShutterStep extends ContainerStep<SequencerSettings.AutoShutterSettings> {
+public class AutoShutterStep extends ContainerStep<AutoShutterSettings> {
    public AutoShutterStep() {
-      super(new SequencerSettings.AutoShutterSettings(),
+      super(new AutoShutterSettings(),
             DefaultSequencerPlugin.Type.AUTOSHUTTER.name());
-   }
-
-   @Override
-   public boolean isRunning() {
-      return false;
    }
 
    @Override

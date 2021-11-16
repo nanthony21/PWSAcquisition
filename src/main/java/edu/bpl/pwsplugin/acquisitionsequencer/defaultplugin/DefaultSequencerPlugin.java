@@ -12,6 +12,7 @@ import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.AcquireFro
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.AcquireTimeSeriesFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.AutoShutterStepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.ChangeConfigGroupFactory;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.WaitStepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.EnterSubfolderFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.EveryNTimesFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.FocusLockFactory;
@@ -38,7 +39,8 @@ public class DefaultSequencerPlugin implements SequencerPlugin {
       PAUSE,
       EVERYN,
       ZSTACK,
-      AUTOSHUTTER;
+      AUTOSHUTTER,
+      WAIT;
    }
 
    @Override
@@ -65,6 +67,8 @@ public class DefaultSequencerPlugin implements SequencerPlugin {
                return new ZStackFactory();
             case "AUTOSHUTTER":
                return new AutoShutterStepFactory();
+            case "WAIT":
+               return new WaitStepFactory();
             default:
                throw new RuntimeException("Shouldn't have happened. Unhandled case.");
          }

@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class VarispecLCTF extends DefaultTunableFilter {
 
-   public VarispecLCTF(TunableFilterSettings settings) throws Device.IDException {
+   public VarispecLCTF(TunableFilterSettings settings)  {
       super(settings, "Wavelength");
    }
 

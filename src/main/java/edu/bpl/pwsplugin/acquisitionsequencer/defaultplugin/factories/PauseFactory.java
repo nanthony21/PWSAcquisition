@@ -22,8 +22,6 @@
 package edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories;
 
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.steps.PauseStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
@@ -46,7 +44,7 @@ public class PauseFactory extends StepFactory {
 
    @Override
    public Class<? extends JsonableParam> getSettings() {
-      return SequencerSettings.PauseStepSettings.class;
+      return PauseFactory.PauseStepSettings.class;
    }
 
    @Override
@@ -68,14 +66,18 @@ public class PauseFactory extends StepFactory {
    public String getCategory() {
       return "Utility";
    }
+
+   public static class PauseStepSettings extends JsonableParam {
+      public String message = "Paused";
+   }
 }
 
-class PauseStepUI extends BuilderJPanel<SequencerSettings.PauseStepSettings> {
+class PauseStepUI extends BuilderJPanel<PauseFactory.PauseStepSettings> {
 
    JTextArea message = new JTextArea();
 
    public PauseStepUI() {
-      super(new MigLayout("insets 0 0 0 0, fill"), SequencerSettings.PauseStepSettings.class);
+      super(new MigLayout("insets 0 0 0 0, fill"), PauseFactory.PauseStepSettings.class);
 
       //message.setPreferredSize(new Dimension(100, 100));
       message.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -91,14 +93,14 @@ class PauseStepUI extends BuilderJPanel<SequencerSettings.PauseStepSettings> {
    }
 
    @Override
-   public SequencerSettings.PauseStepSettings build() {
-      SequencerSettings.PauseStepSettings settings = new SequencerSettings.PauseStepSettings();
+   public PauseFactory.PauseStepSettings build() {
+      PauseFactory.PauseStepSettings settings = new PauseFactory.PauseStepSettings();
       settings.message = message.getText();
       return settings;
    }
 
    @Override
-   public void populateFields(SequencerSettings.PauseStepSettings settings) {
+   public void populateFields(PauseFactory.PauseStepSettings settings) {
       this.message.setText(settings.message);
    }
 }

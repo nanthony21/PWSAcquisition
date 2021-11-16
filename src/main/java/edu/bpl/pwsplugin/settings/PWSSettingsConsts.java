@@ -7,17 +7,15 @@ import edu.bpl.pwsplugin.hardware.settings.TunableFilterSettings;
 import edu.bpl.pwsplugin.utils.JsonableParam;
 
 /**
+ * this class contains constant information that is relevant to the settings
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class PWSSettingsConsts {
 
-   /* this class contains constant information that is relevant to the settings
-
+   /**
+    * this convenient function provides a single function to register all settings with GSON. make sure to call this somewhere during initialization.
     */
    public static void registerGson() {
-      /* this convenient function provides a single function to register all settings with GSON. make sure to call this somewhere during initialization.
-
-       */
       JsonableParam.registerClass(FluorSettings.class);
       JsonableParam.registerClass(PWSSettings.class);
       JsonableParam.registerClass(DynSettings.class);

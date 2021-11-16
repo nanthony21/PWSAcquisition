@@ -27,6 +27,7 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.List;
 
 /**
+ * Used as a placeholder in the event that a step fails to load from file successfully.
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class BrokenStep extends ContainerStep<JsonableParam> {
@@ -54,10 +55,5 @@ public class BrokenStep extends ContainerStep<JsonableParam> {
       List<String> errs = super.validate();
       errs.add("The BROKEN step is caused by an error and can not be run. It must be replaced.");
       return errs;
-   }
-
-   @Override
-   public boolean isRunning() {
-      return false;
    }
 }

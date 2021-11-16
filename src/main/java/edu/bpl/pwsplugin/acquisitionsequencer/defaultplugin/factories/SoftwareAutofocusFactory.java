@@ -23,8 +23,6 @@ package edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories;
 
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.steps.SoftwareAutofocus;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
@@ -45,7 +43,7 @@ public class SoftwareAutofocusFactory extends StepFactory {
 
    @Override
    public Class<? extends JsonableParam> getSettings() {
-      return SequencerSettings.SoftwareAutoFocusSettings.class;
+      return SoftwareAutofocusFactory.SoftwareAutoFocusSettings.class;
    }
 
    @Override
@@ -67,16 +65,20 @@ public class SoftwareAutofocusFactory extends StepFactory {
    public String getCategory() {
       return "Focus";
    }
+
+   public static class SoftwareAutoFocusSettings extends JsonableParam {
+      public double exposureMs = 30;
+   }
 }
 
-class SoftwareAutoFocusUI extends BuilderJPanel<SequencerSettings.SoftwareAutoFocusSettings> {
+class SoftwareAutoFocusUI extends BuilderJPanel<SoftwareAutofocusFactory.SoftwareAutoFocusSettings> {
 
    //JComboBox<String> afNames = new JComboBox<>();
    ImprovedComponents.FormattedTextField exposure = new ImprovedComponents.FormattedTextField(
          NumberFormat.getNumberInstance());
 
    public SoftwareAutoFocusUI() {
-      super(new MigLayout(), SequencerSettings.SoftwareAutoFocusSettings.class);
+      super(new MigLayout(), SoftwareAutofocusFactory.SoftwareAutoFocusSettings.class);
       //afNames.setModel(new DefaultComboBoxModel<>(Globals.mm().getAutofocusManager().getAllAutofocusMethods().toArray(new String[0])));
       //this.add(new JLabel("Autofocus Method:"));
       //this.add(afNames);
@@ -86,16 +88,16 @@ class SoftwareAutoFocusUI extends BuilderJPanel<SequencerSettings.SoftwareAutoFo
    }
 
    @Override
-   public SequencerSettings.SoftwareAutoFocusSettings build() {
-      SequencerSettings.SoftwareAutoFocusSettings afs =
-            new SequencerSettings.SoftwareAutoFocusSettings();
+   public SoftwareAutofocusFactory.SoftwareAutoFocusSettings build() {
+      SoftwareAutofocusFactory.SoftwareAutoFocusSettings afs =
+            new SoftwareAutofocusFactory.SoftwareAutoFocusSettings();
       //afs.afPluginName = (String) afNames.getSelectedItem();
       afs.exposureMs = ((Number) exposure.getValue()).doubleValue();
       return afs;
    }
 
    @Override
-   public void populateFields(SequencerSettings.SoftwareAutoFocusSettings settings) {
+   public void populateFields(SoftwareAutofocusFactory.SoftwareAutoFocusSettings settings) {
       //afNames.setSelectedItem(settings.afPluginName);
       exposure.setValue(settings.exposureMs);
    }

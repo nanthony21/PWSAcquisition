@@ -17,9 +17,12 @@ import org.micromanager.AutofocusPlugin;
 import org.micromanager.Studio;
 import org.micromanager.internal.utils.ReportingUtils;
 
+/**
+ * This class is used to provide access to various parts of the plugin in a way that is practically
+ * global. This stops us from having to pass them around as variables everywhere. Probably not a
+ * good idea in hindsight.
+ */
 public class Globals {
-   //This class is used to provide access to various parts of the plugin in a way that is practically global. This stops us from having to pass them around as variables everywhere.
-
    private static Globals instance = null; //A singleton instance of the class is stored here.
    private Studio studio_ = null;
    private AcquisitionManager acqMan_;
@@ -29,19 +32,20 @@ public class Globals {
    private SequencerUI.API sequencer;
    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-   private Globals() {
-   }
+   private Globals() {}
 
    public static Globals instance() {
-      //Stores a reference to the singleton instance of this class
       if (instance == null) {
          instance = new Globals();
       }
       return instance;
    }
 
+   /**
+    * This must be called before anything else to initialize all the variables.
+    * @param studio
+    */
    public static void init(Studio studio) {
-      //This must be called before anything else to initialize all the variables.
       instance().studio_ = studio;
       try {
          instance().logger_ = new PWSLogger(studio);
@@ -65,13 +69,20 @@ public class Globals {
       }
    }
 
-   public static void saveSettings(
-         PWSPluginSettings settings) { //Save plugin settings to Micro-Manager's settings system.
+   /**
+    * Save plugin settings to Micro-Manager's settings system.
+    * @param settings
+    */
+   public static void saveSettings(PWSPluginSettings settings) {
       Globals.mm().profile().getSettings(PWSPlugin.class)
             .putString("settings", settings.toJsonString());
    }
 
-   private static PWSPluginSettings loadSettings() { //Load and apply the saved settings.
+   /**
+    * Load the saved settings.
+    * @return The loaded settings.
+    */
+   private static PWSPluginSettings loadSettings() {
       String settingsStr = Globals.mm().profile().getSettings(PWSPlugin.class)
             .getString("settings", "");
       PWSPluginSettings set = null;
@@ -87,8 +98,11 @@ public class Globals {
       return set;
    }
 
-   public static void addPropertyChangeListener(
-         PropertyChangeListener l) { //Objects can listen for when a global property has been changed. Right now only `config` is handled.
+   /**
+    * Objects can listen for when a global property has been changed. Right now only `config` is handled.
+    * @param l The listener
+    */
+   public static void addPropertyChangeListener(PropertyChangeListener l) {
       instance().pcs.addPropertyChangeListener(l);
    }
 
@@ -124,8 +138,11 @@ public class Globals {
       return instance().sequencer;
    }
 
-   public static void setHardwareConfigurationSettings(
-         HWConfigurationSettings configg) { //Update the hardware configuration with new settings. Fires an event to property change listeners.
+   /**
+    * Update the hardware configuration with new settings. Fires an event to property change listeners.
+    * @param configg
+    */
+   public static void setHardwareConfigurationSettings(HWConfigurationSettings configg) {
       try {
          instance().config.dispose(); //If we don't do this then the object will still hang around.
          instance().config = new HWConfiguration(configg);
@@ -136,11 +153,13 @@ public class Globals {
 
    }
 
+   /**
+    * First do a coarse autofocus for maximum brightness. then do a software autofocus for sharpness.
+    * Return two doubles, the final autofocus `result` (should be a z value) and the `score`.
+    * Autofocus process will use the current camera exposure time.
+    * @return
+    */
    public static double[] softwareAutoFocus() {
-      // First do a coarse autofocus for maximum brightness. then do a software autofocus for sharpness.
-      // Return two doubles, the final autofocus `result` (should be a z value) and the `score`.
-      // Autofocus process will use the current camera exposure time.
-
       boolean liveWasOn = Globals.mm().live().isLiveModeOn();
       if (liveWasOn) {
          Globals.mm().live().setLiveModeOn(false);

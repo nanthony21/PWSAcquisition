@@ -12,15 +12,30 @@ import edu.bpl.pwsplugin.utils.JsonableParam;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Use this as the factory for any device implementation. Keeps track of all instances created in
+ * order to avoid creating multiple instances for the same physical device.
+ */
 public class HardwareManager {
    private final Map<JsonableParam, Device> map_ = new HashMap<>();
 
    private static final HardwareManager instance_ = new HardwareManager();
 
+   /**
+    * Singleton instance.
+    * @return
+    */
    public static HardwareManager instance() {
       return instance_;
    }
 
+   /**
+    * If a device for these settings has already been created then return that. Otherwise create
+    * a new one and cache it.
+    *
+    * @param settings The settings for the device to create.
+    * @return
+    */
    public Device getDevice(JsonableParam settings) {
       Device dev = map_.getOrDefault(settings, null);
       if (dev == null) {

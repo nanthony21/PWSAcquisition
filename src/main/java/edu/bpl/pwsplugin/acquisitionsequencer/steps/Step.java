@@ -44,79 +44,127 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 /**
+ * Base class for a single step in the acquisition sequencer.
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeNode {
-
-   //Base class for a single step in the acquisition sequencer.
    protected T settings;
    private final String stepType;
-   private static final AtomicInteger COUNTER = new AtomicInteger();
-         //This static counter makes sure that each Step object has it's own uid during runtime.
+   private static final AtomicInteger COUNTER = new AtomicInteger(); //This static counter makes sure that each Step object has it's own uid during runtime.
    private final Integer uid = COUNTER.getAndIncrement();
+   private boolean isRunning_ = false;
 
 
+   /**
+    * Create a mew instance.
+    * @param settings The settings for the instance of the step to be created
+    * @param type The string indicating the "Type" of this step. TODO why is this needed.
+    */
    public Step(T settings, String type) {
       super();
       this.stepType = type;
       this.setSettings(settings);
    }
 
-
-   public Step(Step step) { //copy constructor
+   /**
+    * Copy constructor
+    * @param step The step instance to copy
+    */
+   public Step(Step<T> step) { //copy constructor
       this((T) step.settings.copy(), step.stepType);
    }
 
+   /**
+    *
+    * @return The unique ID of this object. It is unique during a single session of the program. ID's reset when the software is restarted.
+    */
    public Integer getID() {
-      //Return the unique ID of this object. It is unique during a single session of the program. ID's reset when the software is restarted.
       return this.uid;
    }
 
+   /**
+    *
+    * @return A string indicating which type of sequence step this is.
+    */
    public final String getType() {
-      //An string indicating which type of sequence step this is.
       return stepType;
    }
 
+   /**
+    *
+    * @return Use json to safely copy the object
+    */
    @Override
-   public Step copy() {
-      //Use json to safely copy the object
+   public Step<T> copy() {
       Gson gson = GsonUtils.getGson();
-      return (Step) gson.fromJson(gson.toJson(this), this.getClass());
+      return (Step<T>) gson.fromJson(gson.toJson(this), this.getClass());
    }
 
+   /**
+    *
+    * @return A copy of the internal settings of this instance.
+    */
    public final T getSettings() {
       return (T) settings.copy();
    }
 
+   /**
+    * Set new settings for this step.
+    * @param settings
+    */
    public final void setSettings(T settings) {
       this.settings = settings;
    }
 
-   //Return  function to run for this step during execution. Does not include callbacks and mandatory changes to the status object which are handled automatically by `getFunction`. This should initialize any variables that are used for context during runtime.
+   /**
+    *    Return  function to run for this step during execution. Does not include callbacks and
+    *    mandatory changes to the status object which are handled automatically by `getFunction`.
+    *    This should initialize any variables that are used for context during runtime.
+    */
    protected abstract SequencerFunction getStepFunction(List<SequencerFunction> callbacks);
 
-   //return a function that simulates how folder usage and cell number changes through the run.
+   /**
+    * Return a function that simulates how folder usage and cell number changes through the run.
+    */
    protected abstract SimFn getSimulatedFunction();
 
-   public abstract List<String> validate(); //Return a list of any errors for this step.
+   /**
+    *
+    * @return A list of any errors for this step.
+    */
+   public abstract List<String> validate();
 
+   /**
+    * A single instance of this class is passed between the simulation functions to keep track of multiple parameters.
+    */
    public static class SimulatedStatus {
-      //A single instance of this class is passed between the simulation functions to keep track of multiple parameters.
       public Integer cellNum = 1; // The "Cell{X}" number that the acquisition is on.
       // A list of file paths that will be saved. Used to determine if there are any file conflicts.
       public List<String> requiredPaths = new ArrayList<>();
       public String workingDirectory = ""; // The current folder we are in.
    }
 
+   /**
+    * Recieves a SimulatedStatus and returns the same object.
+    */
    @FunctionalInterface
-   public static interface SimFn extends Function<SimulatedStatus, SimulatedStatus> {
+   public interface SimFn extends Function<SimulatedStatus, SimulatedStatus> {}
 
-   } //Recieves a SimulatedStatus and returns the same object.
-
+   /**
+    * Subclasses can override to define a callback function that will be run before each child step.
+    * For example, the optical focus lock checks that PFS is still locked. If not,
+    * then it goes through a search routine.
+    * @return
+    */
    protected SequencerFunction getCallback() {
       return null;
-   } //Subclasses can override to define a callback function that will be run before each child step. For example, the optical focus lock checks that PFS is still locked. If not, then it goes through search routine.
+   }
 
+   /**
+    *
+    * @param rcvdCallbacks  A list of callbacks which will run before this step's functionality runs.
+    * @return The function which will be executed to run this step.
+    */
    public final SequencerFunction getFunction(List<SequencerFunction> rcvdCallbacks) {
       final List<SequencerFunction> callbacks = new ArrayList<>(
             rcvdCallbacks); //To avoid confusion due to the mutable nature of the List we make sure that each time a sequencer function is created it has it's own copy of callbacks to work with, other wise all steps end up sharing a single callback list.
@@ -138,112 +186,15 @@ public abstract class Step<T extends JsonableParam> extends CopyableMutableTreeN
             status = func.apply(status);
          }
          //Run the function for this step subclass.
+         isRunning_ = true;
          status = stepFunc.apply(status);
+         isRunning_ = false;
          status.coords().moveUpTree(); //Set the path back to where it was as we exit this step
          return status;
       };
    }
 
-   public static void registerGsonType(SequencerFactoryManager sequencerFactoryManager) { //This must be called for GSON loading/saving to work.
-      //This custom adapter enables Steps to be Jsonified by GSON even though they have a circular parent/child reference.
-      TypeAdapterFactory factory = new TypeAdapterFactory() {
-         @Override
-         @SuppressWarnings("unchecked") // we use a runtime check to make sure the 'T's equal
-         public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-            if (Step.class.isAssignableFrom(type.getRawType())) { //Allow subtypes to use this factory.
-               return (TypeAdapter<T>) new StepTypeAdapter(gson, sequencerFactoryManager);
-            }
-            return null;
-         }
-      };
-
-      GsonUtils.builder().registerTypeAdapterFactory(factory);
-   }
-
-   public void saveToJson(String savePath) throws IOException {
-      if (!savePath.endsWith(".pwsseq")) {
-         savePath = savePath + ".pwsseq"; //Make sure the extension is there.
-      }
-      try (FileWriter writer = new FileWriter(
-            savePath)) { //Writer is automatically closed at the end of this statement.
-         Gson gson = GsonUtils.getGson();
-         String json = gson.toJson(this);
-         writer.write(json);
-      }
-   }
-
-   public abstract boolean isRunning();
+   public final boolean isRunning() { return isRunning_; }
 }
 
 
-class StepTypeAdapter extends TypeAdapter<Step> {
-
-   private final Gson gson;
-   private final SequencerFactoryManager sequencerFactoryManager;
-
-   public StepTypeAdapter(Gson gson, SequencerFactoryManager sequencerFactoryManager) {
-      this.gson = gson;
-      this.sequencerFactoryManager = sequencerFactoryManager;
-   }
-
-   @Override
-   public void write(JsonWriter out, Step step) throws IOException {
-      out.beginObject();
-      out.name("id");
-      out.value(step.getID());
-      out.name("stepType");
-      out.value(step.getType());
-      out.name("settings");
-      JsonableParam settings = step.getSettings();
-      gson.toJson(settings, settings.getClass(), out);
-      if (step.getAllowsChildren()) {
-         out.name("children");
-         gson.toJson(Collections.list(step.children()), List.class, out); // recursion!
-      }
-      // No need to write node.getParent(), it would lead to infinite recursion.
-      out.endObject();
-   }
-
-   @Override
-   public Step read(JsonReader in) throws IOException {
-      try {
-         in.beginObject();
-         if (!in.nextName().equals("id")) {
-            throw new IOException("Json Parse Error");
-         } //ID is determined at runtime don't load it.
-         int id = in.nextInt(); //read the id to get rid of it.
-         if (!in.nextName().equals("stepType")) {
-            throw new IOException("Json Parse Error");
-         } //This must be "stepType"
-         String stepType = in.nextString();
-         StepFactory factory = sequencerFactoryManager.getFactory(stepType);
-         Step step = (Step) factory.createStep();
-         if (!in.nextName().equals("settings")) {
-            throw new IOException("Json Parse Error");
-         }
-         JsonableParam settings = gson
-               .fromJson(in, factory.getSettings());
-         step.setSettings(settings);
-         if (step.getAllowsChildren()) {
-            if (!in.nextName().equals("children")) {
-               throw new IOException("Json Parse Error");
-            }
-            in.beginArray();
-            while (in.hasNext()) {
-               step.add(read(in)); // recursion! this did also set the parent of the child-node
-            }
-            in.endArray();
-         }
-         in.endObject();
-         return step;
-      } catch (IOException | JsonIOException | IllegalStateException ioe) {
-         while (in.hasNext()) {
-            in.skipValue();
-         } //Read out the rest of the failed json object before returning.
-         in.endObject();
-         //Rather than allow an exception to break the whole loading process just insert the
-         // special "Broken step" where the error occurred.
-         return (Step) SequencerConsts.getFactory(SequencerConsts.Type.BROKEN.name()).createStep();
-      }
-   }
-}

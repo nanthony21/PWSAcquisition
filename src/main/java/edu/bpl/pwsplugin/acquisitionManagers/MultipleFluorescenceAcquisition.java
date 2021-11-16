@@ -56,7 +56,7 @@ class MultipleFluorescenceAcquisition extends ListAcquisitionBase<FluorSettings>
    }
 
    @Override
-   protected void initializeAcquisitions(List<FluorSettings> settingsList) throws MMDeviceException {
+   protected void initializeAcquisitions() throws MMDeviceException {
 
       //Imaging configuration isn't set at this point. A single set of acquisitions may contain multiple imaging configurations so we need to consider initialization for each one.
       initialFilters = new HashMap<>();

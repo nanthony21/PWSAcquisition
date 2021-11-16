@@ -26,12 +26,12 @@ import edu.bpl.pwsplugin.utils.GsonUtils;
 import java.util.List;
 
 /**
+ * Metadata for a PWS measurement.
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class PWSMetadata extends MetadataBase {
 
-   private final List<Double> wavelengths;
-         //The wavelengths associated with each image in the image cube.
+   private final List<Double> wavelengths; //The wavelengths associated with each image in the image cube.
    private final Double exposure; //The exposure time that was used. milliseconds.
 
    public PWSMetadata(MetadataBase base, List<Double> wavelengths, Double exposure) {

@@ -26,6 +26,7 @@ import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.SoftwareAutofocusFactory.SoftwareAutoFocusSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.EndpointStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import java.util.ArrayList;
@@ -35,33 +36,25 @@ import org.micromanager.AutofocusPlugin;
 /**
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public class SoftwareAutofocus extends EndpointStep<SequencerSettings.SoftwareAutoFocusSettings> {
-   private boolean running = false;
+public class SoftwareAutofocus extends EndpointStep<SoftwareAutoFocusSettings> {
 
    public SoftwareAutofocus() {
-      super(new SequencerSettings.SoftwareAutoFocusSettings(),
+      super(new SoftwareAutoFocusSettings(),
             DefaultSequencerPlugin.Type.AF.name());
    }
 
    @Override
-   public boolean isRunning() {
-      return running;
-   }
-
-   @Override
    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
-      SequencerSettings.SoftwareAutoFocusSettings settings = this.settings;
+      SoftwareAutoFocusSettings settings = this.settings;
       return new SequencerFunction() {
          @Override
          public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-            running = true;
             Globals.core().setExposure(settings.exposureMs);
             double[] out = Globals.softwareAutoFocus();
             double z = out[0];
             double score = out[1];
             status.newStatusMessage(
                   String.format("Autofocus terminated at Z=%.2f with score=%.2f", z, score));
-            running = false;
             return status;
          }
       };

@@ -27,6 +27,7 @@ import edu.bpl.pwsplugin.acquisitionsequencer.factory.RootStepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 
 /**
+ * Without these step factories the system just doesn't work.
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class SequencerConsts {
@@ -51,11 +52,5 @@ public class SequencerConsts {
          }
       }
       throw new RuntimeException("Shouldn't get here.");
-   }
-
-   public static void registerGson() {
-      for (Type t : Type.values()) {
-         getFactory(t.name()).registerGson();
-      }
    }
 }

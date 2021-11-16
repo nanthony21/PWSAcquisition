@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class HamamatsuOrcaFlash2_8 extends DefaultCamera {
 
-   public HamamatsuOrcaFlash2_8(CamSettings settings) throws Device.IDException {
+   public HamamatsuOrcaFlash2_8(CamSettings settings)  {
       super(settings);
    }
 

@@ -67,8 +67,11 @@ public class PWSLogger {
       logAtLevel(msg, Level.MSG);
    }
 
+   /**
+    * Convert a throwable to a String trace and log it.
+    * @param e
+    */
    public void logError(Throwable e) { // Log an error
-      //Convert a throwable to a String trace and log it.
       String stackTrace = PWSLogger.getStackTraceAsString(e);
       this.logError(e.toString() + " in " + Thread.currentThread().toString() + LS + stackTrace);
    }
@@ -85,16 +88,24 @@ public class PWSLogger {
       logAtLevel(msg, Level.SEQUENCE);
    }
 
-   private String formatLine(String msg,
-         Level lvl) { //Decorate a line of text with other information
+   /**
+    * Decorate a line of text with other information
+    * @param msg
+    * @param lvl
+    * @return
+    */
+   private String formatLine(String msg, Level lvl) {
       String datetime = LocalDateTime.now().toString();
       String message = datetime + "::" + lvl.name() + "::" + msg + LS;
       return message;
    }
 
-
-   private synchronized void logAtLevel(String msg,
-         Level lvl) { //Other functions call this to perform the actual file writing.
+   /**
+    * Other functions call this to perform the actual file writing.
+    * @param msg
+    * @param lvl
+    */
+   private synchronized void logAtLevel(String msg, Level lvl) {
       String message = formatLine(msg, lvl);
       try {
          logWriter.write(message);
@@ -109,8 +120,11 @@ public class PWSLogger {
       }
    }
 
+   /**
+    * Close all files. Do this before the program exits to avoid weirdness with files.
+    * @throws Exception
+    */
    public synchronized void close() throws Exception {
-      //Close all files. Do this before the program exits to avoid weirdness with files.
       logWriter.close();
 
       if (this.mainCoreLogHandle != null) {
@@ -122,8 +136,11 @@ public class PWSLogger {
       }
    }
 
+   /**
+    * Close any additional log file that was created with `setAcquisitionPath`
+    * @throws Exception
+    */
    public synchronized void closeAcquisition() throws Exception {
-      //Close any additional log file that was created with `setAcquisitionPath`
       acqWriter.close();
       acqWriter = null;
 
@@ -132,8 +149,12 @@ public class PWSLogger {
       }
    }
 
+   /**
+    * Start an additional log file that saves directly to the acquisition data path.
+    * @param path
+    * @throws Exception
+    */
    public void setAcquisitionPath(Path path) throws Exception {
-      //Start an additional log file that saves directly to the acquisition data path.
       String holder = path.toString() + "\\LOGS";
       System.out.println(holder);
       File fileholder = new File(holder);
@@ -145,8 +166,12 @@ public class PWSLogger {
             .startSecondaryLogFile(Paths.get(holder, "CoreLog.txt").toString(), true);
    }
 
+   /**
+    * Convenience function to convert from a Throwable's stacktrace to a readable string.
+    * @param aThrowable
+    * @return
+    */
    private static String getStackTraceAsString(Throwable aThrowable) {
-      //Convenience function to convert from a Throwable's stacktrace to a readable string.
       String result = "";
       for (StackTraceElement line : aThrowable.getStackTrace()) {
          result += "  at " + line.toString() + "\n";
@@ -159,8 +184,10 @@ public class PWSLogger {
       }
    }
 
-
-   public enum Level { //The possible types of log message.
+   /**
+    * The possible types of log message.
+    */
+   public enum Level {
       MSG,
       DBG,
       ERR,

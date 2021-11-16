@@ -36,13 +36,8 @@ public abstract class DefaultCamera implements Camera {
 
    protected CamSettings settings;
 
-   public DefaultCamera(CamSettings settings) throws Device.IDException {
+   public DefaultCamera(CamSettings settings) {
       this.settings = settings;
-      if (!this.identify()) {
-         throw new Device.IDException(
-               String.format("Failed to identify class %s for device name %s",
-                     this.getClass().toString(), settings.name));
-      }
    }
 
    @Override

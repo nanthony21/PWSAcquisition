@@ -25,6 +25,7 @@ import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.ChangeConfigGroupFactory.ChangeConfigGroupSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.ContainerStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import java.util.ArrayList;
@@ -33,23 +34,18 @@ import java.util.List;
 /**
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
-public class ChangeConfigGroup extends ContainerStep<SequencerSettings.ChangeConfigGroupSettings> {
+public class ChangeConfigGroup extends ContainerStep<ChangeConfigGroupSettings> {
    private boolean running = false;
 
    public ChangeConfigGroup() {
-      super(new SequencerSettings.ChangeConfigGroupSettings(),
+      super(new ChangeConfigGroupSettings(),
             DefaultSequencerPlugin.Type.CONFIG.name());
-   }
-
-   @Override
-   public boolean isRunning() {
-      return running;
    }
 
    @Override
    public SequencerFunction getStepFunction(List<SequencerFunction> callbacks) {
       SequencerFunction subStepFunc = getSubstepsFunction(callbacks);
-      SequencerSettings.ChangeConfigGroupSettings settings = this.settings;
+      ChangeConfigGroupSettings settings = this.settings;
       return (status) -> {
          running = true;
          String origConfValue = Globals.core().getCurrentConfig(settings.configGroupName);

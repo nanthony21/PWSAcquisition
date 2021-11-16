@@ -23,8 +23,8 @@ package edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.steps;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
+import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.AcquireFromPositionListFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.IteratingContainerStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
@@ -38,20 +38,14 @@ import org.micromanager.PositionList;
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public class AcquireFromPositionList
-      extends IteratingContainerStep<SequencerSettings.AcquirePositionsSettings> {
+      extends IteratingContainerStep<AcquireFromPositionListFactory.AcquirePositionsSettings> {
 
    //Executes `step` at each position in the positionlist and increments the cell number each time.
    private Integer currentIteration = 0;
-   private boolean running = false;
 
    public AcquireFromPositionList() {
-      super(new SequencerSettings.AcquirePositionsSettings(),
+      super(new AcquireFromPositionListFactory.AcquirePositionsSettings(),
             DefaultSequencerPlugin.Type.POS.name());
-   }
-
-   @Override
-   public boolean isRunning() {
-      return running;
    }
 
    @Override
@@ -61,21 +55,14 @@ public class AcquireFromPositionList
       return (status) -> {
          //set timeout to 30 seconds. Otherwise we get an error if a position move takes greater than 5 seconds. (default timeout)
          Globals.core().setTimeoutMs(30000);
-         running = true;
-         currentIteration = 0;
-         for (int i = 0; i < list.getNumberOfPositions(); i++) {
-            currentIteration++;
-            MultiStagePosition pos = list.getPosition(i);
-            status.coords().setIterationOfCurrentStep(i);
+         for (int currentIteration = 0; currentIteration < list.getNumberOfPositions(); currentIteration++) {
+            MultiStagePosition pos = list.getPosition(currentIteration);
+            status.coords().setIterationOfCurrentStep(currentIteration);
             String label = pos.getLabel();
             status.newStatusMessage(String.format("Moving to position %s", label));
             TranslationStage1d zStage = Globals.getHardwareConfiguration().getActiveConfiguration().zStage();
-            Callable<Void> preMoveRoutine = () -> {
-               return null;
-            };
-            Callable<Void> postMoveRoutine = () -> {
-               return null;
-            };
+            Callable<Void> preMoveRoutine = () -> null;
+            Callable<Void> postMoveRoutine = () -> null;
             if (label.contains("-APFS-")) {
                //Turn off pfs before moving. after moving run autofocus to get back i the right range. then enable pfs again.
                preMoveRoutine = () -> {
@@ -117,14 +104,11 @@ public class AcquireFromPositionList
             //Yes, I know this is weird. It's a static method that needs a position and the core as input.
             MultiStagePosition.goToPosition(pos, Globals.core());
             postMoveRoutine.call();
-            running = false;
             status = stepFunction.apply(status);
-            running = true;
             //Just in case the substep took us to new positions we want to make sure to move back to our position to avoid confusion.
             MultiStagePosition.goToPosition(pos, Globals.core());
          }
          currentIteration = 0;
-         running = false;
          return status;
       };
    }

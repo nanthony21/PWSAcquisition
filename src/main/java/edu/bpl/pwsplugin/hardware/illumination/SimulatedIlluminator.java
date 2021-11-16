@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class SimulatedIlluminator extends DefaultIlluminator {
 
-   public SimulatedIlluminator(IlluminatorSettings settings) throws Device.IDException {
+   public SimulatedIlluminator(IlluminatorSettings settings)  {
       super(settings);
    }
 

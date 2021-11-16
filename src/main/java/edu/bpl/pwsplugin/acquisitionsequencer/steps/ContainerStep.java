@@ -31,23 +31,30 @@ import java.util.stream.Collectors;
 import javax.swing.tree.TreeNode;
 
 /**
+ * A `Step` that takes other `Step`s and wraps functionality around them.
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 public abstract class ContainerStep<T extends JsonableParam> extends Step<T> {
-   //A `Step` that takes other `Step`s and wraps functionality around them.
-
    public ContainerStep(T settings, String type) {
       super(settings, type);
    }
 
-   public ContainerStep(ContainerStep step) {
+   public ContainerStep(ContainerStep<T> step) {
       super(step);
    }
 
-   public final List<Step> getSubSteps() {
-      return (List<Step>) (List<? extends TreeNode>) Collections.list(this.children());
+   /**
+    *
+    * @return A list of the all of the steps that are direct children of this step. May be EndpointSteps or more ContainerSteps
+    */
+   public final List<Step<?>> getSubSteps() {
+      return (List<Step<?>>) (List<? extends TreeNode>) Collections.list(this.children());
    }
 
+   /**
+    * Make sure that the container step is not empty. This is not valid.
+    * @return A list of error strings.
+    */
    @Override
    public List<String> validate() {
       List<String> errs = new ArrayList<>();
@@ -57,10 +64,14 @@ public abstract class ContainerStep<T extends JsonableParam> extends Step<T> {
       return errs;
    }
 
-   protected final SequencerFunction getSubstepsFunction(
-         List<SequencerFunction> callbacks) { // Execute each substep in sequence
+   /**
+    * Return a function that will execute each substep function in sequence
+    * @param callbacks Callbacks passed from above that will be executed before each step function.
+    * @return A function that executes the child functions.
+    */
+   protected final SequencerFunction getSubstepsFunction(List<SequencerFunction> callbacks) {
       List<SequencerFunction> stepFunctions = new ArrayList<>();
-      for (Step substep : this.getSubSteps()) { //Pass callbacks on to child steps.
+      for (Step<?> substep : getSubSteps()) { //Pass callbacks on to child steps.
          stepFunctions.add(substep.getFunction(callbacks));
       }
       return new SequencerFunction() {
@@ -74,6 +85,10 @@ public abstract class ContainerStep<T extends JsonableParam> extends Step<T> {
       };
    }
 
+   /**
+    *
+    * @return A function that will call all substep simulation functions.
+    */
    protected SimFn getSubStepSimFunction() {
       List<SimFn> stepFunctions = this.getSubSteps().stream().map(Step::getSimulatedFunction)
             .collect(Collectors.toList());

@@ -29,14 +29,21 @@ import java.nio.file.Path;
 
 public class FileSpecs {
 
-   public enum Type { // The types of acquisitions that are supported.
+   /**
+    * The types of acquisitions that are supported.
+    */
+   public enum Type {
       DYNAMICS,
       PWS,
       FLUORESCENCE
    }
 
-   public static String getFilePrefix(
-         Type type) { //Files saved by this acquisition should be renamed to this prefix for easier identification.
+   /**
+    * Files saved by this acquisition should be renamed to this prefix for easier identification.
+    * @param type
+    * @return
+    */
+   public static String getFilePrefix(Type type) {
       switch (type) {
          case DYNAMICS:
             return "dyn";
@@ -49,8 +56,12 @@ public class FileSpecs {
             "Programming Error in getFilePrefix"); //If we get this far we forgot to handle a case.
    }
 
-   public static String getSubfolderName(
-         Type type) { //Files saved by this acquisition should be placed into a subfolder of the "CellX" folder by this name.
+   /**
+    * Files saved by this acquisition should be placed into a subfolder of the "CellX" folder by this name.
+    * @param type
+    * @return The subfolder name.
+    */
+   public static String getSubfolderName(Type type) {
       switch (type) {
          case DYNAMICS:
             return "Dynamics";
@@ -63,8 +74,13 @@ public class FileSpecs {
             "Programming Error in getSubfolderName"); //If we get this far we forgot to handle a case.
    }
 
-   public static Path getCellFolderName(Path dir,
-         int cellNum) { //Utility function to get the path to a main "CellX" folder.
+   /**
+    * Utility function to get the path to a main "CellX" folder.
+    * @param dir
+    * @param cellNum
+    * @return The file path to the acquisition folder.
+    */
+   public static Path getCellFolderName(Path dir, int cellNum) {
       return dir.resolve(String.format("Cell%d", cellNum));
    }
 }

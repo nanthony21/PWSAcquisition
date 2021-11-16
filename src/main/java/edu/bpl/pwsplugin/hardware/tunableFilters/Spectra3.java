@@ -37,14 +37,9 @@ public class Spectra3 implements TunableFilter {
       wvMap.put("NIR", 748);
    }
 
-   public Spectra3(TunableFilterSettings settings) throws Device.IDException {
+   public Spectra3(TunableFilterSettings settings)  {
       this._settings = settings;
       devName = settings.name;
-      if (!this.identify()) {
-         throw new Device.IDException(
-               String.format("Failed to identify class %s for device name %s",
-                     this.getClass().toString(), settings.name));
-      }
    }
 
    @Override

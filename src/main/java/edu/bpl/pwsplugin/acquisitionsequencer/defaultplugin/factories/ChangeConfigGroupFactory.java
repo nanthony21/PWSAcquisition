@@ -23,8 +23,6 @@ package edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories;
 
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.steps.ChangeConfigGroup;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
@@ -50,7 +48,7 @@ public class ChangeConfigGroupFactory extends StepFactory {
 
    @Override
    public Class<? extends JsonableParam> getSettings() {
-      return SequencerSettings.ChangeConfigGroupSettings.class;
+      return ChangeConfigGroupFactory.ChangeConfigGroupSettings.class;
    }
 
    @Override
@@ -74,17 +72,24 @@ public class ChangeConfigGroupFactory extends StepFactory {
    public String getCategory() {
       return "Utility";
    }
+
+   public static class ChangeConfigGroupSettings extends JsonableParam {
+
+      public String configGroupName;
+      public String configValue;
+      public boolean resetWhenFinished = true;
+   }
 }
 
 class ChangeConfigGroupUI extends
-      BuilderJPanel<SequencerSettings.ChangeConfigGroupSettings> implements ItemListener {
+      BuilderJPanel<ChangeConfigGroupFactory.ChangeConfigGroupSettings> implements ItemListener {
 
    JComboBox<String> configGroupName = new JComboBox<>();
    JComboBox<String> configValue = new JComboBox<>();
    JCheckBox resetWhenFinished = new JCheckBox("Recover original setting when finished.");
 
    public ChangeConfigGroupUI() {
-      super(new MigLayout("fillx"), SequencerSettings.ChangeConfigGroupSettings.class);
+      super(new MigLayout("fillx"), ChangeConfigGroupFactory.ChangeConfigGroupSettings.class);
 
       configGroupName.addItemListener(this);
 
@@ -105,16 +110,16 @@ class ChangeConfigGroupUI extends
    }
 
    @Override
-   public void populateFields(SequencerSettings.ChangeConfigGroupSettings settings) {
+   public void populateFields(ChangeConfigGroupFactory.ChangeConfigGroupSettings settings) {
       this.configGroupName.setSelectedItem(settings.configGroupName);
       this.configValue.setSelectedItem(settings.configValue);
       this.resetWhenFinished.setSelected(settings.resetWhenFinished);
    }
 
    @Override
-   public SequencerSettings.ChangeConfigGroupSettings build() {
-      SequencerSettings.ChangeConfigGroupSettings settings =
-            new SequencerSettings.ChangeConfigGroupSettings();
+   public ChangeConfigGroupFactory.ChangeConfigGroupSettings build() {
+      ChangeConfigGroupFactory.ChangeConfigGroupSettings settings =
+            new ChangeConfigGroupFactory.ChangeConfigGroupSettings();
       settings.configGroupName = (String) this.configGroupName.getSelectedItem();
       settings.configValue = (String) this.configValue.getSelectedItem();
       settings.resetWhenFinished = this.resetWhenFinished.isSelected();

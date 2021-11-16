@@ -34,27 +34,29 @@ import java.util.List;
  */
 public interface ImagingConfiguration {
 
-   public Camera camera();
+   Camera camera();
 
-   public Illuminator illuminator();
+   Illuminator illuminator();
 
-   //public ImagingConfigurationSettings settings();
+   boolean hasTunableFilter();
 
-   public boolean hasTunableFilter();
+   TunableFilter tunableFilter();
 
-   public TunableFilter tunableFilter();
+   List<String> validate() throws MMDeviceException;
 
-   public List<String> validate() throws MMDeviceException;
+   TranslationStage1d zStage();
 
-   public TranslationStage1d zStage();
+   void activateConfiguration() throws MMDeviceException;
 
-   public void activateConfiguration() throws MMDeviceException;
+   void deactivateConfiguration() throws MMDeviceException;
 
-   public void deactivateConfiguration() throws MMDeviceException;
+   /**
+    * The name of the configuration group used to control fluorescence filter. Return null if manual control is required.
+    * @return
+    */
+   String getFluorescenceConfigGroup();
 
-   public String getFluorescenceConfigGroup(); // The name of the configuration group used to control fluorescence filter. Return null if manual control is required.
-
-   public static ImagingConfiguration getInstance(ImagingConfigurationSettings settings)
+   static ImagingConfiguration getInstance(ImagingConfigurationSettings settings)
          throws MMDeviceException {
       if (null == settings.configType) {
          return null; //This shouldn't ever happen.
@@ -70,7 +72,7 @@ public interface ImagingConfiguration {
       }
    }
 
-   public enum Types {
+   enum Types {
       SpectralCamera,
       StandardCamera;
    }

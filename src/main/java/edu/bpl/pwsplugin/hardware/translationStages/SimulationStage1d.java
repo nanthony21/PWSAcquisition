@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class SimulationStage1d extends TranslationStage1d {
 
-   public SimulationStage1d(TranslationStage1dSettings settings) throws IDException {
+   public SimulationStage1d(TranslationStage1dSettings settings) {
       super(settings);
    }
 

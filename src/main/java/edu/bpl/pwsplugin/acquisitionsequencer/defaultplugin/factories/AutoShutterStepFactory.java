@@ -24,8 +24,6 @@ package edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.steps.AutoShutterStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
@@ -54,7 +52,7 @@ public class AutoShutterStepFactory extends StepFactory {
 
    @Override
    public Class<? extends JsonableParam> getSettings() {
-      return SequencerSettings.AutoShutterSettings.class;
+      return AutoShutterStepFactory.AutoShutterSettings.class;
    }
 
    @Override
@@ -76,9 +74,15 @@ public class AutoShutterStepFactory extends StepFactory {
    public String getCategory() {
       return "Utility";
    }
+
+   public static class AutoShutterSettings extends JsonableParam {
+
+      public String configName = "";
+      public Double warmupTimeMinutes = 0.;
+   }
 }
 
-class AutoShutterUI extends BuilderJPanel<SequencerSettings.AutoShutterSettings> implements
+class AutoShutterUI extends BuilderJPanel<AutoShutterStepFactory.AutoShutterSettings> implements
       PropertyChangeListener {
 
    JComboBox<String> configName = new JComboBox<>();
@@ -86,7 +90,7 @@ class AutoShutterUI extends BuilderJPanel<SequencerSettings.AutoShutterSettings>
          new SpinnerNumberModel(10.0, 0.0, 120.0, 1));
 
    public AutoShutterUI() {
-      super(new MigLayout("insets 0 0 0 0"), SequencerSettings.AutoShutterSettings.class);
+      super(new MigLayout("insets 0 0 0 0"), AutoShutterStepFactory.AutoShutterSettings.class);
 
       this.add(new JLabel("Config Name:"));
       this.add(configName, "wrap");
@@ -97,14 +101,14 @@ class AutoShutterUI extends BuilderJPanel<SequencerSettings.AutoShutterSettings>
    }
 
    @Override
-   public void populateFields(SequencerSettings.AutoShutterSettings settings) {
+   public void populateFields(AutoShutterStepFactory.AutoShutterSettings settings) {
       configName.setSelectedItem(settings.configName);
       warmupTime.setValue(settings.warmupTimeMinutes);
    }
 
    @Override
-   public SequencerSettings.AutoShutterSettings build() {
-      SequencerSettings.AutoShutterSettings settings = new SequencerSettings.AutoShutterSettings();
+   public AutoShutterStepFactory.AutoShutterSettings build() {
+      AutoShutterStepFactory.AutoShutterSettings settings = new AutoShutterStepFactory.AutoShutterSettings();
       settings.configName = (String) configName.getSelectedItem();
       settings.warmupTimeMinutes = (Double) warmupTime.getValue();
       return settings;

@@ -34,15 +34,20 @@ import mmcorej.DoubleVector;
 import org.micromanager.internal.utils.ReportingUtils;
 
 /**
+ * A base class for an acquisition manager that handles instantiation of the required metadata for every type of image.
+ * This class assumes that the same imaging configuration will be used throughout the whole imaging process, which may not be true.
  * @author Nick Anthony (nickmanthony@hotmail.com)
  */
 abstract class SingleAcquisitionBase<S> implements Acquisition<S> {
-   //A base class an acquisition manager that handles instantiation of a the required metadata for every type of image.
-   //This class assumes that the same imaging configuration will be used throughout the whole imaging process, which may not be true.
 
-
+   /**
+    *
+    * @param savePath The path to save to
+    * @param cellNum  The number of acquisition (determines folder naming).
+    * @throws Exception
+    */
    @Override
-   public void acquireImages(String savePath, int cellNum) throws Exception {
+   public final void acquireImages(String savePath, int cellNum) throws Exception {
       MetadataBase metadata = this.initializeMetadata();
       ImageSaver imSaver = new ImageIOSaver();
       imSaver.configure(this.getSavePath(savePath, cellNum),
@@ -50,6 +55,11 @@ abstract class SingleAcquisitionBase<S> implements Acquisition<S> {
       this._acquireImages(imSaver, metadata);
    }
 
+   /**
+    *
+    * @return
+    * @throws Exception
+    */
    private MetadataBase initializeMetadata() throws Exception {
       ImagingConfiguration imConf = this.getImgConfig();
       if (!(imConf == Globals.getHardwareConfiguration()
@@ -68,24 +78,47 @@ abstract class SingleAcquisitionBase<S> implements Acquisition<S> {
          trans.add(aff.get(i));
       }
 
-      MetadataBase metadata = new MetadataBase(
+      return new MetadataBase(
             imConf.camera().getSettings().linearityPolynomial,
             Globals.getHardwareConfiguration().getSettings().systemName,
             imConf.camera().getSettings().darkCounts,
             trans);
-      return metadata;
    }
 
-
+   /**
+    * Get the ImagingConfiguration that this acquisition will use.
+    * @return
+    */
    protected abstract ImagingConfiguration getImgConfig();
 
+   /**
+    * Given a save directory and an acquisition number return the full path that will be saved to.
+    * @param savePath
+    * @param cellNum
+    * @return
+    * @throws FileAlreadyExistsException
+    */
    protected abstract String getSavePath(String savePath, int cellNum)
          throws FileAlreadyExistsException;
 
-   protected abstract FileSpecs.Type getFileType(); //Return the type enumerator for this acquisition, used for file saving information.
+   /**
+    *
+    * @return The type enumerator for this acquisition, used for file saving information.
+    */
+   protected abstract FileSpecs.Type getFileType();
 
+   /**
+    *
+    * @return The number of images that will be acquired.
+    */
    protected abstract Integer numFrames();
 
+   /**
+    * Subclasses should implement the actual image acquisition routine here.
+    * @param saver The object that takes images into a queue for saving.
+    * @param md The basic metadata which will need to be populated and passed to the saver.
+    * @throws Exception
+    */
    protected abstract void _acquireImages(ImageSaver saver, MetadataBase md) throws Exception;
 
 }

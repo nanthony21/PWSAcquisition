@@ -23,8 +23,6 @@ package edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories;
 
 import edu.bpl.pwsplugin.UI.utils.BuilderJPanel;
 import edu.bpl.pwsplugin.UI.utils.ImprovedComponents;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.steps.EveryNTimes;
 import edu.bpl.pwsplugin.acquisitionsequencer.factory.StepFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
@@ -45,7 +43,7 @@ public class EveryNTimesFactory extends StepFactory {
 
    @Override
    public Class<? extends JsonableParam> getSettings() {
-      return SequencerSettings.EveryNTimesSettings.class;
+      return EveryNTimesFactory.EveryNTimesSettings.class;
    }
 
    @Override
@@ -67,16 +65,21 @@ public class EveryNTimesFactory extends StepFactory {
    public String getCategory() {
       return "Logical";
    }
+
+   public static class EveryNTimesSettings extends JsonableParam {
+      public Integer n = 2;
+      public Integer offset = 0;
+   }
 }
 
 
-class EveryNTimesUI extends BuilderJPanel<SequencerSettings.EveryNTimesSettings> {
+class EveryNTimesUI extends BuilderJPanel<EveryNTimesFactory.EveryNTimesSettings> {
 
    private ImprovedComponents.Spinner n;
    private ImprovedComponents.Spinner offset;
 
    public EveryNTimesUI() {
-      super(new MigLayout("insets 0 0 0 0"), SequencerSettings.EveryNTimesSettings.class);
+      super(new MigLayout("insets 0 0 0 0"), EveryNTimesFactory.EveryNTimesSettings.class);
 
       n = new ImprovedComponents.Spinner(new SpinnerNumberModel(2, 1, 1000, 1));
       offset = new ImprovedComponents.Spinner(new SpinnerNumberModel(0, 0, 1000, 1));
@@ -87,14 +90,14 @@ class EveryNTimesUI extends BuilderJPanel<SequencerSettings.EveryNTimesSettings>
       this.add(offset, "wrap");
    }
 
-   public SequencerSettings.EveryNTimesSettings build() {
-      SequencerSettings.EveryNTimesSettings settings = new SequencerSettings.EveryNTimesSettings();
+   public EveryNTimesFactory.EveryNTimesSettings build() {
+      EveryNTimesFactory.EveryNTimesSettings settings = new EveryNTimesFactory.EveryNTimesSettings();
       settings.n = (Integer) this.n.getValue();
       settings.offset = (Integer) this.offset.getValue();
       return settings;
    }
 
-   public void populateFields(SequencerSettings.EveryNTimesSettings settings) {
+   public void populateFields(EveryNTimesFactory.EveryNTimesSettings settings) {
       this.n.setValue(settings.n);
       this.offset.setValue(settings.offset);
    }

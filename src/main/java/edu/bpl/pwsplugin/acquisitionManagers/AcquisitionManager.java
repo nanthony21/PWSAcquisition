@@ -28,13 +28,12 @@ import edu.bpl.pwsplugin.settings.FluorSettings;
 import edu.bpl.pwsplugin.settings.PWSSettings;
 import java.util.List;
 
-
+/**
+ * A parent acquisition manager that can direct commands down to more specific acquisition managers.
+ *    There should only be one of these objects for a given set of hardware in order to avoid trying to run multiple acquisitions at once.
+ *    This should be the only way to access any of sublevel acquisition managers.
+ */
 public class AcquisitionManager {
-
-   /* A parent acquisition manager that can direct commands down to more specific acquisition managers.
-   There should only be one of these objects for a given set of hardware in order to avoid trying to run multiple acquisitions at once.
-   This should be the only way to access any of sublevel acquisition managers.
-   */
    private final Acquisition<PWSSettings> pwsManager_ = new PWSAcquisition(new PWSAlbum("PWS"));
    private final Acquisition<DynSettings> dynManager_ = new DynamicsAcquisition(new PWSAlbum("Dynamics"));
    private final Acquisition<List<FluorSettings>> flManager_ = new MultipleFluorescenceAcquisition(
@@ -43,11 +42,11 @@ public class AcquisitionManager {
    private int cellNum_;
    private String savePath_;
 
-   private void run(Acquisition<?> manager)
+   private synchronized void run(Acquisition<?> manager)
          throws InterruptedException, Exception { //All acquisitions should be run with this.
       if (acquisitionRunning_) {
          throw new IllegalStateException(
-               "Attempting to start acquisition when acquisition is already running.");
+               "Attempting to start acquisition when acquisition is already running. How is that possible?");
       }
       acquisitionRunning_ = true;
       try {

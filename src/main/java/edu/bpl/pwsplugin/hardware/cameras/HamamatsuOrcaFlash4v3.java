@@ -35,7 +35,7 @@ public class HamamatsuOrcaFlash4v3 extends DefaultCamera {
 
    String _devName;
 
-   public HamamatsuOrcaFlash4v3(CamSettings settings) throws Device.IDException {
+   public HamamatsuOrcaFlash4v3(CamSettings settings)  {
       super(settings);
       _devName = settings.name;
    }

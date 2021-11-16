@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class SimulatedCamera extends DefaultCamera {
 
-   public SimulatedCamera(CamSettings settings) throws Device.IDException {
+   public SimulatedCamera(CamSettings settings)  {
       super(settings);
    }
 
