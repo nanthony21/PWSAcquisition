@@ -71,7 +71,6 @@ public class PWSAlbum {
          @Override
          public void run() {
             try {
-               display.toFront();
                store_.putImage(image.copyAtCoords(newCoords));
             } catch (DatastoreFrozenException e) {
                ReportingUtils.showError(e, "Album datastore is locked.");
