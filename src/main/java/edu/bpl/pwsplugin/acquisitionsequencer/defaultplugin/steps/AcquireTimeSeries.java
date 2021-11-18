@@ -31,6 +31,7 @@ import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
 import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper;
 import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper.Runtime;
 import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper.Simulated;
+import java.io.File;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -117,7 +118,7 @@ public class AcquireTimeSeries
    }
 
    private String getSubfolderName(int iteration) {
-      return String.format("T%d_%d", this.getID(), iteration);
+      return new File(String.format("T_%d", getID()), Integer.toString(iteration)).getPath();
    }
 
 }

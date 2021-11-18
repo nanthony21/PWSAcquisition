@@ -33,6 +33,8 @@ import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper;
 import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper.Runtime;
 import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper.Simulated;
 import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
+import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -105,6 +107,6 @@ public class ZStackStep extends IteratingContainerStep<ZStackSettings> {
    }
 
    private String getSubfolderName(int iteration) {
-      return String.format("Z%d_%d", this.getID(), iteration);
+      return new File(String.format("Z_%d", getID()), Integer.toString(iteration)).getPath();
    }
 }

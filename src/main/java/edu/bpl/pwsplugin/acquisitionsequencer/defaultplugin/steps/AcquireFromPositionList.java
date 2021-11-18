@@ -31,6 +31,7 @@ import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper;
 import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper.Runtime;
 import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper.Simulated;
 import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.Callable;
 import org.micromanager.AutofocusPlugin;
@@ -152,7 +153,7 @@ public class AcquireFromPositionList
    }
 
    private String getSubfolderName(int iteration) {
-      return String.format("P%d_%d", this.getID(), iteration);
+      return new File(String.format("P_%d", getID()), Integer.toString(iteration)).getPath();
    }
 }
 
