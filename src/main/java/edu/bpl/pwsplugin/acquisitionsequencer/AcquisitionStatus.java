@@ -131,7 +131,7 @@ public class AcquisitionStatus {
     * Set the number of acquisition that we are on
     * @param num The number.
     */
-   public synchronized void setAcquisitionlNum(Integer num) {
+   public synchronized void setAcquisitionNum(Integer num) {
       currentAcquisitionNum = num;
       Globals.acqManager().setCellNum(num);
       this.publish();
@@ -141,7 +141,7 @@ public class AcquisitionStatus {
     *
     * @return Get the currently set acquisition number.
     */
-   public synchronized Integer getAcquisitionlNum() {
+   public synchronized Integer getAcquisitionNum() {
       return currentAcquisitionNum;
    }
 

@@ -29,6 +29,9 @@ import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlug
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.ZStackFactory.ZStackSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.IteratingContainerStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
+import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper;
+import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper.Runtime;
+import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper.Simulated;
 import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
 import java.util.List;
 
@@ -63,7 +66,9 @@ public class ZStackStep extends IteratingContainerStep<ZStackSettings> {
                      String.format("Moving to z-slice %d of %d", i + 1,
                            settings.numStacks));
                zStage.setPosRelativeUm(settings.intervalUm);
-               status = subStepFunc.apply(status);
+               try (SubfolderHelper.Runtime helper = new Runtime(status, getSubfolderName(i), 0)) {
+                  status = subStepFunc.apply(status);
+               }
             }
             //Make sure to return to the initial position before finishing. The reason we use
             // relative movement is that in the case of a hardware autofocus (PFS) the absolute
@@ -81,7 +86,9 @@ public class ZStackStep extends IteratingContainerStep<ZStackSettings> {
       return (Step.SimulatedStatus status) -> {
          int iterations = this.settings.numStacks;
          for (int i = 0; i < iterations; i++) {
-            status = subStepSimFn.apply(status);
+            try (SubfolderHelper.Simulated helper = new Simulated(status, getSubfolderName(i), 0)) {
+               status = subStepSimFn.apply(status);
+            }
          }
          return status;
       };
@@ -97,4 +104,7 @@ public class ZStackStep extends IteratingContainerStep<ZStackSettings> {
       return settings.numStacks;
    }
 
+   private String getSubfolderName(int iteration) {
+      return String.format("Z%d_%d", this.getID(), iteration);
+   }
 }

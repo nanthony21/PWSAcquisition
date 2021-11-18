@@ -21,14 +21,12 @@
 
 package edu.bpl.pwsplugin.acquisitionsequencer.UI;
 
-import clojure.lang.PersistentTreeMap.Seq;
 import edu.bpl.pwsplugin.Globals;
 import edu.bpl.pwsplugin.UI.utils.disablePanel.DisabledPanel;
 import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFactoryManager;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerCoordinate;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionsequencer.ThrowingFunction;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.components.PauseButton;
 import edu.bpl.pwsplugin.acquisitionsequencer.UI.tree.TreeDragAndDrop;
@@ -39,7 +37,6 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Window;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -98,7 +95,7 @@ class SequencerRunningDlg extends JDialog {
    }
 
    public void updateStatus(AcquisitionStatus status) {
-      this.cellNum.setText(String.format("Acquiring Cell: %d", status.getAcquisitionlNum()));
+      this.cellNum.setText(String.format("Acquiring Cell: %d", status.getAcquisitionNum()));
       this.statusMsg.setText(String.join("\n", status.getStatusMessage()));
       Step[] treePath = status.coords().getTreePath();
       if (treePath.length

@@ -28,6 +28,10 @@ import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.AcquireTim
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.AcquireTimeSeriesFactory.AcquireTimeSeriesSettings;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.IteratingContainerStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
+import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper;
+import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper.Runtime;
+import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper.Simulated;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -60,8 +64,7 @@ public class AcquireTimeSeries
                if (currentIteration != 0) { //No pause for the first iteration
                   Integer msgId = status.newStatusMessage("Waiting"); //This will be updated below.
                   int count = 0;
-                  while ((System.currentTimeMillis() - lastAcqTime) / 60000
-                        < settings.frameIntervalMinutes) {
+                  while ((System.currentTimeMillis() - lastAcqTime) / 60000 < settings.frameIntervalMinutes) {
                      String msg = String.format("Waiting %.1f minutes before acquiring next frame",
                            settings.frameIntervalMinutes
                                  - (System.currentTimeMillis() - lastAcqTime) / 60000);
@@ -77,7 +80,9 @@ public class AcquireTimeSeries
                }
                //Save the current time so we can figure out when to start the next acquisition.
                lastAcqTime = System.currentTimeMillis();
-               status = stepFunction.apply(status);
+               try (SubfolderHelper.Runtime helper = new Runtime(status, getSubfolderName(currentIteration), 0)) {
+                  status = stepFunction.apply(status);
+               }
                status.newStatusMessage(
                      String.format("Finished time step %d of %d", currentIteration + 1, settings.numFrames));
             }
@@ -93,7 +98,9 @@ public class AcquireTimeSeries
       return (Step.SimulatedStatus status) -> {
          int iterations = this.settings.numFrames;
          for (int i = 0; i < iterations; i++) {
-            status = subStepSimFn.apply(status);
+            try (SubfolderHelper.Simulated helper = new Simulated(status, getSubfolderName(i), 0)) {
+               status = subStepSimFn.apply(status);
+            }
          }
          return status;
       };
@@ -108,4 +115,10 @@ public class AcquireTimeSeries
    public Integer getTotalIterations() {
       return settings.numFrames;
    }
+
+   private String getSubfolderName(int iteration) {
+      return String.format("T%d_%d", this.getID(), iteration);
+   }
+
 }
+

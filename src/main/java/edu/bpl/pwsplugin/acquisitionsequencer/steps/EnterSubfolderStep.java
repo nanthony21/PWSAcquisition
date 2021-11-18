@@ -25,9 +25,8 @@ import edu.bpl.pwsplugin.acquisitionsequencer.AcquisitionStatus;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerConsts;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFunction;
 import edu.bpl.pwsplugin.acquisitionsequencer.SequencerSettings;
-import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlugin;
-import edu.bpl.pwsplugin.acquisitionsequencer.steps.ContainerStep;
-import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
+import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper;
+import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper.Simulated;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.List;
@@ -53,18 +52,12 @@ public class EnterSubfolderStep extends ContainerStep<SequencerSettings.EnterSub
       return new SequencerFunction() {
          @Override
          public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-            String origPath = status.getSavePath();
-            Integer origCellNum = status.getAcquisitionlNum();
             status.newStatusMessage(
                   String.format("Moving to subfolder: %s", settings.relativePath));
-            status.setSavePath(Paths.get(origPath).resolve(settings.relativePath).toString());
-            status.setAcquisitionlNum(
-                  cellNum); // Even if we exit and enter this subfolder multiple times we should still remember which cell num we're on.
-            status = stepFunction.apply(status);
-            cellNum =
-                  status.getAcquisitionlNum(); //Update our placeholder with whatever we left off on.
-            status.setSavePath(origPath);
-            status.setAcquisitionlNum(origCellNum);
+            try (SubfolderHelper.Runtime helper = new SubfolderHelper.Runtime(status, settings.relativePath, cellNum)) {
+               status = stepFunction.apply(status);
+               cellNum = helper.getCurrentCellNumber(); //Update our placeholder with whatever we left off on.
+            }
             return status;
          }
       };
@@ -75,16 +68,10 @@ public class EnterSubfolderStep extends ContainerStep<SequencerSettings.EnterSub
       SimFn subStepSimFn = this.getSubStepSimFunction();
       simCellNum = 0; //Initialize cell number.
       return (Step.SimulatedStatus status) -> {
-         String path = this.settings.relativePath;
-         Integer origCellNum = status.cellNum;
-         String origDir = status.workingDirectory;
-         status.cellNum =
-               simCellNum; // Even if we exit and enter this subfolder multiple times we should still remember which cell num we're on.
-         status.workingDirectory = Paths.get(status.workingDirectory, path).toString();
-         status = subStepSimFn.apply(status);
-         simCellNum = status.cellNum;
-         status.workingDirectory = origDir;
-         status.cellNum = origCellNum;
+         try (SubfolderHelper.Simulated helper = new Simulated(status, settings.relativePath, simCellNum)) {
+            status = subStepSimFn.apply(status);
+            simCellNum = helper.getCurrentCellNum();
+         }
          return status;
       };
    }

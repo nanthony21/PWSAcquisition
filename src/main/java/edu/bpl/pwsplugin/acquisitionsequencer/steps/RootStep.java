@@ -66,7 +66,7 @@ public class RootStep extends ContainerStep<SequencerSettings.RootStepSettings> 
             }
             Globals.logger().setAcquisitionPath(startingDir
                   .toPath()); //Begin saving additional log files to the acquisition directory.
-            status.setAcquisitionlNum(0);
+            status.setAcquisitionNum(0);
             status.setSavePath(settings.directory);
             status.getRuntimeSettings()
                   .saveToJson(status.getSavePath()); //Save the runtimesettings to a JSON file.

@@ -27,6 +27,9 @@ import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.DefaultSequencerPlug
 import edu.bpl.pwsplugin.acquisitionsequencer.defaultplugin.factories.AcquireFromPositionListFactory;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.IteratingContainerStep;
 import edu.bpl.pwsplugin.acquisitionsequencer.steps.Step;
+import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper;
+import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper.Runtime;
+import edu.bpl.pwsplugin.acquisitionsequencer.utility.SubfolderHelper.Simulated;
 import edu.bpl.pwsplugin.hardware.translationStages.TranslationStage1d;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -104,7 +107,9 @@ public class AcquireFromPositionList
             //Yes, I know this is weird. It's a static method that needs a position and the core as input.
             MultiStagePosition.goToPosition(pos, Globals.core());
             postMoveRoutine.call();
-            status = stepFunction.apply(status);
+            try (SubfolderHelper.Runtime helper = new Runtime(status, getSubfolderName(currentIteration), 0)) {
+               status = stepFunction.apply(status);
+            }
             //Just in case the substep took us to new positions we want to make sure to move back to our position to avoid confusion.
             MultiStagePosition.goToPosition(pos, Globals.core());
          }
@@ -119,7 +124,9 @@ public class AcquireFromPositionList
       return (Step.SimulatedStatus status) -> {
          int iterations = this.settings.posList.getNumberOfPositions();
          for (int i = 0; i < iterations; i++) {
-            status = subStepSimFn.apply(status);
+            try (SubfolderHelper.Simulated helper = new Simulated(status, getSubfolderName(i), 0)) {
+               status = subStepSimFn.apply(status);
+            }
          }
          return status;
       };
@@ -142,6 +149,10 @@ public class AcquireFromPositionList
    @Override
    public Integer getTotalIterations() {
       return settings.posList.getNumberOfPositions();
+   }
+
+   private String getSubfolderName(int iteration) {
+      return String.format("P%d_%d", this.getID(), iteration);
    }
 }
 

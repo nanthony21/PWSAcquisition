@@ -65,11 +65,11 @@ public class AcquireCell extends EndpointStep<AcquireCellSettings> {
       return new SequencerFunction() {
          @Override
          public AcquisitionStatus applyThrows(AcquisitionStatus status) throws Exception {
-            status.setAcquisitionlNum(status.getAcquisitionlNum() + 1);
+            status.setAcquisitionNum(status.getAcquisitionNum() + 1);
             status.newStatusMessage(
-                  String.format("Acquiring Cell %d", status.getAcquisitionlNum()));
+                  String.format("Acquiring Cell %d", status.getAcquisitionNum()));
             File directory = FileSpecs
-                  .getCellFolderName(Paths.get(status.getSavePath()), status.getAcquisitionlNum())
+                  .getCellFolderName(Paths.get(status.getSavePath()), status.getAcquisitionNum())
                   .toFile();
             if (!directory.exists()) {
                directory.mkdirs();
@@ -99,7 +99,7 @@ public class AcquireCell extends EndpointStep<AcquireCellSettings> {
    private void saveSequenceCoordsFile(AcquisitionStatus status) throws IOException {
       JsonObject obj = status.coords().toJson();
       Path directory = FileSpecs
-            .getCellFolderName(Paths.get(status.getSavePath()), status.getAcquisitionlNum());
+            .getCellFolderName(Paths.get(status.getSavePath()), status.getAcquisitionNum());
       String savePath = directory.resolve("sequencerCoords.json").toString();
       try (FileWriter w = new FileWriter(savePath)) {
          GsonUtils.getGson().toJson(obj, w);
