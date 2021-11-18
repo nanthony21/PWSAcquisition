@@ -105,4 +105,14 @@ public class SimulationStage1d extends TranslationStage1d {
       }
       return errs;
    }
+
+   @Override
+   public void initialize() throws MMDeviceException {
+
+   }
+
+   @Override
+   public void activate() throws MMDeviceException {
+
+   }
 }
