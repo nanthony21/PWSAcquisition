@@ -38,16 +38,30 @@ import org.micromanager.AutofocusPlugin;
  */
 public class NikonTI2_zStage extends TranslationStage1d {
 
-   private final String offsetDevice; //A stage device with no properties
-   private final String pfsDevice; //An autofocus device
+   private String offsetDevice; //A stage device with no properties
+   private String pfsDevice; //An autofocus device
    private boolean calibrated = false;
    private double[] coef_; //Should be 3 elements giving the quadratic fit of x: um, y: offset. stored in order [intercept, linear, quadratic]
    private final EscapeStatus escStatus = new EscapeStatus();
    private final static double ESCAPE_POSITION = 500.; // Hardcoded z position to move to during escape.
 
-   public NikonTI2_zStage(TranslationStage1dSettings settings)
-         throws MMDeviceException {
+   public NikonTI2_zStage(TranslationStage1dSettings settings) {
       super(settings);
+   }
+
+   @Override
+   public boolean identify() {
+      try {
+         return ((Globals.core().getDeviceName(settings.deviceName).equals("ZDrive"))
+               &&
+               (Globals.core().getDeviceLibrary(settings.deviceName).equals("NikonTi2")));
+      } catch (Exception e) {
+         return false;
+      }
+   }
+
+   @Override
+   public void initialize() throws MMDeviceException {
       Globals.logger().logDebug("Creating new instance of NikonTI2");
       try {
          String nikonHub = null;
@@ -58,7 +72,7 @@ public class NikonTI2_zStage extends TranslationStage1d {
             }
          }
          if (nikonHub == null) {
-            throw new MMDeviceException("No Nikon Hub device was found.");
+            throw new MMDeviceException("No Nikon TI2 Hub device was found.");
          }
          String offsetName = null;
          String statusName = null;
@@ -81,6 +95,11 @@ public class NikonTI2_zStage extends TranslationStage1d {
       }
    }
 
+   @Override
+   public void activate() throws MMDeviceException {
+      // Nothing to do
+   }
+
    private Double getMaximumPFSOffset() {
       return 32500.0;
    }
@@ -100,19 +119,6 @@ public class NikonTI2_zStage extends TranslationStage1d {
    private String getPFSDeviceName() {
       return pfsDevice;
    }
-    
-    /*@Override
-    protected boolean busy() throws MMDeviceException { //This doesn't work:(
-        try {
-            return ((Globals.core().deviceBusy(offsetDevice))
-                    ||
-                    (Globals.core().deviceBusy(pfsDevice))
-                    ||
-                    (Globals.core().deviceBusy(settings.deviceName)));
-        } catch (Exception e) {
-            throw new MMDeviceException(e);
-        }
-    }*/
 
    private boolean busy() throws MMDeviceException, InterruptedException {
       try {
@@ -133,17 +139,6 @@ public class NikonTI2_zStage extends TranslationStage1d {
          }
       } catch (Exception e) {
          throw new MMDeviceException(e);
-      }
-   }
-
-   @Override
-   public boolean identify() {
-      try {
-         return ((Globals.core().getDeviceName(settings.deviceName).equals("ZDrive"))
-               &&
-               (Globals.core().getDeviceLibrary(settings.deviceName).equals("NikonTi2")));
-      } catch (Exception e) {
-         return false;
       }
    }
 

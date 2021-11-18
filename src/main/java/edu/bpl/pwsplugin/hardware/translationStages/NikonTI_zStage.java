@@ -39,47 +39,16 @@ import org.micromanager.AutofocusPlugin;
  */
 public class NikonTI_zStage extends TranslationStage1d {
 
-   private final String pfsStatusName;
-   private final String pfsOffsetName;
+   private String pfsStatusName;
+   private String pfsOffsetName;
    private boolean calibrated = false;
    private double[] coef_; //Should be 3 elements giving the quadratic fit of x: um, y: offset. stored in order [intercept, linear, quadratic]
    private final EscapeStatus escStatus = new EscapeStatus();
    private final static double ESCAPE_POSITION = 500.; // Hardcoded z position to move to during escape.
 
 
-   public NikonTI_zStage(TranslationStage1dSettings settings)
-         throws MMDeviceException {
+   public NikonTI_zStage(TranslationStage1dSettings settings) {
       super(settings);
-      try {
-         String nikonHub = null;
-         for (String hubLabel : Globals.core().getLoadedDevicesOfType(DeviceType.HubDevice)) {
-            if (Globals.core().getDeviceName(hubLabel).equals("TIScope")) {
-               nikonHub = hubLabel;
-               break;
-            }
-         }
-         if (nikonHub == null) {
-            throw new MMDeviceException("No Nikon Hub device was found.");
-         }
-         String offsetName = null;
-         String statusName = null;
-         for (String devLabel : Globals.core().getLoadedPeripheralDevices(nikonHub)) {
-            String name;
-            name = Globals.core().getDeviceName(devLabel);
-            if (name.equals("TIPFSOffset")) {
-               offsetName = devLabel;
-            } else if (name.equals("TIPFSStatus")) {
-               statusName = devLabel;
-            }
-         }
-         if (offsetName == null || statusName == null) {
-            throw new MMDeviceException("PFS devices were not found.");
-         }
-         pfsOffsetName = offsetName;
-         pfsStatusName = statusName;
-      } catch (Exception e) {
-         throw new MMDeviceException(e);
-      }
    }
 
    private Double getMaximumPFSOffset() {
@@ -438,6 +407,43 @@ public class NikonTI_zStage extends TranslationStage1d {
       }
       return errs;
    }
+
+   @Override
+   public void initialize() throws MMDeviceException {
+      try {
+         String nikonHub = null;
+         for (String hubLabel : Globals.core().getLoadedDevicesOfType(DeviceType.HubDevice)) {
+            if (Globals.core().getDeviceName(hubLabel).equals("TIScope")) {
+               nikonHub = hubLabel;
+               break;
+            }
+         }
+         if (nikonHub == null) {
+            throw new MMDeviceException("No Nikon Hub device was found.");
+         }
+         String offsetName = null;
+         String statusName = null;
+         for (String devLabel : Globals.core().getLoadedPeripheralDevices(nikonHub)) {
+            String name;
+            name = Globals.core().getDeviceName(devLabel);
+            if (name.equals("TIPFSOffset")) {
+               offsetName = devLabel;
+            } else if (name.equals("TIPFSStatus")) {
+               statusName = devLabel;
+            }
+         }
+         if (offsetName == null || statusName == null) {
+            throw new MMDeviceException("PFS devices were not found.");
+         }
+         pfsOffsetName = offsetName;
+         pfsStatusName = statusName;
+      } catch (Exception e) {
+         throw new MMDeviceException(e);
+      }
+   }
+
+   @Override
+   public void activate() throws MMDeviceException {}
 
    public enum Status {
       //An enumerator representing the possible PFS statuses

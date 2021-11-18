@@ -36,14 +36,6 @@ public abstract class TranslationStage1d implements Device {
 
    protected final TranslationStage1dSettings settings;
 
-   @Override
-   public void activate() {
-   } //Nothing to do here
-
-   @Override
-   public void initialize() {
-   } //Nothing to do here
-
    public TranslationStage1d(TranslationStage1dSettings settings) {
       this.settings = settings;
    }
@@ -82,10 +74,6 @@ public abstract class TranslationStage1d implements Device {
     * @throws MMDeviceException
     */
    public double runFullFocus() throws MMDeviceException {
-      throw new UnsupportedOperationException();
-   }
-
-   public void addFocusLockListener(PropertyChangeListener listener) {
       throw new UnsupportedOperationException();
    }
 
