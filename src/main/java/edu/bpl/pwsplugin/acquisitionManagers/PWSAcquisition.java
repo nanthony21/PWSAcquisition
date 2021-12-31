@@ -32,6 +32,12 @@ import edu.bpl.pwsplugin.hardware.tunableFilters.TunableFilter;
 import edu.bpl.pwsplugin.metadata.MetadataBase;
 import edu.bpl.pwsplugin.metadata.PWSMetadata;
 import edu.bpl.pwsplugin.settings.PWSSettings;
+import org.micromanager.data.Coords;
+import org.micromanager.data.Image;
+import org.micromanager.data.Pipeline;
+import org.micromanager.data.PipelineErrorException;
+import org.micromanager.internal.utils.ReportingUtils;
+
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -39,18 +45,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import org.micromanager.data.Coords;
-import org.micromanager.data.Image;
-import org.micromanager.data.Pipeline;
-import org.micromanager.data.PipelineErrorException;
-import org.micromanager.internal.utils.ReportingUtils;
 
 
 class PWSAcquisition extends SingleAcquisitionBase<PWSSettings> {  //TODO if someone closes the PWSAlbum there is no way to open it up again.
 
    //Used to acquire a single PWS file.
    int[] wv; //The array of wavelengths to image at.
-   final String filtProp = "Wavelength"; //The property name of the filter that we want to tune.
    Boolean hardwareSequence;
          // Whether or not to attempt to use TTL triggering between the camera and spectral filter.
    Boolean useExternalTrigger;
@@ -144,7 +144,6 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings> {  //TODO if som
          saver.beginSavingThread();
 
          long seqEndTime = 0;
-         long collectionEndTime = 0;
          long seqStartTime = 0;
          if (hardwareSequence) {
             try {
@@ -172,7 +171,6 @@ class PWSAcquisition extends SingleAcquisitionBase<PWSSettings> {  //TODO if som
                      addImage(im, i, pipeline, saver);
                      i++;
                      lastImTime = System.currentTimeMillis();
-                     collectionEndTime = System.currentTimeMillis();
                   }
                   if ((System.currentTimeMillis() - lastImTime)
                         > 10000) { //Check for timeout if for some reason the acquisition is stalled.

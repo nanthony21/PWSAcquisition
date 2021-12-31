@@ -50,8 +50,6 @@ Some other day:
 package edu.bpl.pwsplugin;
 
 import com.google.common.eventbus.Subscribe;
-import edu.bpl.pwsplugin.acquisitionsequencer.Sequencer;
-import edu.bpl.pwsplugin.acquisitionsequencer.SequencerFactoryManager;
 import edu.bpl.pwsplugin.settings.PWSPluginSettings;
 import edu.bpl.pwsplugin.settings.PWSSettingsConsts;
 import org.micromanager.MenuPlugin;
@@ -86,7 +84,6 @@ public class PWSPlugin implements MenuPlugin, SciJavaPlugin {
          //They also register themselves when they are instantiated but that may not happen in time.
          PWSSettingsConsts.registerGson();
          PWSPluginSettings.registerGsonType();
-         Sequencer sequencer = new Sequencer();
 
          Globals.init(studio_);
 
