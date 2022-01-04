@@ -53,6 +53,7 @@ public abstract class DefaultImagingConfiguration implements ImagingConfiguratio
     */
    private void initialize() throws MMDeviceException {
       zStage = (TranslationStage1d) HardwareManager.instance().getDevice(new TranslationStage1dSettings());
+      zStage.initialize();
       if (zStage == null) {
          throw new MMDeviceException("No supported Z-stage was found.");
       }
