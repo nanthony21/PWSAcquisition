@@ -124,7 +124,7 @@ public class HamamatsuOrcaFlash4v3 extends DefaultCamera {
       try {
          return ((Globals.core().getDeviceName(this.settings.name).equals("HamamatsuHam_DCAM"))
                &&
-               (Globals.core().getProperty(this.settings.name, "CameraName").equals("C13440-20C")));
+               (Globals.core().getProperty(this.settings.name, "CameraName").startsWith("C13440-20C"))); // This will work for the 20C as well as the updated 20CU
       } catch (Exception e) {
          return false;
       }
